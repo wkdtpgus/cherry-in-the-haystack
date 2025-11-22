@@ -1,0 +1,21 @@
+{
+  "post_id": "081",
+  "title": "**에이전틱 커머스 프로토콜(Agentic Commerce Protocol)과 AI를 위한 경제 인프라 구축 — Stripe의 데이터 및 AI 총괄 Emily Glassberg Sands와 함께**",
+  "base_word_count": 21731,
+  "exact_30_update_wc": 1484,
+  "exact_30_ground_truth_wc": 15470,
+  "exact_30_overlap_ratio": 5.219,
+  "paraphrase_25_update_wc": 1644,
+  "paraphrase_25_ground_truth_wc": 1789,
+  "paraphrase_25_overlap_ratio": 13.13,
+  "fragment_20_update_wc": 1099,
+  "fragment_20_ground_truth_wc": 2456,
+  "fragment_20_overlap_ratio": 18.539,
+  "semantic_25_update_wc": 17134,
+  "semantic_25_ground_truth_wc": 5238,
+  "semantic_25_overlap_ratio": 1.963,
+  "mixed_real_update_wc": 1294,
+  "mixed_real_ground_truth_wc": 1294,
+  "mixed_real_overlap_ratio": 16.794,
+  "status": "generated"
+}

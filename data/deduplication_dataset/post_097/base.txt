@@ -1,0 +1,128 @@
+# **AI 엔지니어링, 주류로 부상하다**
+
+Author: Latent Space
+URL: https://www.latent.space/p/aiewf-2025-keynotes
+
+============================================================
+
+거의 2년 전, 제가 AI 엔지니어(AI Engineer)의 부상에 대해 썼을 때, 저는 이 직업이 오랫동안 ML 엔지니어(ML Engineer)와 AI 연구원(AI Researcher)에게 "열등하게" 느껴질 것이라고 언급했습니다. 이제 우리는 앤드류 응(Andrew Ng)이 "GenAI 애플리케이션 엔지니어(GenAI Application Engineer)"에 대해 쓰고, 하멜(Hamel)이 "AI 과학자(AI Scientist)"라는 용어를 만들고, 심지어 그렉 브록만(Greg Brockman, 다음 게스트!)이 세계 박람회(World’s Fair)에서 엔지니어(engineer)들이 연구원(researcher)들과 동일한 영향력을 가질 수 있는 방법을 설명하는 것을 봅니다. "새로운 하위 산업을 구축하는 것"에 대한 플레이북(playbook)은 없습니다. 이는 개발자 관계/커뮤니티 구축(devrel/ community building), 경제학/산업 조직(economics/industrial organization), 그리고 인류학+집합론(anthropology+set theory)의 혼합입니다. 우리는 선도적인 뉴스레터 중 하나를 구축하는 것으로 시작하여, 팟캐스트, 설문조사 1를 통해 멘탈 모델(mental models)부터 트렌드 차트, 코딩 도구, 논문 강의 계획서, 일일 뉴스에 이르기까지 AI 엔지니어(AI Engineer)에게 필요한 모든 것을 직무 기술서(job description)까지 다루고 있습니다. 그러나 아마도 업계를 발전시키기 위해 우리가 하는 가장 높은 신호이자 가장 의도적인 일은 AIE 컨퍼런스를 조직하는 것입니다. 대규모 산업 컨퍼런스를 운영하는 것은 이상한 기분입니다. 한편으로는 행사 매 순간을 계획하고 300D 캘린더 테트리스(calendar tetris)를 하며 몇 달을 보냈지만, 다른 한편으로는 쇼를 운영하느라 너무 바빠 실제로 많은 것을 보지 못합니다. 그리고 그 후에도 후반 작업 2과 스폰서(sponsor) 요구 사항을 처리해야 하므로 시의적절하면서도 권위 있는 개요를 작성하기가 어렵습니다. 그래서 여기 한 사람의 최선을 다한 개요가 있지만, 아래 링크된 다른 사람들의 다른 요약(recaps)을 놓치지 마십시오.
+
+구글 포토 앨범(google photos album)
+**최고 수준의 하이라이트**
+**최종 집계**: 3,098명 (C-레벨(C-level) 20%, 경영진 17%, 수석/스태프 엔지니어(principal/staff eng) 22%, 시니어 엔지니어(senior eng) 17%)으로, 회사 규모가 잘 분산되어 있었습니다 (직원 1천 명 이상 1/3, 50명 미만 1/3). AI 엔지니어(AI engineer)들은 2일 동안 30개 이상의 워크숍(workshop)과 각 10개의 트랙(track)에서 306명의 연사(speaker)를 포함했습니다 (잊지 마세요: 69명의 온라인 연사(online speaker)도 있었습니다). 그리고 도시 전역에서 30개(!!!)의 독립 행사(independent event)가 열렸습니다.
+
+놀라운 사회자(emcee)인 로리 보스(Laurie Voss)부터 모든 트랙 호스트(track host)들에게 특별한 감사를 드립니다 — 헨리 마오(Henry Mao, MCP), 브리트니 워커(Brittany Walker, 타이니 팀즈(Tiny Teams)), 유진 얀(Eugene Yan, RecSys), 네오포제이(Neo4J)와 스티븐 친(Stephen Chin, GraphRAG), 안쿠르 두갈(Ankur Duggal, 포춘 500대 기업의 AI(AI in Fortune 500) 1), 알레시오 파넬리(Alessio Fanelli, 아키텍트(Architect) 1), 프롬프트QL(PromptQL)과 알렉스 레이브만(Alex Reibman, 에이전트 신뢰성(Agent Reliability)), 시니아 홍(Seenia Hong, AI PM), 이샨 다나니(Ishan Dhanani, AI 인프라(AI Infra)), 토르 셰프(Thor Schaeff, 보이스(Voice)), 비부 사프라(Vibhu Sapra, SWE-에이전트(SWE-Agents)), 오픈파이프(OpenPipe)와 카일 코르빗(Kyle Corbitt, 추론+RL(Reasoning+RL)), 닷 응오(Dat Ngo, 검색+탐색(Retrieval+Search)), 브레인트러스트(Braintrust)와 올모 말도나도(Olmo Maldonado, 평가(Evals)), 랜달 헌트(Randall Hunt, 포춘 500대 기업의 AI(AI in Fortune 500) 2), 브라이언 비숍(Bryan Bischof)을 통한 맷 레드몬드(Matt Redmond, 아키텍트(Architect) 2), 앨리 하우(Allie Howe, 보안(Security)), 알렉시스 가우바(Alexis Gauba, AI 디자인 엔지니어(AI Design Eng)), 자릴 발렌시아노(Jaril Valenciano, 생성 미디어(Gen. Media)), 그리고 에라 첸(Era Qian, 자율성+로봇공학(Autonomy+Robotics), 특히 KScale과 테슬라 옵티머스(Tesla Optimus)를 데려온 것에 대해), 인터뷰어(interviewer) 플로 영(Phlo Young), 사라(Sarah) / 타일러(Tyler), 젠슨 랭글러(Jensen wrangler) 나데르 칼릴(Nader Khalil)과 우리가 할 수 없었던 곳에서 자원봉사하고 다른 사람들을 도왔던 모든 분들께 감사드립니다 (라이브스트림(livestream)의 팀 크레딧(team credit)). 정말 AI 엔지니어링(AI Eng)의 "어벤져스 어셈블(Avengers Assemble)"이었습니다.
+
+AIEWF 주간 동안 무대 위와 스폰서(sponsor)에 의해 출시된 것들 (모든 것을 포함하지 않음!):
+*   **제미니 2.5 프로(Gemini 2.5 Pro)** (06-05)는 로건 킬패트릭(Logan Kilpatrick)의 기조연설(keynote)에서 무대 위에서 출시되었습니다 (제미니 코드(Gemini Code), 딥 리서치 API(Deep Research API), 컴퓨터 사용 API(Computer Use API) 로드맵(roadmap) 포함).
+*   **OpenAI 에이전트 타입스크립트 SDK(OpenAI Agents TypeScript SDK)**는 도미니크 쿤델(Dominik Kundel)의 워크숍(workshop)에서 출시되었습니다.
+*   **OpenAI 에이전트 견고성 팀(OpenAI Agent Robustness Team)**은 푸아드 마틴(Fouad Matin)의 보안 기조연설(Security keynote)에서 발표되었습니다.
+*   **Anthropic MCP 스타트업 요청(Anthropic MCP Request for Startups)**은 테오도라 추(Theodora Chu, MCP PM)에 의해 제공되었습니다.
+*   **Anthropic 클로드 코드 플랜 모드(Anthropic Claude Code Plan Mode)**는 클로드 코드(Claude Code) 개발자인 보리스 체르니(Boris Cherny)와 함께 발표되었습니다.
+*   **대거(Dagger)의 컨테이너 사용(container-use)**은 솔로몬 하이크스(Solomon Hykes)의 기조연설에서 무대 위에서 출시되었습니다.
+*   **모프 리퀴드 메탈(Morph Liquid Metal)과 마기-1 모델(Magi-1 model)**은 제시 한(Jesse Han)에 의해 무대 위에서 출시되었고, 크리스티안 세게디(Christian Szegedy)를 "역대 가장 인상적인 채용 발표 중 하나"로 영입했습니다.
+*   **모프(Morph)의 크리스티안 세게디(Christian Szegedy)가 트리니티(Trinity)로 발표한 검증된 초지능(Verified Superintelligence)**
+*   **AI 외교(AI Diplomacy)**는 알렉스 더피(Alex Duffy)에 의해 무대 위에서 출시되었습니다 — 타이니 팀즈(Tiny Teams) 최고의 연사.
+*   **일레븐랩스(ElevenLabs)**는 보이스(Voice) 트랙 호스트(track host)인 토르 셰프(Thor Schaeff)와 함께 v3 알파(v3 alpha)를 출시했습니다.
+*   **라마인덱스(LlamaIndex)의 라마클라우드 엑셀 지원(LlamaCloud Excel Support)**
+*   **ARC 재단(ARC Foundation) 회장인 그렉 캄라트(Greg Kamradt)에 의해 무대 위에서 미리 공개된 ARC-AGI 3**
+*   **전 게스트 라이자 마틴(Raiza Martin)이 출시한 헉스 AI(Huxe AI)**, AI 제품 관리(AI Product Mgmt) 기조연설.
+*   **전 게스트 윌 브릭(Will Bryk)이 출시한 엑사 리서치(Exa Research)** — 검색 분야 최고의 연사.
+*   **아니쉬 아가르왈(Anish Agarwal)과 팀이 신뢰할 수 있는 에이전트(Reliable Agents) 트랙(track)에서 발표한 트래버설 AI(Traversal AI)**
+*   **다음 게스트 찰스 프라이(Charles Frye)가 출시한 모달(Modal)의 LLM 연감(LLM Almanac)**
+*   **전 게스트 샌더 슐호프(Sander Schulhoff)가 출시한 HackAPrompt AIE**
+*   **사이먼 윌리슨(Simon Willison) 블로그의 펠리컨벤치(PelicanBench) ELO 랭킹** — @swyx에게 우리가 놓친 주요 출시가 있다면 알려주세요.
+
+**보너스 게시물**
+AI 외교(AI Diplomacy)에 대한 알렉스 더피(Alex Duffy, 최고 연사, 타이니 팀즈(Tiny Teams))와의 AIEWF 라이트닝 팟(Lightning Pod)
+
+**여러분의 성찰, 시사점에 대한 링크**
+AI 엔지니어링(AI Engineering) 커뮤니티의 모든 게시물과 @aidotengineer 태그(tag) 외에, 우리가 알고 있는 더 큰 성찰/요약 게시물은 다음과 같습니다:
+*   swyx: TBPN의 AIEWF 1일차
+*   swyx: ThursdAI의 AIEWF 2일차
+*   NLW: AI 엔지니어 세계 박람회(AI Engineer World's Fair)의 가장 큰 트렌드
+*   튜링 포스트(Turing Post): "젠장" 순간 대 아직 아님(Holy Shit moments vs Not There Yet) (비디오(video))
+*   사이먼 윌리슨(Simon Willison): 지난 6개월간의 LLM, 자전거 탄 펠리컨으로 설명
+*   이안 케언스(Ian Cairns): 구축-운영 격차 해소: AI 엔지니어 세계 박람회(AI Engineer World's Fair) 2025의 AI 제품 전략 및 운영 통찰력
+*   랜스 마틴(Lance Martin): AI 에이전트(AI agents)의 현황
+*   찰리 궈(Charlie Guo): AI 엔지니어링(AI Engineering)의 현황 (2025)
+*   대니 톰슨(Danny Thompson): 타이니 팀즈(Tiny Teams)가 몇 달 만에 1천만 달러 스타트업(Startups)을 구축한 방법
+*   미키 베이즐리(Mickey Bazeley): AIE x MongoDB 다중 에이전트 시스템(Multi-Agent Systems)에 대한 성찰
+*   아니타 키르코브스카(Anita Kirkovska, 게스트 저자): 2025년에 AI 제품, 에이전트(agents), 인프라(infrastructure)를 형성하는 것
+*   패트릭 엘리스(Patrick Ellis): 스타트업 플레이북(playbook)이 실시간으로 다시 쓰여지고 있다
+*   데릭 시어린(Derek Sheerin): AI 엔지니어링 세계 박람회(AI Engineering World Fair) 2025에 대한 성찰
+*   레나 홀(Lena Hall): AIEWF의 FOMO 트랙(FOMO track)
+*   짧은 생각(Short takes): 알렉스 볼코프(Alex Volkov), 요기 미라제(Yogi Miraje), 대니 톰슨(Danny Thompson), 유진 얀(Eugene Yan), 발라즈 네메티(Balazs Nemethi)
+
+**메인 스테이지 기조연설 요약**
+AIEWF는 기본적으로 "18개의 컨퍼런스가 하나로" 합쳐진 것이며, 많은 연사들이 다른 컨퍼런스에서는 기조연설자(keynoter)가 될 만한 분들이었기에, 한 사람이 모든 것을 다루기에는 너무 많습니다. 하지만 우리는 어떤 특정 주제에도 잘 맞지 않는 것들을 위한 전체 회의 무대(plenary stage)를 가지고 있습니다. 1일차와 2일차 라이브스트림(livestream)이 이미 올라와 있으므로, 지금은 여기에 집중하고 나중에 AIEWF에 두 번째로 돌아온 토트 AI(Thoth AI) 친구들이 설명하는 선별된 시사점(takeaway)을 자세히 다룰 것입니다!
+
+**아샤 샤르마(Asha Sharma) — 스파크에서 시스템으로: 개방형 에이전트 웹(Open Agentic Web) 구축**
+토트(Thoth)에서 전체 대본 보기!
+정교하게 다듬어진 데모 세트에서 마이크로소프트(Microsoft)는 AIE의 다음 단계를 3가지 주제로 봅니다:
+*   **페어 → 피어 프로그래밍(pair → peer programming)**: GitHub 코파일럿(GitHub Copilot)은 @할당될 수 있고 코드베이스(codebase)에 GraphRAG를 적용할 수 있으며, 프로젝트 아멜리(Project Amelie)를 통해 자율적으로 MLE를 수행할 수도 있습니다.
+*   **소프트웨어 → 에이전트 팩토리(agent factory)**: 모든 회사는 모델 라우팅(model routing), 보안, 신뢰성, 에이전트 RAG(agentic RAG), MCP 도구(MCP tools), 관측 가능성(observability) 등 LLM OS 도구(LLM OS tools)의 전체 세트를 갖추어 에이전트(agents)를 대량 생산하는 데 도움이 되는 플랫폼(platform) (일명 "AI 파운드리(AI Foundry)")을 보유해야 합니다… 심지어 음성 게시물, 이미지 생성(imagegen), 그리고 링크드인(LinkedIn)에 직접 게시하는 것도 포함합니다!
+*   **클라우드 → 로컬 AI(local AI)**: 파운드리 로컬(Foundry Local)을 사용하여 장치에서 오픈 모델(open models) 실행.
+swyx의 참고: 데모가 유튜브(youtube) 채팅에서 뜨거워지고 있을 때 3번째 데모가 시간 초과되어 정말 죄송합니다. 전체 팟캐스트(pod)에서 보충하도록 노력하겠습니다.
+
+**사라 궈(Sarah Guo) — 스타트업(Startups) 및 AI 2025의 현황**
+토트(Thoth)에서 전체 대본 보기!
+컨빅션(Conviction) 설립 이후 지난 2.5년간의 가장 큰 교훈: "지난 몇 년 동안 가능했던 사용자 채택(uptake from users)을 본 적이 없습니다… AI 엔지니어링(AI engineering)은 사람들이 기대했던 것보다 훨씬 어렵지만, 가치 창출은 엄청납니다. 우리는 어떤 기술 혁명에서도 본 적이 없는 속도로 기업들이 연간 매출(run rate) 0에서 1억 달러로 성장하는 것을 봅니다."
+*   **X를 위한 커서(Cursor)를 구축하는 방법**: 추론(Reasoning)은 에이전트(Agents) 확장을 위한 새로운 벡터(vector)입니다.
+*   **에이전트, 에이전트, 에이전트**: 챗봇(chatbots)보다는 동료에 가깝습니다.
+*   **멀티모달리티(Multimodality)는 틈새시장이 아닙니다**: 비디오(Video)와 보이스(Voice) 모두 경제를 휩쓸 것입니다.
+*   **샘 알트만(Sam Altman)**: "작년 모델은 상품이다."
+*   **코드(Code)는 최초의 AI 킬러 앱(AI Killer App)**입니다. 왜냐하면 결정론적 유효성 검사(deterministic validation)를 포함한 구조화된 텍스트(structured text)이며, AGI로 가는 길에 있고, 가장 중요하게는 엔지니어(engineers)가 스스로 구축할 수 있기 때문입니다. 그녀는 이를 두꺼운 AI 래퍼(AI Wrappers) 구축을 위한 레시피(recipe)로 추상화하며 (우리는 찬성합니다), 모든 산업 분야와 직업에서 이를 수행하는 스타트업(Startups)은 좋은 실행력을 가지고 출시에 안주하지 않는다면 기존 기업을 뛰어넘을 수 있다고 말합니다. 그들의 스타트업(Startups) 요청(Requests for Startups)을 참조하십시오.
+
+**사이먼 윌리슨(Simon Willison) — 지난 6개월간의 LLM, 자전거 탄 펠리컨으로 설명**
+그의 웹사이트와 해커 뉴스(Hacker News)에서 가장 잘 요약됨: 펠리컨벤치(PelicanBench) 출시
+**주요 트렌드**: 지난 6개월 동안 30개의 중요한 모델 출시: 노바(Nova)는 저렴하고, 딥시크(DeepSeek)는 훌륭했으며, 미스트랄 스몰(Mistral Small)은 라마 3.3(Llama 3.3)의 훌륭한 경쟁자였습니다. 클로드 3.7(Claude 3.7) → GPT 4.5 → o1-pro → 제미니 2.5 프로(Gemini 2.5 Pro) → GPT 4.1 → 클로드 4(Claude 4). 4o 이미지 생성(imagegen)은 매우 특별했습니다.
+**버그(Bugs)**: 4o 아첨(sycophancy), 그록(Grok)의 문제, 클로드 4(Claude 4)의 고자질은 큰 문제였습니다.
+**MCP = 도구+추론(Tools+Reasoning)**: "저는 이것이 현재 AI 엔지니어링(AI Engineering)에서 가장 강력한 기술이라고 생각합니다."
+**보안: 치명적인 삼중주(Lethal Trifecta)**: 모델이 1) 개인 데이터(private data)에 접근하고, 2) 악성 지시(malicious instructions)에 노출되며, 3) 데이터 유출 벡터(exfiltration vectors)를 가질 때.
+올해는 연사들의 경쟁 정신을 고취하기 위해 최고 연사상(Best Speaker award)을 처음으로 수여했으며, 사이먼(Simon)은 유머와 기술적으로 관련성 있는 통찰력을 겸비하여 전체 AIE 최고 연사 트로피를 쉽게 차지했습니다. (그가 라인 댄스(line dancing)를 하고 있었기 때문에) 로리(Laurie)가 사이먼을 대신하여 트로피를 받았습니다.
+
+**안티 바스(Antje Barth) — 클라우드 규모(Cloud-Scale)로 에이전트(Agents) 구축**
+안티(Antje)는 다가오는 알렉사(Alexa)+클로드(Claude) 통합을 예고하고, 아마존 Q 개발자(Amazon Q Developer) (팀의 비카쉬 아그라왈(Vikash Agrawal)도 발표)가 2주 만에 어떻게 구축되었는지 설명했습니다. 이는 스트랜즈 에이전트(Strands Agents) (AI가 선택한 이름!)와 함께 구축되었는데, 기본적으로 에이전트(Agent) 전용 AWS SDK의 한 형태로 놀랍도록 완전한 에이전트(agent) 기능 세트를 지원합니다.
+
+**케빈 호우(Kevin Hou) — 윈드서프(Windsurf)는 어디에서나, 모든 것을, 한 번에**
+소프트웨어 엔지니어링(Software Engineering) != 코딩(Coding). AIE에 세 번째로 돌아온 케빈(Kevin)은 윈드서프(Windsurf)의 "비법"이 AI를 사용하여 소프트웨어 엔지니어링(software engineering)의 내부 및 외부 루프(loop)를 점진적으로 추상화하고, 엔지니어(engineer)들이 수행하는 "메타 학습(meta-learning)"을 모델링하는 것이라고 밝혔습니다. 이는 데이터 플라이휠(data flywheel) (출시 → 피드백 → 개선)을 사용하여 작업을 엔드투엔드(end-to-end)로 처리하고 (인간에게 검토 및 승인만 요청), 대화형, 휴먼-인-더-루프(human-in-the-loop) 작업을 위한 SWE-1 모델(SWE-1 model)을 구축하는 데까지 이릅니다.
+
+**그렉 브록만(Greg Brockman) - #define AI 엔지니어(AI Engineer)**
+이것에 대한 전체 분석은 아마 그렉(Greg)의 팟캐스트(podcast)로 미루겠지만, 이것은 우리 대화에서 가장 인기 있는 클립(clip)이었습니다 (젠슨 황(Jensen Huang)의 특별 카메오(cameo) 포함):
+
+**로건 킬패트릭(Logan Kilpatrick) — 제미니(Gemini) 진행 상황 1년 + 다음 단계**
+토트(Thoth)에서 전체 강연 대본 보기!
+로건(Logan)은 "구글 데이(Google Day)"를 최종 제미니 2.5 프로(Gemini 2.5 Pro) 미리보기 출시로 시작하여 군중을 기쁘게 하는 방법을 알고 있었지만, 아마도 진짜 알파(alpha)는 GDM 로드맵(roadmap)을 논의하는 마지막에 나왔을 것입니다. 우리의 해석은 Veo 3가 메인라인 제미니(mainline Gemini)에 병합될 가능성이 높고, 더 많은 젬마 모델(Gemma models)이 출시될 것이며, 무한 컨텍스트(infinite context)를 위한 새로운 아키텍처(architecture) 작업이 진행 중이며, 아직 출시되지 않은 제미니 울트라(Gemini Ultra)는 여전히 논의 중이라는 것입니다. 그는 모델이 즉시 사용 가능한 에이전트(agents)가 되고 있다는 주장을 점점 더 밀어붙이고 있으며, 이는 API 팀(API team)이 수행하는 작업에 영향을 미치고 있습니다. API 팀(API team)은 제미니 코드(Gemini Code), 딥 리서치 API(Deep Research API), 컴퓨터 사용 API(Computer Use API)에 대한 새로운 발표를 포함한 로드맵(roadmap)도 공유했습니다.
+
+**잭 래(Jack Rae) — 제미니(Gemini)에서 더 깊이 생각하기**
+토트(Thoth)에서 전체 대본 보기!
+잭(Jack)은 알렉산더 왕(Alexandr Wang)과 함께 메타(Meta)의 새로운 초지능(Superintelligence) 부서로 떠나기 직전에 제미니(Gemini)의 추론 팀을 위해 이 기조연설을 발표했습니다. 플래시 씽킹(Flash Thinking)이 처음 등장했을 때, 다른 모든 사람들이 "추론 시간 컴퓨팅(inference time compute)"이라고 부르는 것에 대한 특이한 용어처럼 보였습니다. 그러나 그들의 사고 정의가 순수한 사고의 사슬(chain of thought) 양 (인공 분석(Artificial Analysis)이 관찰한 2.0 플래시(Flash)보다 17배(!!!) 더 높음) 그 이상이며, 효율성과 소수의 공리(axioms)로부터의 추론에 관한 것임이 더욱 분명해 보입니다. 새로운 과학은 우리가 기존 연구를 깔끔하게 재현할 수 있게 된 후에야 발명될 것입니다.
+
+**솔로몬 하이크스(Solomon Hykes) — 에이전트(Agent) 혼돈 제어**
+토트(Thoth)에서 전체 대본 보기!
+컨퍼런스에서 가장 많이 회자된 출시 중 하나에서 솔로몬 하이크스(Solomon Hykes)는 도커콘(DockerCon)을 출시했던 바로 그 무대에 다시 올라 오픈 소스 컨테이너 사용(container-use)을 발표했습니다. 이는 모든 에이전트(agent)를 위한 컨테이너화된 환경(containerized environments)에 대한 대거(Dagger)의 해답입니다 (지금까지는 클라우드(cloud)의 맞춤형 오케스트레이션(orchestration) / 파이어크래커(Firecracker) 또는 로컬 개발(local dev)의 샌드박스(sandboxed)되지 않은 깃 워크트리(git worktrees)로 제한되었습니다). 병렬 클로드 코드(Claude Code) 인스턴스(instances)를 실행한다면, 이것이 바로 방법입니다. 그렉(Greg)에게 감사드립니다! (뉴욕 연사 복귀!)
+
+**제시 한(Jesse Han) — 특이점(Singularity)을 위한 인프라(Infrastructure)**
+토트(Thoth)에서 전체 강연 대본 보기!
+GPT4 팀(GPT4 team)의 전 멤버였던 제시 한(Jesse Han)은 훨씬 더 철학적인 관점을 취하며, 우리는 기계의 근본적인 욕구를 충족시키고 거기서부터 역으로 작업해야 한다고 주장했습니다. 그렇습니다, 그들은 샌드박싱(sandboxing)을 원하지만, 우리는 또한 초지능(superintelligence)의 요구를 충족시킬 최고의 클라우드 인프라(cloud infrastructure)를 원합니다. 그는 모프 리퀴드 메탈(Morph Liquid Metal)과 마기-1 모델(Magi-1 model)을 발표했으며, 크리스티안 세게디(Christian Szegedy)를 최고 과학자(Chief Scientist)로 영입한 것을 "역대 가장 인상적인 고용 발표 중 하나"라고 언급했습니다.
+
+**조지 카메론(George Cameron) — AI 프론티어(AI Frontier) 전반의 트렌드**
+토트(Thoth)에서 전체 대본 보기!
+익숙한 비자 문제로 마이카(Micah)가 불참했지만, 조지(George)는 인공 분석(Artificial Analysis)의 트레이드마크(trademark)인 세련됨으로 모든 주요 트렌드에 대한 개요를 전달했습니다. "핵심" 슬라이드(money slide)는 워스(Wirth)의 법칙 (일명 게이츠(Gates)의 법칙)의 예상치 못한 재해석이었습니다 – 증류/추론/하드웨어(distillation/ inference/hardware) 사람들이 주는 것을, 대규모 모델/추론/에이전트(bigmodel/reasoning/agents) 사람들이 가져간다는 내용입니다.
+
+**배러 야론(Barr Yaron) — AI 엔지니어링(AI Engineering) 2025의 현황**
+https://libraries.thoth.art/aiewf2025/talk/state-of-ai-engineering-2025
+이것은 배러(Barr)/앰플리파이(Amplify)와 함께 수행된 두 번째 공식 AIE 설문조사입니다. 언급했듯이 전체 설문조사 결과가 발표될 때 이것을 논의할 예정이지만, 재미있는 차트는 배러(Barr)가 텍스트(Text)와 다른 모달리티(modalities) 간의 격차를 정량화할 수 있었다는 것입니다. 올해는 아마 보이스 AI(Voice AI)가 이미지 생성(Image gen)에 뒤처지는 마지막 해가 될 것입니다.
+
+**알렉스 아탈라(Alex Atallah) — 오픈라우터(OpenRouter) 구축에 대한 재미있는 이야기와 이 모든 것이 어디로 향하는지**
+https://libraries.thoth.art/aiewf2025/talk/fun-stories-from-building-openrouter-and-where-all-this-is-going
+오픈라우터(OpenRouter)는 안드레이(Andrej)의 최고 수준 평가(top tier eval)를 위한 새로운 후보이며, 우리는 알렉스(Alex)가 AIE에 참여하여 오픈라우터(OpenRouter) 이야기를 처음으로 들려준 것을 기쁘게 생각합니다. 우리는 LLM 게이트웨이(LLM Gateways)가 AI 엔지니어링 스택(AI Engineering stack)의 매우 근본적인 구성 요소라고 생각하며, 오픈라우터(OpenRouter)는 현재 운영 중인 LLM 게이트웨이(LLM gateways) 중 객관적으로 가장 큰 것 중 하나이며, 관련 모델 연구실 다양성이 증가함에 따라 중요성이 커지고 있습니다 (오픈라우터(OpenRouter)가 시작될 때는 전혀 합의된 의견이 아니었습니다). 알렉스(Alex)는 "추론 네이티브 미들웨어(Inference-Native Middleware)"의 미래를 MCP의 입력 및 출력 변환 보완으로 설명했습니다.
+
+**션 그로브(Sean Grove) — 새로운 코드(Code)**
+https://libraries.thoth.art/aiewf2025/talk/prompt-engineering-is-dead-everything-is-a-spec
+벤(Ben)이 AI 엔지니어(AI Engineer) 이전에 조직했던 마지막 컨퍼런스는 션(Sean), 벤(Ben), 그리고 저로 끝났는데, AIEWF 2025가 우리의 AI 버전으로 끝나는 것이 묘하게 적절해 보입니다. 션(Sean)은 현재 OpenAI의 정렬 연구(Alignment Research)에서 일하며, OpenAI 모델 사양(OpenAI Model Spec)과 같은 것들이 왜 저평가되었지만 사실상 필요한지 옹호하고, 4o 아첨(sycophancy) 문제를 직접적으로 다루며, 최고의 코더(coder)는 사실 최고의 커뮤니케이터(communicator)가 될 것이라고 주장합니다 (그리고 사양(spec)을 갖는 것과 같은 잘 구조화된 커뮤니케이션(communication)은 정렬(alignment)과 AI로 무엇이든 생성하는 것 모두에 가장 좋은 접근 방식입니다).
+
+컨퍼런스의 더 큰 트랙(tracks)과 주요 출시와 관련하여 더 많은 요약을 해야 하지만, 시의적절하게 배포하기 위해 지금 이것을 공개합니다. 연사들에게 정당한 공로를 인정하기 위해, 전체 이야기를 보려면 다음 타임라인(timelines)을 훑어보십시오: 1일차: 및 2일차:!
+1 전체 설문조사 곧 배포! 참여해 주셔서 감사합니다 - 2일차 마지막에 배러(Barr)의 발표에서 예비 결과를 볼 수 있습니다. 우리는 또한 재단 설립을 위한 짧은 시도를 했으며 언젠가 다시 시도할 수도 있습니다.
+2 8개의 라이브스트림(livestreams) + 온라인 트랙(online track) 외에, 우리는 모든 강연 비디오(videos)를 몇 주 안에 편집하여 게시할 것이며, 몇 달이 걸리지 않을 것입니다.

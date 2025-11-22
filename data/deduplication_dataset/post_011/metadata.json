@@ -1,0 +1,21 @@
+{
+  "post_id": "011",
+  "title": "**거대 언어 모델(LLM) 추론 모델(reasoning model) 추론 현황**",
+  "base_word_count": 5028,
+  "exact_30_update_wc": 4837,
+  "exact_30_ground_truth_wc": 5146,
+  "exact_30_overlap_ratio": 0.976,
+  "paraphrase_25_update_wc": 5137,
+  "paraphrase_25_ground_truth_wc": 5136,
+  "paraphrase_25_overlap_ratio": 0.979,
+  "fragment_20_update_wc": 4358,
+  "fragment_20_ground_truth_wc": 5866,
+  "fragment_20_overlap_ratio": 0.808,
+  "semantic_25_update_wc": 5127,
+  "semantic_25_ground_truth_wc": 5111,
+  "semantic_25_overlap_ratio": 0.984,
+  "mixed_real_update_wc": 4465,
+  "mixed_real_ground_truth_wc": 4465,
+  "mixed_real_overlap_ratio": 1.126,
+  "status": "generated"
+}

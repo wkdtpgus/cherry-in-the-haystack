@@ -1,0 +1,45 @@
+**2024년 AI 총정리: 에피소드 142 업데이트 및 2025년 전망**
+
+**서론:**
+지난해 제가 가장 좋아하는 에피소드 중 하나였습니다. 세 번째로, Nathan Benaich와 제가 알아야 할 모든 AI 뉴스 및 발전 사항을 연례 총정리했습니다. 여기에는 2024년 AI 현황 보고서(State of AI Report)에서 발췌한 내용, o3에 대한 몇 가지 초기 견해, 그리고 몇 분 동안 '차이나 가이즈(China Guys)'로 LARP를 한 내용 등이 포함됩니다. 이 에피소드는 2024년의 주요 흐름을 되짚고, 다가오는 2025년의 AI 트렌드를 조명했습니다. 계속해서 함께 해주시고 들어주셔서 정말 감사합니다. 여러분의 의견을 듣는 것을 좋아합니다.
+
+**연락처:**
+Nathan과 Air Street Press는 Substack, Twitter, LinkedIn, 그리고 그의 개인 웹사이트에서 찾을 수 있습니다. 그의 글은 press.airstreet.com에서 확인하세요. 새 에피소드 업데이트를 위해 Twitter(원한다면 LinkedIn에서도)에서 저를 찾을 수 있으며, 피드백, 아이디어, 게스트 제안을 위해 editor@thegradient.pub으로 연락 주세요.
+
+**주요 논의 업데이트:**
+
+*   **o3 및 모델 역량 + 추론 역량:** 2024년 멀티모달(multimodal) 기능 발전과 함께 모델 역량이 논의되었습니다.
+*   **프론티어 모델(frontier models)의 경제학:** AI 기술 발전이 시장에 미치는 경제적 영향 분석.
+*   **Air Street의 한 해와 산업 변화:** AI의 제품-시장 적합성(product-market fit) 성장, 과학/생물학 분야 주요 발전, 국방 및 로봇 공학 분야의 "분위기 변화(vibe shifts)" 관찰.
+*   **생성형 AI(generative AI) 투자 전략, AI 기업 평가 및 투자 방법:** 2024년 말, 수익 모델을 가진 스타트업에 집중하는 경향이 짙어졌습니다.
+*   **BioML 및 과학 발전의 미래: AlphaFold 3, 평가 과제, 그리고 학제 간 협력의 필요성:** AlphaFold 3의 등장은 생명 과학 분야에 혁명적 변화를 가져왔습니다.
+*   **AGI(인공 일반 지능) 문제와 기술 확산:** AGI 및 타임라인에 대한 Nathan의 견해, 기술 채택, 역량과 실제 영향 간의 격차 논의.
+*   **AI의 차등적 경제적 영향, 기술 확산:** AI가 사회 전반에 가져올 경제적 영향과 기술 확산을 다룹니다.
+*   **시장 역학 및 경쟁:** 변화하는 AI 시장의 역동성과 경쟁 구도에 대한 분석.
+*   **DeepSeek과 글로벌 AI 혁신:** DeepSeek이 글로벌 AI 혁신을 주도하며 개방형 모델(open-source models)의 발전이 두드러졌습니다.
+*   **로봇 공학의 르네상스? 로봇 공학의 재조명 + 시각-언어 모델(vision-language models) 및 실제 적용 분야의 발전:** 2024년 휴머노이드 로봇의 상업적 가능성이 부각되었습니다.
+*   **컴퓨팅 인프라(Compute Infrastructure): NVIDIA의 지배력, GPU 가용성, AI 컴퓨팅의 경쟁 환경:** GPU 가용성 문제와 경쟁 환경 심화가 주요 화두입니다.
+*   **산업 통합: AI 분야의 파트너십, 인수, 규제 문제:** AI 산업 내 파트너십, 인수, 규제 동향 분석이 진행되었습니다.
+*   **글로벌 AI 정치 및 규제: 국제 AI 거버넌스 및 다양한 접근 방식:** EU AI 법안(EU AI Act) 시행 등 국제적 규제 논의가 활발합니다.
+*   **규제 환경:** 변화하는 규제 환경에 대한 추가 분석.
+*   **2025년 예측:** AI 모델 소형화, 엣지 AI(edge AI) 확산, 멀티모달(multimodal) AI 산업 적용 가속화가 예상됩니다.
+
+**Air Street Press의 링크 및 자료:**
+*   AI 현황 보고서(The State of AI Report)
+*   중국 AI 현황(The State of Chinese AI)
+*   개방성(Open-endedness)만이 우리가 필요로 할 전부
+*   스케일링(scaling) 장벽은 없다: Eiso Kant (Poolside)와의 대화
+*   연금술은 확장되지 않는다: 일반 지능의 경제학
+*   칩이 모든 것의 근원
+*   AI 에너지 전쟁은 나아지기 전에 더 나빠질 것이다
+
+**기타 주요 내용/자료:**
+*   Deepseek: 중국 AI 경쟁을 이끄는 조용한 거인 — ChinaTalk를 통해 DeepSeek CEO Liang Wenfeng과 진행한 인터뷰, Jordan Schneider, Angela Shen, Irene Zhang 외 번역
+*   Minqi Jiang, Tim Rocktäschel, Ed Grefenstette의 개방성(open-endedness)에 대한 훌륭한 입장 논문 — Minqi는 또한 우리를 위해 이에 대한 블로그 게시물도 작성했습니다!
+*   '차이나 가이즈(China Guys)' 전용: Matt Sheehan의 중국 AI 규제와 제정 과정 (+ 제가 2022년에 Matt와 진행한 인터뷰!)
+*   Daron Acemoglu의 AI의 단순 거시경제학 + Maxwell Tabarrok의 비판 (보고서에 더 많은 링크)
+*   Ian Hogarth의 AI 민족주의(AI Nationalism) (2018년)
+*   Lawfare의 EU AI 법안(EU AI Act) + 규제에 대한 분석
+
+**마무리:**
+이 에피소드를 통해 2024년 AI의 주요 흐름을 되짚어보고, 다가오는 2025년의 AI 트렌드를 예측할 수 있었습니다.

@@ -1,0 +1,21 @@
+{
+  "post_id": "127",
+  "title": "**LWiAI 팟캐스트 #221 - OpenAI 코덱, 크롬의 제미니, K2-Think, SB 53**",
+  "base_word_count": 469,
+  "exact_30_update_wc": 464,
+  "exact_30_ground_truth_wc": 550,
+  "exact_30_overlap_ratio": 0.825,
+  "paraphrase_25_update_wc": 621,
+  "paraphrase_25_ground_truth_wc": 681,
+  "paraphrase_25_overlap_ratio": 0.659,
+  "fragment_20_update_wc": 321,
+  "fragment_20_ground_truth_wc": 619,
+  "fragment_20_overlap_ratio": 0.533,
+  "semantic_25_update_wc": 908,
+  "semantic_25_ground_truth_wc": 908,
+  "semantic_25_overlap_ratio": 0.517,
+  "mixed_real_update_wc": 509,
+  "mixed_real_ground_truth_wc": 509,
+  "mixed_real_overlap_ratio": 0.921,
+  "status": "generated"
+}

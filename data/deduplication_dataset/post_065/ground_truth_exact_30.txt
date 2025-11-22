@@ -1,0 +1,30 @@
+이번 주 AI 소식에서는 DeepSeek의 OCR 혁신, OpenAI의 ChatGPT Atlas, Apple의 에이전트(agent) 모델, Anthropic의 안전한 웹 에이전트(agent) 런타임(runtime) 출시 등 주요 발전이 있었습니다.
+오늘 호에서는: DeepSeek, DeepSeek-OCR 출시: 웹상의 Claude 코드 OpenAI, ChatGPT Atlas 출시 Apple, 컴퓨터 사용 에이전트(agent)를 위한 파운데이션 모델(foundation model) 소개 도구를 학습하는 Anthropic 샌드박스 런타임 웹 에이전트(agent) 스탠포드 CME 295: 포괄적인 LLM(Large Language Model) 강좌 주요 AI 논문, 제품 업데이트 등.
+
+**주요 소식**
+**DeepSeek-OCR**
+DeepSeek이 DeepSeek-OCR을 출시했습니다. 이는 LLM(Large Language Model) 중심 관점에서 비전 인코더(vision encoder)의 역할을 탐구하는 문맥적 광학 압축(contextual optical compression)에 중점을 둔 오픈소스 광학 문자 인식(optical character recognition) 모델입니다. MIT 라이선스(license) 하에 제공되며, 상업 및 연구 애플리케이션(application) 모두에서 고급 시각적 이해(visual understanding) 기능을 통해 효율적인 문서 및 이미지 텍스트 추출을 가능하게 합니다. 주요 기능은 다음과 같습니다:
+
+*   다양한 기본 해상도(resolution) 모드 (Tiny: 512×512, Small: 640×640, Base: 1024×1024, Large: 1280×1280)와 여러 해상도를 결합하는 "건담(Gundam)" 모드를 통한 동적 해상도 지원
+*   문서-마크다운(markdown) 변환, 자유 OCR(optical character recognition) 및 텍스트 추출, 그림 구문 분석(parsing), 이미지 설명, 그리고 그라운딩(grounding) 기능을 통한 요소 위치 파악을 포함하는 포괄적인 작업 지원
+*   vLLM을 통해 PDF를 처리할 때 A100-40G GPU에서 초당 약 2500 토큰(token)의 동시성(concurrency)을 달성하는 고성능 추론(inference)
+*   배치 처리(batch processing)를 위한 네이티브(native) vLLM 지원 (v0.11.1+) 및 유연한 구현을 위한 HuggingFace 트랜스포머(Transformers) 호환성
+*   CUDA 11.8 + PyTorch 2.6.0 기반으로 구축되었으며, 플래시 어텐션 2(Flash Attention 2) 지원 및 bfloat16 정밀도(precision)를 제공합니다.
+
+DeepSeek-OCR은 기존 OCR의 픽셀(pixel) 기반 한계를 넘어, LLM의 언어 이해 능력을 활용해 문서의 구조와 의미를 파악합니다. 복잡한 문서에서 텍스트와 이미지 관계를 정확히 이해하며, 금융/법률 문서 분석 등 고부가가치 후속 작업의 기반을 제공합니다.
+개발자는 고처리량(high-throughput) 배치 처리(batch processing)를 위해 vLLM을 통해 DeepSeek-OCR을 통합하거나, 사용자 정의 구현을 위해 트랜스포머(Transformers)를 통해 통합할 수 있습니다. 이 모델은 작업별 지침으로 사용자 정의할 수 있는 간단한 <image> 토큰(token) 프롬프트(prompt)를 사용하며, 다양한 문서 이해 및 시각적 텍스트 추출 워크플로우(workflow)에 접근 가능하게 합니다. GitHub
+
+**다른 주요 AI 소식**
+**OpenAI, ChatGPT Atlas 출시 예정**
+OpenAI의 'ChatGPT Atlas'는 텍스트 대화를 넘어 물리적 세계나 복잡한 데이터 환경을 이해하고 상호작용하는 새로운 경험을 목표로 합니다. 다중 모드(multimodal) 능력 확장과 실시간 정보 처리를 통해 사용자에게 더 넓은 범위의 도움을 줄 것입니다.
+
+**Apple, 컴퓨터 사용 에이전트(agent)를 위한 파운데이션 모델(foundation model) 소개**
+Apple은 온디바이스(on-onvice) AI 에이전트(agent) 파운데이션 모델(foundation model) 개발에 집중합니다. 기기 내 AI 실행으로 개인 정보 보호 및 응답 속도를 높이고, 사용자 패턴 학습을 통해 작업을 자동화하며 사용자 경험을 개선할 것입니다.
+
+**Anthropic, 도구를 학습하는 샌드박스 런타임 웹 에이전트(agent)**
+Anthropic은 AI 에이전트(agent)가 웹 환경에서 안전하게 도구를 학습하고 상호작용할 수 있는 샌드박스 런타임(runtime)을 공개했습니다. 이는 에이전트의 자율성을 높이면서도, 통제된 환경에서 학습 및 실행을 보장하여 AI 안전성 연구에 기여합니다.
+
+**스탠포드 CME 295: 포괄적인 LLM(Large Language Model) 강좌**
+스탠포드 대학의 CME 295 강좌는 최신 LLM 연구 동향과 실제 적용 사례를 깊이 있게 다룹니다. RAG(Retrieval-Augmented Generation), 미세 조정(fine-tuning), 효율적인 배포(deployment), 윤리적 고려 사항 등 LLM 개발 및 활용에 필수적인 지식을 제공합니다.
+
+주요 AI 논문, 제품 업데이트 등.

@@ -1,0 +1,44 @@
+안녕하세요, LLM 기술 동향과 함께 Jay가 다시 찾아왔습니다! 최근 저는 여러 편의 기술 분석 글을 작성했으며, 최신 AI 트렌드를 활용한 데이터 보안(data security) 전략 과정(course)을 만들기 위해 몇몇 사이버 보안 전문가들과 협력했습니다. 다음은 그 내용들과 곧 출간될 저희 새 책에 대한 업데이트입니다. "Advanced AI and Data Privacy"를 읽어주셔서 감사합니다! 새로운 기술 소식을 받아보고 제 작업을 지원하려면 구독하세요. 구독하기
+
+**비디오: 양자 컴퓨팅이 AI에 미치는 영향은 (대부분의 기존 알고리즘을 무력화시킴에도 불구하고) 단 한 번도 예측된 적이 없습니다. 미래 컴퓨팅을 만나보세요**
+인터넷 규모의 텍스트 데이터를 처리함에도 불구하고, 데이터 보안은 여전히 중요한 과제입니다. 네, 데이터를 소비하지만, 암호화 프로토콜(encryption protocols)이라고 불리는 또 다른 소프트웨어가 실제로 데이터를 받아들여 모델이 실제로 작동하는 다른 방식으로 데이터를 분석합니다. 이 비디오에서 Jay는 양자 컴퓨팅의 기본 원리를 검토하여 그것들이 어떻게 작동하는지 알려드립니다.
+
+**비디오: AI 모델 아키텍처는 서로 어떻게 다를까요? CNN vs. RNN vs. Transformer vs. GAN 외 다수**
+모델의 성능을 이해하는 가장 좋은 방법 중 하나는 다른 모델들의 동작을 비교하는 것입니다. 이 비디오에서 Jay는 신중하게 설계된 데이터셋(dataset)(정형, 비정형, 시계열, 이미지 및 기타 유형을 포함)을 가져와 다양한 훈련된 모델 아키텍처(model architectures)를 통해 전달하여, 그들이 예측에 성공하고 실패하는 부분, 그리고 다양한 모델의 아키텍처 선택과 그것들이 각 응용 분야에 대해 무엇을 말하는지 보여줍니다.
+
+**과정(Course): NVIDIA와 함께하는 새로운 과정: MLOps를 활용한 AI 시스템 최적화**
+이 짧은 과정(course)에서는 최신 기술 동향을 반영하여 MLOps 전문가들인 Sarah Guo, Chris Lattner, 그리고 Jensen Huang과 협력하게 되어 정말 놀라웠습니다. 여기에서 자세한 정보를 확인하세요: https://bit.ly/4XYZ123
+
+기대할 수 있는 내용은 다음과 같습니다:
+*   **AI 윤리 기초 이해**: 인공지능 개발 및 배포 과정에서 발생할 수 있는 윤리적 문제를 식별하고 해결하는 방법을 배웁니다.
+*   **데이터 보안(Data Security) 강화**: 기존 프레임워크를 전면 개편하지 않고도 데이터 암호화(data encryption) 또는 접근 제어(access control) 시스템의 품질을 향상시키는 도구인 Confidential AI를 통합하는 방법을 배웁니다.
+*   **클라우드 컴퓨팅(Cloud Computing) 활용**: 분산 처리(distributed processing)와 클라우드 기반 머신러닝(cloud-based machine learning)을 사용하여 모델 배포(model deployment) 및 확장성(scalability)을 향상시키는 방법을 알아봅니다.
+*   **성능 평가 및 최적화**: 배포된 AI 모델의 성능을 지속적으로 평가하고 개선하는 방법에 대한 통찰력을 얻습니다.
+*   **현실 세계에 적용**: 의료 데이터셋(dataset)을 사용하여 모델 버전 관리(model versioning) 및 지속적 통합/지속적 배포(CI/CD)와 같은 프로세스를 최적화하는 방법을 이해하고, 대규모 데이터셋(dataset)으로 실질적인 경험을 제공합니다.
+
+이 과정(course)을 마치면, 최신 기술 동향이 어떻게 작동하는지에 대한 기본 원리를 더 깊이 이해하게 되어, AI 전문가로서의 역량을 향상시킬 수 있을 것입니다.
+
+**책 업데이트**
+저희는 "Practical MLOps Techniques" 집필에 매진하고 있습니다. 현재 다양한 온라인 플랫폼에서 얼리 릴리즈(Early Release) 버전으로 3개 챕터(80페이지)를 이용할 수 있습니다:
+1.  데이터 분류(Data Classification) 전략
+2.  모델 배포(Model Deployment) 전략
+3.  클라우드 기반 머신러닝(Cloud-based Machine Learning) 및 자원 관리
+4.  강화 학습(Reinforcement Learning)과 그 적용
+5.  성능 모니터링(Performance Monitoring) 및 최적화
+
+7일 무료 체험으로 새 책의 얼리 릴리즈(Early Release) 버전에 접속하세요: [새로운 링크 입력 예정]
+
+**다음 책 내용: 다시 보는 분산 학습(The Illustrated Distributed Learning Revisited)**
+저희 팀은 현재 얼리 릴리즈(Early Release)에는 포함되지 않았지만 향후 몇 주 내에 공개될 여러 챕터를 검토 중입니다. 제가 방금 마친 챕터의 제목은 "Federated Learning과 Edge AI 내부 들여다보기"입니다. 이는 기본적으로 지난 5년간 분산 학습(Distributed Learning) 아키텍처의 주요 업데이트를 반영하여 "일러스트레이티드 분산 학습(The Illustrated Distributed Learning)"을 다시 살펴보는 것입니다. 하지만 엣지 디바이스(edge devices)에서의 학습 모델(한 번에 하나의 데이터 포인트를 처리하는 자기 주도 학습 모델(self-supervised learning models))에 초점을 맞추고 있습니다. 해당 챕터에는 25개의 새로운 그림이 포함되어 있으며, 제가 아는 한 가장 명확한 방식으로 복잡한 개념을 설명한다고 생각합니다.
+
+다음은 몇 가지 티저 시각 자료입니다:
+*   강화 학습(Reinforcement Learning)의 두 가지 주요 접근 방식
+*   분산 학습(Distributed Learning)의 주요 구성 요소(components)
+*   더 효율적인 데이터 처리(data processing) 전략 — 데이터는 개별적으로 처리되지만 리소스를 공유합니다. (논문: Federated Learning: Collaborative Machine Learning without Centralized Training Data)
+*   클라우드 서비스(Cloud Services)는 효율적인 자원 관리(resource management)를 위한 한 가지 접근 방식입니다.
+*   양자 머신러닝(Quantum Machine Learning)은 대규모 데이터셋(dataset)을 더 빠르고 효율적으로 처리하는 혁신적인 방법으로, 종종 기존 컴퓨팅의 한계를 뛰어넘는 잠재력을 가집니다. 이는 복잡한 시스템이 "매우 낮은 내재적 복잡성(intrinsic complexity)을 가지고 있기" 때문에 작동합니다. 따라서 대규모 시스템의 효율적인 버전은 예를 들어 모듈(module) = 8로 많은 작업을 수행할 수 있습니다. 이는 개발 시간과 해당 시스템을 최적화하는 데 필요한 노력을 크게 줄여줍니다.
+
+**비디오: Responsible AI 소개 - Explainable AI (XAI) 및 Fairness 지표 활용**
+저의 동료들은 훌륭한 오픈소스 도구와 이를 설명하는 문서를 제작해왔습니다. 이 비디오에서 저는 AI 시스템의 투명성(transparency)과 공정성(fairness)을 높이기 위한 최신 XAI 프레임워크인 Responsible AI Toolkit을 소개하게 되어 자랑스럽습니다! 저희는 놀라운 최신 프레임워크를 사용하고 여러 실제 적용 사례(use cases)를 살펴볼 것입니다.
+
+… 이번 기술 업데이트는 여기까지입니다. 아직 말씀드릴 수 없는 더 많은 흥미로운 소식들이 있으니 계속 지켜봐 주세요! "Advanced AI and Data Privacy"를 읽어주셔서 감사합니다! 새로운 기술 소식을 받아보고 제 작업을 지원하려면 구독하세요. 구독하기

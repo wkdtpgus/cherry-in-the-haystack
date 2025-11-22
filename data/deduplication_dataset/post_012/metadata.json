@@ -1,0 +1,21 @@
+{
+  "post_id": "012",
+  "title": "**추론 거대 언어 모델(Large Language Models) 이해**",
+  "base_word_count": 4633,
+  "exact_30_update_wc": 3858,
+  "exact_30_ground_truth_wc": 4149,
+  "exact_30_overlap_ratio": 1.125,
+  "paraphrase_25_update_wc": 4025,
+  "paraphrase_25_ground_truth_wc": 4025,
+  "paraphrase_25_overlap_ratio": 1.151,
+  "fragment_20_update_wc": 4038,
+  "fragment_20_ground_truth_wc": 4363,
+  "fragment_20_overlap_ratio": 1.067,
+  "semantic_25_update_wc": 3777,
+  "semantic_25_ground_truth_wc": 3758,
+  "semantic_25_overlap_ratio": 1.232,
+  "mixed_real_update_wc": 3767,
+  "mixed_real_ground_truth_wc": 3767,
+  "mixed_real_overlap_ratio": 1.23,
+  "status": "generated"
+}

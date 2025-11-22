@@ -1,0 +1,21 @@
+{
+  "post_id": "123",
+  "title": "**LWiAI 팟캐스트 #223 - Haiku 4.5, OpenAI DevDay, SB 243**",
+  "base_word_count": 553,
+  "exact_30_update_wc": 565,
+  "exact_30_ground_truth_wc": 887,
+  "exact_30_overlap_ratio": 0.409,
+  "paraphrase_25_update_wc": 1712,
+  "paraphrase_25_ground_truth_wc": 1712,
+  "paraphrase_25_overlap_ratio": 0.323,
+  "fragment_20_update_wc": 940,
+  "fragment_20_ground_truth_wc": 1166,
+  "fragment_20_overlap_ratio": 0.348,
+  "semantic_25_update_wc": 1093,
+  "semantic_25_ground_truth_wc": 1093,
+  "semantic_25_overlap_ratio": 0.506,
+  "mixed_real_update_wc": 720,
+  "mixed_real_ground_truth_wc": 720,
+  "mixed_real_overlap_ratio": 0.768,
+  "status": "generated"
+}

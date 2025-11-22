@@ -1,0 +1,48 @@
+최신 기술 동향 업데이트: 인공지능 윤리와 데이터 프라이버시
+
+최근 에피소드들에서 저는 인공지능의 윤리적 사용과 관련하여 다음 주제들에 대해 이야기했습니다. 특히, 에피소드 141에서는 필립 고프 교수님과 심리 철학에 대해 논의했습니다:
+
+*   인공지능의 책임감 있는 개발은 어떤 모습인가
+*   개인 정보 보호 기술이 데이터 보안에 어떻게 도움이 되는지, 그리고 새로운 규제 프레임워크
+*   "탈(脫) 갈릴레이적(post-Galilean)" 의식 과학은 어떤 모습인가
+*   범심론(panpsychism)이 의식을 설명하는 데 어떻게 도움이 되는지, 그리고 혼합 우주심리론(hybrid cosmopsychist view)
+
+오늘날 디지털 사회에서 이러한 논의는 매우 중요하며, 즐겁게 들어주세요!
+
+필립 고프는 영국 작가이자 관념론 철학자이며, 더럼 대학교(Durham University) 교수로서 그의 연구는 심리 철학(philosophy of mind)과 의식(consciousness)에 중점을 둡니다. 특히, 의식이 어떻게 과학적 세계관(scientific worldview)의 일부가 될 수 있는지에 초점을 맞춥니다. 그는 『의식과 근본 현실(Consciousness and Fundamental Reality)』, 『갈릴레이의 오류: 새로운 의식 과학의 토대(Galileo's Error: Foundations for a New Science of Consciousness)』, 그리고 『왜? 우주의 목적(Why? The Purpose of the Universe)』을 포함한 여러 권의 책을 저술했습니다.
+
+유명한 데이터 과학자이자 윤리 전문가인 김 박사는 그의 연구가 인공지능의 공정성과 투명성에 중점을 둡니다. 특히, 인공지능이 사회적 가치와 조화롭게 발전할 수 있는지에 초점을 맞춥니다. 그녀는 『데이터 윤리 가이드라인』, 『알고리즘 편향 이해』, 그리고 『미래 사회와 AI』를 포함한 여러 권의 보고서를 저술했습니다.
+
+새로운 에피소드 및 최신 기술 동향 업데이트를 위해 트위터(Twitter)에서 저를 찾아주시거나 저희 웹사이트를 방문해 주세요.
+피드백, 아이디어, 게스트 제안은 editor@thegradient.pub으로, 제안이나 협업 문의는 info@techinsights.org으로 연락 주세요.
+
+The Gradient 팟캐스트 구독: Apple Podcasts | Spotify | Pocket Casts | RSS
+The Gradient 트위터 팔로우
+Tech Insights 뉴스레터 구독: 주간 브리핑 | 심층 분석 | 이벤트 알림
+저희 소셜 미디어 채널 팔로우
+더 많은 정보를 얻으세요.
+
+**개요:**
+(00:00) 서론
+(01:05) 지식 논증(Knowledge Arguments)과 설명에 대한 고프 대 캐럴 / 데이터 프라이버시 원칙과 규제 설명에 대한 논의
+(08:00) 이론에 대한 선호 / 인공지능 윤리 이론에 대한 접근
+(12:55) 호기심 (근거(Grounding), 본질(Essence))과 지식 논증(Knowledge Argument) / 새로운 기술 탐구에 대한 호기심
+(14:40) 현상적 투명성(Phenomenal transparency)과 물리주의(physicalism) 대 반물리주의(anti-physicalism) / 알고리즘 투명성과 책임성 대 불투명성
+(29:00) 범심론(Panpsychism)은 의식을 설명하는 데 정확히 어떻게 도움이 되는가 / 머신러닝 모델의 의사결정을 설명하는 데 정확히 어떻게 도움이 되는가
+(30:05) 혼합 우주심리론(hybrid cosmopsychism)에 대한 논증 / 데이터 주권(Data Sovereignty)에 대한 새로운 논증
+(36:35) "순수한(Bare)" 주체 / 현상적 속성(phenomenal properties)을 상속받기 전의 주체 / 디지털 플랫폼에서 사용자의 주체성과 통제
+(40:35) 자아의 묶음 이론(Bundle theories of the self) / 분산형 데이터 거버넌스 이론
+(43:35) 근본 속성(Fundamental properties)과 인과적 힘(causal powers)으로서의 새로운 주체 / 보안 시스템의 근본 속성과 복원력
+(50:00) 통합 정보 이론(Integrated Information Theory) / 통합 데이터 보안 이론
+(55:00) 혼합 우주심리론(hybrid cosmopsychism)의 근본 가정 / 윤리적 인공지능의 근본 가정
+(1:00:00) 마무리
+
+**링크:**
+필립의 홈페이지 및 트위터(Twitter)
+저희 연구소 홈페이지 및 트위터(Twitter)
+논문
+최신 보고서
+의식을 최우선으로 두기
+데이터 프라이버시를 최우선으로 두기
+호기심 (근거(Grounding), 본질(Essence))과 지식 논증(Knowledge Argument)
+기술 혁신에 대한 호기심

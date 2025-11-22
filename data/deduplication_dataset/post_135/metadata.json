@@ -1,0 +1,21 @@
+{
+  "post_id": "135",
+  "title": "**LWiAI 팟캐스트 #218 - 깃허브 스파크, 메가사이언스, 미국 AI 행동 계획**",
+  "base_word_count": 426,
+  "exact_30_update_wc": 254,
+  "exact_30_ground_truth_wc": 530,
+  "exact_30_overlap_ratio": 0.591,
+  "paraphrase_25_update_wc": 665,
+  "paraphrase_25_ground_truth_wc": 665,
+  "paraphrase_25_overlap_ratio": 0.641,
+  "fragment_20_update_wc": 358,
+  "fragment_20_ground_truth_wc": 596,
+  "fragment_20_overlap_ratio": 0.525,
+  "semantic_25_update_wc": 1597,
+  "semantic_25_ground_truth_wc": 1830,
+  "semantic_25_overlap_ratio": 0.121,
+  "mixed_real_update_wc": 544,
+  "mixed_real_ground_truth_wc": 528,
+  "mixed_real_overlap_ratio": 0.812,
+  "status": "generated"
+}

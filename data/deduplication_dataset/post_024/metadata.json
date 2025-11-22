@@ -1,0 +1,21 @@
+{
+  "post_id": "024",
+  "title": "**집단 지능(Mass Intelligence)**",
+  "base_word_count": 1962,
+  "exact_30_update_wc": 1282,
+  "exact_30_ground_truth_wc": 2093,
+  "exact_30_overlap_ratio": 0.898,
+  "paraphrase_25_update_wc": 1882,
+  "paraphrase_25_ground_truth_wc": 1882,
+  "paraphrase_25_overlap_ratio": 1.043,
+  "fragment_20_update_wc": 1050,
+  "fragment_20_ground_truth_wc": 1856,
+  "fragment_20_overlap_ratio": 1.101,
+  "semantic_25_update_wc": 1635,
+  "semantic_25_ground_truth_wc": 1635,
+  "semantic_25_overlap_ratio": 1.2,
+  "mixed_real_update_wc": 1586,
+  "mixed_real_ground_truth_wc": 1587,
+  "mixed_real_overlap_ratio": 1.236,
+  "status": "generated"
+}

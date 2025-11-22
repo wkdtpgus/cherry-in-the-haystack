@@ -1,0 +1,21 @@
+{
+  "post_id": "090",
+  "title": "**GPT-5 핸즈온: 석기 시대로 오신 것을 환영합니다**",
+  "base_word_count": 2669,
+  "exact_30_update_wc": 2560,
+  "exact_30_ground_truth_wc": 3420,
+  "exact_30_overlap_ratio": 0.707,
+  "paraphrase_25_update_wc": 4134,
+  "paraphrase_25_ground_truth_wc": 4127,
+  "paraphrase_25_overlap_ratio": 0.647,
+  "fragment_20_update_wc": 1354,
+  "fragment_20_ground_truth_wc": 2342,
+  "fragment_20_overlap_ratio": 1.242,
+  "semantic_25_update_wc": 2928,
+  "semantic_25_ground_truth_wc": 2928,
+  "semantic_25_overlap_ratio": 0.912,
+  "mixed_real_update_wc": 2005,
+  "mixed_real_ground_truth_wc": 2005,
+  "mixed_real_overlap_ratio": 1.331,
+  "status": "generated"
+}

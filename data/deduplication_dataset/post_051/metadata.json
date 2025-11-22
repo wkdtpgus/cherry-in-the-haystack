@@ -1,0 +1,21 @@
+{
+  "post_id": "051",
+  "title": "**nanoMoE: 전문가 혼합(Mixture-of-Experts) 대규모 언어 모델(LLMs)을 PyTorch로 바닥부터 구현하기**",
+  "base_word_count": 12136,
+  "exact_30_update_wc": 9740,
+  "exact_30_ground_truth_wc": 9739,
+  "exact_30_overlap_ratio": 1.246,
+  "paraphrase_25_update_wc": 10021,
+  "paraphrase_25_ground_truth_wc": 3935,
+  "paraphrase_25_overlap_ratio": 1.818,
+  "fragment_20_update_wc": 3556,
+  "fragment_20_ground_truth_wc": 9434,
+  "fragment_20_overlap_ratio": 1.76,
+  "semantic_25_update_wc": 9123,
+  "semantic_25_ground_truth_wc": 9123,
+  "semantic_25_overlap_ratio": 1.33,
+  "mixed_real_update_wc": 9742,
+  "mixed_real_ground_truth_wc": 9178,
+  "mixed_real_overlap_ratio": 1.304,
+  "status": "generated"
+}

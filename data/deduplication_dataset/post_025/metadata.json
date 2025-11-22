@@ -1,0 +1,21 @@
+{
+  "post_id": "025",
+  "title": "**GPT-5: 그냥 알아서 다 한다**",
+  "base_word_count": 1908,
+  "exact_30_update_wc": 1375,
+  "exact_30_ground_truth_wc": 2281,
+  "exact_30_overlap_ratio": 0.729,
+  "paraphrase_25_update_wc": 1765,
+  "paraphrase_25_ground_truth_wc": 1765,
+  "paraphrase_25_overlap_ratio": 1.081,
+  "fragment_20_update_wc": 1549,
+  "fragment_20_ground_truth_wc": 1547,
+  "fragment_20_overlap_ratio": 1.233,
+  "semantic_25_update_wc": 1521,
+  "semantic_25_ground_truth_wc": 1521,
+  "semantic_25_overlap_ratio": 1.254,
+  "mixed_real_update_wc": 1646,
+  "mixed_real_ground_truth_wc": 1646,
+  "mixed_real_overlap_ratio": 1.159,
+  "status": "generated"
+}

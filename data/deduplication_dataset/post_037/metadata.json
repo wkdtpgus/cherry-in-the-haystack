@@ -1,0 +1,21 @@
+{
+  "post_id": "037",
+  "title": "**검색의 종말, 연구의 시작**",
+  "base_word_count": 1745,
+  "exact_30_update_wc": 1262,
+  "exact_30_ground_truth_wc": 1645,
+  "exact_30_overlap_ratio": 1.079,
+  "paraphrase_25_update_wc": 1748,
+  "paraphrase_25_ground_truth_wc": 1748,
+  "paraphrase_25_overlap_ratio": 0.998,
+  "fragment_20_update_wc": 1406,
+  "fragment_20_ground_truth_wc": 1963,
+  "fragment_20_overlap_ratio": 0.845,
+  "semantic_25_update_wc": 1995,
+  "semantic_25_ground_truth_wc": 2028,
+  "semantic_25_overlap_ratio": 0.858,
+  "mixed_real_update_wc": 1567,
+  "mixed_real_ground_truth_wc": 1567,
+  "mixed_real_overlap_ratio": 1.114,
+  "status": "generated"
+}

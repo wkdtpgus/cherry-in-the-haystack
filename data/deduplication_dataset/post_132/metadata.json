@@ -1,0 +1,21 @@
+{
+  "post_id": "132",
+  "title": "**지난주 인공지능(AI) #319 - GPT-5, 미국용 1달러 모델, DINOv3, 기술직(Tech Jobs)**",
+  "base_word_count": 162,
+  "exact_30_update_wc": 118,
+  "exact_30_ground_truth_wc": 200,
+  "exact_30_overlap_ratio": 0.678,
+  "paraphrase_25_update_wc": 155,
+  "paraphrase_25_ground_truth_wc": 153,
+  "paraphrase_25_overlap_ratio": 1.058,
+  "fragment_20_update_wc": 144,
+  "fragment_20_ground_truth_wc": 191,
+  "fragment_20_overlap_ratio": 0.799,
+  "semantic_25_update_wc": 552,
+  "semantic_25_ground_truth_wc": 552,
+  "semantic_25_overlap_ratio": 0.293,
+  "mixed_real_update_wc": 199,
+  "mixed_real_ground_truth_wc": 199,
+  "mixed_real_overlap_ratio": 0.814,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "028",
+  "title": "**지금 바로 AI 활용하기: 간편 가이드**",
+  "base_word_count": 2638,
+  "exact_30_update_wc": 3057,
+  "exact_30_ground_truth_wc": 3057,
+  "exact_30_overlap_ratio": 0.863,
+  "paraphrase_25_update_wc": 2545,
+  "paraphrase_25_ground_truth_wc": 2545,
+  "paraphrase_25_overlap_ratio": 1.037,
+  "fragment_20_update_wc": 2293,
+  "fragment_20_ground_truth_wc": 2340,
+  "fragment_20_overlap_ratio": 1.13,
+  "semantic_25_update_wc": 2696,
+  "semantic_25_ground_truth_wc": 2696,
+  "semantic_25_overlap_ratio": 0.978,
+  "mixed_real_update_wc": 2207,
+  "mixed_real_ground_truth_wc": 2207,
+  "mixed_real_overlap_ratio": 1.195,
+  "status": "generated"
+}

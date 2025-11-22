@@ -1,0 +1,21 @@
+{
+  "post_id": "216",
+  "title": "**프롬프트 닥터가 해결해 드립니다: 가장 흔한 ChatGPT 문제 6가지 해결 (25가지 실행 가능한 프롬프트(actionable prompts) 포함)**",
+  "base_word_count": 981,
+  "exact_30_update_wc": 1279,
+  "exact_30_ground_truth_wc": 1343,
+  "exact_30_overlap_ratio": 0.717,
+  "paraphrase_25_update_wc": 1056,
+  "paraphrase_25_ground_truth_wc": 1056,
+  "paraphrase_25_overlap_ratio": 0.929,
+  "fragment_20_update_wc": 797,
+  "fragment_20_ground_truth_wc": 1304,
+  "fragment_20_overlap_ratio": 0.595,
+  "semantic_25_update_wc": 954,
+  "semantic_25_ground_truth_wc": 954,
+  "semantic_25_overlap_ratio": 1.028,
+  "mixed_real_update_wc": 996,
+  "mixed_real_ground_truth_wc": 996,
+  "mixed_real_overlap_ratio": 0.985,
+  "status": "generated"
+}

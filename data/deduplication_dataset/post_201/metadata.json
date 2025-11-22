@@ -1,0 +1,21 @@
+{
+  "post_id": "201",
+  "title": "**10월 13일부터 10월 18일 주간 중요 거대 언어 모델(LLM) 논문**",
+  "base_word_count": 1667,
+  "exact_30_update_wc": 1987,
+  "exact_30_ground_truth_wc": 2286,
+  "exact_30_overlap_ratio": 0.688,
+  "paraphrase_25_update_wc": 2124,
+  "paraphrase_25_ground_truth_wc": 2064,
+  "paraphrase_25_overlap_ratio": 0.813,
+  "fragment_20_update_wc": 1369,
+  "fragment_20_ground_truth_wc": 2567,
+  "fragment_20_overlap_ratio": 0.343,
+  "semantic_25_update_wc": 1939,
+  "semantic_25_ground_truth_wc": 1914,
+  "semantic_25_overlap_ratio": 0.873,
+  "mixed_real_update_wc": 2357,
+  "mixed_real_ground_truth_wc": 2152,
+  "mixed_real_overlap_ratio": 0.794,
+  "status": "generated"
+}

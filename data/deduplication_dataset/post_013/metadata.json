@@ -1,0 +1,21 @@
+{
+  "post_id": "013",
+  "title": "**2024년 주목할 만한 AI 연구 논문 (2부)**",
+  "base_word_count": 6141,
+  "exact_30_update_wc": 5197,
+  "exact_30_ground_truth_wc": 5541,
+  "exact_30_overlap_ratio": 1.115,
+  "paraphrase_25_update_wc": 6694,
+  "paraphrase_25_ground_truth_wc": 2998,
+  "paraphrase_25_overlap_ratio": 1.47,
+  "fragment_20_update_wc": 4947,
+  "fragment_20_ground_truth_wc": 9464,
+  "fragment_20_overlap_ratio": 0.328,
+  "semantic_25_update_wc": 5384,
+  "semantic_25_ground_truth_wc": 5384,
+  "semantic_25_overlap_ratio": 1.141,
+  "mixed_real_update_wc": 5186,
+  "mixed_real_ground_truth_wc": 5158,
+  "mixed_real_overlap_ratio": 1.19,
+  "status": "generated"
+}

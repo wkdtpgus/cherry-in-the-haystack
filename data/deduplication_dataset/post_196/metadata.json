@@ -1,0 +1,21 @@
+{
+  "post_id": "196",
+  "title": "**데이터 과학자를 위한 효율적인 파이썬 강좌 [9/14]: Pandas 데이터프레임(DataFrame)에서 값 효과적으로 선택 및 교체하기**",
+  "base_word_count": 2045,
+  "exact_30_update_wc": 1742,
+  "exact_30_ground_truth_wc": 2922,
+  "exact_30_overlap_ratio": 0.497,
+  "paraphrase_25_update_wc": 2555,
+  "paraphrase_25_ground_truth_wc": 2537,
+  "paraphrase_25_overlap_ratio": 0.807,
+  "fragment_20_update_wc": 2062,
+  "fragment_20_ground_truth_wc": 2078,
+  "fragment_20_overlap_ratio": 0.984,
+  "semantic_25_update_wc": 1912,
+  "semantic_25_ground_truth_wc": 1872,
+  "semantic_25_overlap_ratio": 1.09,
+  "mixed_real_update_wc": 1687,
+  "mixed_real_ground_truth_wc": 1776,
+  "mixed_real_overlap_ratio": 1.159,
+  "status": "generated"
+}

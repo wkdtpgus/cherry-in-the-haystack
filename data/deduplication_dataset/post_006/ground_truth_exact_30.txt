@@ -1,0 +1,118 @@
+일부 독자분들께서 아시다시피, 저는 읽고 참고하고 싶은 연구 논문 목록을 계속해서 관리하고 있습니다. 약 6개월 전, 저는 2024년 목록을 공유했고, 많은 독자들이 유용하다고 생각했습니다. 그래서 다시 이 작업을 해볼까 생각했습니다. 하지만 이번에는 계속해서 들어왔던 한 가지 피드백, 즉 "날짜 대신 주제별로 논문을 정리해 주실 수 있나요?"를 반영했습니다. 제가 정한 카테고리는 다음과 같습니다: 추론 모델(Reasoning Models) - 1a. 추론 모델 훈련(Training Reasoning Models) - 1b. 추론 시점 추론 전략(Inference-Time Reasoning Strategies) - 1c. LLM 평가 및/또는 추론 이해(Evaluating LLMs and/또는 Understanding Reasoning) LLM을 위한 기타 강화 학습(Reinforcement Learning) 방법 기타 추론 시점 스케일링(Inference-Time Scaling) 방법 효율적인 훈련(Training) 및 아키텍처(Architectures) 확산 기반 언어 모델(Diffusion-Based Language Models) 멀티모달(Multimodal) 및 비전-언어 모델(Vision-Language Models) 데이터(Data) 및 사전 훈련 데이터셋(Pre-training Datasets)
+
+또한, LLM 연구가 빠른 속도로 공유됨에 따라, 저는 이 목록을 반기별 업데이트로 나누기로 결정했습니다. 이렇게 하면 목록이 소화하기 쉽고, 시기적절하며, 여름에 읽을 만한 좋은 자료를 찾는 모든 사람에게 유용할 것입니다. 이번 업데이트는 특히 지난 6개월간의 중요한 발전에 초점을 맞추어, 최신 동향과 핵심 논문들을 포괄적으로 다루고자 합니다. 현재로서는 엄선된 목록일 뿐이라는 점을 참고해 주세요. 향후 글에서는 더 흥미롭거나 영향력 있는 논문 중 일부를 더 큰 주제별 글로 다시 다루고 논의할 계획입니다. 계속 지켜봐 주세요!
+
+공지: 여름입니다! 그리고 이는 인턴십 시즌, 기술 면접, 그리고 많은 학습을 의미합니다. 중급에서 고급 머신러닝(Machine Learning) 및 AI 주제를 복습하는 분들을 돕기 위해, 저는 제 "Machine Learning Q and AI" 책의 30개 챕터 전체를 여름 동안 무료로 공개했습니다: 🔗 https://sebastianraschka.com/books/ml-q-and-ai/#table-of-contents 단순히 호기심이 있어 새로운 것을 배우고 싶거나 면접을 준비하는 경우에도, 이 자료가 유용하게 쓰이기를 바랍니다. 즐거운 독서 되시고, 면접을 보시는 분들께는 행운을 빕니다!
+
+공지: 가을 학기를 맞이하여, 저는 "Responsible AI Development" 온라인 강좌를 새롭게 개설했습니다! 이 강좌는 최신 LLM 기술의 윤리적 함의, 공정성, 투명성, 그리고 안전성 문제를 심도 있게 다룹니다. AI 개발자, 연구자, 정책 입안자 모두에게 유익한 내용으로 구성되어 있습니다. 자세한 내용은 다음 링크에서 확인하실 수 있습니다: 🔗 https://ai-ethics-course.com/fall2024 단순히 AI의 사회적 영향에 대한 이해를 넓히고 싶거나, 책임감 있는 AI 개발에 기여하고자 하는 분들께 이 자료가 큰 도움이 되기를 바랍니다. 함께 더 나은 AI 미래를 만들어 나갑시다!
+
+1. 추론 모델(Reasoning Models)
+올해 제 목록은 LLM의 핵심 능력 중 하나인 추론 모델(reasoning model)에 매우 집중되어 있습니다. 인간의 복잡한 문제 해결 과정을 모방하려는 시도들이 활발하며, 이는 모델의 지능을 가늠하는 중요한 척도가 되고 있습니다. 저는 이를 훈련(training), 추론 시점 스케일링(inference-time scaling), 그리고 더 일반적인 이해/평가(understanding/evaluation)의 세 가지 범주로 세분화하기로 결정했습니다.
+
+1a. 추론 모델 훈련(Training Reasoning Models)
+이 하위 섹션은 LLM의 추론 능력을 향상시키기 위해 특별히 고안된 훈련 전략에 중점을 둡니다. 최근의 발전은 강화 학습(reinforcement learning)을 넘어, 자기 지도 학습(self-supervised learning)과 합성 데이터(synthetic data)를 활용한 접근 방식이 더욱 중요해지고 있습니다. 특히, 모델이 스스로 추론 과정을 생성하고 평가하는 능력을 학습하도록 하는 방법론들이 주목받고 있습니다. 예를 들어, 복잡한 수학 문제나 코딩 작업을 해결하기 위해, 모델이 여러 단계의 사고 과정을 거치고 오류를 수정하며 학습하는 방식이 연구되고 있습니다. 이는 단순히 정답을 맞추는 것을 넘어, '왜' 그렇게 생각했는지 과정을 설명할 수 있는 모델을 만드는 데 기여합니다.
+
+LLM 추론을 위한 강화 학습의 현황(The State of Reinforcement Learning for LLM Reasoning)
+Sebastian Raschka, PhD · 4월 19일 전체 스토리 읽기
+강화 사전 훈련(Reinforcement Pre-Training)의 주석이 달린 그림, https://arxiv.org/abs/2506.08007
+
+1월 8일, LLM의 시스템 2 추론을 향하여: 메타 CoT(Meta Chain-of-Thought)로 생각하는 방법 학습, https://arxiv.org/abs/2501.04682
+1월 13일, 수학적 추론에서 프로세스 보상 모델(Process Reward Models) 개발의 교훈, https://arxiv.org/abs/2501.07301
+1월 16일, 대규모 추론 모델을 향하여: 대규모 언어 모델(Large Language Models)을 활용한 강화 추론(Reinforced Reasoning) 조사, https://arxiv.org/abs/2501.09686
+1월 20일, 추론 언어 모델(Reasoning Language Models): 청사진, https://arxiv.org/abs/2501.11223
+1월 22일, Kimi k1.5: LLM을 활용한 강화 학습(Reinforcement Learning) 스케일링, https://arxiv.org/abs//2501.12599
+1월 22일, DeepSeek-R1: 강화 학습(Reinforcement Learning)을 통한 LLM의 추론 능력 장려, https://arxiv.org/abs/2501.12948
+2월 3일, 대규모 추론 모델(Large Reasoning Models)을 활용한 경쟁 프로그래밍, https://arxiv.org/abs/2502.06807
+2월 5일, LLM의 긴 CoT(Chain-of-Thought) 추론 이해하기, LLM의 긴 CoT(Chain-of-Thought) 추론 이해하기, https://arxiv.org/abs/2502.03373
+2월 5일, LIMO: 추론을 위한 적은 것이 더 많은 것, https://arxiv.org/abs/2502.03387
+2월 5일, 강화 학습(Reinforcement Learning)을 통해 언어 모델(Language Models)에게 비판하는 방법 가르치기, https://arxiv.org/abs/2502.03492
+2월 6일, 언어 모델(Language Models)을 효율적으로 추론하도록 훈련하기, https://arxiv.org/abs/2502.04463
+2월 10일, 수학적 추론 학습을 위한 결과 보상(Outcome Reward)의 한계 탐색, https://arxiv.org/abs/2502.06781
+2월 10일, LLM에서 사고의 출현 I: 올바른 직관 찾기, https://arxiv.org/abs/2502.06773
+2월 11일, LLM은 시연으로부터 쉽게 추론을 학습할 수 있다 — 내용이 아니라 구조가 중요하다!, https://arxiv.org/abs/2502.07374
+2월 12일, Fino1: 추론 강화 LLM의 금융 분야 전이 가능성, https://arxiv.org/abs/2502.08127
+2월 13일, 모델 병합(Model Merging)을 통해 언어별 LLM을 하루 만에 추론 모델(Reasoning Model)로 적용하기 - 공개 레시피, https://arxiv.org/abs/2502.09056
+2월 20일, Logic-RL: 규칙 기반 강화 학습(Rule-Based Reinforcement Learning)으로 LLM 추론 능력 발휘하기, https://arxiv.org/abs/2502.14768
+2월 25일, SWE-RL: 오픈 소프트웨어 진화(Open Software Evolution)에 대한 강화 학습(Reinforcement Learning)을 통한 LLM 추론 발전, https://arxiv.org/abs/2502.18449
+3월 4일, 다중 시도 강화 학습(Multi-Attempt Reinforcement Learning)에서 실패로부터 학습하기, https://arxiv.org/abs/2503.04808
+3월 4일, 처음 몇 개의 토큰(Tokens)만 있으면 충분하다: 추론 모델(Reasoning Models)을 위한 효율적이고 효과적인 비지도 접두사 미세 조정(Unsupervised Prefix Fine-Tuning) 방법, https://arxiv.org/abs/2503.02875
+3월 10일, R1-Searcher: 강화 학습(Reinforcement Learning)을 통해 LLM의 검색 능력 장려, https://arxiv.org/abs/2503.05592
+3월 10일, LMM-R1: 2단계 규칙 기반 RL(Rule-Based RL)을 통해 3B LMM에 강력한 추론 능력 부여, https://arxiv.org/abs/2503.07536
+3월 12일, Search-R1: 강화 학습(Reinforcement Learning)으로 LLM이 추론하고 검색 엔진을 활용하도록 훈련하기, https://arxiv.org/abs/2503.09516
+3월 16일, 대규모 언어 모델(Large Language Models)의 향상된 추론을 위한 계층적 다단계 보상 모델(Hierarchical Multi-Step Reward Models)을 향하여, https://arxiv.org/abs/2503.13551
+3월 20일, 소규모 LLM의 추론을 위한 강화 학습(Reinforcement Learning): 무엇이 효과 있고 무엇이 효과 없는가, https://arxiv.org/abs/2503.16219
+3월 25일, ReSearch: 강화 학습(Reinforcement Learning)을 통해 LLM을 위한 검색으로 추론하는 방법 학습, https://arxiv.org/abs/2503.19470
+3월 26일, R1-Zero와 유사한 훈련 이해하기: 비판적 관점, https://arxiv.org/abs/2503.20783
+3월 30일, RARE: 검색 증강 추론 모델링(Retrieval-Augmented Reasoning Modeling), https://arxiv.org/abs/2503.23513
+3월 31일, Open-Reasoner-Zero: 기본 모델(Base Model)에서 강화 학습(Reinforcement Learning)을 확장하기 위한 오픈 소스(Open Source) 접근 방식, https://arxiv.org/abs/2503.24290
+3월 31일, JudgeLRM: 심판으로서의 대규모 추론 모델(Large Reasoning Models), https://arxiv.org/abs/2504.00050
+4월 7일, 강화 학습(Reinforcement Learning)을 통한 간결한 추론, https://arxiv.org/abs/2504.05185
+4월 10일, VL-Rethinker: 강화 학습(Reinforcement Learning)으로 비전-언어 모델(Vision-Language Models)의 자기 성찰 장려, https://arxiv.org/abs/2504.08837
+4월 11일, Genius: 고급 추론을 위한 일반화 가능하고 순수 비지도 자기 훈련 프레임워크(Generalizable and Purely Unsupervised Self-Training Framework), https://arxiv.org/abs/2504.08672
+4월 13일, 추론 모델(Reasoning Model) 답변을 활용하여 비추론 모델(Non-Reasoning Model) 능력 향상, https://arxiv.org/abs/2504.09639
+4월 21일, 오프-정책 가이드(Off-Policy Guidance) 하에서 추론하는 방법 학습, https://arxiv.org/abs/2504.14945
+4월 22일, Tina: LoRA를 통한 소형 추론 모델(Tiny Reasoning Models), https://arxiv.org/abs/2504.15777
+4월 29일, 하나의 훈련 예제(Training Example)로 대규모 언어 모델(Large Language Models)에서 추론을 위한 강화 학습(Reinforcement Learning), https://arxiv.org/abs/2504.20571
+4월 30일, Phi-4-Mini-Reasoning: 수학 분야에서 소형 추론 언어 모델(Small Reasoning Language Models)의 한계 탐색, https://arxiv.org/abs/2504.21233
+5월 2일, Llama-Nemotron: 효율적인 추론 모델(Efficient Reasoning Models), https://arxiv.org/abs/2505.00949
+5월 5일, RM-R1: 추론으로서의 보상 모델링(Reward Modeling), https://arxiv.org/abs/2505.02387
+5월 6일, Absolute Zero: 제로 데이터(Zero Data)를 활용한 강화된 자기 플레이 추론(Reinforced Self-play Reasoning), https://arxiv.org/abs/2505.03335
+5월 12일, INTELLECT-2: 전역 분산 강화 학습(Globally Decentralized Reinforcement Learning)을 통해 훈련된 추론 모델(Reasoning Model), https://arxiv.org/abs/2505.07291
+5월 12일, MiMo: 언어 모델(Language Model)의 추론 잠재력 해제 -- 사전 훈련(Pretraining)부터 사후 훈련(Posttraining)까지, https://arxiv.org/abs/2505.07608
+5월 14일, Qwen3 기술 보고서(Technical Report), https://arxiv.org/abs/2505.09388
+5월 15일, '아하!'를 넘어서: 대규모 추론 모델(Large Reasoning Models)에서 체계적인 메타 능력 정렬(Meta-Abilities Alignment)을 향하여, https://arxiv.org/abs/2505.10554
+5월 19일, AdaptThink: 추론 모델(Reasoning Models)은 언제 생각해야 할지 학습할 수 있다, https://arxiv.org/abs/2505.13417
+5월 19일, Thinkless: LLM은 언제 생각해야 할지 학습한다, https://arxiv.org/abs/2505.13379
+5월 20일, General-Reasoner: 모든 도메인(Domains)에서 LLM 추론 발전시키기, https://arxiv.org/abs/2505.14652
+5월 21일, 논리적 추론을 위한 사고 혼합(Mixture-of-Thought)을 통한 추론 학습, https://arxiv.org/abs/2505.15817
+5월 21일, RL Tango: 언어 추론을 위해 생성기(Generator)와 검증기(Verifier)를 함께 강화하기, https://arxiv.org/abs/2505.15034
+5월 23일, QwenLong-L1: 강화 학습(Reinforcement Learning)을 통한 장문 맥락 대규모 추론 모델(Long-Context Large Reasoning Models)을 향하여, https://www.arxiv.org/abs/2505.17667
+5월 26일, Enigmata: 합성 검증 가능 퍼즐(Synthetic Verifiable Puzzles)로 대규모 언어 모델(Large Language Models)의 논리적 추론 스케일링, https://arxiv.org/abs/2505.19914
+5월 26일, 외부 보상(External Rewards) 없이 추론하는 방법 학습, https://arxiv.org/abs/2505.19590
+5월 29일, Darwin Godel Machine: 자기 개선 에이전트(Self-Improving Agents)의 개방형 진화(Open-Ended Evolution), https://arxiv.org/abs/2505.22954
+5월 30일, Reflect, Retry, Reward: 강화 학습(Reinforcement Learning)을 통한 자기 개선 LLM, https://arxiv.org/abs/2505.24726
+5월 30일, ProRL: 장기 강화 학습(Prolonged Reinforcement Learning)이 대규모 언어 모델(Large Language Models)의 추론 경계 확장, https://arxiv.org/abs/2505.24864
+6월 2일, 80/20 규칙을 넘어서: 고엔트로피 소수 토큰(High-Entropy Minority Tokens)이 LLM 추론을 위한 효과적인 강화 학습(Reinforcement Learning)을 주도한다, https://arxiv.org/abs/2506.01939
+6월 3일, 예상치 못한 것에 보상하기: GRPO를 분포 선명화(Distribution Sharpening) 너머로 끌어올리기, https://www.arxiv.org/abs/2506.02355
+6월 9일, 강화 사전 훈련(Reinforcement Pre-Training), https://arxiv.org/abs/2506.08007
+6월 10일, RuleReasoner: 도메인 인식 동적 샘플링(Domain-aware Dynamic Sampling)을 통한 강화된 규칙 기반 추론(Reinforced Rule-based Reasoning), https://arxiv.org/abs/2506.08672
+6월 10일, 테스트 시간 스케일링(Test Time Scaling)의 강화 학습(Reinforcement Learning) 교사, https://www.arxiv.org/abs/2506.08388
+6월 12일, Magistral, https://arxiv.org/abs/2506.10910
+6월 12일, 가짜 보상(Spurious Rewards): RLVR에서 훈련 신호(Training Signals) 재고하기, https://arxiv.org/abs/2506.10947
+6월 16일, AlphaEvolve: 과학 및 알고리즘 발견을 위한 코딩 에이전트(coding agent), https://arxiv.org/abs/2506.13131
+6월 17일, 검증 가능한 보상(Verifiable Rewards)을 통한 강화 학습(Reinforcement Learning)이 기본 LLM에서 올바른 추론을 암묵적으로 장려한다, https://arxiv.org/abs/2506.14245
+6월 23일, 역전파(Backprop)를 통한 프로그래밍: LLM은 코드 훈련(Code Training) 중 재사용 가능한 알고리즘 추상화(Reusable Algorithmic Abstractions)를 습득한다, https://arxiv.org/abs/2506.18777
+6월 26일, LLM을 위한 오프라인(Offline) 및 온라인 강화 학습(Online Reinforcement Learning) 연결, https://arxiv.org/abs/2506.21495
+
+최근 논문 동향:
+- 6월 15일, 자기 개선을 위한 강화 학습(Reinforcement Learning) 기반 추론 파이프라인(Reasoning Pipeline) 최적화, https://arxiv.org/abs/2506.15123
+- 6월 18일, 대규모 언어 모델(Large Language Models)의 추론 능력 강화를 위한 합성 데이터(Synthetic Data) 생성 전략, https://arxiv.org/abs/2506.18456
+- 6월 22일, 추론 과정의 투명성(Transparency) 확보를 위한 설명 가능한 강화 학습(Explainable Reinforcement Learning) 기법, https://arxiv.org/abs/2506.22001
+
+1b. 추론 시점 추론 전략(Inference-Time Reasoning Strategies)
+이 목록의 부분은 재훈련(retraining) 없이 테스트 시점(test time)에 추론을 동적으로 개선하는 방법을 다룹니다. 종종 이러한 논문들은 모델링 성능(modeling performance)을 위해 계산 성능(computational performance)을 교환하는 데 중점을 둡니다. 최근에는 단순히 CoT(Chain-of-Thought) 프롬프팅을 넘어서, 모델이 여러 추론 경로를 탐색하고 자체적으로 최적의 경로를 선택하거나 오류를 수정하는 '자기 성찰(self-reflection)' 및 '트리 탐색(tree search)' 기반 방법론들이 각광받고 있습니다. 예를 들어, Tree-of-Thought나 Self-Correction 같은 기법들은 추론 과정에서 발생할 수 있는 오류를 실시간으로 감지하고 수정하여 최종 결과의 정확도를 높입니다. 이는 특히 복잡한 논리적 문제 해결에 있어 모델의 효율성과 정확성을 크게 향상시킵니다.
+
+최근 논문 동향:
+- 7월 1일, 적응형 추론을 위한 동적 토큰 소비(Dynamic Token Consumption) 모델, https://arxiv.org/abs/2507.01045
+- 7월 5일, 자체 비판(Self-Critique)을 통한 LLM 추론 성능 향상: 새로운 프레임워크, https://arxiv.org/abs/2507.05321
+
+1c. LLM 평가 및/또는 추론 이해(Evaluating LLMs and/또는 Understanding Reasoning)
+LLM의 추론 능력이 발전함에 따라, 이를 정확하게 평가하고 모델 내부의 추론 과정을 이해하려는 연구도 활발합니다. 이 섹션에서는 새로운 평가 벤치마크, 모델의 '사고' 과정을 시각화하거나 해석하는 방법, 그리고 추론 오류의 근본 원인을 분석하는 연구들을 다룹니다. 기존의 정답-오답 방식의 평가는 복잡한 추론 과정을 충분히 반영하지 못할 수 있으므로, 단계별 정확성(step-by-step accuracy), 인과적 추론(causal reasoning) 능력, 그리고 특정 도메인(domain-specific) 추론 능력을 측정하는 새로운 지표들이 개발되고 있습니다. 이러한 연구는 LLM의 잠재력을 최대한 활용하고 한계를 명확히 파악하는 데 필수적입니다.
+
+최근 논문 동향:
+- 7월 10일, LLM의 인과적 추론(Causal Reasoning) 능력 평가를 위한 새로운 벤치마크, https://arxiv.org/abs/2507.10012
+- 7월 14일, 다단계 추론(Multi-Step Reasoning) 과정의 시각화 및 해석을 위한 도구, https://arxiv.org/abs/2507.14333
+
+2. 효율적인 훈련(Training) 및 아키텍처(Architectures)
+LLM의 규모가 커짐에 따라, 훈련 및 추론의 효율성은 더욱 중요한 과제가 되고 있습니다. 이 섹션에서는 모델의 성능을 유지하면서 자원 소모를 줄이는 혁신적인 방법론들을 살펴봅니다. 특히, 매개변수 효율적인 미세 조정(Parameter-Efficient Fine-Tuning, PEFT) 기법들은 전체 모델을 재훈련하지 않고도 특정 작업에 모델을 효과적으로 적응시킬 수 있게 합니다. 또한, 희소 모델(Sparse Models)이나 양자화(Quantization) 기술은 모델의 크기와 계산량을 줄여, 제한된 하드웨어 환경에서도 대규모 모델을 배포하고 실행할 수 있도록 돕습니다. Mixture-of-Experts (MoE) 아키텍처는 특정 작업에 특화된 전문가 네트워크를 동적으로 활성화하여 효율성과 성능 두 마리 토끼를 잡으려는 시도입니다.
+
+최근 논문 동향:
+- 7월 18일, MoE 기반 LLM의 효율적인 추론을 위한 동적 전문가 라우팅(Dynamic Expert Routing) 전략, https://arxiv.org/abs/2507.18567
+- 7월 22일, 엣지 디바이스(Edge Devices)를 위한 초경량 LLM 양자화(Quantization) 기법, https://arxiv.org/abs/2507.22111
+
+3. 멀티모달(Multimodal) 및 비전-언어 모델(Vision-Language Models)
+언어 모델이 텍스트를 넘어 이미지, 비디오 등 다양한 형태의 정보를 이해하고 추론하는 능력은 실제 세계 문제 해결에 필수적입니다. 이 섹션은 멀티모달 데이터(multimodal data)를 통합하여 LLM의 이해 및 추론 능력을 확장하는 최신 연구들을 소개합니다. 특히, 비전-언어 모델(Vision-Language Models, VLM)은 시각적 맥락과 텍스트 정보를 결합하여 복잡한 질문에 답하거나, 이미지 내용을 기반으로 추론하는 등 새로운 가능성을 열고 있습니다. 이러한 모델은 의료 영상 분석, 자율 주행, 그리고 로봇 공학 등 다양한 분야에서 혁신적인 응용 사례를 제시하고 있습니다. 멀티모달 추론은 단순한 정보 통합을 넘어, 서로 다른 양식 간의 상호작용을 통해 더 깊은 수준의 이해를 가능하게 합니다.
+
+최근 논문 동향:
+- 7월 26일, 비디오 이해를 위한 시공간 멀티모달(Spatiotemporal Multimodal) 추론 프레임워크, https://arxiv.org/abs/2507.26089
+- 7월 30일, 멀티모달 LLM의 환각(Hallucination) 감소를 위한 시각적 검증(Visual Grounding) 기법, https://arxiv.org/abs/2507.30190

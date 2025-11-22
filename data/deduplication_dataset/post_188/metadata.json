@@ -1,0 +1,21 @@
+{
+  "post_id": "188",
+  "title": "**금주의 AI 에이전트**",
+  "base_word_count": 239,
+  "exact_30_update_wc": 452,
+  "exact_30_ground_truth_wc": 452,
+  "exact_30_overlap_ratio": 0.529,
+  "paraphrase_25_update_wc": 250,
+  "paraphrase_25_ground_truth_wc": 250,
+  "paraphrase_25_overlap_ratio": 0.956,
+  "fragment_20_update_wc": 282,
+  "fragment_20_ground_truth_wc": 406,
+  "fragment_20_overlap_ratio": 0.408,
+  "semantic_25_update_wc": 446,
+  "semantic_25_ground_truth_wc": 448,
+  "semantic_25_overlap_ratio": 0.531,
+  "mixed_real_update_wc": 233,
+  "mixed_real_ground_truth_wc": 233,
+  "mixed_real_overlap_ratio": 1.026,
+  "status": "generated"
+}

@@ -1,0 +1,62 @@
+지난주 주요 AI 뉴스 요약 및 토론을 담은 220번째 에피소드입니다! 2025년 8월 30일 녹화
+
+Astrocade에서 Andrey의 작업을 확인해 보세요. 여기에서 앰배서더(ambassador)로 등록하세요.
+Andrey Kurenkov가 진행하고 Daniel Bashir가 공동 진행합니다.
+질문이나 피드백이 있으시면 contact@lastweekinai.com 및/또는 hello@gladstone.ai로 이메일을 보내주세요.
+
+이번 에피소드에서는: 구글(Google)이 새로 출시한 제미니 2.5(Gemini 2.5) 이미지 편집 모델(image editing model)은 놀라운 발전을 보여주며, 원본 특징을 유지하면서도 피사체를 매우 정확하게 수정할 수 있게 합니다. 앤트로픽(Anthropic)은 크롬(Chrome)용 AI 브라우저 에이전트(AI browser agent)로 클로드(Claude)를 확장하고, 과거 대화를 기억하는 기능을 추가하여 사용자 경험(user experience)과 개인화(personalization)를 향상시킵니다. 엔비디아(NVIDIA)와 AMD는 중국에 대한 AI 칩(AI chip) 판매 수익을 미국 정부와 공유할 예정이며, 이는 수출 통제 정책(export control policies)과 무역 관행(trade practices)에 있어 주목할 만한 변화를 나타냅니다. AI 동반자 앱(AI companion apps)은 상당한 성장을 경험하고 있으며, 2025년까지 예상 수익이 1억 2천만 달러에 이를 것으로 전망되어 사회적 영향(social implications)과 사용자 참여(user engagement)에 대한 의문을 제기합니다.
+이와 더불어, 최근 AI 분야에서는 멀티모달(multimodal) 능력의 발전이 두드러지고 있습니다. 텍스트뿐만 아니라 이미지, 오디오, 비디오를 동시에 이해하고 생성하는 모델들이 속속 등장하며, 특히 의료 진단이나 복잡한 데이터 분석과 같은 전문 분야에서 AI의 활용 가능성을 넓히고 있습니다. 또한, 오픈 소스(open source) 기반의 대규모 언어 모델(LLM) 경쟁이 심화되면서, 접근성과 투명성이 향상되어 전 세계 개발자들의 혁신을 가속화하고 있습니다. AI 윤리 및 거버넌스(governance)에 대한 논의도 더욱 활발해져, 기술 발전과 함께 사회적 책임에 대한 중요성이 강조되고 있습니다.
+
+타임스탬프(Timestamps) + 링크:
+**도구 및 앱**
+(00:02:12) 구글 제미니(Google Gemini)의 AI 이미지 모델(AI image model), '놀라운' 업그레이드 단행 | TechCrunch
+(00:05:32) 앤트로픽(Anthropic), 크롬(Chrome)에 상주하는 클로드(Claude) AI 에이전트(AI agent) 출시 | TechCrunch
+(00:05:32) 앤트로픽(Anthropic), 클로드(Claude) 3.5 소네트(Sonnet) 출시로 추론 능력(reasoning capability) 및 속도 향상 | Anthropic Blog
+(00:08:30) 앤트로픽(Anthropic)의 클로드(Claude) 챗봇(chatbot), 이제 과거 대화 기억 가능 | The Verge
+(00:08:30) 마이크로소프트(Microsoft), 코파일럿(Copilot)에 새로운 멀티모달 기능(multimodal features) 추가, 사용자 생산성(user productivity) 극대화 | Microsoft News
+(00:11:46) 구글(Google), 사용자 교육을 위한 AI '안내 학습(Guided Learning)' 도구 출시
+(00:11:46) 스태빌리티 AI(Stability AI), 스테이블 디퓨전 3(Stable Diffusion 3) 미디엄(Medium) 모델 공개로 이미지 생성 품질(image generation quality) 향상 | Stability AI Blog
+(00:14:55) 애플 인텔리전스(Apple Intelligence)의 챗GPT(ChatGPT) 통합, iOS 26부터 GPT-5 사용 | The Verge
+(00:14:55) 오픈AI(OpenAI), GPT-4o에 실시간 음성 상호작용(real-time voice interaction) 및 비전(vision) 기능 통합 | OpenAI Blog
+(00:15:39) 오픈AI(OpenAI), 코덱스(Codex)에 IDE 확장(IDE Extension) 및 깃허브 코드 리뷰(GitHub Code Reviews)와 같은 새로운 기능 추가
+
+**애플리케이션 및 비즈니스**
+(00:16:49) 러버블(Lovable), 향후 12개월 내 10억 달러 ARR(Annual Recurring Revenue) 달성 예상 | TechCrunch
+(00:16:49) 헬스케어 AI 스타트업(healthcare AI startup) 메디AI(MediAI), 2억 달러 투자 유치로 임상 의사 결정(clinical decision-making) 지원 강화 | Reuters
+(00:18:56) 데카르트(Decart), 실시간 상호작용(real-time interaction) 강화를 위해 1억 달러 투자 유치로 31억 달러 가치 달성 | Ctech
+(00:18:56) 자율 주행(autonomous driving) 기술 기업 오토드라이브(Autodrive), 50억 달러 가치로 시리즈 C(Series C) 투자 유치 성공 | Forbes
+(00:20:19) 코히어(Cohere), 생성형 AI(generative AI) 경쟁사들을 물리치기 위해 5억 달러 투자 유치 | TechCrunch
+(00:20:19) 엣지 AI(Edge AI) 솔루션 제공업체 뉴로코어(NeuroCore), 산업용 AI(industrial AI) 시장 확장을 위해 3억 달러 투자 유치 | VentureBeat
+(00:21:25) 포니 AI(Pony AI), 연간 로보택시(robotaxi) 목표 달성 임박, 유럽 시장 주시 - 블룸버그(Bloomberg)
+(00:21:25) AI 기반 금융 분석(financial analysis) 플랫폼 퀀트플로우(QuantFlow), 아시아 시장 진출 가속화 | Bloomberg
+(00:22:41) 일론 머스크(Elon Musk)의 xAI 공동 창업자, 회사 떠나 | TechCrunch
+(00:22:41) 생성형 AI(generative AI) 기반 콘텐츠(content) 제작 스타트업 스토리텔러(StoryTeller), 주요 미디어 그룹(media group)과 파트너십 체결 | TechCrunch
+
+**프로젝트 및 오픈 소스**
+(00:24:39) 메타 AI(Meta AI), DINOv3 출시: 자기 지도 학습(Self-Supervised Learning)으로 훈련된 최첨단 컴퓨터 비전 모델(Computer Vision Model)로 고해상도 이미지 특징(High-Resolution Image Features) 생성 - MarkTechPost
+(00:24:39) 메타 AI(Meta AI), LLaMA 3.1 출시: 더욱 강력해진 추론 능력(reasoning ability)과 다국어 지원(multilingual support) 제공 | Meta AI Research
+(00:27:02) GLM-4.5: 에이전트(Agentic), 추론(Reasoning) 및 코딩(Coding) (ARC) 파운데이션 모델(Foundation Models)
+(00:27:02) 하이퍼클로바 X(HyperCLOVA X)의 새로운 에이전트(agent) 프레임워크(framework) 공개: 복합 작업 처리(complex task processing) 효율성 증대 | Naver D2SF
+(00:29:49) 중국 딥시크(DeepSeek), V3.1 출시로 AI 모델(AI Model) 역량 강화 - 블룸버그(Bloomberg)
+(00:29:49) 미스트랄 AI(Mistral AI), 미스트랄 라지(Mistral Large)의 오픈 모델(open model) 버전 공개로 커뮤니티(community) 기여 독려 | Mistral AI Blog
+(00:30:36) 오픈 웨이트(Open weight) LLM(Large Language Models)은 제공업체마다 일관되지 않은 성능을 보입니다.
+(00:30:36) 허깅페이스(Hugging Face), 새로운 오픈 소스 데이터셋(dataset) 프로젝트 시작: AI 모델(AI model)의 편향성(bias) 완화 목표 | Hugging Face Blog
+(00:32:02) 마이크로소프트(Microsoft), VibeVoice-1.5B 출시: 4명의 서로 다른 화자로 최대 90분 분량의 음성을 합성할 수 있는 오픈 소스 텍스트-투-스피치 모델(Open-Source Text-to-Speech Model) - MarkTechPost
+(00:32:02) 구글(Google), 오픈 소스(open-source) 멀티모달(multimodal) 에이전트(agent) 프레임워크인 '오픈 에이전트(Open Agent)' 공개 | Google AI Blog
+
+**연구 및 발전**
+(00:33:43) 자신감을 가진 심층 사고(Deep Think with Confidence)
+(00:33:43) 양자 AI(Quantum AI) 연구: 양자 컴퓨터(quantum computer)를 활용한 새로운 머신러닝(machine learning) 알고리즘(algorithm) 개발 | Nature Physics
+(00:36:30) 스탠포드(Stanford) 연구에 따르면 생성형 AI(Generative AI)가 미국 고용 시장을 재편합니다.
+(00:36:30) 설명 가능한 AI(Explainable AI, XAI)의 최신 발전: AI 의사 결정(AI decision-making) 과정의 투명성(transparency) 및 신뢰도(trustworthiness) 향상 | MIT Technology Review
+(00:39:15) AI 기반 신소재(new material) 발견: 재료 과학(materials science) 분야에서 AI 활용을 통한 연구 가속화 | Science Advances
+
+**정책 및 안전**
+(00:41:42) 미국 정부의 미공개 AI 안전(AI Safety) 보고서 내부 | WIRED
+(00:41:42) 유럽연합(EU), AI법(AI Act) 최종 승인: AI 기술(AI technology) 개발 및 배포에 대한 전 세계적 표준(global standard) 제시 | European Commission
+(00:44:10) 미국 정부, 엔비디아(Nvidia)와 AMD의 대중국 AI 칩(AI Chip) 판매 수익 일부 가져갈 예정 - 뉴욕 타임즈(The New York Times)
+(00:44:10) 미국 무역부(US Department of Commerce), AI 칩(AI chip) 수출 통제(export control) 강화 방안 발표 | Wall Street Journal
+(00:45:13) 앤트로픽(Anthropic), 도서 저자들이 제기한 세간의 이목을 끄는 AI 저작권 소송(AI Copyright Lawsuit) 합의
+(00:45:13) AI 시스템(AI system)의 책임(liability) 문제에 대한 국제적 논의: 사고 발생 시 법적 책임(legal responsibility) 주체 확립 | The Economist
+(00:46:56) AI 동반자 앱(AI companion apps), 2025년 1억 2천만 달러 수익 달성 예상 | TechCrunch
+(00:49:05) 데이터 프라이버시(data privacy)와 AI 윤리(AI ethics)의 교차점: 개인 정보(personal information) 보호를 위한 새로운 규제 필요성 대두 | IEEE Spectrum

@@ -1,0 +1,21 @@
+{
+  "post_id": "057",
+  "title": "**모델 병합(Model Merging): 서베이**",
+  "base_word_count": 12537,
+  "exact_30_update_wc": 7925,
+  "exact_30_ground_truth_wc": 7891,
+  "exact_30_overlap_ratio": 1.586,
+  "paraphrase_25_update_wc": 7510,
+  "paraphrase_25_ground_truth_wc": 7510,
+  "paraphrase_25_overlap_ratio": 1.669,
+  "fragment_20_update_wc": 7808,
+  "fragment_20_ground_truth_wc": 1057,
+  "fragment_20_overlap_ratio": 2.47,
+  "semantic_25_update_wc": 7875,
+  "semantic_25_ground_truth_wc": 386,
+  "semantic_25_overlap_ratio": 2.543,
+  "mixed_real_update_wc": 7473,
+  "mixed_real_ground_truth_wc": 7473,
+  "mixed_real_overlap_ratio": 1.678,
+  "status": "generated"
+}

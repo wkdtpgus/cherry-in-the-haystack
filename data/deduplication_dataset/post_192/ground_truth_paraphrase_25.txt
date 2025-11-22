@@ -1,0 +1,205 @@
+1년 동안 50% 할인
+
+본 문서에서는 데이터프레임(DataFrame) 내의 자료들을 특정 속성(attribute) 기준으로 묶어 처리하는 `.groupby()` 메서드(method)의 효율적인 활용법을 다룰 예정입니다. 이 기능은 데이터프레임(DataFrame)에 적용되어 지정된 특성(feature)에 따라 데이터를 논리적으로 분류합니다. 분류된 객체(object)에는 간단한 집계 함수부터 복잡한 사용자 정의 함수까지 다양한 연산을 적용할 수 있습니다. 테이블 형태의 구조화된 데이터(data)를 다루는 모든 데이터 과학자(data scientist)에게 이는 필수적인 도구(tool)입니다. 데이터를 손쉽고 효과적으로 변형하고 분석하는 데 결정적인 역할을 하기 때문입니다.
+
+**목차:**
+*   `.groupby()`와 함께 활용되는 주요 함수들
+*   `.groupby()` 및 `.transform()`을 이용한 결측치 처리 기법
+*   `.groupby()` 및 `.filter()`를 활용한 데이터 정제 방법
+*   `.groupby()`와 `.apply()`의 차이점 및 활용
+
+**제 모든 책을 버튼 하나로 40% 할인된 가격에 만나보세요**
+**Youssef Hosni · 6월 17일**
+
+저의 모든 책과 학습 로드맵(roadmap)을 한데 묶은 특별 번들(bundle)을 출시했습니다. 이제 단 한 번의 클릭으로 이 모든 것을 정가 대비 40% 할인된 가격에 구매하실 수 있습니다. 이 번들(bundle)에는 다음을 포함한 8권의 전자책(eBook)이 포함되어 있습니다:
+
+전체 이야기 읽기
+
+### 1. `.groupby()`와 함께 활용되는 주요 함수들
+
+1년 동안 50% 할인
+
+그룹(group)별로 집계된 데이터에 적용할 수 있는 가장 기본적인 연산 중 하나는 `.count()`입니다. 다음 예시에서는 레스토랑 데이터셋(dataset)에 이 메서드(method)를 적용해 보겠습니다. 먼저, 고객의 흡연 여부에 따라 레스토랑 데이터를 그룹화(group)합니다. 그 후, `.count()` 메서드(method)를 적용하여 흡연자와 비흡연자 그룹 각각의 데이터 개수를 파악합니다.
+
+```python
+restaurant = pd.read_csv('restaurant_data.csv')
+restaurant_grouped = restaurant.groupby('smoker')
+print(restaurant_grouped.count())
+```
+
+`.count()` 메서드(method)가 각 그룹(group) 내에서 각 특성(feature)의 비결측값(non-missing value) 수를 세기 때문에, 모든 특성(feature)에 대해 동일한 결과가 나오는 것은 당연합니다. 만약 데이터에 결측값(missing value)이 없다면, 모든 컬럼에서 동일한 집계 결과가 도출될 것입니다.
+
+`.groupby()`와 함께 자주 사용되는 또 다른 집계 함수는 `.mean()`입니다. 예를 들어, 요일별(day) 팁(tip)의 평균을 알고 싶다면 다음과 같이 간단히 계산할 수 있습니다.
+
+```python
+print(restaurant.groupby('day')['tip'].mean())
+```
+
+특정 특성(feature)의 값에 따라 데이터프레임(DataFrame)의 자료를 그룹화(group)한 뒤에는, 우리가 필요로 하는 어떠한 변환(transformation)도 적용할 수 있습니다. 여기서는 표준화 변환(normalization transformation)의 일종인 z-점수(z-score)를 적용해볼 것입니다. z-점수(z-score)는 개별 데이터 포인트(data point)가 평균(mean)으로부터 얼마나 떨어져 있는지를 표준 편차(standard deviation) 단위로 나타낸 값입니다. 이는 통계 분석에서 매우 유용한 변환(transformation)으로, 표준화된 테스트(standardized testing)나 z-검정(z-test)과 함께 자주 활용됩니다.
+
+이러한 변환(transformation)을 그룹화된 객체(object)에 적용하려면, 우리가 정의한 람다 변환(lambda transformation)을 포함하여 `.transform()` 메서드(method)를 호출하기만 하면 됩니다. 이번에는 식사 시간(time, 저녁 식사 또는 점심 식사)에 따라 데이터를 그룹화(group)할 것입니다. z-점수 변환(z-score transformation)은 각 그룹(group)의 통계량에 기반하기 때문에, 결과 테이블(table)의 형태는 원본 테이블(table)과 동일하게 유지됩니다. 각 요소에 대해 해당 요소가 속한 그룹(group)의 평균(mean)을 빼고, 그 그룹의 표준 편차(standard deviation)로 나눕니다. 또한, 숫자형 변환(numerical transformation)은 데이터프레임(DataFrame)의 숫자형 특성(numerical feature)에만 적용된다는 점을 유의해야 합니다.
+
+1년 동안 50% 할인
+
+```python
+zscore = lambda x: (x - x.mean() ) / x.std()
+restaurant_grouped = restaurant.groupby('time')
+restaurant_transformed = restaurant_grouped.transform(zscore)
+restaurant_transformed.head()
+```
+
+`transform()` 메서드(method)가 많은 과정을 간소화하지만, 과연 순수 파이썬(Python) 코드를 사용하는 것보다 효율적일까요? 앞서와 같이, 이번에는 성별(sex)에 따라 데이터를 먼저 그룹화(group)합니다. 그런 다음 이전에 적용했던 z-점수 변환(z-score transformation)을 적용하고 그 효율성을 측정합니다. 각 작업의 시간을 측정하는 코드(code)는 이미 익숙하실 것이므로 여기서는 생략합니다. `transform()` 함수(function)를 사용하면 엄청난 속도 향상을 이룰 수 있음을 알 수 있습니다. 게다가, 우리는 단 한 줄의 코드(code)만으로 원하는 작업을 수행할 수 있습니다.
+
+```python
+restaurant.groupby('sex').transform(zscore)
+
+# 수동 구현 (비교용)
+mean_female = restaurant.groupby('sex').mean()['total_bill']['Female']
+mean_male = restaurant.groupby('sex').mean()['total_bill']['Male']
+
+std_female = restaurant.groupby('sex').std()['total_bill']['Female']
+std_male = restaurant.groupby('sex').std()['total_bill']['Male']
+
+for i in range(len(restaurant)):
+    if restaurant.iloc[i][2] == 'Female':
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_female)/std_female
+    else:
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_male)/std_male
+```
+
+### 2. `.groupby()` 및 `.transform()`을 이용한 결측치 처리 기법
+
+내 모든 책을 40% 할인된 가격에 만나보세요
+
+이제 그룹화된 판다스(pandas) 객체(object)에 `transform()` 함수(function)를 사용하는 이유와 방법을 이해했으니, 결측값(missing value)을 대체하는 매우 중요한 작업에 대해 살펴보겠습니다. `transform()` 함수(function)를 결측치 대체(missing value imputation)에 어떻게 활용할 수 있는지 실제로 알아보기 전에, 각 그룹(group)에서 우리가 관심 있는 변수(variable)에 결측값(missing value)이 얼마나 있는지 확인해봅시다. 아래에서 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 볼 수 있으며, 이는 176+68 = 244입니다.
+
+```python
+prior_counts = restaurant.groupby('time')
+prior_counts['total_bill'].count()
+```
+
+다음으로, 아래 코드(code)를 사용하여 무작위 관측치(random observation)의 10%에 해당하는 총 청구액(total bill)을 `NaN`으로 설정한 `restaurant_nan` 데이터셋(dataset)을 생성할 것입니다.
+
+```python
+import pandas as pd
+import numpy as np
+
+p = 0.1 #percentage missing data required
+mask = np.random.choice([np.nan,1], size=len(restaurant), p=[p,1-p])
+
+restaurant_nan = restaurant.copy()
+restaurant_nan['total_bill'] = restaurant_nan['total_bill'] * mask
+```
+
+이제 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 출력해 보면, 현재 155 + 62 = 217임을 알 수 있습니다. 우리가 가진 총 데이터 포인트(data point)는 244이므로, 결측 데이터 포인트(missing data point)는 24개이며, 이는 약 10%에 해당합니다.
+
+```python
+prior_counts = restaurant_nan.groupby('time') # restaurant_nan 사용
+prior_counts['total_bill'].count()
+```
+
+데이터에서 결측값(missing value)의 개수를 확인한 후, 그룹(group)별 함수(function)를 사용하여 이 결측값(missing value)을 채우는 방법을 시연하겠습니다. 가장 일반적인 대체 값은 평균(mean)과 중앙값(median)이며, 데이터의 왜도(skewness)에 따라 적절한 것을 선택합니다. 예를 들어, 데이터 분포가 치우쳐 있을 경우(skewed data) 중앙값(median)이 평균(mean)보다 더 강건한(robust) 선택이 될 수 있습니다. 이전과 마찬가지로, `fillna()` 함수(function)를 사용하여 모든 결측값(missing value)을 해당 그룹(group)의 평균(average)으로 대체하는 람다 변환(lambda transformation)을 정의합니다. 앞서와 같이, 식사 시간에 따라 데이터를 그룹화(group)한 다음 미리 정의된 변환(transformation)을 적용하여 결측값(missing value)을 처리합니다.
+
+```python
+# 결측치 대체 (평균 사용)
+missing_trans_mean = lambda x: x.fillna(x.mean())
+restaurant_nan_grouped = restaurant_nan.groupby('time')['total_bill']
+restaurant_nan_imputed_mean = restaurant_nan_grouped.transform(missing_trans_mean)
+print("평균으로 대체된 데이터 (일부):\n", restaurant_nan_imputed_mean.head())
+
+# 결측치 대체 (중앙값 사용 예시)
+missing_trans_median = lambda x: x.fillna(x.median())
+restaurant_nan_imputed_median = restaurant_nan_grouped.transform(missing_trans_median)
+print("\n중앙값으로 대체된 데이터 (일부):\n", restaurant_nan_imputed_median.head())
+```
+
+보시다시피, 인덱스(index) 0과 인덱스(index) 4의 관측치(observation)는 동일하며, 이는 해당 결측값(missing value)이 해당 그룹(group)의 평균(mean)으로 대체되었음을 의미합니다. 또한 이 메서드(method)를 사용한 계산 시간은 매우 효율적임을 알 수 있습니다. 이를 기존의 수동적인 메서드(method)와 비교해 봅시다:
+
+```python
+import time # time 모듈 import
+
+start_time = time.time()
+mean_din = restaurant_nan.loc[restaurant_nan.time =='Dinner']['total_bill'].mean()
+mean_lun = restaurant_nan.loc[restaurant_nan.time == 'Lunch']['total_bill'].mean()
+
+# 새로운 컬럼에 할당하여 원본 데이터프레임에 영향을 주지 않도록 수정
+restaurant_nan['total_bill_imputed'] = restaurant_nan['total_bill'].copy()
+
+for row in range(len(restaurant_nan)):
+    if pd.isna(restaurant_nan.loc[row, 'total_bill_imputed']): # 결측값인 경우에만 대체
+        if restaurant_nan.iloc[row]['time'] == 'Dinner':
+            restaurant_nan.loc[row, 'total_bill_imputed'] = mean_din
+        else:
+            restaurant_nan.loc[row, 'total_bill_imputed'] = mean_lun
+
+print("Results from the above operation calculated in %s seconds" % (time.time() - start_time))
+```
+
+그룹화된 객체(object)에 적용된 `.transform()` 함수(function)를 사용하는 것이 이 작업에 대해 순수 파이썬(Python) 코드(code)보다 훨씬 빠르게 수행됨을 알 수 있습니다.
+
+### 3. `.groupby()` 및 `.filter()`를 활용한 데이터 정제 방법
+
+1년 동안 50% 할인
+
+이제 그룹화된 판다스(pandas) 객체(object)에서 `filter()` 함수(function)를 어떻게 사용할 수 있는지 논의할 것입니다. 이 함수를 통해 특정 조건(condition)에 따라 해당 그룹(group)의 하위 집합(subset)만 포함하도록 데이터를 정제할 수 있습니다. 종종 특정 특성(feature)에 따라 데이터프레임(DataFrame)의 자료를 그룹화(group)한 후, 우리는 특정 조건(condition)을 만족하는 그룹(group)만을 선택하고자 합니다. 필터링 조건(filtration condition)의 몇 가지 예로는 결측값(missing value)의 수, 특정 특성(feature)의 평균(mean), 또는 데이터셋(dataset)에서 그룹(group)의 발생 횟수 등이 있습니다.
+
+예를 들어, 특정 그룹의 데이터 수가 너무 적어 통계적으로 유의미한 분석이 어렵다고 판단될 때, 해당 그룹을 제거할 수 있습니다. 아래 예시에서는 각 그룹의 크기가 5개 미만인 그룹을 필터링하는 방법을 보여줍니다.
+
+```python
+restaurant_grouped_size = restaurant.groupby('day')
+# 그룹의 크기가 5보다 작은 그룹을 제거 (예시를 위해 작은 값 설정)
+filter_small_groups = lambda x: len(x) >= 5
+filtered_by_size = restaurant_grouped_size.filter(filter_small_groups)
+print("그룹 크기가 5 이상인 데이터프레임 (일부):\n", filtered_by_size.head())
+print("원본 데이터프레임 크기:", len(restaurant))
+print("필터링된 데이터프레임 크기:", len(filtered_by_size))
+```
+
+우리는 웨이터(waiter)에게 지불된 평균 금액이 20달러를 초과하는 날에 주어진 팁(tip)의 평균 금액을 찾는 데 관심이 있습니다. `.filter()` 함수(function)는 각 그룹(group)의 데이터프레임(DataFrame)에 작동하는 람다 함수(lambda function)를 허용합니다. 이 예시에서 람다 함수(lambda function)는 "total_bill"을 선택하고 `mean()`이 20보다 큰지 확인합니다. 만약 해당 람다 함수(lambda function)가 `True`를 반환하면, 해당 그룹 전체가 유지됩니다. 이렇게 필터링된 데이터에서 팁(tip)의 `mean()`이 계산됩니다. 팁(tip)의 전체 평균(mean)과 비교하면 두 값 사이에 차이가 있음을 알 수 있으며, 이는 필터링(filtering)이 올바르게 수행되었음을 의미합니다.
+
+```python
+restaurant_grouped = restaurant.groupby('day')
+filter_trans = lambda x : x['total_bill'].mean() > 20
+restaurant_filtered = restaurant_grouped.filter(filter_trans)
+print(f"총 청구액 평균이 20달러 초과하는 날의 팁 평균: {restaurant_filtered['tip'].mean():.2f}")
+print(f"전체 팁 평균: {restaurant['tip'].mean():.2f}")
+```
+
+`groupby()`를 사용하지 않고 이 작업을 수행하려고 하면, 비효율적인 코드(code)가 됩니다. 먼저, 리스트 컴프리헨션(list comprehension)을 사용하여 평균 식사 비용이 20달러보다 큰 날을 나타내는 데이터프레임(DataFrame)의 항목을 추출한 다음, `for` 루프(loop)를 사용하여 이를 리스트(list)에 추가하고 평균(mean)을 계산합니다. 매우 직관적으로 보일 수 있지만, 보시다시피 매우 비효율적입니다.
+
+내 모든 책을 40% 할인된 가격에 만나보세요
+
+```python
+# 수동 구현 (비교용)
+t=[restaurant.loc[restaurant['day'] == i]['tip'] for i in restaurant['day'].unique() if restaurant.loc[restaurant['day'] == i]['total_bill'].mean()>20]
+restaurant_filtered_manual = t[0]
+for j in t[1:]:
+    restaurant_filtered_manual = restaurant_filtered_manual.append(j,ignore_index=True)
+```
+
+### 4. `.groupby()`와 `.apply()`의 차이점 및 활용
+
+`.transform()`과 `.filter()` 외에도, `.groupby()` 객체에는 `.apply()` 메서드(method)가 있습니다. `.apply()`는 그룹별로 복잡한 사용자 정의 함수를 적용할 때 매우 유용합니다. `.transform()`이 원본 데이터프레임과 동일한 형태의 결과를 반환해야 하는 반면, `.apply()`는 각 그룹에 대해 어떤 형태의 결과도 반환할 수 있습니다. 이는 각 그룹에 대해 여러 통계량을 한 번에 계산하거나, 그룹별로 다른 모델을 적용하는 등 매우 유연한 작업을 가능하게 합니다.
+
+예를 들어, 각 요일(day)별로 'total_bill'과 'tip'의 평균 및 표준 편차를 동시에 계산하고 싶다면 `.apply()`를 사용할 수 있습니다.
+
+```python
+def custom_agg(group):
+    return pd.Series({
+        'total_bill_mean': group['total_bill'].mean(),
+        'total_bill_std': group['total_bill'].std(),
+        'tip_mean': group['tip'].mean(),
+        'tip_std': group['tip'].std()
+    })
+
+daily_stats = restaurant.groupby('day').apply(custom_agg)
+print("요일별 총 청구액 및 팁 통계:\n", daily_stats)
+```
+
+이처럼 `.apply()`는 `.transform()`이나 `.filter()`로는 처리하기 어려운, 그룹별로 완전히 새로운 구조의 데이터를 생성하거나 복잡한 로직을 적용할 때 강력한 도구(tool)가 됩니다.
+
+이 뉴스레터(newsletter)는 개인적인 열정 프로젝트(project)이며, 여러분의 지속적인 지원은 이를 유지하는 데 큰 힘이 됩니다. 기여하고 싶으시다면, 몇 가지 좋은 방법이 있습니다: 구독(Subscribe)하여 최신 소식을 받아보세요. 유료 구독(paid subscription)은 제 글쓰기를 지속 가능하게 하고 독점 콘텐츠(content)에 대한 접근 권한을 제공합니다.*
+
+제 책 번들(bundle)을 구매하여 저의 7권의 실용서와 로드맵(roadmap)을 40% 할인된 가격으로 만나보세요.
+
+읽어주셔서 감사하며, 독립적인 글쓰기와 연구를 지원해 주셔서 진심으로 감사합니다!

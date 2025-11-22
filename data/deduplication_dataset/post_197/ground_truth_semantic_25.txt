@@ -1,0 +1,94 @@
+**AI 에이전트 개발, 심층 분석 가이드**
+
+인공지능 행위자(agent)를 구축하는 과정에서 그 내부에 어떤 일들이 벌어지는지 궁금했던 적이 있습니까? 에이전트가 오작동하거나 예상치 못한 결과를 생성했을 때, 그 원인을 파악하는 작업은 마치 밀폐된 상자 속을 탐색하는 것처럼 느껴질 수 있습니다. 바로 이때 LangSmith의 작동 흐름 기록(tracing) 기능이 결정적인 역할을 합니다. 이 안내서에서는 웹에서 요리 정보를 찾아 개인화된 레시피 가이드를 만드는 '레시피 탐색 에이전트(Recipe Discovery Agent)'를 만들어 볼 예정입니다. 더욱 중요하게는, LangSmith의 추적 기능을 활용하여 에이전트의 모든 실행 단계를 관찰하고, 그 불투명한 시스템을 명확하고 분석 가능한 체계로 바꿀 것입니다.
+
+**목차:**
+*   에이전트 시스템 구조(Agent System Architecture)
+*   LangSmith 추적 기능 설정
+*   LLM 통신 객체 중계(Wrapping)
+*   기록 가능한 기능(Traceable Functions) 구축
+*   추적 결과 분석 및 활용
+
+대규모 언어 모델(LLM) 기반의 애플리케이션을 개발해 본 경험이 있다면, 그 난해함을 잘 이해하실 것입니다. 문제가 발생했을 때, 단순한 결함인 경우는 드뭅니다. 대신, 복잡하게 얽힌 처리 과정 계층 구조(run tree)를 통해 단일 사용자 상호작용을 추적하거나, 모델이 왜 올바르게 추론하지 못했는지 파악하기 위해 수많은 비정형 대화 속에서 핵심 의미를 찾아내려 고군분투하게 됩니다. 그 논리를 분석하고 성능을 꾸준히 향상시키는 방법을 알아내는 것은 종종 반복 가능한 과학이라기보다는 예측 불가능한 예술처럼 느껴지곤 합니다. 바로 이 지점에서 LangSmith가 등장합니다. LangSmith는 전체 LLM 개발 수명 주기(lifecycle)를 위해 설계되었으며, 일반적인 개발 접근 방식을 뒤엎는 몇 가지 근본적인 원칙을 제시합니다.
+
+LangSmith는 시스템 내부 상태 파악(observability)과 같은 핵심 기능을 제공하며, 여기에는 자동화된 실행 경로 추적 및 결함 분석을 위한 처리 과정 계층 구조 보기, 자원 소모가 큰 단계 식별, 지연 시간 병목 현상(latency bottlenecks) 분석과 같은 기능이 포함됩니다. 또한, 이 플랫폼은 효용성 측정 및 탐색(evaluation and experimentation)을 지원하여 사용자가 맞춤형 평가자를 정의하고, 선별된 자료 집합(datasets)으로 체계적인 검증(testing)을 수행하며, 구조적 수정의 득실을 평가하기 위해 실험 결과를 나란히 비교할 수 있도록 합니다.
+
+이 시리즈는 다음 주제를 다룰 것입니다:
+*   LangSmith란 무엇인가? (게시됨!)
+*   LangSmith로 트레이싱하기 (현재 보고 계신 글)
+*   LangSmith의 플레이그라운드(Playground) 및 프롬프트(Prompts)
+*   LangSmith의 데이터셋(Datasets) 및 평가(Evaluations)
+*   LangSmith의 주석 큐(Annotation Queues)
+*   LangSmith의 자동화(Automations) 및 온라인 평가(Online Evaluation)
+*   LangSmith의 대시보드(Dashboards)
+
+**AI 개발자의 필수 도구 번들: 지금 바로 만나보세요!**
+유세프 호스니 · 6월 17일
+
+제 저서와 로드맵(roadmap)을 한데 묶은 특별 번들을 준비했습니다. 버튼 하나로 모든 것을 원가보다 40% 저렴하게 구매하실 수 있습니다. 이 번들에는 다음을 포함한 8개의 전자책(eBook)이 포함되어 있습니다: 전체 이야기 읽기
+
+**1. 에이전트 시스템 구조(Agent System Architecture)**
+
+**AI 개발자의 필수 도구 번들: 지금 바로 만나보세요!**
+
+저희 레시피 에이전트는 간단한 두 단계의 작업 흐름(pipeline)을 따릅니다. 먼저, DuckDuckGo를 활용하여 웹에서 레시피 정보를 수집합니다. 그런 다음, 이 정보를 언어 모델(language model)에 전달하여 모든 것을 유용한 요리 가이드로 형식화합니다. 이 개념은 직관적이지만, 이 처리 경로를 통해 정보가 어떻게 이동하는지 면밀히 관찰하면 성능, 소요 비용 및 잠재적인 개선 지점에 대한 심층적인 이해를 얻을 수 있습니다. 특히, 에이전트가 외부 도구를 사용하는 방식과 LLM의 추론 과정이 어떻게 결합되어 최종 결과물을 만들어내는지 추적하는 것은 복잡한 시스템의 동작을 파악하는 데 필수적입니다. 이러한 모듈화된 접근 방식은 문제 발생 시 원인 분석을 용이하게 합니다.
+
+**2. LangSmith 추적 기능 설정**
+
+**AI 개발자의 필수 도구 번들: 지금 바로 만나보세요!**
+
+에이전트 소스 코드(code)에 들어가기 전에 LangSmith를 올바르게 구성하는 것이 중요합니다. 여기서 작업 순서는 매우 중요합니다. LangChain 라이브러리(libraries)를 불러오기(import) 전에 시스템 설정 값(environment variables)을 설정해야 합니다. 그렇지 않으면 추적 기능이 제대로 초기화되지 않을 수 있습니다. 이는 라이브러리가 로드될 때 필요한 구성 정보를 먼저 읽어 들이도록 보장하기 위함입니다.
+
+```python
+import os
+from google.colab import userdata
+
+# Set environment variables FIRST
+os.environ[”LANGSMITH_TRACING”] = “true”
+os.environ[”LANGSMITH_ENDPOINT”] = “https://api.smith.langchain.com”
+os.environ[”LANGSMITH_PROJECT”] = “recipe-discovery-agent”
+os.environ[”LANGSMITH_API_KEY”] = userdata.get(”LANGSMITH_API_KEY”)
+OPENROUTER_API_KEY = userdata.get(’OPENROUTER_API_KEY’)
+```
+
+`LANGSMITH_TRACING`을 "true"로 설정함으로써, LangSmith에게 에이전트로부터 작동 기록(execution data)을 자동으로 수집하도록 지시하는 것입니다. 프로젝트 이름은 이러한 추적 기록이 현황판(dashboard)에 어디에 나타날지 결정하여, 다양한 실험(experiments)이나 애플리케이션을 더 쉽게 정리하고 관리할 수 있도록 돕습니다. 이 에이전트의 경우, 저는 더 전문화된 인터페이스(API) 대신 DuckDuckGo 검색을 선택했습니다. 그 이유는 실용적입니다. DuckDuckGo는 인터페이스 키(API key)가 필요 없으므로 학습 자료(tutorials) 및 실험에 완벽하며, 우리의 필요에 잘 맞는 정돈된 탐색 정보(structured search results)를 반환합니다.
+
+**AI 개발자의 필수 도구 번들: 지금 바로 만나보세요!**
+
+```python
+from langchain_community.tools import DuckDuckGoSearchResults
+search_tool = DuckDuckGoSearchResults(max_results=3)
+```
+
+DuckDuckGo가 이 시연(demo)에 훌륭하지만, 실제 서비스 환경(production) 애플리케이션은 Tavily Search(AI에 최적화된 결과 제공) 또는 Wikipedia(더 백과사전적인 정보 제공)와 같은 대안으로부터 이점을 얻을 수 있습니다. LangChain의 기능 모듈화(tool abstraction)의 장점은 나중에 이들을 교체할 때 최소한의 코드 수정만 필요하다는 것입니다. 이는 개발자가 다양한 도구를 쉽게 실험하고, 특정 사용 사례에 가장 적합한 것을 선택할 수 있도록 유연성을 제공합니다.
+
+**3. LLM 통신 객체 중계(Wrapping)**
+
+**AI 개발자의 필수 도구 번들: 지금 바로 만나보세요!**
+
+이제 흥미로운 부분이 시작됩니다. 단순히 LLM을 호출하는 것만으로는 LangSmith에서 상세한 추적 기록을 얻을 수 없습니다. LangSmith의 `wrap_openai` 함수(function)로 통신 객체(client)를 감싸야 합니다. 이 중계기(wrapper)는 모든 인터페이스 요청(API call)을 중간에 개입하여 전체 프롬프트(prompt), 응답(response), 처리 단위(token) 개수, 소요 시간(timing) 정보를 포함한 완전한 상호작용을 기록합니다. 이는 LLM과의 모든 대화 내용을 빠짐없이 기록하여, 추후 분석에 필요한 모든 데이터를 확보하는 데 목적이 있습니다.
+
+```python
+from langsmith.wrappers import wrap_openai
+from openai import OpenAI
+
+openrouter_client = wrap_openai(
+    OpenAI(
+        base_url=”https://openrouter.ai/api/v1”,
+        api_key=OPENROUTER_API_KEY,
+    )
+)
+```
+
+이 중계기가 없으면, 추적 기록에는 함수가 LLM을 호출했다는 것만 표시되고 실제로 무엇이 전송되거나 수신되었는지는 확인할 수 없을 것입니다. 이러한 가시성(visibility)은 질의어 오류(prompt issues)를 분석하거나 처리 단위 소비 효율화(token usage optimization)를 수행할 때 매우 중요해집니다. 예를 들어, 모델이 예상치 못한 답변을 내놓았을 때, 정확히 어떤 프롬프트가 전송되었는지 확인하지 못하면 문제의 근원을 파악하기가 거의 불가능합니다. 또한, 토큰 사용량에 대한 정밀한 데이터는 비용을 절감하고 성능을 최적화하는 데 결정적인 역할을 합니다.
+
+**4. 기록 가능한 기능(Traceable Functions) 구축**
+
+**AI 개발자의 필수 도구 번들: 지금 바로 만나보세요!**
+
+LangSmith의 진정한 강점은 `@traceable` 데코레이터(decorator)를 통해 발휘됩니다. `@traceable`로 장식된 모든 함수는 유입 데이터(inputs), 결과 데이터(outputs), 소요 시간(execution time) 및 기능 호출 관계(call hierarchy) 내에서의 위치를 자동으로 기록합니다. 이는 개발자가 수동으로 로그(log)를 작성할 필요 없이, 에이전트의 복잡한 실행 흐름을 손쉽게 시각화하고 분석할 수 있게 해줍니다. 이 자동 계측 기능은 복잡한 다단계 에이전트에서 각 서브태스크(subtask)가 어떻게 수행되었는지, 그리고 어떤 입력이 어떤 결과를 초래했는지 명확하게 보여줍니다.
+
+**레시피 검색**
+
+**AI 개발자의 필수 도구 번들: 지금 바로 만나보세요!**
+레시피 검색 기능은 에이전트의 핵심 부분으로, 사용자 질의에 따라 웹에서 관련 정보를 추출하는 역할을 합니다. `@traceable` 데코레이터를 이 함수에 적용함으로써, 우리는 검색 질의가 무엇이었는지, 어떤 검색 도구가 사용되었는지, 그리고 최종적으로 어떤 검색 결과가 반환되었는지에 대한 자세한 기록을 얻을 수 있습니다. 이는 검색 품질을 평가하고, 검색 도구의 효율성을 분석하며, 필요한 경우 검색 전략을 최적화하는 데 귀중한 데이터를 제공합니다. 예를 들어, 특정 키워드에 대한 검색 결과가 미흡하다면, 트레이스 데이터를 통해 검색 질의의 문제점이나 검색 도구의 한계를 쉽게 식별할 수 있습니다.

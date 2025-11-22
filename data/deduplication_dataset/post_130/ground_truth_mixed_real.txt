@@ -1,0 +1,43 @@
+지난주 주요 AI 뉴스 요약 및 토론을 담은 225번째 에피소드입니다! 2026년 8월 25일 녹화
+
+Astrocade에서 Andrey의 작업을 확인해 보세요. 여기에서 앰배서더(ambassador)로 등록하세요.
+Andrey Kurenkov가 진행하고 Daniel Bashir가 공동 진행합니다.
+질문이나 피드백이 있으시면 contact@lastweekinai.com 및/또는 hello@gladstone.ai로 이메일을 보내주세요.
+
+이번 에피소드에서는: 구글(Google)의 제미니(Gemini) 이미지 편집 모델은 지속적인 혁신을 통해 원본의 미묘한 특징을 보존하면서도 피사체를 정교하게 수정하는 능력을 더욱 강화했습니다. 앤트로픽(Anthropic)은 클로드(Claude)를 크롬(Chrome) 브라우저 환경에 깊이 통합하고, 사용자의 과거 상호작용을 기억하는 기능을 고도화하여 개인화된 경험을 제공하며 그 활용 범위를 넓히고 있습니다. 한편, 엔비디아(NVIDIA)와 AMD는 대중국 AI 칩(AI chip) 수출과 관련하여 미국 정부와의 수익 공유 방안을 심화하고 있으며, 이는 글로벌 기술 무역 환경의 복잡성을 반영하는 중요한 변화로 평가됩니다. 또한, AI 동반자 앱(AI companion apps) 시장은 폭발적인 성장을 이어가며 2026년에는 예상 수익이 2억 달러를 넘어설 것으로 전망되어, 단순한 사용자 참여를 넘어 사회적, 윤리적 영향에 대한 심도 깊은 논의가 필요하다는 목소리가 커지고 있습니다.
+
+타임스탬프(Timestamps) + 링크:
+**도구 및 앱**
+*   (00:02:12) 구글 제미니(Google Gemini), 최신 버전 출시로 이미지 생성 및 편집 기능 대폭 개선 | AI Trend Report
+*   (00:05:32) 앤트로픽(Anthropic)의 클로드(Claude) AI 에이전트(AI agent), 다양한 플랫폼으로 확장 | The AI Journal
+*   (00:08:30) 클로드(Claude) 챗봇(chatbot), 장기 기억 기능 강화로 사용자 맞춤형 대화 제공 | AI Weekly
+*   (00:11:46) 구글(Google), 사용자 교육을 위한 AI '안내 학습(Guided Learning)' 도구 출시
+*   (00:14:55) 애플, 차세대 iOS에 애플 인텔리전스(Apple Intelligence)를 통한 온디바이스 AI(On-device AI) 기능 대폭 강화 및 챗GPT(ChatGPT) 통합 (iOS 26부터 GPT-5 사용), 프라이버시(privacy) 강조 | The Verge, Apple Insider
+*   (00:15:39) 오픈AI(OpenAI), 코덱스(Codex)에 IDE 확장(IDE Extension) 및 깃허브 코드 리뷰(GitHub Code Reviews)와 같은 새로운 기능 추가
+
+**애플리케이션 및 비즈니스**
+*   (00:16:49) 러버블(Lovable), 향후 12개월 내 10억 달러 ARR(Annual Recurring Revenue) 달성 예상 | TechCrunch
+*   (00:18:56) 데카르트(Decart), 인터랙티브 AI(Interactive AI) 솔루션 강화를 위해 1억 달러 규모의 추가 투자 유치로 31억 달러 가치 달성 | Ctech, VC Insights
+*   (00:20:19) 코히어(Cohere), 생성형 AI(generative AI) 경쟁사들을 물리치기 위해 5억 달러 투자 유치 | TechCrunch
+*   (00:21:25) 포니 AI(Pony AI), 연간 로보택시(robotaxi) 목표 달성 임박, 유럽 시장 주시 - 블룸버그(Bloomberg)
+*   (00:21:25) 자율주행 시장, 규제 완화와 기술 발전에 힘입어 상업화 가속 | AutoTech News
+*   (00:22:41) xAI, 공동 창업자 이탈 등 내부 인력 변동 속에서도 성장 동력 유지 | TechCrunch, AI Business Today
+
+**프로젝트 및 오픈 소스**
+*   (00:24:39) 메타 AI(Meta AI), DINOv3 출시: 자기 지도 학습(Self-Supervised Learning)으로 훈련된 최첨단 컴퓨터 비전 모델(Computer Vision Model)로 고해상도 이미지 특징(High-Resolution Image Features) 생성 - MarkTechPost
+*   (00:27:02) GLM 시리즈 (GLM-4.5 포함), 에이전트(Agentic), 추론(Reasoning) 및 코딩(Coding) (ARC) 기능과 역량 강화로 파운데이션 모델(Foundation Models) 시장 선도 | AI Research Hub
+*   (00:29:49) 중국 딥시크(DeepSeek), V3.1 출시로 AI 모델(AI Model) 역량 강화 - 블룸버그(Bloomberg)
+*   (00:29:49) 중국 AI 생태계, 새로운 오픈 소스 LLM(Large Language Models)의 등장으로 경쟁 심화 | East AI Watch
+*   (00:30:36) 오픈 웨이트(Open weight) LLM(Large Language Models)의 성능 평가, 지속적인 관심 필요
+*   (00:32:02) 마이크로소프트(Microsoft), VibeVoice-1.5B 출시: 4명의 서로 다른 화자로 최대 90분 분량의 음성을 합성할 수 있는 오픈 소스 텍스트-투-스피치 모델(Open-Source Text-to-Speech Model) - MarkTechPost
+
+**연구 및 발전**
+*   (00:33:43) AI 모델의 불확실성 추정(Uncertainty Estimation) 및 신뢰도(Reliability) 연구 활발 | AI Science Review
+*   (00:36:30) 생성형 AI(Generative AI)가 노동 시장에 미치는 영향, 심층 연구 결과 발표 | Stanford AI Lab
+
+**정책 및 안전**
+*   (00:41:42) 미국 정부의 AI 안전(AI Safety) 규제 논의 지속 | Policy Tech
+*   (00:44:10) 미국, 중국향 AI 칩(AI Chip) 수출 통제 강화, 관련 기업 수익 분배 논의 심화 | Global Tech Policy
+*   (00:45:13) 앤트로픽(Anthropic), 도서 저자들이 제기한 세간의 이목을 끄는 AI 저작권 소송(AI Copyright Lawsuit) 합의
+*   (00:45:13) AI 저작권(AI Copyright) 분쟁, 새로운 합의 모델과 법적 선례 형성 | Legal AI Watch
+*   (00:46:56) AI 동반자 앱(AI companion apps) 시장, 2026년까지 괄목할 만한 성장세 유지, 수익 전망 상향 조정 | App Economy Insights

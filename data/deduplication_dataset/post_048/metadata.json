@@ -1,0 +1,21 @@
+{
+  "post_id": "048",
+  "title": "**대규모 언어 모델(LLM) 학습 데이터(training data) 디버깅(debugging) 가이드**",
+  "base_word_count": 8790,
+  "exact_30_update_wc": 7586,
+  "exact_30_ground_truth_wc": 7586,
+  "exact_30_overlap_ratio": 1.159,
+  "paraphrase_25_update_wc": 7088,
+  "paraphrase_25_ground_truth_wc": 7088,
+  "paraphrase_25_overlap_ratio": 1.24,
+  "fragment_20_update_wc": 1133,
+  "fragment_20_ground_truth_wc": 7193,
+  "fragment_20_overlap_ratio": 2.41,
+  "semantic_25_update_wc": 8484,
+  "semantic_25_ground_truth_wc": 8785,
+  "semantic_25_overlap_ratio": 1.001,
+  "mixed_real_update_wc": 7158,
+  "mixed_real_ground_truth_wc": 7163,
+  "mixed_real_overlap_ratio": 1.227,
+  "status": "generated"
+}

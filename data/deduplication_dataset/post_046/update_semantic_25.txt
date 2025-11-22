@@ -1,0 +1,57 @@
+대규모 언어 모델(LLM) 연구의 핵심 요소인 보상 모델(RM)은 인간의 선호도를 학습 과정에 통합하여 눈부신 발전을 이끌어냈습니다. 이러한 중추적인 역할에도 불구하고, RM은 종종 제대로 조명받지 못하는 경향이 있습니다. 특히 검증 가능한 보상(verifiable rewards)을 활용하는 강화 학습(reinforcement learning) 기법들이 주목받고 있지만, RM을 효과적으로 구축하고 활용하는 데 필요한 실질적인 지침은 여전히 부족합니다. 그럼에도 불구하고, PPO 기반 강화 학습(reinforcement learning)을 통해 LLM을 미세 조정하는 것은 최상위 기반 모델(foundation models)을 개발하는 데 여전히 필수적인 구성 요소입니다. 이 글에서는 급변하는 LLM 생태계(ecosystem) 속에서 보상 모델의 과거와 현재의 중요성을 명확히 하며, 보상 모델에 대한 심층적인 이해를 단계별로 구축해 나갈 것입니다. 구독하기
+
+**보상 모델은 무엇인가?**
+
+"보상 모델은 강화 학습(reinforcement learning) 연구에서 환경 보상(environment rewards)의 대리자(proxy)로 광범위하게 사용되어 왔습니다... 가장 일반적인 보상 모델은 훈련 비교(training comparisons)에서 선호되는 텍스트에 특정 텍스트가 얼마나 가까운지 확률을 예측합니다." - RLHF 책
+
+보상 모델(RM)은 입력된 프롬프트(prompt)와 여러 완성 후보(candidate completion)에 대해 사람의 선호도 점수(human preference score)를 예상하도록 학습된 특수 목적의 LLM(specialized LLMs)입니다. 이들은 대개 현재 학습 중인 LLM으로부터 파생됩니다(위 내용 참고). RM의 점수가 높다는 것은 해당 완성(completion)이 인간에게 더 바람직하게 여겨질 가능성이 크다는 것을 의미합니다. 첫 단계로, 우리는 보상 모델(RM)이 무엇인지, 어떻게 만들어지는지, 그리고 LLM 환경에서 어떻게 적용되는지에 대한 기본적인 개념을 정립해야 합니다. 이 부분에서는 다음을 집중적으로 다룰 것입니다.
+
+*   선호도를 통계적 모형(statistical models)으로 다루려는 RM의 근본적인 동기.
+*   대부분의 RM이 채택하는 구조(architecture)와 구성.
+*   RM의 학습 절차(training process).
+
+RM의 활용 방안을 이해하기 위해서는 강화 학습(RL)과 LLM의 후처리 훈련(post-training)에 대한 추가적인 배경 지식이 필요하며, 이는 다음 장에서 다루겠습니다.
+
+**브래들리-테리 선호도 모형(The Bradley-Terry Model of Preference)**
+
+보상 모델의 일반적인 구현 방식은 브래들리-테리 선호도 모형(Bradley-Terry model of preference)에서 파생됩니다. 이 모형은 쌍으로 제시된 항목들 사이의 상대적인 우위나 성능을 기반으로 쌍 비교 데이터(paired comparison data)를 순위화하는 데 활용되는 통계적 방법론(statistical model)입니다. 동일한 분포에서 추출된 두 사건 $i$와 $j$가 주어졌을 때, 브래들리-테리 모형은 항목 $i$가 항목 $j$보다 선호될(또는 승리할) 확률을 다음과 같이 정의합니다.
+
+**브래들리-테리 모델에 따른 쌍별 비교 확률(Pairwise comparison probability from the Bradley-Terry model)**
+$$P(i \text{ is preferred to } j) = \frac{e^{s_i}}{e^{s_i} + e^{s_j}}$$
+
+LLM의 맥락에서, 항목 $i$와 $j$는 동일한 LLM이 동일한 프롬프트(prompt)에 대해 생성한 두 개의 출력(completion)입니다(즉, 이 출력들은 동일한 분포에서 샘플링됩니다). RM은 이 각각의 출력에 점수를 부여한 다음, 브래들리-테리 모델의 위 표현식을 활용하여 출력 $i$가 출력 $j$보다 더 선호될 확률을 산출합니다. 간단히 말해, 우리는 브래들리-테리 모델을 사용하여 두 출력 간의 쌍별 비교 확률(pairwise comparisons)을 나타냅니다.
+
+(출처: [14]) **선호도 자료(Preference data).** 쌍별 선호도 자료(pairwise preference data)는 LLM 후처리 훈련(post-training)에 폭넓게 활용되어 왔으며, 그 역사는 꽤 오래되었습니다 [14]. 이 자료는 다양한 프롬프트(prompt)로 구성되며, 우리는 자료 내에서 프롬프트의 다양성(diversity)을 극대화하는 것을 목표로 합니다. 프롬프트 분포(prompt distribution)는 모델이 실제 환경에서 접하게 될 질문들을 대표해야 합니다. 각 프롬프트(prompt)에 대해 우리는 한 쌍의 잠재적 완성(candidate completions) 1을 가지고 있으며, 이 중 하나의 완성(completion)은 대개 사람에 의해, 때로는 모델에 의해 다른 것보다 더 바람직한 것으로 지정됩니다(위 내용 참조). 선택된 완성(chosen completions)과 거부된 완성(rejected completions)이 함께 포함된 프롬프트(prompt) 데이터셋(dataset)을 (인간) 선호도 데이터셋(preference dataset)이라고 부릅니다.
+
+**RM은 어떻게 작동하는가?**
+
+우리는 RM이 브래들리-테리 선호도 모형(Bradley-Terry model of preference)에 기반을 둔다는 것을 알지만, 이러한 통계적 모형(statistical model)을 실질적으로 구현하는 방식은 여러 가지가 있습니다. LLM 분야에서는 이러한 모형이 LLM으로 구현됩니다(아마도 놀랄 일은 아닐 것입니다). 하지만 일반적인 (생성형) 디코더 전용 LLM(decoder-only LLMs)과 비교할 때, RM은 기본 구조(architecture)와 학습 목표(training objective) 모두를 변경합니다.
+
+**RM 아키텍처(architecture)의 개략도(Schematic depiction of RM architecture)**
+(Image of RM architecture)
+
+**RM 구조(architecture).** 보상 모델은 프롬프트-완성 쌍(prompt-completion pair)을 입력으로 받아 단일 선호도 점수(scalar preference score)를 출력합니다. 실제로는 디코더 전용 구조(decoder-only architecture)의 마지막에 선형 헤드(linear head)를 추가하여 LLM 형태로 구현됩니다(위 그림 참조). 구체적으로, LLM은 토큰 벡터(token vectors) 목록(각 입력 토큰 벡터(token vector)마다 하나씩)을 생성하며, 이 목록의 최종 벡터를 선형 헤드(linear head)를 통해 전달하여 하나의 스칼라 값(scalar score)을 도출합니다. RM을 특정 완성(completion)이 선호되는지 여부를 분류하는 데 사용되는 추가 분류 헤드(classification head)를 가진 LLM으로 이해할 수 있습니다.
+
+**학습 과정(Training process).** RM의 매개변수(parameters)는 대개 기존 정책(policy) 2로 초기화되며, 이를 RM의 "기반(base)" 모델이라고 칭할 것입니다. RM을 초기화할 정책(policy)에 대한 몇 가지 선택지가 있습니다. 예를 들어, 현재 학습 중인 LLM 또는 사전 훈련된 기반(pretrained base) 모델이나 SFT 모델(SFT model)과 같은 이 모델의 이전 버전이 있습니다. RM이 초기화되면 이 모델에 선형 헤드(linear head)를 추가하고 선호도 데이터셋(preference dataset)(즉, 프롬프트(prompt)에 대한 선택된 모델 응답(chosen model responses) 및 거부된 모델 응답(rejected model responses) 쌍)에 대해 학습합니다.
+
+**RM 출력에 대한 쌍별 확률 표현(Pairwise probability expressed with respect to the output of an RM)**
+$$P(\text{chosen is preferred to rejected}) = \frac{e^{s_{\text{chosen}}}}{e^{s_{\text{chosen}}} + e^{s_{\text{rejected}}}}$$
+
+선호도 쌍이 주어졌을 때, 우리는 RM이 거부된 응답보다 선택된 응답에 더 높은 점수를 부여하기를 원합니다. 즉, 최적의 RM은 선택된 응답이 거부된 응답보다 선호될 확률을 최대화해야 합니다. 앞서 학습했듯이, 우리는 브래들리-테리 모델(Bradley-Terry model)을 사용하여 이 확률을 표현할 수 있습니다(위 참조). 이 확률 표현식을 재정렬하면 아래에 제시된 손실 함수(loss function)를 도출할 수 있습니다. 이는 모델이 선택된 응답에 더 높은 점수를 할당하도록 유도하는 쌍별 순위 손실(pairwise ranking loss)입니다.
+
+**RM의 표준 손실 함수(loss function) 공식(Standard loss function formulation for an RM)**
+$$L = -\log \left( \frac{e^{s_{\text{chosen}}}}{e^{s_{\text{chosen}}} + e^{s_{\text{rejected}}}} \right) = -\log(\text{sigmoid}(s_{\text{chosen}} - s_{\text{rejected}}))$$
+
+이를 음의 로그 우도(NLL) 손실(negative log likelihood (NLL) loss)로 볼 수 있으며, NLL에 대한 확률은 브래들리-테리 모델(Bradley-Terry model)에 의해 정의됩니다. 이 손실의 형상(landscape) 시각화는 아래에 제시되어 있으며, 선택된 점수가 최대화되고 거부된 점수가 최소화될 때 손실이 최소화됨을 알 수 있습니다.
+
+(Image of loss landscape)
+
+방대한 선호도 데이터셋(preference dataset)에 대해 이 손실 함수(loss function)를 경험적으로 최소화함으로써, 우리는 선택된 응답이 거부된 응답보다 선호될 예상 확률(expected probability)을 (대략적으로) 극대화할 수 있습니다.
+
+**보상 정규화(Normalizing the reward).** 학습이 완료된 후 RM은 정규화되지 않은 스칼라 값(unnormalized scalar values)을 출력합니다. 보상 함수(reward function)의 편차(variance)를 줄여(즉, RM의 출력이 표준 범위(standard range) 내에 있도록 하기 위해), 학습에 활용된 선호도 데이터셋(preference dataset)에 대해 평균 보상(reward)이 0이 되도록 RM의 출력을 표준화할 수 있습니다. [14]의 저자들은 이러한 보상 정규화 방식(reward normalization approach)을 사용한다고 언급합니다.
+
+"훈련이 끝날 때, 우리는 데이터셋(dataset)의 참조 요약이 평균 점수 0을 달성하도록 보상 모델(reward model) 출력을 정규화합니다." - [14]에서
+
+**RM 구현하기**
+
+이 설명을 더욱 실용적으로 만들기 위해, RM의 구조(architecture)와 손실 함수(loss function)가 일반적인 딥러닝 프레임워크(deep learning frameworks)를 활용

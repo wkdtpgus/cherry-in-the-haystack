@@ -1,0 +1,21 @@
+{
+  "post_id": "150",
+  "title": "**주디 팬: 인간 인지 도구 키트 역공학**",
+  "base_word_count": 500,
+  "exact_30_update_wc": 569,
+  "exact_30_ground_truth_wc": 665,
+  "exact_30_overlap_ratio": 0.71,
+  "paraphrase_25_update_wc": 627,
+  "paraphrase_25_ground_truth_wc": 634,
+  "paraphrase_25_overlap_ratio": 0.786,
+  "fragment_20_update_wc": 475,
+  "fragment_20_ground_truth_wc": 764,
+  "fragment_20_overlap_ratio": 0.444,
+  "semantic_25_update_wc": 947,
+  "semantic_25_ground_truth_wc": 942,
+  "semantic_25_overlap_ratio": 0.533,
+  "mixed_real_update_wc": 521,
+  "mixed_real_ground_truth_wc": 521,
+  "mixed_real_overlap_ratio": 0.96,
+  "status": "generated"
+}

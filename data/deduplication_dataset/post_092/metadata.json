@@ -1,0 +1,21 @@
+{
+  "post_id": "092",
+  "title": "**소규모 팀 플레이북**",
+  "base_word_count": 1126,
+  "exact_30_update_wc": 1344,
+  "exact_30_ground_truth_wc": 1773,
+  "exact_30_overlap_ratio": 0.519,
+  "paraphrase_25_update_wc": 1464,
+  "paraphrase_25_ground_truth_wc": 1464,
+  "paraphrase_25_overlap_ratio": 0.769,
+  "fragment_20_update_wc": 1055,
+  "fragment_20_ground_truth_wc": 1491,
+  "fragment_20_overlap_ratio": 0.654,
+  "semantic_25_update_wc": 1396,
+  "semantic_25_ground_truth_wc": 1396,
+  "semantic_25_overlap_ratio": 0.807,
+  "mixed_real_update_wc": 1140,
+  "mixed_real_ground_truth_wc": 1140,
+  "mixed_real_overlap_ratio": 0.988,
+  "status": "generated"
+}

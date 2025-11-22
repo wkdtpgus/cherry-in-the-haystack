@@ -1,0 +1,20 @@
+# 🤖 AI 에이전트(AI Agents) 주간: 컨텍스트 엔지니어링(Context Engineering) 2.0, 키미 K2 씽킹(Kimi K2 Thinking), 윈드서프 코드맵(Windsurf Codemaps), 구글 파일 검색(Google File Search), 툴-투-에이전트 검색(Tool-to-Agent Retrieval)
+
+Author: Elvis Saravia
+URL: https://nlp.elvissaravia.com/p/ai-agents-weekly-context-engineering
+
+============================================================
+
+오늘의 이슈: 컨텍스트 엔지니어링(Context Engineering) 2.0, 인간-기계 커뮤니케이션(human-machine communication)을 재정의하다
+Kimi K2 Thinking이 GPT-5 및 Claude Sonnet 4.5를 능가하다
+코드 실행(code execution)으로 MCP 토큰(token) 사용량 98.7% 절감
+Denario AI 에이전트(agent)가 엔드투엔드(end-to-end) 과학 연구를 수행하다
+Windsurf, AI 생성 코드맵(Codemaps) 출시
+Cursor, 에이전트 트레이스(agent traces)로 학습된 시맨틱 검색(semantic search) 제공
+MiniMax-M2 인터리브드 씽킹 가이드(interleaved thinking guide)가 에이전트 성능(agentic performance)을 향상시키다
+OpenAI, 문화 인식 IndQA 벤치마크(benchmark) 공개
+주요 AI 개발 뉴스, 도구 업데이트 등
+
+**주요 기사**
+**컨텍스트 엔지니어링(Context Engineering) 2.0**
+SJTU, SII, GAIR의 연구원들은 20년 이상에 걸친 컨텍스트 엔지니어링(context engineering)의 진화를 추적하며, 이를 원시 컴퓨팅(primitive computing) (1.0 시대)부터 오늘날의 지능형 에이전트(intelligent agents) (2.0 시대) 및 그 이후에 이르는 인간-기계 커뮤니케이션(human-machine communication)의 근본적인 과제로 재정의합니다. 이 논문은 컨텍스트 인식(context-aware) AI 시스템(AI systems) 구축을 위한 체계적인 정의, 역사적 분석 및 설계 프레임워크(design framework)를 제공합니다. 기계 지능(machine intelligence)을 기반으로 네 가지 진화 단계를 정의합니다: 컨텍스트 1.0 (구조화된 입력(structured inputs)을 사용하는 원시 컴퓨팅(primitive computing)), 2.0 (자연어(natural language)를 사용하는 지능형 에이전트(intelligent agents)), 3.0 (인간 수준 지능(human-level intelligence)), 그리고 4.0 (초인적 지능(superhuman intelligence)). 각 단계는 인간-AI 상호작용 비용(human-AI interaction cost)을 줄입니다. 컨텍스트 엔지니어링(context engineering)을 엔트로피 감소(entropy reduction)로 규정합니다. 이는 인간이 높은 엔트로피(high-entropy) 컨텍스트(contexts)를 기계가 이해할 수 있는 낮은 엔트로피(low-entropy) 표현(representations)으로 전처리(preprocess)해야 하며, 이 격차는 기계 지능(machine intelligence)이 증가함에 따라 좁아진다는 것입니다. 컨텍스트 수집(context collection) (다중 모드 센서(multimodal sensors), 계층형 저장소(layered storage)), 관리(management) (텍스트/다중 모드 처리(text/multimodal processing), 계층적 메모리(hierarchical memory), 자체 생성 추상화(self-baking abstractions)), 그리고 사용(usage) (시스템 내 공유(intra-system sharing), 시스템 간 프로토콜(cross-system protocols), 사전 예방적 추론(proactive inference))에 걸친 포괄적인 설계 고려 사항을 제공합니다. CLI 도구(CLI tools) (GEMINI.md 파일을 사용하는 Gemini CLI), 심층 연구 에이전트(deep research agents) (주기적 요약(periodic summarization)을 사용하는 Tongyi DeepResearch), 그리고 KV 캐싱 최적화(KV caching optimization) 및 도구 설계 전략(tool design strategies)과 같은 새로운 실제 구현 사례를 검토합니다. 미해결 과제를 식별합니다: 제한된 컨텍스트 수집 방법(context collection methods), 대규모 저장소 병목 현상(large-scale storage bottlenecks), 규모에 따른 처리 성능 저하(processing degradation at scale), 평생 기억(lifelong memory)으로 인한 시스템 불안정성(system instability), 그리고 인간 인지(human cognition)처럼 컨텍스트(context)를 능동적으로 관리하는 시맨틱 운영 체제(semantic operating system)의 필요성. 논문

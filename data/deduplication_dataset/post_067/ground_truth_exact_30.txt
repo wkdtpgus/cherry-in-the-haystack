@@ -1,0 +1,17 @@
+**오늘 호에서는:** 혁신적인 AI 에이전트의 시대: Anthropic의 Claude Haiku 4.5와 최신 AI 동향 | AI 에이전트 설계의 발전과 실제 적용 | 강화 학습(RL)을 통한 에이전트 추론 최적화 | Cognition의 SWE-grep을 활용한 코드 검색 효율성 증대 | Andrej Karpathy의 nanochat 출시와 경량 모델의 부상 | Anthropic의 에이전트 스킬(Agent Skills) 프레임워크 | n8n의 AI 워크플로우 빌더(AI Workflow Builder) | OpenAI의 gpt-5-search-api와 검색 혁명 | Google DeepMind와 Yale의 Cell2Sentence-Scale 27B | Google의 Veo 3.1 및 Veo 3.1 Fast, 비디오 생성의 진화 | 최신 AI 개발 뉴스, 도구 및 심층 논문 분석.
+
+**주요 소식**
+**Claude Haiku 4.5**
+Anthropic의 새로운 소형 모델인 Claude Haiku 4.5는 비용과 지연 시간(latency)을 대폭 절감하면서 최첨단에 가까운 성능을 제공합니다. 이는 실제 코딩 및 컴퓨터 사용 벤치마크에서 Claude Sonnet 4와 동등하거나 능가하는 성능을 보여주며, 라이브 채팅, 코딩 에이전트(coding agents), 고객 서비스 자동화와 같은 반응형 AI 작업에 이상적입니다. Haiku 4.5의 출시는 단순히 더 빠르고 저렴한 모델을 넘어, AI 모델의 경량화 및 효율성 경쟁이 심화되고 있음을 보여주는 중요한 이정표입니다. 특히, 실시간 상호작용이 요구되는 서비스에서 이러한 고성능 경량 모델의 등장은 사용자 경험을 혁신할 잠재력을 가지고 있습니다. 개발자들은 이제 성능 저하 없이도 훨씬 경제적인 비용으로 복잡한 AI 기능을 구현할 수 있게 되었습니다.
+
+*   **속도 및 효율성** – Haiku 4.5는 Sonnet 4보다 2배 빠르고 비용은 3분의 1에 불과하며, SWE-bench Verified 점수에서 필적하는 성능을 달성하고 컴퓨터 사용 작업에서는 Sonnet 4를 능가하기도 합니다. 이러한 속도와 비용 효율성은 특히 대규모 언어 모델(LLM) 기반 애플리케이션의 운영 비용을 절감하는 데 큰 기여를 합니다. 예를 들어, 수많은 사용자 요청을 처리하는 챗봇 서비스나 실시간 데이터 분석 시스템에서 Haiku 4.5는 지연 시간을 최소화하면서도 높은 처리량을 보장하여 서비스 품질을 향상시킬 수 있습니다. 이는 AI 기술의 상업적 활용성을 크게 확장하는 요소입니다.
+
+Haiku 4.5의 이러한 특성은 다중 에이전트(multi-agent) 시스템 구축에도 매우 유리합니다. Anthropic이 강조하듯이, Sonnet 4.5와 같은 강력한 모델이 복잡한 계획을 수립하고, Haiku 4.5와 같은 효율적인 모델이 해당 계획의 하위 작업을 병렬적으로 실행하는 워크플로우는 AI 에이전트의 자율성과 효율성을 극대화할 수 있습니다. 이는 복잡한 문제 해결을 위한 분산형 AI 시스템의 가능성을 열어줍니다.
+
+*   **안전 우선 설계** – 정렬 테스트(alignment testing)에서 Haiku 4.5는 모든 Claude 모델 중 가장 낮은 오정렬 행동(misaligned behaviors) 비율을 보였으며, Sonnet 4.5의 ASL-3보다 덜 제한적인 AI 안전 수준 2(ASL-2) 등급을 획득했습니다. AI 시스템의 안전성과 신뢰성은 점점 더 중요해지고 있으며, Haiku 4.5는 이러한 요구 사항을 충족하기 위한 Anthropic의 노력을 보여줍니다. 낮은 오정렬 행동 비율은 모델이 의도하지 않은 방식으로 작동하거나 유해한 콘텐츠를 생성할 위험이 적다는 것을 의미하며, 이는 기업 및 공공 부문에서 AI를 도입하는 데 있어 중요한 고려 사항입니다.
+
+이러한 안전성 강화는 모델의 배포와 활용 범위를 넓히는 데 결정적인 역할을 합니다. 특히 민감한 정보나 중요한 의사 결정 과정에 AI가 개입하는 경우, 안전성 검증은 필수적입니다. Haiku 4.5는 이러한 측면에서 신뢰할 수 있는 선택지를 제공하며, AI 윤리 및 거버넌스에 대한 논의가 활발한 현 시점에서 중요한 시사점을 던집니다.
+
+*   **광범위한 배포** – Claude API, Claude Code, Amazon Bedrock, Google Vertex AI를 통해 사용할 수 있으며, 비용 효율적인 실시간 추론(real-time reasoning)을 추구하는 개발자를 위한 Haiku 3.5 또는 Sonnet 4의 즉시 대체 가능한(drop-in replacement) 모델로 자리매김하고 있습니다.
+*   **벤치마크(Benchmarks)** – SWE-bench Verified, Terminal-Bench, τ²-Bench, AIME, OSWorld, MMMLU에서 Haiku 4.5는 도구 사용(tool use)이 활성화된 128K 사고 예산(thinking budgets)을 사용하여 강력한 정확도를 유지합니다.
+블로그

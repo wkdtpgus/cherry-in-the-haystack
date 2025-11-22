@@ -1,0 +1,49 @@
+저희의 224번째 에피소드에서는 지난주 주요 AI 뉴스 요약 및 토론을 다루며, 오늘날 기술 산업을 형성하는 최신 동향에 대한 심층적인 분석을 제공합니다. 이 콘텐츠는 2025년 10월 31일 녹화되었으며, Andrey Kurenkov가 진행하고 Gavin Purcell이 공동 진행했습니다 (AI For Humans 및 AndThen!을 확인해 보세요!). 또한, 기술 전문가 박선우가 진행하고 김민준이 편집한 2024년 11월 15일자 보고서의 내용도 포함되어 있습니다. 질문 및 피드백은 contact@lastweekinai.com 및/또는 hello@gladstone.ai 또는 저희 웹사이트를 통해 자유롭게 보내주세요.
+
+이번 에피소드 및 보고서에서는: OpenAI가 영리 목적 재편성(for-profit restructuring)을 완료하며 Microsoft와의 관계를 재정의하고 미래 투자를 확보했으며, 양자 컴퓨팅 또한 컴퓨팅 패러다임을 재정의하며 미래 투자를 확보했습니다. 한편, Qualcomm 및 기타 기술 대기업들은 Nvidia 및 AMD와 경쟁하기 위한 새로운 AI 칩(AI chips)을 발표하며 AI 하드웨어(AI hardware) 역량의 주요 발전을 알렸습니다. Amazon과 Google은 Anthropic과의 파트너십을 심화하여 AI 연구 및 애플리케이션(application) 강화를 위한 광범위한 컴퓨팅 자원(computing resources)을 제공합니다. 이러한 발전은 다양한 산업의 상당한 성장과 경쟁을 예고합니다. Cursor 2.0, CLAUDE 코딩 기능, Minimax의 오픈 소스(open-source) 옵션을 포함한 주요 AI 도구 및 모델(model)들이 출시 및 업데이트되었으며, 최신 보안 솔루션, 위협 인텔리전스 플랫폼, 그리고 오픈 소스(open-source) 보안 도구들 또한 출시 및 업데이트되었습니다. 이 새로운 AI 도구들은 코딩, 디자인 등을 위한 다양한 기능을 제공합니다. OpenAI가 저작권이 있는 자료 사용과 관련하여 작가들로부터 소송에 직면함에 따라 AI 저작권(copyright) 문제에 대한 법적 분쟁이 지속되고 있으며, Universal Music Group은 AI 음악 스타트업(startup) UDO와의 저작권 소송(copyright suit)을 합의하고 AI 생성 음악에 대한 라이선스 모델(licensed model)로 전환했습니다. 이러한 변화는 저작권(copyright), 데이터 주권 및 윤리적 사용이 여전히 매우 논쟁적인 문제로 남아있는 AI 생성 콘텐츠 및 디지털 콘텐츠 분야의 광범위한 도전과 적응을 반영합니다.
+
+타임스탬프:
+(00:00:10) 소개 / 잡담
+(00:02:44) 뉴스 미리보기: 도구 및 앱(Tools & Apps)
+(00:03:44) Cursor 2.0, Composer 모델(Composer model) 및 병렬 에이전트(parallel agents)를 통해 자체 AI로 전환
+(00:07:44) Anthropic, Claude Code를 웹에 도입 | TechCrunch
+(00:10:01) Microsoft의 Mico, AI 시대의 'Clippy' | TechCrunch
+(00:14:20) Anthropic의 Claude, 업그레이드된 메모리 기능(memory features)으로 ChatGPT 및 Gemini와 어깨를 나란히 | The Verge
+(00:18:46) Canva, 자체 디자인 모델(design model) 출시 및 플랫폼에 새로운 AI 기능 추가 | TechCrunch
+(00:21:07) Elon Musk의 Grokipedia, Wikipedia의 AI 복제 페이지로 출시 | The Verge
+애플리케이션 및 비즈니스(Applications & Business)
+(00:25:10) OpenAI, 영리 목적 재편성(for-profit restructuring) 완료 및 Microsoft와 새로운 계약 체결 | The Verge
+(00:31:25) Qualcomm, AMD 및 Nvidia와 경쟁할 AI 칩(AI chips) 발표
+(00:34:02) Amazon, Anthropic의 Claude 모델(model)을 구동할 AI 인프라 프로젝트(AI infrastructure project) 착수 | Reuters
+(00:38:52) Google과 Anthropic, 수백억 달러 규모의 클라우드 계약(cloud deal) 발표
+(00:39:46) Google, Ambani의 Reliance와 파트너십을 맺고 인도 수백만 Jio 사용자에게 무료 AI Pro 액세스(access) 제공 | TechCrunch
+프로젝트 및 오픈 소스(Projects & Open Source)
+(00:41:17) MiniMax, MiniMax M2 출시: Claude Sonnet 가격의 8%로 최대 코딩 및 에이전트 워크플로우(agentic workflows)를 위해 구축된 미니 오픈 모델(open model), 약 2배 더 빠름 - MarkTechPost
+(00:45:22) [2510.25741] 루프형 언어 모델(Looped Language Models)을 통한 잠재 추론(Latent Reasoning) 확장
+(00:47:59) OpenAI의 gpt-oss-safeguard, 개발자들이 더 안전한 AI를 구축할 수 있도록 지원 - Help Net Security 연구 및 발전(Research & Advancements)
+(00:49:51) [2510.15103] 희소 메모리 미세 조정(Sparse Memory Finetuning)을 통한 지속 학습(Continual Learning)
+(00:54:01) [2510.18091] 적응형 패치 크기(Adaptive Patch Sizes)를 통한 비전 트랜스포머(Vision Transformers) 가속화
+(01:00:00) [2510.18871] LLM(LLMs)은 깊이(depth)를 어떻게 활용하는가?
+정책 및 안전(Policy & Safety)
+(01:01:07) AMD, 에너지부(Department of Energy)와 10억 달러 규모의 AI 슈퍼컴퓨터(AI supercomputer) 파트너십 발표 | The Verge
+(01:03:03) 합성 미디어 및 예술(Synthetic Media & Art)
+(01:09:34) Universal, 저작권 소송(copyright suit) 합의 후 AI 스타트업(startup) Udio와 파트너십 | The Verge
+(01:16:04) OpenAI, 미국 작가들의 저작권 소송(copyright lawsuit) 일부 기각 요청 패소 | Reuters
+
+**양자 컴퓨팅의 새로운 지평**
+양자 컴퓨팅은 기존의 컴퓨팅 한계를 뛰어넘는 새로운 가능성을 제시하고 있습니다. 최근 양자 시스템의 오류 보정 기술이 크게 발전하며, 복잡한 문제 해결에 대한 실현 가능성이 높아지고 있습니다. 연구자들은 양자 얽힘(quantum entanglement)을 활용하여 암호 해독, 신소재 개발, 의약품 설계 등 다양한 분야에서 혁신적인 돌파구를 마련하고 있습니다. 그러나 아직 상용화까지는 많은 기술적 과제가 남아있으며, 전 세계 정부와 기업들은 이 분야에 막대한 투자를 아끼지 않고 있습니다.
+
+**지속 가능한 기술의 부상**
+기후 변화에 대한 위기의식이 고조되면서, 기술 산업에서도 지속 가능한 솔루션에 대한 관심이 증폭되고 있습니다. 친환경 데이터 센터 구축 기술, 에너지 효율적인 하드웨어 설계, 그리고 재생 가능 에너지원을 활용한 컴퓨팅 인프라가 주목받고 있습니다. 주요 에너지 기업들은 친환경 기술 개발을 통해 지속 가능한 미래를 위한 주요 발전을 알렸습니다. 또한, 블록체인 기술을 활용한 탄소 배출권 거래 시스템이나 스마트 그리드(smart grid) 관리 시스템 등, IT 기술이 환경 문제 해결에 기여하는 방식 또한 다양하게 모색되고 있습니다.
+
+**생명 공학 및 맞춤형 의료의 혁신**
+생명 공학 분야는 유전체 편집 기술(CRISPR)의 발전과 함께 맞춤형 의료 시대를 열고 있습니다. 질병 진단, 치료, 예방에 있어 개인의 유전적 특성을 고려한 접근 방식이 가능해지면서, 의료 패러다임이 근본적으로 변화하고 있습니다. 주요 제약 회사들은 유전체 분석 기술과의 파트너십을 심화하여 맞춤형 치료법 강화를 위한 광범위한 연구 자원을 제공합니다. 정밀 의학(precision medicine)은 암과 같은 난치병 치료에 새로운 희망을 제시하며, 환자 개개인에게 최적화된 치료 계획을 수립하는 데 기여하고 있습니다.
+
+**사이버 보안 위협과 방어 전략**
+디지털 전환이 가속화됨에 따라 사이버 보안의 중요성은 더욱 커지고 있습니다. 랜섬웨어 공격, 데이터 유출, 국가 지원 해킹 등 다양한 위협에 맞서 기업과 정부는 새로운 방어 전략을 모색하고 있습니다. 최신 보안 솔루션, 위협 인텔리전스 플랫폼, 그리고 오픈 소스(open-source) 보안 도구들이 출시 및 업데이트되었습니다. 제로 트러스트(zero-trust) 아키텍처, 인공지능 기반의 위협 탐지 시스템, 그리고 블록체인을 활용한 데이터 무결성(data integrity) 확보 기술 등이 활발히 연구 및 적용되고 있습니다.
+
+**우주 탐사의 새로운 시대**
+민간 기업들이 주도하는 우주 탐사의 새로운 시대가 열리고 있습니다. 달 탐사, 화성 이주 계획, 그리고 소행성 자원 채굴 등 과거에는 상상하기 어려웠던 프로젝트들이 현실화되고 있습니다. 민간 우주 기업들이 규제 문제와 관련하여 우주 자원 활용에 대한 법적 분쟁이 지속되고 있습니다. 이러한 움직임은 우주 경제(space economy)라는 새로운 시장을 창출하며, 위성 통신, 우주 관광 등 다양한 비즈니스 기회를 제공하고 있습니다. 국제 협력과 법적 프레임워크 구축 또한 중요한 과제로 부상하고 있습니다.
+
+**디지털 윤리와 데이터 주권**
+기술의 발전과 함께 디지털 윤리 문제는 더욱 복잡해지고 있습니다. 개인 정보 보호, 알고리즘 편향성, 그리고 디지털 격차(digital divide) 해소 등은 기술 개발의 중요한 고려 사항이 되고 있습니다. 주요 디지털 플랫폼들은 개인 정보 보호 소송(privacy suit)을 합의하고, 사용자 데이터 보호 모델(data protection model)로 전환했습니다. 사용자들은 자신의 데이터에 대한 통제권을 요구하고 있으며, 이는 데이터 주권(data sovereignty) 개념의 중요성을 부각시키고 있습니다. 기술 기업들은 사회적 책임을 다하며, 투명하고 윤리적인 기술 개발을 위한 노력을 지속해야 할 것입니다.

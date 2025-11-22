@@ -1,0 +1,331 @@
+두 달은 정말 격렬한 시간이었습니다. AI 연구 분야에서는 또다시 많은 발전이 있었고, AI에 두 개의 노벨상이 수여되었으며, 여러 흥미로운 연구 논문이 발표되었습니다. 그중에서도 Meta AI는 최신 Llama 3.2 모델을 출시했는데, 여기에는 1B 및 3B 대규모 언어 모델(large language model)을 위한 공개 가중치(open-weight) 버전과 두 개의 멀티모달 모델(multimodal model)이 포함되어 있습니다. 이 글에서는 멀티모달 LLM(multimodal LLM)이 어떻게 작동하는지 설명하고자 합니다. 또한, 최근 몇 주 동안 발표된 약 12개의 다른 최신 멀티모달 논문과 모델(Llama 3.2 포함)을 검토하고 요약하여 그들의 접근 방식을 비교할 것입니다. (목차 메뉴를 보려면 왼쪽의 줄 스택을 클릭하세요.)
+
+다양한 입력 모달리티(input modality)(오디오, 텍스트, 이미지, 비디오)를 받아들이고 텍스트를 출력 모달리티(output modality)로 반환하는 멀티모달 LLM의 그림.
+
+하지만 시작하기 전에, 개인적으로 흥미로운 소식이 있습니다! 제 책 "Build A Large Language Model (From Scratch)"이 드디어 Amazon에서 구매 가능합니다. 이 책은 LLM의 내부 작동 방식을 깊이 이해하고자 하는 분들을 위해 고안되었습니다.
+
+[Build a Large Language Model (From Scratch) now available on Amazon]
+
+이 책을 쓰는 것은 엄청난 노력이 필요했고, 지난 2년 동안—특히 지난 몇 달 동안—많은 친절한 독자들이 피드백을 공유해주신 모든 지원과 동기 부여가 되는 피드백에 진심으로 감사드립니다. 여러분 모두에게 감사드리며, 저자로서 이 책이 여러분의 경력에 변화를 가져온다는 소식보다 더 큰 동기 부여는 없습니다! 책을 마치고 더 많은 것을 갈망하는 분들을 위해, 계속 지켜봐 주세요! 앞으로 몇 달 안에 GitHub 저장소에 보너스 콘텐츠를 추가할 예정입니다.
+
+추신. 만약 이 책을 읽으셨다면, 짧은 리뷰를 남겨주시면 정말 감사하겠습니다. 그것은 저희 저자들에게 정말 큰 도움이 됩니다!
+
+### 1. 멀티모달 LLM의 사용 사례
+
+멀티모달 LLM이란 무엇일까요? 서론에서 암시했듯이, 멀티모달 LLM은 여러 유형의 입력을 처리할 수 있는 대규모 언어 모델(large language model)이며, 여기서 각 "모달리티(modality)"는 텍스트(기존 LLM처럼), 소리, 이미지, 비디오 등과 같은 특정 유형의 데이터를 의미합니다. 간단히 말해, 우리는 주로 텍스트 입력과 함께 이미지 모달리티(image modality)에 초점을 맞출 것입니다.
+
+멀티모달 LLM의 고전적이고 직관적인 응용 분야는 이미지 캡셔닝(image captioning)입니다. 입력 이미지를 제공하면 모델이 아래 그림과 같이 이미지에 대한 설명을 생성합니다.
+
+밈(meme)을 설명하는 멀티모달 LLM의 사용 예시.
+
+물론, 다른 많은 사용 사례가 있습니다. 예를 들어, 제가 가장 좋아하는 것 중 하나는 PDF 표에서 정보를 추출하여 LaTeX 또는 Markdown으로 변환하는 것입니다. 이 외에도 멀티모달 LLM은 다양한 분야에서 혁신적인 가능성을 제시합니다. 시각적 질문 응답(Visual Question Answering, VQA)은 사용자가 이미지에 대한 질문을 하면 모델이 텍스트로 답변을 제공하는 기능으로, 정보 검색 및 교육 분야에서 유용하게 활용될 수 있습니다. 또한, 자율 주행 차량(autonomous vehicles)에서는 카메라와 센서 데이터를 분석하여 주변 환경을 이해하고 의사 결정을 내리는 데 필수적입니다. 의료 분야에서는 X-레이, MRI와 같은 의료 영상과 환자 기록 텍스트를 결합하여 질병 진단 및 치료 계획 수립을 지원하는 데 기여할 수 있습니다. 로봇 공학(robotics)에서는 시각 및 촉각 데이터를 통해 로봇이 물리적 세계와 상호 작용하고 복잡한 작업을 수행하도록 돕습니다. 이처럼 멀티모달 LLM은 단순한 이미지 분석을 넘어 현실 세계의 복잡한 문제를 해결하는 데 중요한 역할을 하고 있습니다.
+
+### 2. 멀티모달 LLM 구축을 위한 일반적인 접근 방식
+
+멀티모달 LLM을 구축하는 데는 두 가지 주요 접근 방식이 있습니다. 방법 A: 통합 임베딩 디코더 아키텍처(Unified Embedding Decoder Architecture) 접근 방식; 방법 B: 교차 모달리티 어텐션 아키텍처(Cross-modality Attention Architecture) 접근 방식. (참고로, 저는 이러한 기술에 대한 공식 용어가 아직 존재한다고 생각하지 않지만, 혹시 아는 것이 있다면 알려주세요. 예를 들어, 더 간결한 설명은 "디코더 전용(decoder-only)" 및 "교차 어텐션 기반(cross-attention-based)" 접근 방식일 수 있습니다.)
+
+위 그림에서 보듯이, 통합 임베딩 디코더 아키텍처(Unified Embedding-Decoder Architecture)는 GPT-2 또는 Llama 3.2와 같은 수정되지 않은 LLM 아키텍처와 매우 유사하게 단일 디코더 모델(decoder model)을 활용합니다. 이 접근 방식에서는 이미지가 원래 텍스트 토큰(text token)과 동일한 임베딩 크기(embedding size)를 가진 토큰으로 변환되어, LLM이 연결(concatenation) 후 텍스트 및 이미지 입력 토큰(image input token)을 함께 처리할 수 있도록 합니다. 교차 모달리티 어텐션 아키텍처(Cross-Modality Attention Architecture)는 교차 어텐션 메커니즘(cross-attention mechanism)을 사용하여 어텐션 레이어(attention layer) 내에서 이미지 및 텍스트 임베딩(embedding)을 직접 통합합니다. 이 두 가지 접근 방식은 멀티모달 정보를 언어 모델에 통합하는 방식에서 근본적인 차이를 보입니다. 방법 A는 다양한 모달리티의 데이터를 공통 임베딩 공간(common embedding space)으로 변환하여 단일 시퀀스로 언어 모델에 입력하는 방식입니다. 마치 여러 언어를 하나의 보편적인 언어로 번역하여 LLM이 이해하도록 하는 것과 같습니다. 반면 방법 B는 각 모달리티를 개별적으로 처리한 후, 언어 모델의 어텐션 메커니즘을 통해 모달리티 간의 상호작용을 학습하는 방식입니다. 이는 마치 통역가가 두 언어를 실시간으로 연결하여 대화를 이어가는 방식과 유사합니다.
+
+다음 섹션에서는 이러한 방법이 개념적 수준(conceptual level)에서 어떻게 작동하는지 살펴볼 것입니다. 그런 다음, 멀티모달 LLM에 대한 최신 연구 논문을 살펴보고 실제 적용 방식을 알아볼 것입니다.
+
+#### 2.1 방법 A: 통합 임베딩 디코더 아키텍처
+
+아래 그림에 다시 설명된 통합 임베딩 디코더 아키텍처(unified embedding decoder architecture)부터 시작하겠습니다.
+
+이미지 토큰(image token) 및 텍스트 토큰(text token) 임베딩(embedding)으로 구성된 입력을 받는 수정되지 않은 디코더 스타일 LLM(GPT-2, Phi-3, Gemma 또는 Llama 3.2와 같은)인 통합 임베딩 디코더 아키텍처의 그림.
+
+통합 임베딩 디코더 아키텍처(unified embedding-decoder architecture)에서 이미지는 표준 텍스트 전용 LLM(text-only LLM)에서 입력 텍스트가 임베딩으로 변환되는 방식과 유사하게 임베딩 벡터(embedding vector)로 변환됩니다. 텍스트를 처리하는 일반적인 텍스트 전용 LLM의 경우, 텍스트 입력은 일반적으로 토큰화(tokenized)된 다음(예: 바이트 쌍 인코딩(Byte-Pair Encoding) 사용), 아래 그림과 같이 임베딩 레이어(embedding layer)를 통과합니다.
+
+텍스트를 토큰화(tokenizing)하고 토큰 임베딩 벡터(token embedding vector)로 변환하는 표준 프로세스 그림. 이 벡터는 훈련(training) 및 추론(inference) 중에 LLM으로 전달됩니다.
+
+##### 2.1.1 이미지 인코더(Image encoders)의 발전
+
+이전 섹션에서 언급된 비전 트랜스포머(Vision Transformer, ViT)는 이미지 인코더의 대표적인 예시입니다. 그러나 최근에는 ViT 외에도 다양한 이미지 인코더들이 개발되어 멀티모달 LLM의 성능을 향상시키고 있습니다. 예를 들어, 스윈 트랜스포머(Swin Transformer)는 계층적 특징 표현(hierarchical feature representation)을 통해 다양한 스케일(scale)의 이미지 정보를 효율적으로 처리하며, 컨볼루션 신경망(Convolutional Neural Network, CNN) 기반의 인코더(ResNet, EfficientNet 등)는 특정 유형의 이미지(예: 의료 영상)에서 여전히 강력한 성능을 보여줍니다. 이러한 이미지 인코더들은 사전 훈련된(pretrained) 대규모 이미지 데이터셋(ImageNet, JFT-300M 등)을 통해 시각적 특징을 효과적으로 추출하도록 학습됩니다.
+
+이미지를 이미지 패치 임베딩(image patch embedding)으로 인코딩하는 프로세스 그림.
+
+##### 2.1.2 선형 투영(linear projection) 모듈의 역할
+
+이전 그림에 표시된 "선형 투영(linear projection)"은 단일 선형 레이어(linear layer)(즉, 완전 연결 레이어(fully connected layer))로 구성됩니다. 이 레이어의 목적은 벡터로 평탄화된 이미지 패치(image patch)를 트랜스포머 인코더(transformer encoder)와 호환되는 임베딩 크기(embedding size)로 투영하는 것입니다. 이 선형 투영(linear projection)은 아래 그림에 설명되어 있습니다.
+
+256차원 벡터로 평탄화된 이미지 패치(image patch)가 768차원 벡터로 상향 투영됩니다.
+
+256차원에서 768차원 임베딩 공간(embedding space)으로 평탄화된 이미지 패치(image patch)를 투영하는 선형 투영(linear projection) 레이어 그림. 이 선형 투영 레이어는 단순히 차원을 맞추는 역할뿐만 아니라, 이미지 인코더가 추출한 시각적 특징을 언어 모델이 이해할 수 있는 "언어적" 표현으로 변환하는 중요한 다리 역할을 합니다. 때로는 단일 선형 레이어 대신 다층 퍼셉트론(Multi-Layer Perceptron, MLP)이나 더 복잡한 어댑터(adapter) 구조를 사용하여 이미지와 텍스트 임베딩 간의 정렬(alignment)을 더욱 정교하게 수행하기도 합니다. 예를 들어, 일부 모델에서는 Q-Former와 같은 질의 기반(query-based) 아키텍처를 사용하여 이미지 특징에서 LLM에 필요한 정보를 선택적으로 추출하기도 합니다.
+
+코드 예시를 선호하는 분들을 위해, PyTorch 코드에서는 이미지 패치(image patch)에 대한 선형 투영(linear projection)을 다음과 같이 구현할 수 있습니다.
+
+```python
+import torch
+
+class PatchProjectionLayer(torch.nn.Module):
+    def __init__(self, patch_size, num_channels, embedding_dim):
+        super().__init__()
+        self.patch_size = patch_size
+        self.num_channels = num_channels
+        self.embedding_dim = embedding_dim
+        self.projection = torch.nn.Linear(
+            patch_size * patch_size * num_channels,
+            embedding_dim
+        )
+
+    def forward(self, x):
+        batch_size, num_patches, channels, height, width = x.size()
+        x = x.view(batch_size, num_patches, -1) # Flatten each patch
+        x = self.projection(x) # Project each flattened patch
+        return x
+
+# Example Usage:
+batch_size = 1
+num_patches = 9 # Total patches per image
+patch_size = 16 # 16x16 pixels per patch
+num_channels = 3 # RGB image
+embedding_dim = 768 # Size of the embedding vector
+
+projection_layer = PatchProjectionLayer(patch_size, num_channels, embedding_dim)
+
+patches = torch.rand(
+    batch_size, num_patches, num_channels, patch_size, patch_size
+)
+
+projected_embeddings = projection_layer(patches)
+print(projected_embeddings.shape)
+# This prints
+# torch.Size([1, 9, 768])
+```
+
+혹시 제 "Machine Learning Q and AI" 책을 읽으셨다면, 선형 레이어(linear layer)를 수학적으로 동등하게 구현할 수 있는 컨볼루션 연산(convolution operation)으로 대체하는 방법이 있다는 것을 아실 것입니다. 여기서는 패치(patch) 생성과 투영(projection)을 두 줄의 코드로 결합할 수 있어 특히 유용합니다.
+
+```python
+layer = torch.nn.Conv2d(3, 768, kernel_size=(16, 16), stride=(16, 16))
+image = torch.rand(batch_size, 3, 48, 48)
+projected_patches = layer(image)
+print(projected_patches.flatten(-2).transpose(-1, -2).shape)
+# This prints
+# torch.Size([1, 9, 768])
+```
+
+##### 2.1.3 이미지 대 텍스트 토큰화(tokenization)
+
+이제 이미지 인코더(image encoder)(및 인코더의 일부인 선형 투영(linear projection))의 목적에 대해 간략하게 논의했으므로, 이전의 텍스트 토큰화(text tokenization) 비유로 돌아가 아래 그림에 묘사된 텍스트 및 이미지 토큰화(tokenization)와 임베딩(embedding)을 나란히 살펴보겠습니다.
+
+이미지 토큰화(tokenization) 및 임베딩(embedding)(왼쪽)과 텍스트 토큰화(tokenization) 및 임베딩(embedding)(오른쪽)을 나란히 비교.
+
+위 그림에서 보듯이, 저는 이미지 인코더(image encoder) 뒤에 추가 프로젝터 모듈(projector module)을 포함했습니다. 이 프로젝터(projector)는 일반적으로 이전에 설명한 것과 유사한 또 다른 선형 투영(linear projection) 레이어일 뿐입니다. 그 목적은 아래 그림에 설명된 대로 이미지 인코더(image encoder) 출력을 임베딩된 텍스트 토큰(text token)의 차원과 일치하는 차원으로 투영하는 것입니다. (나중에 보겠지만, 프로젝터(projector)는 때때로 어댑터(adapter), 어댑터(adaptor) 또는 커넥터(connector)라고도 불립니다.)
+
+이미지 토큰화(tokenization)와 텍스트 토큰화(tokenization)의 또 다른 나란한 비교. 여기서 프로젝터(projector)의 역할은 텍스트 토큰 임베딩(text token embedding) 차원을 일치시키는 것입니다.
+
+이제 이미지 패치 임베딩(image patch embedding)이 텍스트 토큰 임베딩(text token embedding)과 동일한 임베딩 차원(embedding dimension)을 가지므로, 이 섹션 시작 부분의 그림에 표시된 대로 LLM의 입력으로 간단히 연결(concatenate)할 수 있습니다. 아래는 더 쉽게 참조할 수 있도록 동일한 그림입니다.
+
+이미지 패치 토큰(image patch token)을 텍스트 토큰 임베딩(text token embedding)과 동일한 차원으로 투영한 후, 표준 LLM의 입력으로 간단히 연결(concatenate)할 수 있습니다.
+
+이미지 인코더(image encoder) 없이 이미지 패치(image patch)에서 직접 작동하는 Fuyu 멀티모달 LLM의 주석이 달린 그림. (https://www.adept.ai/blog/fuyu-8b에서 주석이 달린 그림.)
+
+##### 2.1.4 Fuyu: 통합 디코더 아키텍처의 간결한 구현
+
+Fuyu 모델은 통합 임베딩 디코더 아키텍처(Unified Embedding Decoder Architecture)의 흥미로운 변형을 보여줍니다. 대부분의 모델이 사전 훈련된(pretrained) 복잡한 이미지 인코더(image encoder)를 사용하는 반면, Fuyu는 이미지 패치(image patch)를 직접 선형 투영(linear projection) 레이어로 전달하여 자체적인 이미지 임베딩을 학습합니다. 이러한 "인코더 없는(encoder-less)" 접근 방식은 아키텍처를 크게 단순화하고, 이미지 인코더와 LLM 간의 복잡한 정렬(alignment) 문제를 줄여줍니다. 이는 훈련 효율성을 높이고, 모델이 텍스트와 이미지 정보를 더욱 유기적으로 결합할 수 있도록 돕는 장점이 있습니다. Fuyu의 이러한 설계는 멀티모달 LLM의 개발 방향에 있어 효율성과 단순성의 중요성을 강조합니다.
+
+#### 2.2 방법 B: 교차 모달리티 어텐션 아키텍처(Cross-Modality Attention Architecture)
+
+이제 멀티모달 LLM을 구축하기 위한 통합 임베딩 디코더 아키텍처(unified embedding decoder architecture) 접근 방식에 대해 논의하고 이미지 인코딩(image encoding)의 기본 개념을 이해했으므로, 아래 그림에 요약된 교차 어텐션(cross-attention)을 통한 멀티모달 LLM 구현의 대안적인 방법에 대해 이야기해 보겠습니다.
+
+멀티모달 LLM 구축을 위한 교차 모달리티 어텐션 아키텍처(Cross-Modality Attention Architecture) 접근 방식의 그림.
+
+위 그림에 묘사된 교차 모달리티 어텐션 아키텍처(Cross-Modality Attention Architecture) 방법에서는 이전에 논의한 것과 동일한 이미지 인코더(image encoder) 설정을 여전히 사용합니다. 이 접근 방식의 핵심은 텍스트와 이미지 임베딩을 직접 연결하는 대신, 트랜스포머 아키텍처(Transformer architecture)의 교차 어텐션 메커니즘(cross-attention mechanism)을 활용하여 두 모달리티 간의 상호작용을 모델링하는 것입니다. 텍스트 시퀀스가 쿼리(query) 역할을 하고, 이미지 특징(image features)이 키(key)와 값(value) 역할을 하여, 텍스트가 이미지의 어떤 부분에 "주목(attend)"해야 하는지를 학습합니다. 이는 이미지의 모든 픽셀 정보를 LLM에 직접 주입하는 대신, 텍스트와 관련된 시각적 정보만을 효율적으로 추출하고 통합할 수 있게 합니다. 이러한 방식은 특히 긴 이미지 시퀀스나 고해상도 이미지를 처리할 때 계산 효율성(computational efficiency) 측면에서 큰 이점을 가집니다. 또한, 언어 모델의 핵심 구조를 덜 변경하면서 멀티모달 기능을 추가할 수 있어, 기존의 강력한 텍스트 전용 LLM의 성능을 보존하는 데 유리합니다. 이 아이디어는 관련이 있으며, 아래 그림에 강조된 2017년 "Attention Is All You Need" 논문의 오리지널 트랜스포머 아키텍처(original transformer architecture)로 거슬러 올라갑니다.
+
+오리지널 트랜스포머 아키텍처(original transformer architecture)에 사용된 교차 어텐션 메커니즘(cross-attention mechanism)의 고수준 그림. ("Attention Is All You Need" 논문에서 주석이 달린 그림: https://arxiv.org/abs/1706.03762.)
+
+위 그림에 묘사된 오리지널 "Attention Is All You Need" 트랜스포머(transformer)는 원래 언어 번역을 위해 개발되었습니다. 따라서 번역할 문장을 받아들이고 텍스트 디코더(text decoder)(그림의 오른쪽 부분)를 통해 번역을 생성하는 텍스트 인코더(text encoder)(그림의 왼쪽 부분)로 구성됩니다. 멀티모달 LLM의 맥락에서 인코더(encoder)는 텍스트 인코더(text encoder) 대신 이미지 인코더(image encoder)이지만, 동일한 아이디어가 적용됩니다.
+
+교차 어텐션(cross-attention)은 어떻게 작동할까요? 일반적인 셀프 어텐션 메커니즘(self-attention mechanism) 내부에서 일어나는 일의 개념적 그림을 살펴보겠습니다.
+
+일반적인 셀프 어텐션 메커니즘(self-attention mechanism)의 개요. (이 흐름은 일반적인 멀티 헤드 어텐션 모듈(multi-head attention module)의 헤드 중 하나를 묘사합니다.)
+
+위 그림에서 x는 입력이고, Wq는 쿼리(queries, Q)를 생성하는 데 사용되는 가중치 행렬(weight matrix)입니다. 유사하게, K는 키(keys)를 나타내고, V는 값(values)을 나타냅니다. A는 어텐션 스코어 행렬(attention scores matrix)을 나타내고, Z는 출력 컨텍스트 벡터(output context vector)로 변환된 입력(x)입니다. (이것이 혼란스럽다면, 제 책 "Build a Large Language Model from Scratch"의 3장에서 포괄적인 소개(comprehensive introduction)를 찾아보는 것이 도움이 될 수 있습니다. 또는 제 기사 "Understanding and Coding Self-Attention, Multi-Head Attention, Cross-Attention, and Causal-Attention in LLMs"도 도움이 될 수 있습니다.)
+
+교차 어텐션(cross-attention)에서는 셀프 어텐션(self-attention)과 달리 다음 그림에 설명된 대로 두 가지 다른 입력 소스(input source)가 있습니다.
+
+두 가지 다른 입력 x1과 x2가 있을 수 있는 교차 어텐션(cross attention) 그림.
+
+이전 두 그림에서 설명했듯이, 셀프 어텐션(self-attention)에서는 동일한 입력 시퀀스(input sequence)로 작업합니다. 교차 어텐션(cross-attention)에서는 두 가지 다른 입력 시퀀스(input sequence)를 혼합하거나 결합합니다. "Attention Is All You Need" 논문의 오리지널 트랜스포머 아키텍처(original transformer architecture)의 경우, 두 입력 x1과 x2는 왼쪽의 인코더 모듈(encoder module)이 반환하는 시퀀스(x2)와 오른쪽의 디코더 부분(decoder part)이 처리하는 입력 시퀀스(x1)에 해당합니다. 멀티모달 LLM의 맥락에서 x2는 이미지 인코더(image encoder)의 출력입니다. (쿼리(queries)는 일반적으로 디코더(decoder)에서 오고, 키(keys)와 값(values)은 일반적으로 인코더(encoder)에서 온다는 점에 유의하세요.)
+
+교차 어텐션(cross-attention)에서 두 입력 시퀀스 x1과 x2는 다른 수의 요소를 가질 수 있다는 점에 유의하세요. 그러나 임베딩 차원(embedding dimension)은 일치해야 합니다. x1 = x2로 설정하면 이는 셀프 어텐션(self-attention)과 동일합니다.
+
+### 3. 멀티모달 LLM 훈련의 전략과 고려사항
+
+이제 두 가지 주요 멀티모달 설계 선택에 대해 조금 이야기했으므로, 아래 그림에 요약된 모델 훈련(model training) 중 세 가지 주요 구성 요소를 어떻게 다루는지 간략하게 이야기해 보겠습니다.
+
+멀티모달 LLM의 다양한 구성 요소 개요. 1-3번으로 표시된 구성 요소는 멀티모달 훈련(training) 프로세스 중에 고정되거나 고정되지 않을 수 있습니다.
+
+전통적인 텍스트 전용 LLM(text-only LLM) 개발과 유사하게, 멀티모달 LLM 훈련(training)도 사전 훈련(pretraining)과 명령어 미세 조정(instruction finetuning)의 두 단계를 포함합니다. 그러나 처음부터 시작하는 것과 달리, 멀티모달 LLM 훈련(training)은 일반적으로 사전 훈련(pretrained)되고 명령어 미세 조정(instruction-finetuned)된 텍스트 전용 LLM을 기본 모델(base model)로 시작합니다.
+
+이미지 인코더(image encoder)의 경우, CLIP이 일반적으로 사용되며 전체 훈련(training) 프로세스 동안 변경되지 않는 경우가 많지만, 나중에 살펴볼 예외도 있습니다. 사전 훈련(pretraining) 단계에서 LLM 부분을 고정하는 것도 일반적이며, 프로젝터(projector)—선형 레이어(linear layer) 또는 작은 다층 퍼셉트론(multi-layer perceptron)—훈련(training)에만 집중합니다. 프로젝터(projector)의 학습 능력이 제한적이고 일반적으로 한두 개의 레이어(layer)로만 구성되어 있기 때문에, 더 포괄적인 업데이트를 허용하기 위해 멀티모달 명령어 미세 조정(multimodal instruction finetuning)(2단계) 동안 LLM이 종종 고정 해제됩니다. 그러나 교차 어텐션 기반(cross-attention-based) 모델(방법 B)에서는 교차 어텐션 레이어(cross-attention layer)가 전체 훈련(training) 프로세스 동안 고정 해제된다는 점에 유의하세요.
+
+두 가지 주요 접근 방식(방법 A: 통합 임베딩 디코더 아키텍처(Unified Embedding Decoder Architecture) 및 방법 B: 교차 모달리티 어텐션 아키텍처(Cross-modality Attention Architecture))을 소개한 후, 어떤 것이 더 효과적인지 궁금할 수 있습니다. 답은 특정 트레이드오프(trade-off)에 따라 달라집니다. 통합 임베딩 디코더 아키텍처(Unified Embedding Decoder Architecture)(방법 A)는 LLM 아키텍처(architecture) 자체에 어떤 수정도 필요하지 않으므로 일반적으로 구현하기 더 쉽습니다. 교차 모달리티 어텐션 아키텍처(Cross-modality Attention Architecture)(방법 B)는 추가 이미지 토큰(image token)으로 입력 컨텍스트(input context)를 과부하하지 않고 대신 교차 어텐션 레이어(cross-attention layer)에서 나중에 도입하기 때문에 종종 계산 효율성(computational efficiency)이 더 높은 것으로 간주됩니다. 또한, 이 접근 방식은 훈련(training) 중에 LLM 매개변수(parameter)가 고정된 상태로 유지되면 오리지널 LLM의 텍스트 전용 성능(text-only performance)을 유지합니다. 모델링 성능(modeling performance) 및 응답 품질(response quality)에 대한 논의는 NVIDIA의 NVLM 논문을 논의할 다음 섹션에서 다시 다룰 것입니다.
+
+최근에는 이러한 훈련 과정을 더욱 효율적으로 만들기 위한 다양한 기법들이 연구되고 있습니다. 특히, 매개변수 효율적 미세 조정(Parameter-Efficient Fine-Tuning, PEFT) 기법들은 멀티모달 LLM의 막대한 매개변수 수를 고려할 때 매우 중요합니다. LoRA(Low-Rank Adaptation)나 QLoRA와 같은 PEFT 방법은 전체 모델의 가중치를 업데이트하는 대신, 작은 수의 추가 매개변수만을 훈련시켜 계산 비용을 크게 절감하면서도 성능 저하를 최소화합니다. 이는 멀티모달 모델의 접근성을 높이고 더 많은 연구자들이 혁신적인 모델을 개발할 수 있도록 돕습니다.
+
+또한, 멀티모달 데이터셋의 중요성도 간과할 수 없습니다. LAION-5B, CC3M/12M, LLaVA-Instruct와 같은 대규모 멀티모달 데이터셋은 모델이 다양한 시각적 및 텍스트적 개념을 학습하는 데 필수적입니다. 하지만 이러한 데이터셋을 구축하고 큐레이션(curation)하는 것은 엄청난 비용과 노력이 필요하며, 데이터의 편향성(bias)이나 노이즈(noise) 문제 또한 중요한 도전 과제입니다. 훈련 과정에서 사용되는 손실 함수(loss function)도 중요한데, 이미지와 텍스트 간의 관계를 학습하기 위한 대조 학습(contrastive learning), 이미지 특징 재구성(reconstruction loss), 캡셔닝(captioning)을 위한 교차 엔트로피 손실(cross-entropy loss) 등이 복합적으로 사용되어 모델의 성능을 최적화합니다.
+
+이것으로 멀티모달 LLM에 대한 다소 광범위한 소개가 끝났습니다. 이 글을 쓰면서, 논의가 처음 계획했던 것보다 길어졌다는 것을 깨달았고, 아마도 이 시점에서 글을 마무리하는 것이 좋을 것 같습니다. 그러나 실용적인 관점을 제공하기 위해 이러한 접근 방식을 구현하는 몇 가지 최신 연구 논문을 살펴보는 것이 좋을 것입니다. 따라서 이 글의 나머지 섹션에서는 이러한 논문들을 탐구할 것입니다.
+
+### 4. 최신 멀티모달 모델 및 동향
+
+멀티모달 LLM 분야는 그야말로 눈부신 속도로 발전하고 있으며, 매주 새로운 모델과 방법론이 발표되고 있습니다. 이 섹션에서는 최근 주목할 만한 멀티모달 모델 몇 가지를 살펴보고, 이들이 어떤 혁신을 가져왔는지, 그리고 어떤 방향으로 발전하고 있는지 탐구해 보겠습니다.
+
+#### 4.1 Llama 3.2: 공개 가중치와 커뮤니티의 힘
+
+Meta AI가 출시한 Llama 3.2는 멀티모달 LLM의 대중화에 큰 기여를 했습니다. 특히 1B 및 3B 버전의 공개 가중치(open-weight)는 연구자와 개발자들이 최첨단 멀티모달 기술에 접근하고 이를 기반으로 새로운 애플리케이션을 구축할 수 있는 문을 열었습니다. Llama 3.2는 교차 어텐션 기반(cross-attention-based) 접근 방식을 사용하여 이미지와 텍스트를 효과적으로 통합합니다. 주목할 점은, 이미지 인코더(image encoder)를 업데이트하면서도 언어 모델(language model)의 매개변수(parameter)는 고정하여 텍스트 전용 기능(text-only capabilities)을 보존했다는 점입니다. 이는 텍스트 모델의 강력한 성능을 유지하면서 멀티모달 능력을 추가하려는 실용적인 접근 방식을 보여줍니다. Llama 3.2의 등장은 오픈 소스(open source) 커뮤니티 내에서 멀티모달 LLM 연구를 가속화하는 중요한 전환점이 되었습니다.
+
+#### 4.2 Molmo 및 PixMo: 최첨단 멀티모달 모델을 위한 공개 가중치(Open Weights) 및 공개 데이터(Open Data)
+
+Molmo 및 PixMo: 최첨단 멀티모달 모델을 위한 공개 가중치(Open Weights) 및 공개 데이터(Open Data) 논문(2024년 9월 25일)은 언어 전용 OLMo LLM과 유사하게 모델 가중치(model weight)뿐만 아니라 데이터셋(dataset)과 소스 코드(source code)까지 오픈 소스(open source)로 공개하겠다고 약속했기 때문에 주목할 만합니다. (이는 LLM 연구에 매우 중요합니다. 정확한 훈련 절차(training procedure)와 코드를 살펴보고, 어블레이션 연구(ablation study)를 수행하며, 동일한 데이터셋(dataset)에서 결과를 재현할 수 있기 때문입니다.)
+
+논문 제목에 두 가지 이름이 있는 이유가 궁금하다면, Molmo는 모델(멀티모달 오픈 언어 모델, Multimodal Open Language Model)을 의미하고, PixMo(Pixels for Molmo)는 데이터셋(dataset)입니다.
+
+Molmo 디코더 전용(decoder-only) 접근 방식(방법 A)의 그림. Molmo 및 PixMo: 최첨단 멀티모달 모델을 위한 공개 가중치(Open Weights) 및 공개 데이터(Open Data) 논문에서 각색된 주석이 달린 그림: https://www.arxiv.org/abs/2409.17146.
+
+위 그림에 설명된 대로, 이미지 인코더(image encoder)는 상용 비전 트랜스포머(off-the-shelf vision transformer), 특히 CLIP을 사용합니다. 여기서 "커넥터(connector)"라는 용어는 이미지 특징(image feature)을 언어 모델(language model)과 정렬하는 "프로젝터(projector)"를 의미합니다. Molmo는 여러 사전 훈련(pretraining) 단계를 피하고, 기본 LLM, 커넥터(connector), 이미지 인코더(image encoder)를 포함한 모든 매개변수(parameter)를 통합된 접근 방식(unified approach)으로 업데이트하는 간단한 파이프라인(pipeline)을 선택하여 훈련(training) 프로세스를 간소화합니다.
+
+Molmo 팀은 기본 LLM(base LLM)에 대해 여러 옵션을 제공합니다.
+*   OLMo-7B-1024 (완전히 오픈된 모델 백본(model backbone))
+*   OLMoE-1B-7B (전문가 혼합 아키텍처(mixture-of-experts architecture); 가장 효율적인 모델)
+*   Qwen2 7B (OLMo-7B-1024보다 성능이 좋은 공개 가중치(open-weight) 모델)
+*   Qwen2 72B (공개 가중치(open-weight) 모델이자 최고의 성능을 보이는 모델)
+
+#### 4.3 NVLM: 아키텍처 비교를 통한 통찰
+
+NVIDIA의 NVLM: 오픈 프론티어 클래스 멀티모달 LLM 논문(2024년 9월 17일)은 단일 접근 방식에 초점을 맞추기보다는 두 가지 방법, 즉 방법 A: 통합 임베딩 디코더 아키텍처(Unified Embedding Decoder Architecture) ("디코더 전용(decoder-only) 아키텍처(architecture)," NVLM-D)와 방법 B: 교차 모달리티 어텐션 아키텍처(Cross-Modality Attention Architecture) ("교차 어텐션 기반(cross-attention-based) 아키텍처(architecture)," NVLM-X)를 모두 탐구하기 때문에 특히 흥미롭습니다. 또한, 그들은 하이브리드 접근 방식(hybrid approach)(NVLM-H)을 개발하고 세 가지 방법 모두에 대한 공정한 비교(apples-to-apples comparison)를 제공합니다. NVIDIA의 NVLM 연구는 단일 모델의 성능 향상에 초점을 맞추기보다는, 멀티모달 LLM을 구축하는 두 가지 주요 아키텍처(방법 A와 방법 B)에 대한 심층적인 비교 분석을 제공했다는 점에서 매우 중요합니다. NVLM-D (디코더 전용), NVLM-X (교차 어텐션 기반), 그리고 NVLM-H (하이브리드)의 세 가지 변형을 통해 연구팀은 각 접근 방식의 장단점을 명확히 밝혔습니다. 예를 들어, NVLM-X는 고해상도 이미지 처리에서 계산 효율성을, NVLM-D는 OCR 관련 작업에서 높은 정확도를 보였습니다. 이러한 비교 연구는 개발자들이 특정 사용 사례와 제약 조건에 따라 가장 적합한 아키텍처를 선택하는 데 귀중한 지침을 제공합니다. 특히, 하이브리드 접근 방식의 성공은 두 가지 방법의 장점을 결합하여 더욱 강력하고 유연한 멀티모달 시스템을 구축할 가능성을 제시합니다.
+
+세 가지 멀티모달 접근 방식 개요. (NVLM: 오픈 프론티어 클래스 멀티모달 LLM 논문에서 주석이 달린 그림: https://arxiv.org/abs/2409.11402)
+
+아래 그림에 요약된 대로, NVLM-D는 방법 A에 해당하고, NVLM-X는 이전에 논의된 방법 B에 해당합니다. 하이브리드 모델(hybrid model)(NVLM-H)의 개념은 두 가지 방법의 장점을 결합하는 것입니다. 이미지 썸네일(image thumbnail)이 입력으로 제공된 다음, 더 미세한 고해상도 세부 정보(high-resolution detail)를 캡처하기 위해 교차 어텐션(cross-attention)을 통해 동적 패치 수(dynamic number of patches)가 전달됩니다.
+
+요약하자면, 연구팀은 다음을 발견했습니다.
+*   NVLM-X는 고해상도 이미지에 대해 우수한 계산 효율성(computational efficiency)을 보여줍니다.
+*   NVLM-D는 OCR 관련 작업(OCR-related task)에서 더 높은 정확도를 달성합니다.
+*   NVLM-H는 두 가지 방법의 장점을 결합합니다.
+
+Molmo 및 다른 접근 방식과 유사하게, 그들은 처음부터 멀티모달 모델(multimodal model)을 사전 훈련(pretraining)하는 대신 텍스트 전용 LLM(text-only LLM)으로 시작합니다(일반적으로 이것이 더 나은 성능을 보이기 때문입니다). 또한, 기본 LLM(base LLM) 대신 명령어 미세 조정된 LLM(instruction-tuned LLM)을 사용합니다. 특히, 백본 LLM(backbone LLM)은 Qwen2-72B-Instruct입니다(제가 아는 한, Molmo는 Qwen2-72B 기본 모델(base model)을 사용했습니다).
+
+NVLM-D 접근 방식에서 모든 LLM 매개변수(parameter)를 훈련(training)하는 동안, 그들은 NVLM-X의 경우 원래 LLM 매개변수(parameter)를 고정하고 사전 훈련(pretraining) 및 명령어 미세 조정(instruction finetuning) 모두에서 교차 어텐션 레이어(cross-attention layer)만 훈련(training)하는 것이 잘 작동한다는 것을 발견했습니다. 이미지 인코더(image encoder)의 경우, 일반적인 CLIP 모델을 사용하는 대신 InternViT-6B를 사용하며, 이는 모든 단계에서 고정된 상태로 유지됩니다. 프로젝터(projector)는 단일 선형 레이어(linear layer)가 아닌 다층 퍼셉트론(multilayer perceptron)입니다.
+
+#### 4.4 Qwen2-VL: 고해상도 이미지의 효율적인 처리
+
+이전 두 논문과 모델인 Molmo 및 NVLM은 Qwen2-72B LLM을 기반으로 했습니다. 이 논문에서 Qwen 연구팀 자체는 멀티모달 LLM인 Qwen2-VL: 모든 해상도에서 비전-언어 모델의 세계 인식 향상(2024년 10월 3일)을 발표합니다. 이 작업의 핵심은 그들의 이른바 "단순 동적 해상도(Naive Dynamic Resolution)" 메커니즘(여기서 "단순(naive)"이라는 용어는 의도적이며 "네이티브(native)"의 오타가 아니지만, "네이티브(native)"도 적합할 수 있습니다)입니다. 이 메커니즘은 모델이 간단한 다운샘플링(downsampling) 없이 다양한 해상도의 이미지를 처리할 수 있도록 하여 원본 해상도(original resolution)로 이미지를 입력할 수 있게 합니다. Qwen2-VL은 "단순 동적 해상도(Naive Dynamic Resolution)" 메커니즘을 통해 멀티모달 LLM이 다양한 해상도의 이미지를 효율적으로 처리할 수 있도록 한 혁신적인 모델입니다. 기존 모델들이 고해상도 이미지를 처리하기 위해 다운샘플링(downsampling)을 사용해 정보 손실이 발생했던 것과 달리, Qwen2-VL은 원본 해상도(original resolution) 이미지를 직접 입력으로 받아들일 수 있습니다. 이는 특히 상세한 시각적 정보가 중요한 의료 영상 분석, 정밀 제조 검사, 과학 연구 등에서 매우 유용합니다. ViT 아키텍처를 수정하여 절대 위치 임베딩(absolute position embedding)을 제거하고 2D-RoPE를 도입한 것은, 모델이 이미지의 공간적 정보를 더욱 유연하게 해석하도록 돕는 핵심 기술적 진보입니다. Qwen2-VL은 실제 환경에서 다양한 이미지 데이터를 다루는 멀티모달 애플리케이션의 실용성을 크게 향상시켰습니다.
+
+다양한 해상도의 입력 이미지를 기본적으로 처리할 수 있는 멀티모달 Qwen 모델의 개요. (Qwen2-VL 논문에서 주석이 달린 그림: https://arxiv.org/abs/2409.12191)
+
+네이티브 해상도 입력(native resolution input)은 원래 절대 위치 임베딩(absolute position embedding)을 제거하고 2D-RoPE를 도입하여 수정된 ViT를 통해 구현됩니다. 그들은 6억 7천 5백만 매개변수(parameter)를 가진 고전적인 비전 인코더(vision encoder)와 아래 표에 표시된 다양한 크기의 LLM 백본(LLM backbone)을 사용했습니다.
+
+다양한 Qwen2-VL 모델의 구성 요소. (Qwen2-VL 논문에서 주석이 달린 그림: https://arxiv.org/abs/2409.12191)
+
+훈련(training) 자체는 3단계로 구성됩니다. (1) 이미지 인코더(image encoder)만 사전 훈련(pretraining), (2) 모든 매개변수(parameter)(LLM 포함) 고정 해제, (3) 이미지 인코더(image encoder) 고정 및 LLM만 명령어 미세 조정(instruction-finetuning).
+
+#### 4.5 Pixtral 12B
+
+방법 A: 통합 임베딩 디코더 아키텍처(Unified Embedding Decoder Architecture) 접근 방식을 사용하는 Pixtral 12B(2024년 9월 17일)는 Mistral AI의 첫 번째 멀티모달 모델(multimodal model)입니다. 아쉽게도 기술 논문(technical paper)이나 보고서(report)는 없지만, Mistral 팀은 블로그 게시물(blog post)에서 몇 가지 흥미로운 정보를 공유했습니다. 흥미롭게도, 그들은 사전 훈련된(pretrained) 이미지 인코더(image encoder)를 사용하지 않고, 대신 4억 매개변수(parameter)를 가진 인코더(encoder)를 처음부터 훈련(training)하기로 선택했습니다. LLM 백본(LLM backbone)으로는 120억 매개변수(parameter) Mistral NeMo 모델을 사용했습니다. Qwen2-VL과 유사하게, Pixtral도 아래 그림에 설명된 대로 가변 이미지 크기(variable image size)를 기본적으로 지원합니다.
+
+Pixtral이 다양한 크기의 이미지를 처리하는 방법 그림. (Pixtral 블로그 게시물에서 주석이 달린 그림: https://mistral.ai/news/pixtral-12b/)
+
+#### 4.6 MM1.5: 멀티모달 LLM 미세 조정의 방법, 분석 및 통찰력
+
+MM1.5: 멀티모달 LLM 미세 조정의 방법, 분석 및 통찰력 논문(2024년 9월 30일)은 실용적인 팁을 제공하고 Molmo와 유사한 밀집 모델(dense model)과 함께 전문가 혼합 멀티모달 모델(mixture-of-experts multimodal model)을 소개합니다. 이 모델들은 10억에서 300억 매개변수(parameter)에 이르는 넓은 크기 범위를 가집니다. 이 논문에 설명된 모델들은 방법 A, 즉 멀티모달 학습을 위해 입력을 효과적으로 구조화하는 통합 임베딩 트랜스포머 아키텍처(Unified Embedding Transformer Architecture)에 초점을 맞춥니다. 또한, 이 논문은 데이터 혼합(data mixture)과 좌표 토큰(coordinate token) 사용의 효과를 살펴보는 일련의 흥미로운 어블레이션 연구(ablation study)를 포함합니다.
+
+바운딩 박스(bounding box)를 나타내는 추가 좌표 토큰(coordinate token)을 포함하는 MM1.5 접근 방식의 그림. (MM1.5 논문에서 주석이 달린 그림: https://arxiv.org/abs/2409.20566.)
+
+#### 4.7 Aria: 오픈 멀티모달 네이티브 전문가 혼합 모델
+
+Aria: 오픈 멀티모달 네이티브 전문가 혼합 모델 논문(2024년 10월 8일)은 Molmo 및 MM1.5 라인업의 변형 중 하나와 유사한 또 다른 전문가 혼합 모델(mixture-of-experts model) 접근 방식을 소개합니다. Aria 모델은 249억 매개변수(parameter)를 가지며, 텍스트 토큰(text token)당 35억 매개변수(parameter)가 할당됩니다. 이미지 인코더(image encoder)(SigLIP)는 4억 3천 8백만 매개변수(parameter)를 가집니다. 이 모델은 다음과 같은 전체 훈련 절차(training procedure)를 가진 교차 어텐션(cross-attention) 접근 방식을 기반으로 합니다.
+*   LLM 백본(LLM backbone)을 처음부터 완전히 훈련(training)합니다.
+*   LLM 백본(LLM backbone)과 비전 인코더(vision encoder)를 모두 사전 훈련(pretraining)합니다.
+
+#### 4.8 Baichuan-Omni
+
+Baichuan-Omni 기술 보고서(2024년 10월 11일)는 아래 그림에 표시된 대로 방법 A: 통합 임베딩 디코더 아키텍처(Unified Embedding Decoder Architecture) 접근 방식을 기반으로 하는 70억 매개변수(parameter) 멀티모달 LLM인 Baichuan-Omni를 소개합니다.
+
+다양한 입력 모달리티(input modality)를 처리할 수 있는 Baichuan-Omni 모델의 개요. (Baichuan-Omni 논문에서 주석이 달린 그림: https://arxiv.org/abs/2410.08565)
+
+Baichuan-Omni의 훈련(training) 프로세스는 3단계 접근 방식을 포함합니다.
+*   **프로젝터(projector) 훈련(training)**: 처음에는 프로젝터(projector)만 훈련(training)되고, 비전 인코더(vision encoder)와 언어 모델(LLM)은 모두 고정된 상태로 유지됩니다.
+*   **비전 인코더(vision encoder) 훈련(training)**: 다음으로, 비전 인코더(vision encoder)는 고정 해제되고 훈련(training)되며, LLM은 여전히 고정된 상태입니다.
+*   **전체 모델 훈련(training)**: 마지막으로, LLM은 고정 해제되어 전체 모델이 엔드투엔드(end-to-end)로 훈련(training)될 수 있도록 합니다.
+
+이 모델은 SigLIP 비전 인코더(vision encoder)를 활용하고, 다운샘플링 기법(down-sampling technique)을 통해 고해상도 이미지를 처리하기 위해 AnyRes 모듈을 통합합니다. 보고서에는 LLM 백본(LLM backbone)이 명시적으로 지정되어 있지 않지만, 모델의 매개변수 크기(parameter size)와 명명 규칙(naming convention)을 고려할 때 Baichuan 7B LLM을 기반으로 할 가능성이 높습니다.
+
+#### 4.9 Emu3: 다음 토큰 예측만 있으면 됩니다
+
+Emu3: 다음 토큰 예측만 있으면 됩니다 논문(2024년 9월 27일)은 이미지 생성(image generation)을 위한 확산 모델(diffusion model)에 대한 설득력 있는 대안을 제시하며, 이는 트랜스포머 기반 디코더 아키텍처(transformer-based decoder architecture)에만 기반합니다. 비록 고전적인 의미의 멀티모달 LLM(즉, 생성보다는 이미지 이해(image understanding)에 초점을 맞춘 모델)은 아니지만, Emu3는 트랜스포머 디코더(transformer decoder)를 사용하여 이미지 생성(image generation)이 가능하다는 것을 보여주기 때문에 매우 흥미롭습니다. 이미지 생성(image generation)은 일반적으로 확산 방법(diffusion method)이 지배하는 작업입니다. (그러나 Autoregressive Model Beats Diffusion: Llama for Scalable Image Generation과 같은 다른 유사한 접근 방식이 이전에도 있었다는 점에 유의하세요.)
+
+Emu3는 확산 모델(diffusion model)의 대안으로 이미지 생성(image generation)을 위한 LLM입니다. (Emu3 논문에서 주석이 달린 그림: https://arxiv.org/abs/2409.18869)
+
+연구자들은 Emu3를 처음부터 훈련(training)한 다음, 직접 선호 최적화(Direct Preference Optimization, DPO)를 사용하여 모델을 인간 선호도에 맞추었습니다. 아키텍처(architecture)에는 SBER-MoVQGAN에서 영감을 받은 비전 토크나이저(vision tokenizer)가 포함됩니다. 핵심 LLM 아키텍처(core LLM architecture)는 Llama 2를 기반으로 하지만, 처음부터 완전히 훈련(training)되었습니다.
+
+#### 4.10 Janus: 통합 멀티모달 이해 및 생성을 위한 시각 인코딩 분리
+
+우리는 이전에 이미지 이해(image understanding)를 위한 멀티모달 LLM에 초점을 맞췄고, 위에서 Emu 3를 통한 이미지 생성(image generation)의 한 가지 예를 보았습니다. 이제 Janus: 통합 멀티모달 이해 및 생성을 위한 시각 인코딩 분리 논문(2024년 10월 17일)은 단일 LLM 백본(LLM backbone) 내에서 멀티모달 이해(multimodal understanding) 및 생성 작업(generation task)을 통합하는 프레임워크(framework)를 소개합니다.
+
+Janus의 핵심 기능은 이해(understanding) 및 생성 작업(generation task)의 고유한 요구 사항(distinct requirement)을 해결하기 위한 시각 인코딩 경로(visual encoding pathway)의 분리입니다. 연구자들은 이미지 이해(image understanding) 작업에는 고차원 의미론적 표현(high-dimensional semantic representation)이 필요하고, 생성 작업(generation task)에는 이미지의 상세한 지역 정보(detailed local information)와 전역 일관성(global consistency)이 필요하다고 주장합니다. 이러한 경로를 분리함으로써 Janus는 이러한 상이한 요구 사항을 효과적으로 관리합니다.
+
+이 모델은 Baichuan-Omni에서 사용된 것과 유사한 SigLIP 비전 인코더(vision encoder)를 사용하여 시각적 입력을 처리합니다. 이미지 생성(image generation)을 위해 벡터 양자화(Vector Quantized, VQ) 토크나이저(tokenizer)를 사용하여 생성 프로세스를 처리합니다. Janus의 기본 LLM(base LLM)은 13억 매개변수(parameter)를 가진 DeepSeek-LLM입니다.
+
+Janus에서 사용된 통합 디코더 전용(decoder-only) 프레임워크(framework)의 개요. (Janus 논문에서 주석이 달린 그림: https://arxiv.org/abs/2410.13848.)
+
+이 이미지의 모델 훈련(training) 프로세스는 아래 그림에 표시된 대로 3단계로 진행됩니다.
+
+Janus 모델의 3단계 훈련(training) 프로세스 그림. (Janus 논문에서 주석이 달린 그림: https://arxiv.org/abs/2410.13848)
+
+1단계에서는 LLM, 이해(understanding) 및 생성 인코더(generation encoder)가 고정된 상태에서 프로젝터 레이어(projector layer)와 이미지 출력 레이어(image output layer)만 훈련(training)됩니다. 2단계에서는 LLM 백본(LLM backbone)과 텍스트 출력 레이어(text output layer)가 고정 해제되어 이해(understanding) 및 생성 작업(generation task) 전반에 걸쳐 통합 사전 훈련(unified pretraining)이 가능해집니다. 마지막으로 3단계에서는 SigLIP 이미지 인코더(image encoder)를 포함한 전체 모델이 고정 해제되어 지도 미세 조정(supervised fine-tuning)을 위해 사용되며, 모델이 멀티모달 기능(multimodal capability)을 완전히 통합하고 개선할 수 있도록 합니다.
+
+#### 4.11 미래 지향적 멀티모달 모델: 통합 에이전트 아키텍처
+
+최근 멀티모달 LLM의 발전은 단순한 이해와 생성 능력을 넘어, 물리적 세계와 상호작용하는 "통합 에이전트(integrated agent)"로 진화하는 방향을 제시하고 있습니다. 이러한 미래 지향적 모델은 시각, 청각, 텍스트 입력은 물론, 촉각(tactile)이나 운동 감각(proprioceptive)과 같은 추가적인 모달리티를 통합하여 더욱 풍부한 환경 인식을 가능하게 합니다. 예를 들어, 로봇 공학 분야에서는 카메라와 LiDAR 센서 데이터를 통해 환경을 인지하고, 언어 명령을 이해하며, 팔다리 움직임을 제어하는 멀티모달 LLM이 개발되고 있습니다. 이들은 단순히 이미지 캡션을 생성하는 것을 넘어, "저기 있는 빨간색 상자를 집어서 테이블 위에 놓아줘"와 같은 복잡한 지시를 수행하기 위해 시각 정보를 해석하고, 물체의 위치와 속성을 파악하며, 로봇의 움직임을 계획하고 실행해야 합니다.
+
+이러한 통합 에이전트 아키텍처는 다음과 같은 특징을 가질 수 있습니다:
+*   **지속적 학습(Continual Learning)**: 현실 세계의 변화하는 환경에 적응하며 지속적으로 새로운 지식을 학습합니다.
+*   **행동 계획(Action Planning)**: 멀티모달 입력과 목표를 기반으로 복잡한 행동 시퀀스를 계획하고 실행합니다.
+*   **피드백 루프(Feedback Loop)**: 행동의 결과로 발생하는 시각적/물리적 피드백을 통해 학습하고 다음 행동을 수정합니다.
+*   **인간-로봇 상호작용(Human-Robot Interaction)**: 자연어 대화와 시각적 단서를 통해 인간과 더욱 직관적으로 상호작용합니다.
+
+이러한 모델들은 멀티모달 LLM이 단순한 정보 처리 도구를 넘어, 자율적인 의사결정 및 행동을 수행하는 지능형 시스템의 핵심 구성 요소가 될 것임을 시사합니다.
+
+### 5. 멀티모달 LLM의 도전 과제 및 미래 방향
+
+멀티모달 LLM은 놀라운 발전을 이루고 있지만, 여전히 해결해야 할 많은 도전 과제들이 존재합니다. 이러한 도전 과제들을 극복하는 것이 미래 멀티모달 AI의 발전 방향을 결정할 것입니다.
+
+**5.1 데이터 희소성 및 품질 (Data Scarcity and Quality)**
+
+고품질의 대규모 멀티모달 데이터셋을 구축하는 것은 여전히 가장 큰 도전 과제 중 하나입니다. 텍스트와 이미지를 정교하게 정렬(align)하고, 다양한 시나리오와 문화적 맥락을 포괄하는 데이터를 수집하는 것은 엄청난 비용과 노력이 필요합니다. 데이터의 편향성(bias) 또한 중요한 문제로, 특정 이미지나 텍스트 유형에 치우친 데이터는 모델이 현실 세계를 왜곡되게 인식하게 만들 수 있습니다. 미래에는 합성 데이터(synthetic data) 생성, 능동 학습(active learning)을 통한 효율적인 데이터 큐레이션, 그리고 크라우드소싱(crowdsourcing)을 통한 데이터 수집 방법론의 발전이 중요해질 것입니다.
+
+**5.2 계산 비용 및 효율성 (Computational Cost and Efficiency)**
+
+멀티모달 LLM은 텍스트 전용 LLM보다 훨씬 더 많은 매개변수(parameter)와 복잡한 아키텍처를 가지므로, 훈련 및 추론(inference)에 막대한 계산 자원이 필요합니다. 이는 연구 개발의 장벽을 높이고, 일반 사용자가 이러한 모델을 활용하는 것을 어렵게 만듭니다. 모델 경량화(model quantization), 프루닝(pruning), 지식 증류(knowledge distillation)와 같은 효율성 향상 기법과 더불어, 분산 훈련(distributed training) 및 특화된 하드웨어(hardware) 개발이 필수적입니다. 또한, 더욱 효율적인 아키텍처 설계와 더 적은 데이터로도 강력한 성능을 내는 학습 방법론에 대한 연구가 활발히 이루어질 것입니다.
+
+**5.3 정렬 및 편향 (Alignment and Bias)**
+
+멀티모달 모델은 텍스트와 이미지라는 두 가지 다른 모달리티에서 발생하는 편향을 모두 상속받을 수 있으며, 이들이 결합될 때 예상치 못한 방식으로 증폭될 수도 있습니다. 모델이 사회적 편견이나 차별적인 내용을 생성하지 않도록 윤리적이고 공정한 정렬(alignment)을 보장하는 것이 중요합니다. 이는 데이터셋의 다양성 확보, 공정성 지표 개발, 그리고 인간의 가치관을 반영하는 미세 조정(fine-tuning) 기법(예: DPO, RLAIF)을 멀티모달 맥락에 적용하는 연구를 통해 이루어져야 합니다.
+
+**5.4 장문 컨텍스트 이해 (Long-Context Understanding)**
+
+텍스트 LLM에서 장문 컨텍스트(long context) 처리가 중요한 것처럼, 멀티모달 LLM에서도 여러 이미지, 비디오 시퀀스, 그리고 긴 텍스트를 동시에 이해하는 능력이 중요합니다. 예를 들어, 영화의 전체 줄거리를 분석하거나, 여러 장의 의료 영상과 상세한 환자 기록을 종합적으로 판단하는 작업에는 확장된 멀티모달 컨텍스트 윈도우(context window)가 필요합니다. 효율적인 어텐션 메커니즘, 계층적 정보 처리, 그리고 메모리 메커니즘(memory mechanism)을 통합하여 장문 컨텍스트를 효과적으로 처리하는 방법이 미래 연구의 핵심이 될 것입니다.
+
+**5.5 실제 세계 상호작용 및 체화된 AI (Embodied AI and Real-world Interaction)**
+
+궁극적으로 멀티모달 LLM은 가상 환경을 넘어 실제 세계와 상호작용하는 체화된 AI(Embodied AI)의 핵심이 될 것입니다. 로봇 공학, 증강 현실(Augmented Reality, AR), 가상 현실(Virtual Reality, VR) 분야에서 멀티모달 LLM은 환경을 인지하고, 인간의 의도를 이해하며, 물리적 행동을 수행하는 데 필수적인 지능을 제공할 것입니다. 이를 위해서는 실시간 데이터 처리, 강력한 추론 능력, 그리고 안전하고 신뢰할 수 있는 의사 결정 능력이 요구됩니다.
+
+### 결론
+
+눈치채셨겠지만, 저는 모델링(modeling) 및 계산 성능 비교(computational performance comparison)를 거의 완전히 건너뛰었습니다. 첫째, LLM 및 멀티모달 LLM의 공개 벤치마크(public benchmark) 성능을 비교하는 것은 일반적인 데이터 오염(data contamination) 때문에 어렵습니다. 즉, 테스트 데이터(test data)가 훈련 데이터(training data)에 포함되었을 수 있습니다. 또한, 아키텍처 구성 요소(architectural component)가 너무 다양하여 공정한 비교(apples-to-apples comparison)를 하기가 어렵습니다. 따라서 적어도 디코더 전용(decoder-only) 및 교차 어텐션(cross-attention) 접근 방식 간의 비교를 가능하게 한 다양한 버전의 NVLM을 개발한 NVIDIA 팀에게 큰 찬사를 보냅니다.
+
+어쨌든, 이 글의 핵심 요점(main takeaway)은 멀티모달 LLM이 다양한 방식으로 성공적으로 구축될 수 있다는 것입니다. 아래는 이 글에서 다룬 모델들의 다양한 구성 요소와 더불어 미래 지향적 모델의 가능성을 요약한 그림입니다.
+
+(이 글에서 다룬 다양한 모델과 그 하위 구성 요소 및 훈련(training) 접근 방식에 대한 개요 그림.)
+
+이 글을 읽는 것이 교육적(educational)이었기를 바라며, 이제 멀티모달 LLM이 어떻게 작동하는지, 그리고 이 분야가 어떤 방향으로 발전하고 있는지에 대해 더 잘 이해하게 되셨기를 바랍니다! 멀티모달 AI의 미래는 무한한 가능성을 가지고 있으며, 앞으로도 더욱 놀라운 혁신이 계속될 것입니다.
+
+이 잡지는 개인적인 열정 프로젝트(personal passion project)입니다. 저를 지원하고 싶으신 분들은 제가 쓴 책 "Build a Large Language Model (From Scratch)"을 구매해 주시면 감사하겠습니다. 이 책은 LLM의 복잡한 메커니즘을 상세히 설명하며, 여러분의 AI 여정에 큰 도움이 될 것이라고 확신합니다.
+
+[Build a Large Language Model (From Scratch) now available on Amazon]
+
+책을 읽으셨고 잠시 시간을 내실 수 있다면, 짧은 리뷰를 남겨주시면 정말 감사하겠습니다. 그것은 저희 저자들에게 큰 도움이 됩니다! 또는, 최근에 Substack에 유료 구독 옵션(paid subscription option)을 활성화하여 이 잡지를 직접 지원할 수도 있습니다. 여러분의 지원은 큰 의미가 있습니다! 감사합니다!
+
+[Subscribe]

@@ -1,0 +1,19 @@
+# 지난주 AI 소식 #318 - OpenAI 오픈소스 모델(OSS models), Opus 4.1, Gemini 2.5 심층 사고(Deep Think)
+
+Author: Last Week in AI
+URL: https://lastweekin.ai/p/last-week-in-ai-318-openai-oss-models
+
+============================================================
+
+**AI 주간 뉴스 #318 - OpenAI OSS 모델, Opus 4.1, Gemini 2.5 Deep Think**
+
+OpenAI, 두 가지 '오픈' AI 추론 모델(AI reasoning models) 출시, Anthropic, 에이전틱(Agentic) 기능의 Claude Opus 4.1 출시, Google, Gemini Deep Think AI 출시 등!
+
+AI 주간 뉴스 2025년 8월 6일 ∙ 유료 51 9 공유
+
+**주요 뉴스**
+OpenAI, 두 가지 '오픈' AI 추론 모델(AI reasoning models) 출시
+
+7일 무료 체험으로 계속 읽기
+
+이 게시물을 계속 읽고 전체 게시물 아카이브에 7일간 무료로 액세스하려면 AI 주간 뉴스(Last Week in AI)를 구독하세요. 체험 시작 이미 유료 구독자이신가요? 로그인

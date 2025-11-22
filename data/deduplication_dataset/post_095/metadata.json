@@ -1,0 +1,21 @@
+{
+  "post_id": "095",
+  "title": "**Andrej Karpathy의 소프트웨어 3.0(Software 3.0): 인공지능(AI) 시대의 소프트웨어 (전체 대본으로 업데이트됨)**",
+  "base_word_count": 1564,
+  "exact_30_update_wc": 1094,
+  "exact_30_ground_truth_wc": 1610,
+  "exact_30_overlap_ratio": 0.958,
+  "paraphrase_25_update_wc": 2188,
+  "paraphrase_25_ground_truth_wc": 2189,
+  "paraphrase_25_overlap_ratio": 0.714,
+  "fragment_20_update_wc": 1507,
+  "fragment_20_ground_truth_wc": 1842,
+  "fragment_20_overlap_ratio": 0.816,
+  "semantic_25_update_wc": 2818,
+  "semantic_25_ground_truth_wc": 2818,
+  "semantic_25_overlap_ratio": 0.555,
+  "mixed_real_update_wc": 1302,
+  "mixed_real_ground_truth_wc": 1324,
+  "mixed_real_overlap_ratio": 1.184,
+  "status": "generated"
+}

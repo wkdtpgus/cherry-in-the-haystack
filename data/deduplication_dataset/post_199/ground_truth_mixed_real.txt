@@ -1,0 +1,44 @@
+AI 코딩 에이전트(AI coding agents) 성능 향상을 위한 DSPy 프롬프트 최적화: GEPA 활용 업데이트
+
+이 블로그 게시물은 GEPA(Generic-Pareto Evolutionary Prompt Optimizer)를 활용하여 AI 데이터 과학 분야의 AI 코딩 에이전트 효율성을 극대화하는 기술적 접근 방식을 설명합니다. DSPy 생태계 발전과 함께 프롬프트 엔지니어링 중요성이 커지고 있으며, GEPA는 에이전트 실제 적용 가능성을 높이는 핵심 요소입니다. 본 글에서는 데이터 준비, GEPA의 원리 및 DSPy를 통한 최적화 적용에 대해 다룹니다.
+
+1. 데이터 준비 및 분석
+
+데이터셋(dataset)은 저희 제품을 통해 실행된 파이썬(Python) 코드 실행 결과로 구성됩니다. 자동 분석기(auto-analyst)는 여러 부분으로 구성된 AI 시스템(AI system)으로, 각 부분은 특정 코딩 작업을 위해 설계되었습니다. 한 부분인 전처리 에이전트(pre-processing agent)는 판다스(pandas)를 사용하여 데이터를 정리하고 준비하며, 다른 부분인 데이터 시각화 에이전트(data visualization agent)는 플로틀리(plotly)를 사용하여 차트와 그래프를 생성합니다.
+
+이 시스템에는 약 12개의 고유한 시그니처(signature)가 있으며, 각각 두 가지 버전이 있습니다. 하나는 플래너(planner)를 사용하는 버전이고, 다른 하나는 '@agent' 쿼리(query)에 대해 자체적으로 실행되는 버전입니다. 하지만 이 블로그 게시물에서는 이 시그니처 중 4개와 그 두 가지 변형에만 초점을 맞출 것입니다. 이 4가지 시그니처만으로도 전체 코드 실행의 약 90%를 차지하는데, 이는 무료 사용자든 유료 사용자든 거의 모든 사람이 사용하는 기본 시그니처이기 때문입니다.
+
+*   `preprocessing_agent`
+*   `data_viz_agent`
+*   `statistical_analytics_agent`
+*   `sk_learn_agent`
+
+데이터셋(dataset)은 시스템에서 제공하는 기본 데이터셋과 사용자가 직접 업로드하는 데이터로 나눌 수 있습니다. 저희 목표는 어떤 최적화든 두 가지 모두에서 성능을 향상시키는 것입니다. 기본 데이터뿐만 아니라 사용자가 업로드하는 데이터셋(dataset)에서도 잘 작동해야 합니다. 이를 위해 데이터를 계층화(stratify)해야 합니다. 그렇게 하면 모델(model)이 기본 데이터셋(dataset)에 과적합(overfit)되지 않고 다양한 입력을 효과적으로 처리할 수 있습니다.
+
+고려해야 할 또 다른 중요한 요소는 모델 제공업체(model providers)입니다. 한 제공업체에 대해서만 최적화하여 다른 제공업체의 성능을 저해하고 싶지 않습니다. 최근 다양한 고성능 LLM 출시로, 특정 제공업체 편향보다는 여러 제공업체에 걸쳐 일관된 성능 유지가 중요해졌습니다. 충분한 데이터가 없을 경우, 제공업체를 대리(proxy) 변수로 활용하는 것이 현실적입니다.
+
+데이터셋(dataset)을 준비한 후, 다음 제약 조건(constraint)을 사용하여 계층화된 샘플(stratified sample)을 생성했습니다:
+*   데이터의 20% 이상이 기본 데이터셋(dataset)에서 오지 않습니다 ( `is_default_dataset == True` ).
+*   세 가지 모델 제공업체(model providers) ( `openai`, `anthropic`, `gemini` ) 각각이 최종 샘플(sample)의 최소 10%를 차지합니다.
+
+계층화(stratification)는 다음 세 가지 열(column)에 걸쳐 수행되었습니다:
+*   `model_provider`
+*   `is_successful`
+*   `is_default_dataset`
+
+계층화된 샘플(stratified sample)이 생성된 후, 평가에 사용될 훈련 세트(training set)와 테스트 세트(test set)로 분할했습니다.
+
+2. GEPA의 원리 및 DSPy를 통한 최적화 적용
+
+GEPA는 AI 프롬프트(AI prompts) 개선을 위해 리플렉션(reflection)을 사용하는 DSPy 프로그램(program)용 진화적 프롬프트 최적화기(evolutionary prompt optimizer)입니다. GEPA는 대규모 언어 모델(LLMs)이 프로그램(program) 실행을 성찰하고, 효과 유무를 진단하며, 자연어 리플렉션(natural language reflection)을 통해 개선 사항을 제안하는 능력을 활용합니다. 이는 다중 목표(Pareto) 최적화(optimization)를 기반으로 더 나은 프롬프트(prompt)를 반복적으로 테스트하고 선택하여 진화된 프롬프트 후보(prompt candidates)의 트리(tree)를 구축합니다.
+
+DSPy에서 GEPA가 수행하는 단계는 다음과 같습니다:
+
+1.  **초기 프롬프트 생성**
+2.  **실행 및 평가**
+3.  **리플렉션 및 진단**
+4.  **개선 제안**
+5.  **Pareto Frontier 업데이트**
+6.  **반복**
+
+최근 DSPy는 `BootstrapFewShot` 같은 효율적인 옵티마이저와 `LabeledPairwiseEvaluator` 같은 평가 메커니즘을 통합하며 발전하고 있습니다. GEPA는 복잡한 다단계 에이전트 시스템의 프롬프트 최적화와 최신 멀티모달(multimodal) 모델 환경에서의 성능 향상에 기여하여, 견고한 AI 코딩 에이전트 구축에 핵심적인 역할을 합니다.

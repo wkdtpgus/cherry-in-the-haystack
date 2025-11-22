@@ -1,0 +1,160 @@
+**편집자 주**: 최근 뉴스레터와 팟캐스트가 정기적으로 발행되지 못한 점 사과드립니다. 스타트업 생활로 인해 저와 공동 진행자가 상당히 바빴습니다. 지난 몇 주간의 공백을 만회하고 더 풍부한 내용으로 돌아오기 위해 노력했습니다. 이번 주부터 뉴스레터와 팟캐스트 모두 주간 발행 주기를 재개하며, 앞으로도 최신 AI 동향과 심층 분석을 꾸준히 제공할 것을 약속드립니다.
+
+**OpenAI, 브로드컴과 AI용 자체 칩 설계를 위한 계약 체결**
+관련: 브로드컴 주가, OpenAI 맞춤형 칩 계약으로 9% 급등, 엔비디아 및 AMD 계약에 추가
+AMD, OpenAI와 AI 칩 공급 계약 체결, 주가 34% 이상 급등
+
+OpenAI는 브로드컴(Broadcom)과 맞춤형 AI 가속기(AI accelerators)를 공동 설계하고 배포하는 계약을 체결했으며, 내년 말부터 OpenAI가 설계한 칩 랙(racks)을 출시할 계획이다. 이 시스템은 브로드컴의 이더넷 스택(Ethernet stack)에 컴퓨팅(compute), 메모리(memory), 네트워킹(networking)을 통합하여 OpenAI 워크로드(workloads)의 주요 효율성 향상을 목표로 하며, 엔비디아(Nvidia)와 AMD에 대한 의존도를 줄일 것이다.
+
+이 파트너십은 약 10기가와트(gigawatts)의 컴퓨팅 용량(compute capacity)을 구축하려는 계획에 부합하며, OpenAI는 이미 텍사스주 애빌린(Abilene)에 데이터센터(data center)를 건설 중이고 텍사스, 뉴멕시코, 오하이오, 중서부 지역에 추가 부지를 계획하고 있다. 업계 추산에 따르면 1기가와트(gigawatt) AI 데이터센터(data center)는 약 500억 달러(현재 엔비디아 가격 기준으로 약 350억 달러가 칩 비용)에 달하며, 이는 맞춤형 실리콘(custom silicon)이 컴퓨팅 비용(compute costs)을 크게 절감할 수 있음을 보여준다. 이 회사는 또한 엔비디아(Nvidia), 오라클(Oracle), AMD와도 대규모 계약을 맺고 있다. 엔비디아(Nvidia)는 1,000억 달러를 투자할 계획이라고 밝혔고, AMD는 OpenAI의 확장을 지원하기 위해 1억 6천만 주(AMD 주식의 약 10%)를 사실상 부여했지만, 브로드컴(Broadcom)은 지분 투자를 하지 않는다. 브로드컴(Broadcom)의 맞춤형 AI 칩(XPU)은 하이퍼스케일러(hyperscalers)로부터 강력한 수요를 받고 있으며, 이 소식에 주가가 약 9.9% 급등했다. 그러나 브로드컴은 OpenAI가 이전에 공개했던 100억 달러 규모의 고객이 아니라고 밝혔다.
+
+OpenAI의 자체 칩 설계는 AI 워크로드에 최적화된 하드웨어 솔루션에 대한 수요 증가를 반영합니다. 이는 구글의 TPU(Tensor Processing Unit), 아마존의 Trainium 및 Inferentia 칩과 같이 주요 기술 기업들이 자체 AI 가속기를 개발하는 추세와 일맥상통합니다. 자체 칩은 특정 모델 아키텍처와 워크플로우에 맞춰 성능을 극대화하고 전력 효율성을 높여 운영 비용을 절감할 수 있다는 장점이 있습니다. 그러나 동시에 막대한 R&D 투자와 제조 복잡성, 그리고 공급망 관리라는 새로운 과제를 안겨줍니다. OpenAI의 이러한 움직임은 장기적으로 엔비디아와 AMD에 대한 의존도를 낮추고, AI 인프라의 주도권을 확보하려는 전략적 포석으로 해석됩니다.
+
+**OpenAI가 DevDay 2025에서 발표한 모든 것: AgentKit, Apps SDK, ChatGPT 등**
+관련: OpenAI, ChatGPT 내 앱 출시
+OpenAI, 개발자들이 AI 에이전트(AI agents)를 구축하고 배포하도록 돕는 AgentKit 출시
+OpenAI, API에 더 강력한 모델을 추가하여 개발자 지원 강화
+샘 알트만(Sam Altman), ChatGPT 주간 활성 사용자 8억 명 돌파 발표
+
+OpenAI의 DevDay 2025는 ChatGPT를 앱 플랫폼(app platform) 및 에이전트 OS(agent OS)로 재구성했으며, ChatGPT 내 앱(Apps inside ChatGPT), 미리보기 앱 SDK(Apps SDK), AgentKit을 선보였다. 앱은 모델 컨텍스트 프로토콜(Model Context Protocol, MCP)을 통해 대화형 UI(interactive UIs), 비디오, 로그인(login), 액션(actions)과 함께 ChatGPT 응답에서 직접 실행된다. 출시 파트너로는 Canva, Zillow, Coursera, Figma, Spotify, Booking.com, Expedia가 있으며, DoorDash, Instacart, Uber, AllTrails는 "곧 출시될 예정"이다. 라이브 데모(Live demos)에서는 "앱과 대화하기"의 엔드투엔드(end-to-end) 기능을 선보였다: Canva에서 포스터 생성, 피치 덱(pitch deck) 자동 구축, 자연어 필터(natural-language filters) 및 지도(maps)를 사용하여 Zillow 매물 검색(ChatGPT 내 전체 화면 렌더링 포함).
+
+개발자 데이의 핵심 발표 중 하나인 AgentKit은 개발자들이 AI 에이전트를 쉽게 구축하고 배포할 수 있도록 돕는 도구입니다. 예를 들어, AgentKit을 사용하여 특정 기업의 고객 서비스 에이전트를 구축한다고 가정해 봅시다. 이 에이전트는 고객 문의를 자동으로 분석하고, 기존 데이터베이스에서 관련 정보를 검색하며, 심지어 외부 CRM 시스템과 연동하여 티켓을 생성하거나 업데이트하는 등의 복잡한 작업을 수행할 수 있습니다. 이는 단순히 질문에 답하는 것을 넘어, 실제 비즈니스 프로세스에 깊이 통합되어 가치를 창출하는 AI 솔루션의 시대를 예고합니다. Apps SDK는 개발자들이 ChatGPT 환경 내에서 풍부한 사용자 경험을 제공하는 앱을 만들 수 있게 하여, ChatGPT를 단순한 챗봇이 아닌 강력한 AI 기반 생태계로 확장시키고 있습니다. 이러한 움직임은 AI가 일상적인 작업과 전문적인 워크플로우에 더욱 깊이 스며들게 할 것입니다.
+
+개발자 데이(dev day)의 다른 발표 내용으로는 Agent Builder(에이전트용 시각적 "Canva")와 함께 출시된 AgentKit, ChatKit(임베드 가능한 채팅 UI), 에이전트용 평가(Evals for Agents, 단계 추적 채점, 데이터셋, 자동 프롬프트 최적화, 외부 모델 평가), 그리고 관리자 제어 기능이 있는 커넥터 레지스트리(Connectors registry)가 포함되었다. 라이브 데모(live demo)에서는 8분 이내에 두 개의 프로덕션 에이전트(production agents)와 가드레일(guardrails)을 구축했다. Codex는 연구 미리보기(research preview)에서 일반 출시(general availability)로 전환되었으며, 무대 데모(on-stage demos)에서는 카메라를 Xbox 360 컨트롤러에 연결하고, 조명용 음성 비서(voice assistant)를 구축하고, 오버레이(overlays), 카운트다운(countdowns), 단체 사진을 자동 생성하는 모습을 보여주었다. 새로운 API 모델(API models)에는 고정확도, 심층 추론 사용 사례를 위한 GPT-5 Pro; 동기화된 오디오, 물리적 일관성, 세분화된 카메라 제어 기능을 갖춘 Sora 2 비디오(미리보기); 이전 고급 음성 모델보다 "70% 저렴한" 저지연 음성 모델(low-latency voice model)인 gpt-realtime-mini가 포함된다. 알트만은 또한 ChatGPT가 현재 주간 활성 사용자 8억 명, 개발자 4백만 명, API에서 분당 60억 토큰(tokens)에 도달했으며, 개발자 앱 제출(developer app submissions)은 올해 말에 검토를 위해 개방될 것이라고 말했다.
+
+**Anthropic, 더 작고 저렴한 AI 모델 Claude Haiku 4.5 출시**
+Anthropic은 가장 작고 저렴한 Claude 4.x 모델인 Claude Haiku 4.5를 출시했으며, 이제 무료 티어(free tier)를 포함한 모든 사용자가 이용할 수 있다. 이 회사는 Haiku 4.5가 특히 빠르고 "기대 이상의 성능을 발휘한다"며, 이전의 더 큰 모델들을 능가하고 컴퓨터 사용 작업에서는 Claude Sonnet 4마저 뛰어넘는다고 밝혔다. 코딩(coding) 분야에서 Haiku 4.5는 실제 버그 수정(bug fixing)을 위한 벤치마크(benchmark)인 SWE-bench Verified에서 Claude Sonnet 4 및 OpenAI의 GPT-5와 비슷한 점수를 기록했다. 가격 면에서 Haiku 모델은 Sonnet 비용의 약 3분의 1이며, Sonnet은 Opus 비용의 약 5분의 1이다. 이는 Haiku 4.5를 가장 저렴한 유료 옵션으로 만들면서도, 더 작은 크기 덕분에 무료 사용자에게 더 많은 용량을 제공한다. 이번 출시는 Sonnet 4.5(9월)와 Opus 4.1(8월)에 이은 것이며, 업데이트된 Opus는 2024년 말 또는 2025년 초에 출시될 예정이다. 매출 연간 환산액(revenue run rate)이 70억 달러에 육박하고 30만 명 이상의 기업 고객을 보유하며 1,830억 달러의 가치를 평가받는 Anthropic은 GPT-5를 출시하고 인프라 계약(infrastructure deals)과 Sora로 확장한 구글(Google) 및 OpenAI와의 경쟁 속에서 출시를 가속화하고 있다.
+
+Claude Haiku 4.5의 출시는 "더 작고 저렴하며 빠르지만 강력한" AI 모델의 중요성이 커지고 있음을 보여줍니다. 이러한 경량 모델은 제한된 컴퓨팅 자원을 가진 환경(예: 모바일 기기, 엣지 디바이스)에서도 AI 기능을 구현할 수 있게 하며, API 비용에 민감한 스타트업이나 개인 개발자들에게도 큰 이점을 제공합니다. Haiku 4.5는 특히 코딩 작업에서 이전 세대 모델과 GPT-5에 필적하는 성능을 보여주며, 이는 개발 생산성 향상에 크게 기여할 수 있음을 시사합니다. 구글의 Gemma, 미스트랄 AI의 Mistral Small/Tiny와 같은 모델들도 이와 유사한 목표를 가지고 있으며, AI 모델 시장이 단순히 규모 경쟁을 넘어 효율성과 접근성 경쟁으로 진화하고 있음을 보여줍니다.
+
+**구글, Veo 3.1 출시, Flow 비디오 편집기에 추가**
+구글은 Veo 3 비디오 생성 모델(video generation model)의 업그레이드 버전인 Veo 3.1을 출시했으며, 이는 고화질 비주얼(higher-fidelity visuals), 더 강력한 프롬프트(prompt) 준수, 풍부한 편집 제어 기능에 중점을 둔다. 이번 업데이트는 이미지-비디오(image-to-video) 품질을 개선하고 더 나은 오디오 출력(audio output)을 도입하며, 참조 이미지 캐릭터 제어(reference-image character control), 첫/마지막 프레임 기반 클립 생성(first/last-frame guided clip generation), 후행 프레임(trailing frames)으로부터 클립 확장(clip extension)과 같은 기능에 동기화된 오디오를 추가한다. Veo 3.1은 또한 클립의 시각적 스타일(visual style)에 자연스럽게 어우러지는 객체 추가를 포함한 세분화된 편집(granular edits)을 지원하며, Flow에서는 곧 객체 제거(object removal) 기능이 제공될 예정이다. 새로운 모델은 현재 Flow, Gemini 앱, 그리고 Vertex 및 Gemini API를 통해 이용할 수 있다.
+
+Veo 3.1은 비디오 생성 AI의 중요한 진화를 보여줍니다. 단순히 짧은 클립을 만드는 것을 넘어, 이제 사용자는 더 높은 프롬프트 준수도를 통해 원하는 장면을 정확하게 구현하고, 캐릭터의 일관성을 유지하며, 특정 프레임을 기반으로 비디오를 확장하거나 편집할 수 있습니다. 특히 동기화된 오디오 기능과 세분화된 편집 기능은 콘텐츠 제작자들에게 혁신적인 도구를 제공합니다. 이는 복잡한 스토리텔링, 광고 제작, 심지어 영화 예고편 제작에도 AI를 활용할 수 있는 가능성을 열어줍니다. OpenAI의 Sora와 같은 경쟁 모델들이 현실감과 긴 비디오 길이에 초점을 맞추는 반면, Veo 3.1은 사용자 제어 및 편집 기능에 강점을 두어 크리에이터의 워크플로우에 더 깊이 통합될 수 있는 방향을 제시합니다. 비디오 생성 AI 시장은 이제 단순히 '만드는 것'을 넘어 '제어하고 편집하는 것'으로 경쟁의 초점을 옮기고 있습니다.
+
+**OpenAI, Sora의 저작권 작품 사용에 대한 입장 번복**
+관련: AI 샘 알트만과 Sora 저작권 도박: '닌텐도가 우리를 고소하지 않기를 바란다'
+OpenAI는 Sora의 저작권 논란을 예상하지 못했다
+OpenAI 비디오 앱 Sora, ChatGPT보다 빠르게 100만 다운로드 달성
+OpenAI의 Sora, 애플 미국 앱 스토어(App Store) 1위 등극
+Sora 모방 앱들이 애플 앱 스토어(App Store)를 범람했으며, 일부는 여전히 남아있다
+
+OpenAI는 Sora의 훈련 데이터(training data) 및 저작권 처리(copyright handling)에 대한 강도 높은 조사를 받았으며, 법적 및 홍보 압력이 가중됨에 따라 공개적인 입장을 변경하게 되었다. 출시는 빠른 사용자 채택을 촉발했고, 앱을 미국 앱 스토어(App Store) 최상위로 끌어올렸으며, 모방 앱(copycat apps)의 물결을 일으키기도 했다. 알트만의 논평과 여러 언론사의 보도는 저작권 위험(copyright risk), 사용자 수요(user demand), 플랫폼 거버넌스(platform governance)가 Sora의 빠른 출시에 어떻게 교차하고 있는지를 강조한다.
+
+Sora의 저작권 논란은 생성형 AI가 직면한 가장 큰 윤리적, 법적 딜레마 중 하나를 상징합니다. AI 모델이 방대한 양의 기존 저작물을 학습 데이터로 사용하는 것이 '공정 사용(fair use)'에 해당하는지, 아니면 저작권 침해인지에 대한 논쟁은 전 세계적으로 뜨겁습니다. 특히 영상 생성 모델의 경우, 특정 스타일이나 캐릭터를 모방할 가능성이 높아 기존 창작자들의 우려가 큽니다. 이러한 논란은 AI 개발사들에게 훈련 데이터의 투명성을 높이고, 데이터 출처를 명확히 하며, 저작권 침해 가능성을 줄일 수 있는 새로운 기술적, 법적 프레임워크를 모색하도록 압력을 가하고 있습니다. 또한, AI 생성 콘텐츠에 대한 새로운 라이선스 모델이나 보상 체계 마련의 필요성도 제기되고 있습니다.
+
+**기타 뉴스**
+
+**도구**
+마이크로소프트, 엑셀(Excel)과 워드(Word)에 '바이브 워킹(vibe working)' 출시.
+OpenAI의 GPT-5(Copilot 채팅의 Anthropic 기반 Office 에이전트 포함)로 구동되는 마이크로소프트의 새로운 "에이전트 모드(Agent Mode)"는 간단한 프롬프트(prompts)만으로 복잡한 스프레드시트(spreadsheets), 문서(documents), 슬라이드 덱(slide decks)을 생성, 계획, 실행할 수 있다.
+
+마이크로소프트의 '에이전트 모드'는 생산성 소프트웨어의 패러다임 전환을 의미합니다. 단순히 데이터를 처리하거나 텍스트를 작성하는 보조 도구를 넘어, AI가 사용자의 의도를 이해하고 복잡한 작업을 능동적으로 계획하고 실행하는 '협력자'의 역할을 수행하게 됩니다. 이는 기업 환경에서 개인의 생산성을 극대화하고, 반복적이고 시간 소모적인 작업을 자동화하여 직원들이 더 전략적이고 창의적인 업무에 집중할 수 있도록 돕습니다. 그러나 동시에 AI의 작업 결과에 대한 검증, 데이터 보안, 그리고 AI가 내린 결정의 책임 소재에 대한 새로운 질문들을 던지고 있습니다.
+
+Anthropic AI, Petri 출시: AI 에이전트(AI Agents)를 사용하여 다양한 시나리오(Scenarios)에서 대상 모델(Target Models)의 동작을 테스트하는 자동화된 감사(Automated Auditing)를 위한 오픈소스 프레임워크(Open-Source Framework).
+Petri는 감사 에이전트(auditor agent)를 조율하여 대상 모델(target models)에 대해 다중 턴(multi-turn), 도구 증강 프로브(tool-augmented probes)를 실행하고, 현실적인 환경과 도구를 합성하며, LLM 심사관(LLM judge)을 사용하여 기본 36차원 루브릭(rubric)에 걸쳐 스크립트(transcripts)를 채점함으로써 대규모 정렬 감사(alignment audits)를 자동화한다.
+
+Petri와 같은 자동화된 감사 프레임워크의 등장은 AI 안전과 정렬(alignment) 연구의 중요성이 커지고 있음을 반영합니다. AI 에이전트가 복잡한 작업을 수행하고 외부 도구와 상호작용하는 능력이 향상됨에 따라, 예상치 못한 행동이나 편향, 또는 보안 취약점을 사전에 식별하고 완화하는 것이 필수적입니다. Petri는 실제와 유사한 시나리오에서 AI 에이전트의 행동을 체계적으로 테스트하고 평가함으로써, AI 시스템의 신뢰성과 견고성을 확보하는 데 기여할 수 있습니다. 이는 AI의 책임 있는 개발과 배포를 위한 핵심 도구로 자리매김할 것입니다.
+
+Anthropic, Claude를 업무에 더 유용하게 만들기 위해 '스킬(skills)' 활용.
+조직은 Claude.ai, Claude Code, API, Claude 에이전트 SDK(Claude Agent SDK) 전반에 걸쳐 통합되어 Claude가 특정 업무 작업을 수행하도록 가르치는 재사용 가능한 "스킬(Skills)"(명령, 스크립트, 리소스 세트)을 생성하고 공유할 수 있다.
+
+세일즈포스, 엔터프라이즈 AI(enterprise AI) 경쟁이 심화됨에 따라 Agentforce 360 발표.
+이번 업데이트는 새로운 프롬프트(prompting) 및 빌더 도구(builder tools)(베타 에이전트 스크립트(Agent Script) 및 "Vibes" 앱-바이브 코딩(app-vibe coding)이 포함된 Agentforce Builder 포함), Agentforce의 슬랙(Slack) 통합 심화, 그리고 고객이 Anthropic, OpenAI, 구글의 추론 모델(reasoning models)을 사용하여 더 예측 가능하고 유연한 엔터프라이즈 에이전트(enterprise agents)를 구축할 수 있도록 한다.
+
+슬랙, 슬랙봇(Slackbot)을 AI 비서(AI assistant)로 전환 중.
+슬랙봇(Slackbot)은 채널(channels)과 파일(files) 전반에서 계획과 요약을 취합하고, 자연어(natural language)로 작업 공간(workspace)을 검색하며, 캘린더(calendars)를 조정하는 기능을 얻고 있다. 이는 VPC(Virtual Private Cloud) 내에서 실행되므로 고용주는 옵트아웃(opt out)할 수 있다.
+
+구글의 AI 모드(AI Mode) 이미지 검색, 더욱 대화형으로 진화.
+사용자는 자연어 후속 질문(natural-language follow-ups)으로 검색을 세분화하고, 업로드된 참조 이미지(reference images)를 텍스트 프롬프트(text prompts)와 혼합할 수 있게 된다. 영어 버전 출시는 이번 주 미국에서 시작된다.
+
+구글의 Search Live, 인도에 출시, AI 모드(AI Mode)에 더 많은 언어 추가.
+구글은 인도에서 영어와 힌디어로 Search Live를 출시하고, AI 모드(AI Mode)를 7개 추가 인도 언어로 확장하며, 현지 상호작용을 활용하여 시간이 지남에 따라 다중 모달 시각 이해(multimodal visual understanding)를 개선할 예정이다.
+
+마이크로소프트 AI, 자체 개발 첫 이미지 생성기 발표.
+마이크로소프트의 자체 개발 모델은 사실감(photorealism)과 속도를 우선시하며, 창의적인 전문가들의 피드백을 통합하여 일반적인 스타일을 피하고, 이미 AI 벤치마크(benchmark) 사이트 LMArena에서 상위 10위 안에 들었다.
+
+Zendesk, 새로운 AI 에이전트(AI agent)가 지원 문제의 80%를 해결할 수 있다고 밝혀.
+Zendesk는 최근 AI 인수(AI acquisitions)를 통해 구축되고 더 높은 만족도를 보고한 고객들과 테스트된 여러 LLM 기반 에이전트(LLM-driven agents)를 도입하고 있다. 여기에는 대부분의 티켓을 위한 자율 에이전트(autonomous agent), 인간 기술자를 위한 코파일럿(co-pilot), 전문 관리, 음성, 분석 에이전트(analytics agents)가 포함된다.
+
+**비즈니스**
+아마존의 Zoox 로보택시(Robotaxis), 라스베이거스에 도착.
+Zoox는 휴대폰 앱을 통해 라스베이거스 스트립(Las Vegas Strip)을 따라 지도화되고 지오펜스(geofenced)된 지역 내에서 무료 탑승을 제공하고 있다. 초기 탑승자 보고서는 대부분 긍정적이었으며 사고는 보고되지 않았다.
+
+Waymo의 로보택시(robotaxis), 런던에 진출.
+Waymo는 몇 주 내에 런던에서 감독 하에 데이터 수집(data-collection) 운행을 계획하고 있으며, 2026년에는 Moove가 차량을 유지보수하는 방식으로 앱을 통한 완전 무인 호출 서비스(fully driverless ride-hail service)를 출시하는 것을 목표로 한다.
+
+Zoox와 Waymo의 로보택시 확장은 자율주행 기술이 상업적 단계로 진입하고 있음을 명확히 보여줍니다. 그러나 이러한 확장은 여전히 규제 당국의 승인, 대중의 신뢰 확보, 그리고 기술적 안전성이라는 난관에 봉착해 있습니다. 특히 런던과 같은 복잡한 도시 환경에서의 운행은 예기치 못한 상황에 대한 AI의 대응 능력과 현지 교통 법규 준수 능력을 시험할 것입니다. 로보택시 서비스는 운송 산업의 혁신을 가져올 잠재력이 크지만, 광범위한 상용화를 위해서는 지속적인 기술 개선과 엄격한 안전 프로토콜이 필수적입니다.
+
+OpenAI, 비공개 주식 매각(private stock sale) 후 세계에서 가장 가치 있는 비상장 기업(private company) 등극.
+2차 주식 매각(secondary share sale)을 통해 현재 및 전직 직원들에게 66억 달러가 지급되었으며, 소프트뱅크(SoftBank)와 T. 로우 프라이스(T. Rowe Price) 등의 구매자가 참여하여 OpenAI의 가치를 5,000억 달러로 평가했다. 이는 막대한 인프라 지출(infrastructure spending)과 지속적인 제품 출시(product launches) 속에서 OpenAI의 자금 조달 모멘텀(fundraising momentum)을 강조한다.
+
+메타, Arm과 협력하여 AI 노력 확장.
+다년간의 계약에 따라 메타(Meta)는 데이터센터(data-center) 용량(프로메테우스(Prometheus) 및 하이페리온(Hyperion)이라는 코드명 프로젝트 포함)을 확장함에 따라 와트당 성능(performance per watt)을 개선하기 위해 랭킹(ranking) 및 추천 시스템(recommendation systems)을 Arm의 Neoverse 플랫폼으로 이전할 예정이다.
+
+Reflection AI, DeepSeek에 도전하며 미국의 오픈 프론티어 AI 연구소(open frontier AI lab)가 되기 위해 20억 달러 유치.
+새로운 자금은 대규모 컴퓨팅(large-scale compute)을 확보하고 프론티어 LLM(frontier LLM)(초기에는 텍스트 중심이며, 미래에는 다중 모달(multimodal) 기능 포함)을 훈련할 인재를 모집하는 데 사용될 것이다. 이 LLM의 공개된 모델 가중치(model weights)는 오픈 액세스(open-access) 대안을 제공하는 것을 목표로 하며, 수익화(monetization)는 기업 및 국가 배포(sovereign deployments)를 대상으로 한다.
+
+Supabase, 20억 달러 달성 4개월 만에 50억 달러 가치 평가 확보.
+Supabase는 새로운 자금을 유치하여 총 자본금을 5억 달러로 늘렸으며, 시리즈 E(Series E)의 일환으로 커뮤니티 개발자(community developers)가 주식을 구매할 수 있는 옵션을 포함했다.
+
+Character.AI, 스튜디오 경고 후 플랫폼에서 디즈니 캐릭터 제거.
+Character.AI는 저작권 및 상표권이 있는 캐릭터(copyrighted and trademarked characters)의 무단 사용을 주장하는 중단 및 금지 서한(cease-and-desist letter)을 받은 후, 사용자가 만든 디즈니 캐릭터 모방 봇(bots)을 제거했다.
+
+**일반**
+Intuition, 비디오 게임 클립(video game clips)을 사용하여 에이전트(agents)에게 공간 추론(spatial reasoning)을 가르치기 위해 1억 3,400만 달러 시드 투자 유치.
+이 스타트업은 Medal의 게임 클립 데이터셋(dataset)을 사용하여 1인칭 게임 플레이(first-person gameplay)에서 시공간 추론(spatial-temporal reasoning)을 학습하는 에이전트(agents) 및 파운데이션 모델(foundation models)을 훈련하고 있다. 이는 더 스마트한 게임 내 봇(in-game bots)과 수색 및 구조 드론(search-and-rescue drones)을 목표로 하며, 연구 및 엔지니어링(engineering)을 확장하기 위해 1억 3,370만 달러를 유치했다.
+
+비디오 게임 클립을 활용하여 AI 에이전트에게 공간 추론을 가르치는 Intuition의 접근 방식은 AI 훈련 데이터의 혁신적인 활용 사례를 보여줍니다. 게임 환경은 복잡한 물리 법칙, 상호작용 가능한 객체, 그리고 다양한 시나리오를 제공하여 실제 세계의 복잡성을 모방하는 데 이상적입니다. 이러한 방식으로 훈련된 AI는 단순히 게임 내 봇을 개선하는 것을 넘어, 자율주행, 로봇 공학, 드론 제어 등 실제 세계의 다양한 응용 분야에서 향상된 공간 이해와 문제 해결 능력을 발휘할 수 있습니다. 이는 시뮬레이션 기반 학습(simulation-based learning)이 AI 개발의 중요한 축으로 부상하고 있음을 강조합니다.
+
+**연구**
+샘플링(Sampling)을 통한 추론: 당신의 기본 모델(Base Model)은 생각보다 똑똑하다.
+기본 모델(base-model) 출력에 대한 "멱분포(power distribution)"를 목표로 하는 훈련 없는 MCMC 샘플링(MCMC sampling) 방법을 사용하여, 저자들은 추론 시간 샘플링(inference-time sampling)이 단일 샷(single-shot) 및 도메인 외 추론 작업(out-of-domain reasoning tasks)에서 RL 후 훈련(RL post-training, GRPO)과 일치하거나 이를 능가할 수 있으며, 다중 샘플 다양성(multi-sample diversity)을 보존함을 보여준다.
+
+이 연구는 기존의 대규모 언어 모델(LLM)이 추가적인 미세 조정(fine-tuning) 없이도 얼마나 뛰어난 추론 능력을 가지고 있는지를 보여줍니다. MCMC 샘플링과 같은 추론 시간 기법을 활용함으로써, 모델이 이미 학습한 지식을 더욱 효과적으로 탐색하고 활용할 수 있게 됩니다. 이는 모델 재훈련에 필요한 막대한 컴퓨팅 자원과 시간을 절약하면서도, 다양한 추론 작업에서 성능을 향상시킬 수 있는 실용적인 방법을 제시합니다. 특히 도메인 외 작업에서 강력한 성능을 보이는 것은 LLM의 일반화 능력과 유연성을 높이는 데 기여합니다.
+
+대규모 진화 전략(Evolution Strategies): 강화 학습(Reinforcement Learning)을 넘어선 LLM 미세 조정(Fine-Tuning).
+이 논문은 LLM 미세 조정(fine-tuning)을 위해 수십억 개의 모델 매개변수(model parameters)를 직접 탐색하는 메모리 효율적이고 고도로 병렬화된 진화 전략(evolution strategies) 구현을 제시하며, 결과만 있는 추론 작업(outcome-only reasoning tasks)에서 강화 학습(reinforcement learning)보다 더 나은 샘플 효율성(sample efficiency), 견고성(robustness), 안정성(stability)을 보여준다.
+
+기본 모델(Base Models)은 추론 방법을 알고, 사고 모델(Thinking Models)은 언제 추론할지 학습한다.
+저자들은 "사고 모델(thinking model)"의 이점 대부분이 기본 모델(base models)이 이미 가지고 있는 추론 행동(reasoning behaviors)을 언제 활성화할지 학습하는 데서 온다고 주장하며, 이는 조종된 기본 모델(steered base models)이 목표 활성화 편집(targeted activation edits)의 작은 부분을 통해 벤치마크 성능 격차(benchmark performance gap)의 대부분을 회복할 수 있도록 한다.
+
+LLM을 위한 강화 학습 컴퓨팅(Reinforcement Learning Compute) 확장 기술.
+수십만 GPU 시간(GPU-hours)에 걸쳐 검증된 예측 시그모이드(sigmoid) 유사 스케일링 프레임워크(scaling framework)와 ScaleRL이라는 RL 레시피(recipe)는 연구자들이 작은 실행(small runs)에서 RL 성능을 외삽(extrapolate)하고, 확장 가능한 방법(scalable methods)을 식별하며, 점근적 성능(asymptotic performance)과 컴퓨팅 효율성(compute efficiency)을 향상시키도록 돕는다.
+
+행동으로서의 메모리: 장기 에이전트 작업(Long-Horizon Agentic Tasks)을 위한 자율 컨텍스트 큐레이션(Autonomous Context Curation).
+MemAct는 메모리 큐레이션(memory curation)을 명시적인 편집 행동(explicit editing actions)으로 취급하고 이를 동적 컨텍스트 정책 최적화(Dynamic Context Policy Optimization) 알고리즘과 결합하여, 에이전트(agents)가 토큰(token) 및 지연 시간(latency) 비용을 제어하면서 장기 작업(long-horizon tasks)을 위한 작업 메모리(working memory)를 자율적으로 관리하고 최적화할 수 있도록 한다.
+
+언어화된 샘플링(Verbalized Sampling): 모드 붕괴(Mode Collapse)를 완화하고 LLM 다양성(Diversity)을 확보하는 방법.
+언어화된 샘플링(Verbalized Sampling)은 모델에게 확률과 함께 여러 응답을 출력하도록 요청하는 프롬프트(prompting) 기술로, 선호도 데이터(preference data)의 전형성 편향(typicality bias)에 대응하고 재훈련 없이 사전 훈련된 다양성(pretrained diversity)을 복구한다.
+
+생성형 AI(GenAI)가 학업 성과를 향상시킬 수 있는가? 사회 및 행동 과학(Social and Behavioral Sciences)의 증거.
+저자 수준 패널 데이터(author-level panel data)와 차이의 차이 설계(difference-in-differences design)를 사용하여, 이 연구는 ChatGPT 출시 후 생성형 AI(GenAI)를 사용하기 시작한 연구자들이 출판물 생산량(publication output)을 증가시켰으며(특히 초기 경력 및 비영어권 저자), 평균 저널 영향력(average journal impact)에서 완만한 상승을 보였다는 것을 발견했다.
+
+이 연구는 생성형 AI가 학술 연구 분야에 미치는 긍정적인 영향을 정량적으로 보여줍니다. 특히 초기 경력 연구자와 비영어권 저자들이 GenAI를 활용하여 출판물 생산량을 늘리고 저널 영향력을 향상시켰다는 점은, AI가 학술 연구의 접근성을 높이고 잠재적으로 연구 불평등을 완화할 수 있음을 시사합니다. 이는 AI가 단순한 보조 도구를 넘어, 연구 프로세스 자체를 혁신하고 다양한 배경을 가진 연구자들에게 새로운 기회를 제공할 수 있음을 의미합니다. 그러나 동시에 AI 오용에 대한 윤리적 가이드라인 마련과 표절 문제에 대한 지속적인 논의도 중요함을 강조합니다.
+
+**우려**
+OpenAI의 내부 슬랙(Slack) 메시지, 저작권 소송에서 수십억 달러의 비용 초래 가능성.
+불법 복제된 LibGen 훈련 데이터셋(training dataset) 삭제에 대한 내부 슬랙(Slack) 및 이메일 논의(변호사가 삭제를 조언했는지 여부 포함)는 이제 원고들이 고의적인 증거 인멸을 보여주고 특권 통신(privileged communications)에 대한 접근을 확보하려 함에 따라 핵심 증거가 되었으며, 이는 잠재적으로 손해 배상액(damages)을 극적으로 증가시킬 수 있다.
+
+OpenAI의 내부 슬랙 메시지 논란은 AI 기업들이 직면한 법적 리스크의 심각성을 부각시킵니다. 훈련 데이터의 출처와 정당성에 대한 저작권 소송은 AI 산업 전반에 걸쳐 중요한 쟁점이며, 내부 커뮤니케이션이 증거로 채택될 경우 기업에 막대한 재정적, 평판적 손실을 초래할 수 있습니다. 이는 AI 개발사들이 데이터 수집 및 활용 과정에서 더욱 엄격한 윤리적, 법적 기준을 준수하고, 투명성을 확보해야 함을 시사합니다. 또한, AI 모델의 학습 데이터에 대한 법적 책임 소재를 명확히 하는 새로운 규제 프레임워크의 필요성도 제기됩니다.
+
+AI 사용자들, OpenAI 계약 관련 반독점 집단 소송(antitrust class action)으로 마이크로소프트 고소 | 로이터.
+제안된 집단 소송(class action)은 마이크로소프트의 OpenAI 투자 및 계약이 반독점법(antitrust laws)을 위반한다고 주장하며, 경쟁 피해(competitive harm)에 대한 구제책을 모색한다.
+
+**정책**
+캘리포니아, AI 동반자 챗봇(AI companion chatbots)을 규제하는 첫 번째 주가 되다.
+새로운 법은 연령 확인(age verification), 콘텐츠 경고(content warnings), 자살 예방 프로토콜(suicide-prevention protocols), 그리고 상호작용이 AI 생성임을 명확히 공개하도록 요구하며, 챗봇이 스스로를 의료 전문가로 가장하는 것을 금지한다. 위반 시 불법 딥페이크(deepfakes)에 대한 벌금을 포함한 처벌이 따를 수 있다.
+
+캘리포니아의 AI 동반자 챗봇 규제는 AI 기술의 사회적 영향에 대한 정책 입안자들의 인식이 높아지고 있음을 보여줍니다. 특히 AI 챗봇이 인간과의 감정적 유대감을 형성할 수 있는 잠재력을 고려할 때, 사용자 보호, 특히 취약 계층 보호는 매우 중요합니다. 연령 확인, 콘텐츠 경고, 자살 예방 프로토콜 등은 사용자가 AI와 안전하고 책임감 있게 상호작용할 수 있도록 돕는 필수적인 조치입니다. 또한 AI가 의료 전문가를 가장하는 것을 금지함으로써 AI의 오용으로 인한 잠재적 피해를 방지하려는 노력은 다른 지역의 AI 규제에도 중요한 선례가 될 것입니다.
+
+**분석**
+바이트댄스(ByteDance)가 중국에서 가장 인기 있는 AI 챗봇(AI Chatbot)을 만든 방법.
+바이트댄스(ByteDance)의 Doubao는 채팅, 이미지 및 짧은 비디오 생성, 다중 모달 음성 및 비디오 상호작용, 맞춤형 AI 에이전트(AI agents), 그리고 Douyin과의 깊은 통합을 결합하여 광범위한 비기술 사용자층에 도달하며, 월간 활성 사용자(monthly active users) 1억 5,700만 명 이상을 확보한다.
+
+바이트댄스의 Doubao 성공 사례는 AI 제품의 시장 침투 전략에 대한 중요한 통찰력을 제공합니다. 단순히 기술적 우수성을 넘어, 기존의 인기 플랫폼(Douyin)과의 깊은 통합, 다양한 멀티모달 기능(이미지, 비디오, 음성 생성) 제공, 그리고 사용자 친화적인 맞춤형 에이전트 기능은 광범위한 사용자층을 끌어들이는 데 결정적인 역할을 했습니다. 이는 AI 서비스가 성공하기 위해서는 기술력뿐만 아니라 사용자 경험, 플랫폼 시너지, 그리고 현지 시장의 특성을 이해하는 것이 중요함을 보여줍니다. 특히 중국 시장의 특성상 멀티모달 상호작용과 엔터테인먼트 요소의 결합이 Doubao의 성공에 크게 기여했을 것입니다.
+
+인터넷의 50% 이상이 이제 AI 슬롭(AI Slop), 새로운 데이터 발견.
+Surfer 탐지기(detector)를 사용하여 65,000개의 영어 기사를 분석한 Graphite의 연구에 따르면, ChatGPT가 2022년에 출시된 후 AI 작성 콘텐츠가 급격히 증가하여 현재 새로운 기사의 약 52%를 차지한다. 그러나 탐지기 정확도(detector accuracy)와 샘플 편향(sample biases)으로 인해 실제 인간 콘텐츠의 비율은 더 높을 수 있다.
+
+"AI 슬롭"의 증가는 인터넷 정보의 질과 신뢰성에 대한 심각한 우려를 제기합니다. AI가 생성한 콘텐츠가 급증하면서, 독자들은 진정성 있는 인간의 창작물과 AI가 단순히 조합한 정보를 구분하기 어려워지고 있습니다. 이는 검색 엔진 최적화(SEO) 전략에 혼란을 주고, 가짜 정보 확산의 위험을 높이며, 궁극적으로는 인간 콘텐츠 창작자들의 가치를 저해할 수 있습니다. AI 생성 콘텐츠 탐지 기술의 발전이 필요하지만, 동시에 AI가 생성한 콘텐츠의 목적과 출처를 명확히 밝히는 윤리적 기준과 플랫폼 정책 마련이 시급합니다. 이는 디지털 생태계의 건전성을 유지하기 위한 중요한 과제입니다.

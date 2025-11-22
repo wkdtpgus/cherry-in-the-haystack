@@ -1,0 +1,38 @@
+**최신 AI 동향과 미래 기술의 지평**
+
+오늘 호에서는: OpenAI 에이전트 키트(AgentKit) 출시, Google Gemini 2.5 컴퓨터 사용 모델 발표, 2025 AI 현황 보고서, Claude Code 플러그인(plugin) 지원, 에이전트 컨텍스트 엔지니어링(Agentic Context Engineering), ElevenLabs 에이전트 워크플로우(Agent Workflows) 발표, RL을 사용한 LLM 에이전트(LLM agent) 메모리(memory) 부여, Google DeepMind CodeMender 발표, AI 기술의 윤리적 책임, 데이터 프라이버시(data privacy) 및 보안, 최신 머신러닝(machine learning) 연구 동향, 멀티모달(multimodal) AI 발전, 지속 가능한 AI 개발 방법론, 오픈 소스(open-source) 커뮤니티의 역할, 주요 AI 뉴스, 논문, 도구 등.
+
+**주요 소식**
+
+**AI 윤리 및 책임 있는 개발**
+
+인공지능(AI) 기술의 발전은 사회 전반에 걸쳐 혁신적인 변화를 가져오고 있지만, 동시에 중요한 윤리적 질문들을 제기하고 있습니다. OpenAI는 에이전트 개발을 간소화하기 위해 다양한 연구를 지속하고 있으며, 이는 단순한 기술적 진보를 넘어 AI 시스템이 사회에 미칠 영향을 깊이 고려해야 함을 의미합니다. 특히, AI 모델의 편향성(bias) 문제와 의사결정 과정의 투명성(transparency) 확보는 책임 있는 AI 개발의 핵심 과제입니다. 이러한 맥락에서 OpenAI는 에이전트 키트(AgentKit)의 구성 요소 중 하나로 '가드레일(Guardrails)'을 발표했습니다. 가드레일은 탈옥(jailbreak)을 표시하고, PII(개인 식별 정보)를 마스킹(masking)하거나 표시하며, 정책 검사를 추가하는 오픈 소스(open-source) 모듈형 안전 계층(modular safety layer)입니다. 이는 독립적으로 또는 파이썬(Python) 및 자바스크립트(JavaScript) 라이브러리(library)를 통해 배포할 수 있으며, 에이전트 빌더(Agent Builder) 노드(node)에 직접 통합되도록 설계되었습니다. 모든 AI 솔루션은 인간의 가치를 존중하고 사회적 이익을 증진하는 방향으로 설계되어야 하며, 가드레일은 이러한 책임 있는 개발을 위한 구체적인 노력의 일환입니다.
+
+**데이터 보안과 거버넌스의 중요성**
+
+클라우드 환경에서 데이터 통합과 보안은 중요하며, 특히 거버넌스(governance)를 위한 '커넥터 레지스트리(Connector Registry)'는 필수적입니다. 데이터는 AI 학습의 근간이며, 민감한 정보의 보호와 접근 제어는 매우 중요합니다. OpenAI의 커넥터 레지스트리는 ChatGPT 및 API 전반의 데이터(data) 및 도구 접근에 대한 중앙 집중식 거버넌스를 제공합니다. 관리자는 Google Drive, SharePoint, Teams, Dropbox와 같은 사전 구축된 커넥터(connector) 및 타사 MCP(Multi-Cloud Platform)를 하나의 패널(panel)에서 관리할 수 있습니다. 이러한 최신 클라우드 관리 시스템은 모든 자원을 통합 관리하여 데이터 유출 위험을 줄이고, 규제 준수(compliance)를 강화하는 데 기여합니다. 커넥터 레지스트리는 글로벌 관리 콘솔(Global Admin Console)이 필요하며, 현재 일부 엔터프라이즈(Enterprise) 및 교육(Edu) 테넌트(tenant)에 베타(beta)로 출시됩니다. 데이터 보안은 모든 AI 시스템의 최우선 과제이며, 사용자의 개인 정보 보호 권리를 존중하는 것이 신뢰할 수 있는 AI 서비스를 구축하는 첫걸음입니다.
+
+**AI 개발 도구의 진화**
+
+AI 개발의 복잡성을 줄이기 위한 노력은 계속되고 있으며, OpenAI는 에이전트 개발을 간소화하기 위해 '에이전트 키트(AgentKit)'를 발표했습니다. 에이전트 키트는 시각적 워크플로우 빌더(visual workflow builder), 거버넌스(governance)를 위한 커넥터 레지스트리(connector registry), 드롭인(drop-in) 채팅 UI 키트(chat UI kit), 강화된 평가(evals), 그리고 강화 미세 조정(reinforcement fine-tuning) 옵션을 포함합니다. 이는 파편화된 오케스트레이션(orchestration), 수동 평가, 임시 프런트엔드(frontend)를 버전 관리되는 프로덕션(production) 준비 구성 요소로 대체하도록 구축되었습니다.
+특히, '에이전트 빌더(Agent Builder)'는 드래그 앤 드롭(drag-and-drop) 노드(node), 도구 연결, 사용자 지정 가드레일(guardrail)을 사용하여 다중 에이전트 워크플로우(multi-agent workflow)를 구성하는 시각적 캔버스(visual canvas)를 제공합니다. 이러한 시각적 개발 환경은 빠른 반복을 위한 미리 보기 실행, 인라인(inline) 평가 구성, 전체 버전 관리(versioning)를 지원하며, 전문가뿐만 아니라 비전문가도 AI 솔루션을 구현할 수 있도록 돕습니다. 제품, 법률, 엔지니어링(engineering) 팀이 동일한 인터페이스(interface)에서 협업하여 첫 에이전트를 개발하는 데 몇 달이 아닌 몇 시간이 걸린다고 보고됩니다.
+또한, 챗봇 개발은 사용자 경험을 중시하며, 특히 스트리밍(streaming)과 같은 실시간 기능을 지원하는 채팅 기반 에이전트 UI(User Interface)를 위한 임베더블(embeddable) 툴킷(toolkit)인 '챗킷(ChatKit)'이 중요해지고 있습니다. 챗킷은 스트리밍(streaming), 스레드(thread), "사고 과정 표시(show thinking)", 채팅 내 액션(in-chat actions)을 지원하며, 몇 주간의 프런트엔드(frontend) 작업을 건너뛰고 브랜드에 맞게 테마(theme)를 지정할 수 있습니다. Canva 및 HubSpot과 같은 회사에서 지원, 온보딩(onboarding), 문서 도우미, 연구 에이전트(research agent)에 사용됩니다. 이는 사용자 인터페이스(UI)와 사용자 경험(UX) 디자인의 중요성을 다시 한번 상기시키며, 앞으로도 개발 편의성을 높이는 도구들이 지속적으로 등장할 것입니다.
+
+**지속 가능한 AI 모델 평가 및 개선**
+
+AI 모델의 성능을 지속적으로 평가하고 개선하는 것은 서비스의 신뢰성을 유지하는 데 필수적입니다. 대규모로 에이전트를 측정하고 개선하기 위한 지속적인 모니터링이 필수적이며, OpenAI는 이를 위해 '평가 업그레이드(Evals upgrades)' 기능을 제공합니다. 이 새로운 기능은 다음과 같습니다:
+*   자동 채점기(auto-grader) 및 사람 주석(human annotation)을 사용하여 평가 스위트(eval suite)를 시드(seed)하고 확장하는 데이터셋(dataset) 구축
+*   종단 간(end-to-end) 워크플로우(workflow)를 평가하고 실패 지점을 정확히 찾아내는 추적 채점(trace grading)
+*   채점기 출력 및 사람 피드백(human feedback)에 의해 구동되는 자동화된 프롬프트 최적화(prompt optimization)
+*   동일한 평가에서 모델을 비교하기 위한 타사 모델(third-party model) 지원
+모델의 성능 검증을 위해 다양한 시나리오를 포함하는 평가 스위트(eval suite)를 시드하고 확장하는 데이터셋 구축이 중요하며, 이는 AI 시스템의 라이프사이클(lifecycle) 전반에 걸쳐 이루어져야 할 과정입니다. 또한, '강화 미세 조정(Reinforcement fine-tuning, RFT)'은 o4-mini에서 일반 가용성(GA)으로 제공되며 GPT-5에서 비공개 베타(private beta)로 제공됩니다. 이는 모델이 도구를 언제 어떻게 호출해야 하는지 학습하도록 사용자 지정 도구 호출 훈련(custom tool-call training)을 추가하고, KPI(핵심 성과 지표)에 보상을 맞추기 위한 사용자 지정 채점기(custom grader)를 추가합니다. 자동화된 평가 시스템과 사람의 피드백(feedback)을 결합하는 방식은 모델의 정확성과 견고성(robustness)을 높이는 데 기여합니다.
+
+**AI의 사회적 영향과 미래 비전**
+
+인공지능은 단순히 기술적인 문제를 넘어 사회 전반에 광범위한 영향을 미칩니다. OpenAI의 챗킷(ChatKit)과 새로운 평가 기능은 사용자 경험을 혁신하고 있으며, 현재 일반적으로 사용할 수 있습니다. 에이전트 빌더(Agent Builder)는 베타(beta) 상태이며, 커넥터 레지스트리(Connector Registry)는 글로벌 관리 콘솔(Global Admin Console)을 사용하는 조직에 대해 베타(beta)를 시작합니다. 이러한 기술 발전은 교육, 의료, 금융 등 다양한 분야에서 새로운 기회를 창출합니다.
+클라우드 서비스 비용은 사용량에 따라 책정되며, 에이전트 키트의 특정 기능은 표준 API 모델(API model) 가격에 포함됩니다. 독립형 워크플로우 API(Workflows API) 및 ChatGPT로의 에이전트 배포(agent deployment)도 계획되어 있어 확장성 있는 시스템 구축을 지원할 것입니다. 따라서 AI 기술의 접근성을 높이고, 소외되는 계층이 없도록 정책적 지원도 중요합니다.
+에이전트 키트의 적용 분야는 심층 연구, 고객 지원, 영업, 내부 비서와 같은 종단 간(end-to-end) 에이전트 워크플로우(agentic workflow)를 포함하며, Responses API 및 Agents SDK를 기반으로 구축되어 높은 티켓 처리율(ticket coverage)과 성장 이점을 제공합니다. AI가 가져올 긍정적인 변화를 극대화하고, 잠재적 위험을 최소화하기 위한 사회적 논의와 협력이 지속되어야 합니다.
+
+**결론**
+
+인공지능 기술은 끊임없이 진화하며 우리의 삶을 변화시키고 있습니다. 기술적 혁신과 더불어 윤리적 고려, 데이터 보안, 그리고 사회적 책임이 함께 발전해야 합니다. 이러한 균형 잡힌 접근 방식만이 AI의 밝은 미래를 열어갈 수 있을 것입니다.

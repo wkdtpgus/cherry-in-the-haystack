@@ -1,0 +1,21 @@
+{
+  "post_id": "042",
+  "title": "**REINFORCE: 대규모 언어 모델(Large Language Models)을 위한 간편한 온라인 강화 학습(Online Reinforcement Learning)**",
+  "base_word_count": 8017,
+  "exact_30_update_wc": 7846,
+  "exact_30_ground_truth_wc": 8000,
+  "exact_30_overlap_ratio": 1.002,
+  "paraphrase_25_update_wc": 6555,
+  "paraphrase_25_ground_truth_wc": 6537,
+  "paraphrase_25_overlap_ratio": 1.226,
+  "fragment_20_update_wc": 7234,
+  "fragment_20_ground_truth_wc": 7311,
+  "fragment_20_overlap_ratio": 1.098,
+  "semantic_25_update_wc": 6258,
+  "semantic_25_ground_truth_wc": 4011,
+  "semantic_25_overlap_ratio": 1.64,
+  "mixed_real_update_wc": 6217,
+  "mixed_real_ground_truth_wc": 6217,
+  "mixed_real_overlap_ratio": 1.29,
+  "status": "generated"
+}

@@ -1,0 +1,427 @@
+데이터 과학자를 위한 효율적인 파이썬 강좌: DataFrame 값 선택 및 교체 심화편
+
+1년 동안 50% 할인 혜택!
+
+이번 강좌의 아홉 번째 세션에서는 데이터 과학자들이 pandas 라이브러리를 활용하여 `DataFrame` 객체 내의 데이터를 선택하고 수정하는 데 필요한 두 가지 핵심적인 작업에 대해 깊이 있게 다뤄볼 예정입니다. 특히, 특정 조건이나 위치에 해당하는 행(row)과 열(column)을 빠르게 찾아내는 실용적인 기법과, `replace()` 메서드를 사용하여 단일 값은 물론, 리스트 또는 딕셔너리 형태의 여러 값을 일괄적으로 변경하는 방법을 학습할 것입니다. 이러한 기능들은 모든 데이터 분석 워크플로우(workflow)에서 데이터 전처리 및 조작 단계에 필수적으로 요구되며, 보다 간결하고, 신속하며, 최적화된 코드 작성 능력을 길러줄 것입니다.
+
+**목차:**
+*   효율적인 코딩이 왜 중요한가?
+*   `.iloc[]` 및 `.loc[]`를 활용한 행과 열의 효과적인 선택
+*   `DataFrame` 내 값의 능률적인 변경 전략
+*   `.at[]` 및 `.iat[]`를 사용한 단일 값 고속 접근
+*   정규 표현식(regex)을 활용한 복잡한 값 교체
+*   값 선택 및 교체에 대한 최적화된 접근법 요약
+
+### 내 모든 책을 40% 할인된 가격으로 한 번의 클릭으로 구매하세요
+
+**유세프 호스니(Youssef Hosni) · 6월 17일**
+
+제가 집필한 서적들과 로드맵(roadmap)을 하나의 묶음 상품(bundle)으로 구성했습니다. 이제 단 한 번의 클릭으로 이 모든 자료를 정가보다 40% 저렴한 가격에 만나보실 수 있습니다. 본 번들 상품에는 다음을 포함한 8권의 전자책(eBook)이 포함되어 있습니다:
+
+[전체 이야기 읽기](https://medium.com/@youssefhosni/get-all-my-books-one-button-away-with-40-off-221295324150)
+
+### 1. 효율적인 코딩이 왜 중요한가?
+
+효율성을 갖춘 코드는 실행 속도가 더 빠르고, 컴퓨팅 자원(계산 메모리)을 덜 소비하는 프로그램을 의미합니다. 이 글에서는 `time()` 함수를 활용하여 코드의 실행 시간을 측정하는 방법을 사용하겠습니다. 이 함수는 현재 시각을 반환하므로, 코드 실행 전후에 해당 값을 변수에 저장한 뒤 그 차이를 계산함으로써 코드의 수행 시간을 파악할 수 있습니다.
+
+아래 코드에 간결한 예시가 제시되어 있습니다:
+
+```python
+import time
+
+# record time before execution
+start_time = time.time()
+
+# execute operation
+result = 5 + 2
+
+# record time after execution
+end_time = time.time()
+
+print("Result calculated in {} sec".format(end_time - start_time))
+```
+
+효율적인 코드 작성 기법을 적용하는 것이 프로그램의 실행 시간(runtime)을 어떻게 단축하고 계산 시간 복잡도(computational time complexity)를 줄이는지 몇 가지 사례를 통해 살펴보겠습니다.
+
+0부터 100만까지 각 숫자의 제곱을 계산하는 작업을 예로 들어보겠습니다. 먼저, 리스트 컴프리헨션(list comprehension)을 사용하여 이 연산을 수행하고, 이어서 `for` 루프(loop)를 활용하여 동일한 절차를 반복할 것입니다.
+
+**첫째, 리스트 컴프리헨션 활용:**
+
+```python
+#using List comprehension
+list_comp_start_time = time.time()
+result = [i*i for i in range(0,1000000)]
+list_comp_end_time = time.time()
+print("Time using the list_comprehension: {} sec".format(list_comp_end_time - list_comp_start_time))
+```
+
+이제 `for` 루프를 사용하여 동일한 연산을 실행하겠습니다:
+
+```python
+# Using For loop
+for_loop_start_time= time.time()
+result=[]
+for i in range(0,1000000):
+    result.append(i*i)
+for_loop_end_time= time.time()
+print("Time using the for loop: {} sec".format(for_loop_end_time - for_loop_start_time))
+```
+
+두 방식 간에 상당한 성능 차이가 있음을 알 수 있습니다. 이 차이를 백분율로 계산할 수 있습니다:
+
+```python
+list_comp_time = list_comp_end_time - list_comp_start_time
+for_loop_time = for_loop_end_time - for_loop_start_time
+
+print("Difference in time: {} %".format((for_loop_time - list_comp_time)/ list_comp_time*100))
+```
+
+효율적인 코드를 작성하는 효과를 보여주는 또 다른 예시입니다. 1부터 100만까지의 모든 연속된 숫자의 합을 계산하려고 합니다. 두 가지 방법이 있습니다: 첫 번째는 무차별 대입(brute force) 방식을 사용하는 것으로, 1부터 100만까지 하나씩 더하는 것입니다.
+
+```python
+def sum_brute_force(N):
+    res = 0
+    for i in range(1,N+1):
+        res+=i
+    return res
+
+# Using brute force
+bf_start_time = time.time()
+bf_result = sum_brute_force(1000000)
+bf_end_time = time.time()
+print("Time using brute force: {} sec".format(bf_end_time - bf_start_time))
+```
+
+더 효율적인 또 다른 방법은 공식을 사용하여 계산하는 것입니다. 1부터 N까지의 모든 정수(integer number)의 합을 계산하려면, N에 N+1을 곱한 다음 2로 나누면 원하는 결과를 얻을 수 있습니다. 이 문제는 실제로 19세기 독일의 일부 학생들에게 주어졌으며, 칼 프리드리히 가우스(Carl-Friedrich Gauss)라는 영리한 학생이 이 공식을 고안하여 문제를 몇 초 만에 해결했습니다.
+
+```python
+def sum_formula(N):
+    return N*(N+1)/2
+
+# Using the formula
+formula_start_time = time.time()
+formula_result = sum_formula(1000000)
+formula_end_time = time.time()
+print("Time using the formula: {} sec".format(formula_end_time - formula_start_time))
+```
+
+두 가지 방법을 모두 실행한 후, 우리는 160,000%가 넘는 엄청난 개선을 달성했으며, 이는 간단한 작업에도 효율적이고 최적화된 코드(optimized code)가 필요한 이유를 명확히 보여줍니다.
+
+**새로운 관점: 벡터화 연산의 힘**
+
+데이터 과학 분야에서 효율적인 코딩은 단순히 파이썬 내장 기능을 넘어, NumPy나 pandas와 같은 라이브러리의 벡터화(vectorization) 기능을 활용하는 것을 의미합니다. 벡터화 연산은 명시적인 `for` 루프 없이 배열 전체에 걸쳐 작업을 수행하여 C 언어로 구현된 내부 로직을 통해 훨씬 빠른 속도를 제공합니다.
+
+예를 들어, 백만 개의 숫자로 구성된 리스트의 각 요소에 10을 더하는 작업을 생각해 봅시다.
+
+```python
+import numpy as np
+
+# Python list operation
+python_list = list(range(1, 1000001))
+start_time = time.time()
+result_list = [x + 10 for x in python_list]
+end_time = time.time()
+print(f"Python list comprehension time: {end_time - start_time:.6f} sec")
+
+# NumPy array operation
+numpy_array = np.arange(1, 1000001)
+start_time = time.time()
+result_array = numpy_array + 10 # Vectorized operation
+end_time = time.time()
+print(f"NumPy vectorized operation time: {end_time - start_time:.6f} sec")
+```
+
+위 예시에서 NumPy의 벡터화 연산은 리스트 컴프리헨션보다 훨씬 빠른 성능을 보입니다. 이는 데이터 과학자가 대규모 데이터셋을 다룰 때 반드시 고려해야 할 핵심적인 효율성 증진 기법입니다.
+
+### 2. `.iloc[]` 및 `.loc[]`를 활용한 행과 열의 효과적인 선택
+
+### 내 모든 책을 40% 할인된 가격으로 구매하세요
+
+이 하위 섹션에서는 `pandas` 라이브러리의 `.iloc[]`와 `.loc[]` 함수를 이용하여 `DataFrame` 내의 특정 행과 열을 효과적으로 찾아내고 선택하는 방법을 소개할 것입니다. `iloc[]`는 정수 기반의 위치(index number locator)를 사용하여 데이터를 탐색하는 반면, `loc[]`는 레이블(index name locator)을 기반으로 데이터를 선택하는 데 활용됩니다.
+
+아래 예시에서는 포커 데이터셋(dataset)의 첫 500개 행을 선택할 것입니다. 먼저 `.loc[]` 함수를 사용하고, 그 다음 `.iloc[]` 함수를 사용할 것입니다.
+
+```python
+# Specify the range of rows to select
+rows = range(0, 500)
+
+# Time selecting rows using .loc[]
+loc_start_time = time.time()
+poker_data.loc[rows]
+loc_end_time = time.time()
+print("Time using .loc[] : {} sec".format(loc_end_time - loc_start_time))
+
+# Specify the range of rows to select
+rows = range(0, 500)
+
+# Time selecting rows using .iloc[]
+iloc_start_time = time.time()
+poker_data.iloc[rows]
+iloc_end_time = time.time()
+print("Time using .iloc[]: {} sec".format(iloc_end_time - iloc_start_time))
+
+loc_comp_time = loc_end_time - loc_start_time
+iloc_comp_time = iloc_end_time - iloc_start_time
+print("Difference in time: {} %".format((loc_comp_time - iloc_comp_time)/ iloc_comp_time*100))
+```
+
+이 두 방법은 구문(syntax)이 동일하지만, `iloc[]`는 `loc[]`보다 거의 70% 더 빠르게 작동합니다. `.iloc[]` 함수는 이미 정렬된 인덱스(index)의 순서를 활용하므로 더 빠릅니다.
+
+행뿐만 아니라 열을 선택하는 데에도 사용할 수 있습니다. 다음 예시에서는 두 가지 방법을 모두 사용하여 처음 세 개의 열을 선택할 것입니다.
+
+```python
+iloc_start_time = time.time()
+poker_data.iloc[:,:3]
+iloc_end_time = time.time()
+print("Time using .iloc[]: {} sec".format(iloc_end_time - iloc_start_time))
+
+names_start_time = time.time()
+poker_data[['S1', 'R1', 'S2']]
+names_end_time = time.time()
+print("Time using selection by name: {} sec".format(names_end_time - names_start_time))
+
+loc_comp_time = names_end_time - names_start_time
+iloc_comp_time = iloc_end_time - iloc_start_time
+print("Difference in time: {} %".format((loc_comp_time - iloc_comp_time)/ loc_comp_time*100))
+```
+
+`iloc[]`를 사용한 열 인덱싱(column indexing)이 여전히 80% 더 빠르다는 것을 알 수 있습니다. 따라서 특정 열을 이름으로 선택하기 위해 `loc[]`를 사용하는 것이 더 쉽지 않은 한, 더 빠른 `iloc[]`를 사용하는 것이 좋습니다.
+
+**새로운 관점: 조건부 선택과 고속 단일 값 접근**
+
+데이터 분석에서는 특정 조건을 만족하는 행을 선택하는 경우가 매우 흔합니다. `loc[]`는 이러한 조건부 선택에 매우 강력하며 유연하게 사용될 수 있습니다. 예를 들어, 특정 열의 값이 50보다 큰 모든 행을 선택하는 경우를 살펴보겠습니다.
+
+```python
+import pandas as pd
+data = {'A': [10, 20, 30, 40, 50, 60],
+        'B': [1, 2, 3, 4, 5, 6]}
+df = pd.DataFrame(data)
+
+start_time = time.time()
+filtered_df = df.loc[df['A'] > 30]
+end_time = time.time()
+print(f"Time for conditional selection with .loc[]: {end_time - start_time:.6f} sec")
+print(filtered_df)
+```
+
+이처럼 `loc[]`는 불리언(Boolean) 배열을 인덱서로 사용하여 복잡한 조건에 따른 데이터 필터링을 효율적으로 수행합니다.
+
+**`.at[]` 및 `.iat[]`를 사용한 단일 값 고속 접근**
+
+때로는 `DataFrame`에서 단일 값에만 접근해야 할 때가 있습니다. 이 경우 `.loc[]`나 `.iloc[]`보다 훨씬 빠른 전용 접근자(`.at[]`, `.iat[]`)가 있습니다. `.at[]`는 레이블(label) 기반으로 단일 값을 가져오고, `.iat[]`는 정수 위치(integer position) 기반으로 단일 값을 가져옵니다. 이들은 슬라이싱(slicing)이나 불리언 인덱싱(Boolean indexing)을 지원하지 않으므로, 단일 셀 접근 시 성능 이점을 가집니다.
+
+```python
+# Create a large DataFrame for demonstration
+large_df = pd.DataFrame(np.random.rand(100000, 10), columns=[f'col_{i}' for i in range(10)])
+
+# Access using .loc[]
+loc_start = time.time()
+value_loc = large_df.loc[50000, 'col_5']
+loc_end = time.time()
+print(f".loc[] for single value: {loc_end - loc_start:.8f} sec")
+
+# Access using .at[]
+at_start = time.time()
+value_at = large_df.at[50000, 'col_5']
+at_end = time.time()
+print(f".at[] for single value: {at_end - at_start:.8f} sec")
+
+# Access using .iloc[]
+iloc_start = time.time()
+value_iloc = large_df.iloc[50000, 5]
+iloc_end = time.time()
+print(f".iloc[] for single value: {iloc_end - iloc_start:.8f} sec")
+
+# Access using .iat[]
+iat_start = time.time()
+value_iat = large_df.iat[50000, 5]
+iat_end = time.time()
+print(f".iat[] for single value: {iat_end - iat_start:.8f} sec")
+```
+
+위 예시에서 `.at[]`와 `.iat[]`가 `.loc[]` 및 `.iloc[]`보다 단일 값 접근에서 훨씬 빠름을 확인할 수 있습니다. 데이터프레임의 특정 셀에 빠르게 접근하거나 수정해야 할 때 이들을 활용하면 성능을 크게 향상시킬 수 있습니다.
+
+### 3. DataFrame 내 값의 능률적인 변경 전략
+
+1년 동안 50% 할인 혜택!
+
+`DataFrame` 내의 값을 교체하는 것은 데이터 정제(data cleaning) 단계에서 특히 중요한 작업입니다. 동일한 의미를 나타내는 다양한 표현들을 일관된 형태로 통합해야 할 때 그 유용성이 더욱 부각됩니다.
+
+이전에 불러왔던 인기 아기 이름 데이터셋을 다시 살펴보겠습니다:
+
+`Gender`(성별) 특성(feature)을 자세히 살펴보고 고유한 값(unique values)을 확인해 봅시다:
+
+```python
+names['Gender'].unique()
+```
+
+여성 성별이 대문자와 소문자 두 가지 값으로 표현되어 있음을 알 수 있습니다. 이는 실제 데이터에서 매우 흔한 일이며, 이를 해결하는 쉬운 방법은 전체 데이터셋에서 일관성을 유지하기 위해 한 값을 다른 값으로 교체하는 것입니다.
+
+이를 수행하는 두 가지 방법이 있습니다. 첫 번째는 단순히 교체하려는 값을 정의한 다음, 무엇으로 교체할지 정의하는 것입니다. 이는 아래 코드에 나와 있습니다:
+
+```python
+start_time = time.time()
+names['Gender'].loc[names.Gender=='female'] = 'FEMALE'
+end_time = time.time()
+pandas_time = end_time - start_time
+print("Replace values using .loc[]: {} sec".format(pandas_time))
+```
+
+두 번째 방법은 아래 코드에 나와 있는 것처럼 `pandas`의 내장 함수인 `.replace()`를 사용하는 것입니다:
+
+### 내 모든 책을 40% 할인된 가격으로 구매하세요
+
+```python
+start_time = time.time()
+names['Gender'].replace('female', 'FEMALE', inplace=True)
+end_time = time.time()
+replace_time = end_time - start_time
+print("Time using replace(): {} sec".format(replace_time))
+```
+
+내장 함수를 사용하면 시간 복잡도(time complexity)에 차이가 있으며, `.loc()` 메서드를 사용하여 값의 행과 열 인덱스를 찾아 교체하는 것보다 157% 더 빠르다는 것을 알 수 있습니다.
+
+```python
+print('The differnce: {} %'.format((pandas_time- replace_time )/replace_time*100))
+```
+
+리스트를 사용하여 여러 값을 교체할 수도 있습니다. 우리의 목표는 `WHITE NON-HISPANIC` 또는 `WHITE NON-HISP`로 분류된 모든 민족을 `WNH`로 변경하는 것입니다. `.loc[]` 함수를 사용하여, 'or' 문(파이썬에서는 파이프(`|`)로 상징됨)을 이용하여 우리가 찾고 있는 민족의 아기들을 찾을 것입니다. 그런 다음 새 값을 할당할 것입니다. 항상 그렇듯이, 이 연산에 필요한 CPU 시간도 측정합니다.
+
+```python
+start_time = time.time()
+names['Ethnicity'].loc[(names["Ethnicity"] == 'WHITE NON HISPANIC') | (names["Ethnicity"] == 'WHITE NON HISP')] = 'WNH'
+end_time = time.time()
+pandas_time= end_time - start_time
+print("Results from the above operation calculated in %s seconds" %(pandas_time))
+```
+
+다음과 같이 `.replace()` pandas 내장 함수를 사용하여 동일한 연산을 수행할 수도 있습니다:
+
+```python
+start_time = time.time()
+names['Ethnicity'].replace(['WHITE NON HISPANIC','WHITE NON HISP'], 'WNH', inplace=True)
+end_time = time.time()
+replace_time = end_time - start_time
+print("Time using .replace(): {} sec".format(replace_time))
+```
+
+다시 한번 `.replace()` 메서드를 사용하는 것이 `.loc[]` 메서드를 사용하는 것보다 훨씬 빠르다는 것을 알 수 있습니다. 얼마나 빠른지 더 잘 이해하기 위해 아래 코드를 실행해 봅시다:
+
+```python
+print('The differnce: {} %'.format((pandas_time- replace_time )/replace_time*100))
+```
+
+`.replace()` 메서드는 `.loc[]` 메서드를 사용하는 것보다 87% 더 빠릅니다. 데이터가 방대하고 많은 정제가 필요한 경우, 이 팁은 데이터 정제(data cleaning)의 계산 시간을 줄이고 pandas 코드를 훨씬 더 빠르고 효율적으로 만들 것입니다.
+
+마지막으로, 딕셔너리(dictionary)를 사용하여 `DataFrame`에서 단일 값과 여러 값을 모두 교체할 수도 있습니다. 하나의 명령으로 여러 함수를 교체하고 싶을 때 매우 유용할 것입니다. 딕셔너리를 사용하여 모든 남성 성별을 `BOY`로, 모든 여성 성별을 `GIRL`로 교체할 것입니다.
+
+```python
+names = pd.read_csv('Popular_Baby_Names.csv')
+start_time = time.time()
+names['Gender'].replace({'MALE':'BOY', 'FEMALE':'GIRL', 'female': 'girl'}, inplace=True)
+end_time = time.time()
+dict_time = end_time - start_time
+print("Time using .replace() with dictionary: {} sec".format(dict_time))
+
+names = pd.read_csv('Popular_Baby_Names.csv')
+start_time = time.time()
+names['Gender'].replace('MALE', 'BOY', inplace=True)
+names['Gender'].replace('FEMALE', 'GIRL', inplace=True)
+names['Gender'].replace('female', 'girl', inplace=True)
+end_time = time.time()
+list_time = end_time - start_time
+print("Time using multiple .replace(): {} sec".format(list_time))
+
+print('The differnce: {} %'.format((list_time- dict_time )/dict_time*100))
+```
+
+리스트로도 같은 작업을 할 수 있지만, 더 장황합니다. 두 가지 방법을 비교하면 딕셔너리가 약 22% 더 빠르게 실행된다는 것을 알 수 있습니다. 일반적으로 파이썬에서 딕셔너리를 사용하는 것은 리스트에 비해 매우 효율적입니다. 리스트를 탐색하는 것은 리스트의 모든 요소를 통과해야 하는 반면, 딕셔너리를 탐색하는 것은 항목과 일치하는 키(key)로 즉시 이동합니다. 하지만 두 구조는 목적이 다르기 때문에 비교가 다소 불공평합니다.
+
+딕셔너리를 사용하면 여러 다른 열에서 동일한 값을 교체할 수 있습니다. 이전의 모든 예시에서는 교체할 값이 있는 열을 지정했습니다. 이제 동일한 열의 여러 값을 하나의 공통 값으로 교체할 것입니다. 모든 민족을 흑인(Black), 아시아인(Asian), 백인(White)의 세 가지 큰 범주로 분류하고자 합니다. 구문은 다시 한번 매우 간단합니다. 여기서는 중첩 딕셔너리(nested dictionary)를 사용합니다. 외부 키(outer key)는 값을 교체하려는 열입니다. 이 외부 키의 값은 또 다른 딕셔너리이며, 여기서 키는 교체할 민족이고 값은 새로운 민족(흑인, 아시아인 또는 백인)입니다.
+
+```python
+start_time = time.time()
+names.replace({'Ethnicity': {'ASIAN AND PACI': 'ASIAN', 'ASIAN AND PACIFIC ISLANDER': 'ASIAN',
+                             'BLACK NON HISPANIC': 'BLACK', 'BLACK NON HISP': 'BLACK',
+                             'WHITE NON HISPANIC': 'WHITE', 'WHITE NON HISP': 'WHITE'}})
+print("Time using .replace() with dictionary: {} sec".format (time.time() - start_time))
+```
+
+**새로운 관점: 정규 표현식(Regex)을 이용한 복잡한 값 교체**
+
+데이터 정제 과정에서는 단순히 문자열을 일치시키는 것을 넘어, 특정 패턴을 가진 문자열을 찾아 교체해야 하는 경우가 많습니다. `pandas`의 `.replace()` 메서드는 `regex=True` 옵션을 통해 정규 표현식(regular expression)을 활용한 강력한 값 교체 기능을 제공합니다. 이는 복잡한 텍스트 데이터를 처리할 때 매우 유용합니다.
+
+예를 들어, 'Version 1.0', 'ver.2', 'v3' 등 다양한 형태로 표현된 버전 정보를 'VERSION'으로 통일하고 싶다고 가정해 봅시다.
+
+```python
+import pandas as pd
+import re
+
+df_versions = pd.DataFrame({
+    'Software': ['App_A', 'App_B', 'App_C', 'App_D'],
+    'Version_Info': ['Version 1.0', 'ver.2', 'Old_v3_beta', 'Latest']
+})
+
+print("Original DataFrame:")
+print(df_versions)
+
+# 정규 표현식을 사용하여 'version', 'ver', 'v'로 시작하는 패턴을 'VERSION'으로 교체
+start_time = time.time()
+df_versions['Version_Info_Cleaned'] = df_versions['Version_Info'].replace(r'(?i)ver(sion|\.)?\s*\d+\w*', 'VERSION', regex=True)
+end_time = time.time()
+
+print("\nDataFrame after regex replace:")
+print(df_versions)
+print(f"Time using regex replace: {end_time - start_time:.6f} sec")
+
+```
+위 코드에서 `(?i)`는 대소문자를 무시하도록 하며, `ver(sion|\.)?\s*\d+\w*`는 'ver' 또는 'version'으로 시작하고 숫자와 추가 문자가 붙는 다양한 버전 문자열을 효과적으로 찾아 교체합니다. 이처럼 정규 표현식을 활용하면 매우 유연하고 강력한 데이터 클리닝이 가능해집니다.
+
+**`.map()` 또는 `.apply()`를 이용한 유연한 교체**
+
+`replace()` 메서드가 강력하지만, 때로는 더 복잡한 로직이나 함수를 적용하여 값을 교체해야 할 수도 있습니다. 이때 `.map()`이나 `.apply()` 메서드를 활용할 수 있습니다. 특히 `.map()`은 Series의 각 요소에 함수나 딕셔너리를 적용할 때 `replace()`와 유사하게 작동하면서도 더 유연한 상황에서 사용될 수 있습니다.
+
+예를 들어, 나이 데이터를 특정 범주로 매핑하거나, 여러 조건에 따라 값을 변경해야 하는 경우를 생각해 볼 수 있습니다.
+
+```python
+df_ages = pd.DataFrame({'Age': [15, 22, 35, 48, 62, 18, 29]})
+
+# 나이를 연령대로 매핑하는 함수 정의
+def map_age_to_group(age):
+    if age < 20:
+        return 'Teenager'
+    elif 20 <= age < 40:
+        return 'Young Adult'
+    elif 40 <= age < 60:
+        return 'Middle Age'
+    else:
+        return 'Senior'
+
+start_time = time.time()
+df_ages['Age_Group'] = df_ages['Age'].map(map_age_to_group)
+end_time = time.time()
+
+print("\nDataFrame with Age Group using .map():")
+print(df_ages)
+print(f"Time using .map() with function: {end_time - start_time:.6f} sec")
+```
+`.map()`은 Series에 최적화되어 있어 `apply()`보다 빠를 수 있으며, 특히 딕셔너리나 Series를 매핑 인수로 사용할 때 매우 효율적입니다.
+
+### 4. 값 선택 및 교체를 위한 최적화된 접근법 요약
+
+### 내 모든 책을 40% 할인된 가격으로 구매하세요
+
+*   **위치 기반 선택 시:** `DataFrame`에서 행과 열을 선택할 때는 `.iloc[]` 함수가 일반적으로 더 빠릅니다. 따라서 `loc[]`를 사용하는 것이 구문적으로 더 편리하거나 직관적이지 않고, 속도가 최우선 고려 사항이거나 반복적인 작업이 아니라면 `.iloc[]`를 사용하는 것을 권장합니다.
+*   **레이블 기반 선택 시:** 특정 레이블(인덱스 이름, 열 이름)을 사용하여 데이터를 선택할 때는 `.loc[]`가 적합하며, 조건부 선택에도 매우 강력합니다.
+*   **단일 값 접근 시:** `DataFrame`의 특정 단일 셀에 접근하거나 값을 변경해야 할 경우, `.loc[]`나 `.iloc[]`보다 `.at[]`(레이블 기반) 또는 `.iat[]`(정수 위치 기반)를 사용하는 것이 훨씬 빠릅니다.
+*   **값 교체 시:** 내장 `replace()` 함수를 활용하는 것이 수동으로 `loc[]`를 사용하여 값을 변경하는 것보다 훨씬 더 신속합니다.
+*   **다중 값 교체 시:** 여러 값을 한 번에 교체할 때는 파이썬 딕셔너리를 `replace()`와 함께 사용하는 것이 리스트를 사용하는 것보다 효율적입니다.
+*   **복잡한 패턴 교체 시:** `replace()` 메서드의 `regex=True` 옵션과 정규 표현식을 활용하면 복잡한 텍스트 패턴을 유연하고 강력하게 교체할 수 있습니다.
+*   **함수 기반 교체 시:** `replace()`로 처리하기 어려운 복잡한 로직이나 함수를 적용하여 값을 변경해야 할 때는 `.map()` 또는 `.apply()`를 고려할 수 있습니다.
+
+이 뉴스레터(newsletter)는 개인적인 열정 프로젝트이며, 여러분의 지원이 이를 유지하는 데 도움이 됩니다. 기여하고 싶다면 몇 가지 좋은 방법이 있습니다:
+
+*   **구독(Subscribe)**하세요. 유료 구독은 제 글쓰기를 지속 가능하게 하고 추가 콘텐츠에 대한 접근 권한을 제공합니다.
+*   제 책 **번들(Bundle)**을 구매하세요. 제 실용적인 책 7권과 로드맵을 단 40% 가격으로 만나보세요.
+
+읽어주셔서 감사하며, 독립적인 글쓰기와 연구를 지원해 주셔서 감사합니다!

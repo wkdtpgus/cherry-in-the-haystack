@@ -1,0 +1,21 @@
+{
+  "post_id": "010",
+  "title": "**기초부터의 추론 첫 번째 살펴보기: 1장**",
+  "base_word_count": 280,
+  "exact_30_update_wc": 299,
+  "exact_30_ground_truth_wc": 299,
+  "exact_30_overlap_ratio": 0.936,
+  "paraphrase_25_update_wc": 330,
+  "paraphrase_25_ground_truth_wc": 330,
+  "paraphrase_25_overlap_ratio": 0.848,
+  "fragment_20_update_wc": 255,
+  "fragment_20_ground_truth_wc": 363,
+  "fragment_20_overlap_ratio": 0.675,
+  "semantic_25_update_wc": 584,
+  "semantic_25_ground_truth_wc": 584,
+  "semantic_25_overlap_ratio": 0.479,
+  "mixed_real_update_wc": 230,
+  "mixed_real_ground_truth_wc": 242,
+  "mixed_real_overlap_ratio": 1.165,
+  "status": "generated"
+}

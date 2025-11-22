@@ -1,0 +1,210 @@
+1년 동안 50% 할인
+
+이 글에서는 특정 특성(feature)의 값에 따라 데이터프레임(DataFrame)의 항목을 그룹화(group)하기 위해 `.groupby()` 함수(function)를 효과적으로 사용하는 방법에 대해 논의할 것입니다. `.groupby()` 메서드(method)는 데이터프레임(DataFrame)에 적용되어 특정 특성(feature)에 따라 그룹화(group)합니다. 그런 다음, 그룹화된 객체(object)에 간단하거나 더 복잡한 함수(function)를 적용할 수 있습니다. 이는 테이블 형식 또는 구조화된 데이터(data)를 다루는 모든 데이터 과학자(data scientist)에게 매우 중요한 도구(tool)입니다. 데이터를 쉽고 효과적으로 조작하는 데 도움이 될 것이기 때문입니다.
+
+**목차:**
+*   `.groupby()`와 함께 사용되는 일반적인 함수
+*   `.groupby()` 및 `.transform()`을 사용한 결측값 대체
+*   `.groupby()` 및 `.filter()`를 사용한 데이터 필터링
+
+내 모든 책을 버튼 하나로 40% 할인된 가격에 만나보세요
+**Youssef Hosni · 6월 17일**
+
+제 책과 로드맵(roadmap)을 묶은 번들(bundle)을 만들었습니다. 이제 버튼 하나로 모든 것을 원가보다 40% 저렴하게 구매할 수 있습니다. 이 번들(bundle)에는 다음을 포함한 8권의 전자책(eBook)이 있습니다:
+
+전체 이야기 읽기
+
+### 1. `.groupby()`와 함께 사용되는 일반적인 함수
+
+1년 동안 50% 할인
+
+집계된 그룹(group)에 적용할 수 있는 가장 간단한 메서드(method) 중 하나는 `.count()`입니다. 아래 예시에서는 이를 레스토랑 데이터셋(dataset)에 적용할 것입니다. 먼저, 고객이 흡연자인지 아닌지에 따라 레스토랑 데이터를 그룹화(group)합니다. 그런 다음, `.count()` 메서드(method)를 적용합니다. 흡연자와 비흡연자의 수를 얻습니다.
+
+```python
+restaurant = pd.read_csv(’restaurant_data.csv’)
+restaurant_grouped = restaurant.groupby(’smoker’)
+print(restaurant_grouped.count())
+```
+
+`.count()` 메서드(method)는 각 특성(feature)에서 각 그룹(group)의 발생 횟수를 세기 때문에 모든 특성(feature)에 대해 동일한 결과를 얻는 것은 놀라운 일이 아닙니다. 데이터에 결측값(missing value)이 없으므로 모든 열에서 결과는 동일해야 합니다.
+
+**다양한 집계 함수 사용하기**
+
+`.count()` 외에도 `.groupby()`와 함께 자주 사용되는 다양한 집계 함수들이 있습니다. 이 함수들은 각 그룹의 데이터를 요약하는 데 필수적입니다. 가장 일반적인 함수로는 `.sum()` (합계), `.mean()` (평균), `.median()` (중앙값), `.min()` (최소값), `.max()` (최대값), 그리고 `.std()` (표준편차) 등이 있습니다. 이들을 통해 그룹별로 데이터의 분포나 중심 경향을 파악할 수 있습니다.
+
+예를 들어, 흡연자 여부에 따른 팁(tip)의 평균과 합계를 알고 싶다면 다음과 같이 사용할 수 있습니다.
+
+```python
+# 흡연자 여부에 따른 팁의 평균 계산
+print(restaurant.groupby(’smoker’)[’tip’].mean())
+
+# 흡연자 여부에 따른 팁의 합계 계산
+print(restaurant.groupby(’smoker’)[’tip’].sum())
+```
+
+**여러 집계 함수 동시에 적용하기: `.agg()`**
+
+만약 하나의 그룹에 대해 여러 통계량을 동시에 보고 싶다면 `.agg()` 메서드를 활용할 수 있습니다. `.agg()`는 리스트(list)나 딕셔너리(dictionary) 형태로 여러 집계 함수를 인자로 받아 한 번에 계산해줍니다.
+
+```python
+# 흡연자 여부에 따른 팁의 평균, 중앙값, 표준편차를 동시에 계산
+print(restaurant.groupby(’smoker’)[’tip’].agg([’mean’, ’median’, ’std’]))
+
+# 여러 컬럼에 다른 집계 함수 적용
+print(restaurant.groupby(’smoker’).agg(
+    mean_total_bill=(’total_bill’, ’mean’),
+    max_tip=(’tip’, ’max’)
+))
+```
+
+이처럼 `.agg()`를 사용하면 데이터 분석의 효율성을 크게 높일 수 있으며, 그룹별로 필요한 다양한 통계적 요약을 한눈에 파악할 수 있습니다.
+
+**`.transform()`을 이용한 그룹별 변환의 힘**
+
+특정 특성(feature)의 값에 따라 데이터프레임(DataFrame)의 항목을 그룹화(group)한 후, 우리는 원래 데이터프레임(DataFrame)의 인덱스와 동일한 형태를 유지하면서 그룹별로 특정 변환(transformation)을 적용하고자 할 때가 있습니다. 이때 `.transform()` 메서드가 강력한 도구가 됩니다. `.transform()`은 각 그룹에 함수를 적용하고, 그 결과를 원래 데이터프레임의 크기에 맞춰 다시 브로드캐스팅(broadcasting)하여 반환합니다. 이는 그룹별 평균으로 결측치를 채우거나, 그룹별 통계량을 이용해 데이터를 스케일링(scaling)하는 등의 작업에 매우 유용합니다.
+
+z-점수(z-score) 변환은 `.transform()`의 대표적인 활용 예시 중 하나입니다. z-점수는 개별 데이터 포인트가 그룹 내에서 평균으로부터 얼마나 떨어져 있는지를 표준편차 단위로 나타냅니다. 이는 데이터의 스케일을 표준화하여 그룹 간 또는 그룹 내 비교를 용이하게 합니다. 예를 들어, 식사 시간(점심/저녁)에 따라 그룹화한 후, 각 식사 시간 그룹 내에서 개별 총 청구액(total_bill)이 해당 그룹의 평균으로부터 얼마나 표준화되어 떨어져 있는지 계산할 수 있습니다.
+
+1년 동안 50% 할인
+
+```python
+zscore = lambda x: (x - x.mean() ) / x.std()
+restaurant_grouped = restaurant.groupby(’time’)
+restaurant_transformed = restaurant_grouped.transform(zscore)
+restaurant_transformed.head()
+```
+
+`transform()` 메서드는 그룹별 계산을 효율적으로 수행하고 그 결과를 원본 데이터의 구조에 맞게 반환함으로써, 복잡한 그룹 기반 변환 작업을 단순화합니다. 이는 수동으로 그룹별 평균이나 표준편차를 계산하고 이를 다시 원본 데이터에 매핑하는 번거로운 과정을 크게 줄여줍니다. `transform()`이 제공하는 이러한 효율성은 대규모 데이터셋에서 특히 빛을 발하며, 코드의 가독성과 유지보수성도 향상시킵니다.
+
+### 2. `.groupby()` 및 `.transform()`을 사용한 결측값 대체
+
+내 모든 책을 40% 할인된 가격에 만나보세요
+
+이제 그룹화된 판다스(pandas) 객체(object)에 `transform()` 함수(function)를 사용하는 이유와 방법을 살펴보았으니, 이제 결측값(missing value)을 대체하는 매우 구체적인 작업에 대해 다룰 것입니다. `transform()` 함수(function)를 결측값 대체(missing value imputation)에 어떻게 사용할 수 있는지 실제로 알아보기 전에, 각 그룹(group)에서 우리가 관심 있는 변수(variable)에 결측값(missing value)이 얼마나 있는지 살펴보겠습니다. 아래에서 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 볼 수 있으며, 이는 176+68 = 244입니다.
+
+```python
+prior_counts = restaurant.groupby(’time’)
+prior_counts[’total_bill’].count()
+```
+
+다음으로, 아래 코드(code)를 사용하여 무작위 관측치(random observation)의 10%에 해당하는 총 청구액(total bill)을 `NaN`으로 설정한 `restaurant_nan` 데이터셋(dataset)을 생성할 것입니다.
+
+```python
+import pandas as pd
+import numpy as np
+
+p = 0.1 #percentage missing data required
+mask = np.random.choice([np.nan,1], size=len(restaurant), p=[p,1-p])
+
+restaurant_nan = restaurant.copy()
+restaurant_nan[’total_bill’] = restaurant_nan[’total_bill’] * mask
+```
+
+이제 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 출력해 보면, 현재 155 + 62 = 217임을 알 수 있습니다. 우리가 가진 총 데이터 포인트(data point)는 244이므로, 결측 데이터 포인트(missing data point)는 24개이며, 이는 10%에 해당합니다.
+
+```python
+prior_counts = restaurant.groupby(’time’)
+prior_counts[’total_bill’].count()
+```
+
+**그룹별 결측값 대체 전략**
+
+데이터에서 결측값(missing value)의 수를 센 후, 그룹(group)별 함수(function)를 사용하여 이 결측값(missing value)을 채우는 방법을 보여드리겠습니다. 가장 일반적인 선택은 평균(mean)과 중앙값(median)이며, 선택은 데이터의 왜도(skewness)와 관련이 있습니다. 데이터가 정규 분포에 가깝고 이상치(outlier)의 영향이 적다면 평균으로 대체하는 것이 합리적입니다. 그러나 데이터가 한쪽으로 치우쳐 있거나 이상치가 많다면, 중앙값이 더 견고한 대푯값이므로 중앙값으로 대체하는 것이 좋습니다.
+
+이전과 마찬가지로, `fillna()` 함수(function)를 사용하여 모든 결측값(missing value)을 해당 그룹(group)의 평균(average)으로 대체하는 람다 변환(lambda transformation)을 정의합니다. 이전과 마찬가지로, 식사 시간에 따라 데이터를 그룹화(group)한 다음 미리 정의된 변환(transformation)을 적용하여 결측값(missing value)을 대체합니다.
+
+```python
+# Missing value imputation using group-wise mean
+missing_trans = lambda x: x.fillna(x.mean())
+restaurant_nan_grouped = restaurant_nan.groupby(’time’)[’total_bill’]
+restaurant_nan_grouped.transform(missing_trans)
+```
+
+만약 `total_bill` 데이터가 왜곡되어 있다고 판단된다면, 평균 대신 중앙값을 사용하여 결측값을 대체할 수 있습니다.
+
+```python
+# Missing value imputation using group-wise median
+missing_trans_median = lambda x: x.fillna(x.median())
+restaurant_nan_grouped_median = restaurant_nan.groupby(’time’)[’total_bill’]
+restaurant_nan_grouped_median.transform(missing_trans_median)
+```
+
+보시다시피, 인덱스(index) 0과 인덱스(index) 4의 관측치(observation)는 동일하며, 이는 해당 결측값(missing value)이 해당 그룹(group)의 평균(mean)으로 대체되었음을 의미합니다. 또한 이 메서드(method)를 사용한 계산 시간은 0.007초임을 알 수 있습니다. 이를 기존 메서드(method)와 비교해 봅시다:
+
+```python
+start_time = time.time()
+mean_din = restaurant_nan.loc[restaurant_nan.time ==’Dinner’][’total_bill’].mean()
+mean_lun = restaurant_nan.loc[restaurant_nan.time == ‘Lunch’][’total_bill’].mean()
+
+for row in range(len(restaurant_nan)):
+    if restaurant_nan.iloc[row][’time’] == ‘Dinner’:
+        restaurant_nan.loc[row, ‘total_time’] = mean_din
+    else:
+        restaurant_nan.loc[row, ‘total_time’] = mean_lun
+
+print(”Results from the above operation calculated in %s seconds” % (time.time() - start_time))
+```
+
+그룹화된 객체(object)에 적용된 `.transform()` 함수(function)를 사용하는 것이 이 작업에 대해 순수 파이썬(Python) 코드(code)보다 더 빠르게 수행됨을 알 수 있습니다. `.transform()`은 내부적으로 최적화된 C(C) 코드를 사용하기 때문에, 파이썬(Python) `for` 루프(loop)보다 훨씬 빠르고 효율적으로 대규모 데이터셋(dataset)을 처리할 수 있습니다. 이는 특히 데이터 전처리 단계에서 반복적으로 결측값을 처리해야 할 때 매우 큰 장점입니다.
+
+### 3. `.groupby()` 및 `.filter()`를 사용한 데이터 필터링
+
+1년 동안 50% 할인
+
+이제 그룹화된 판다스(pandas) 객체(object)에서 `filter()` 함수(function)를 어떻게 사용할 수 있는지 논의할 것입니다. 이를 통해 특정 조건(condition)에 따라 해당 그룹(group)의 하위 집합(subset)만 포함할 수 있습니다. 종종 특정 특성(feature)에 따라 데이터프레임(DataFrame)의 항목을 그룹화(group)한 후, 우리는 특정 조건(condition)에 따라 해당 그룹(group)의 하위 집합(subset)만 포함하는 데 관심이 있습니다. 필터링 조건(filtration condition)의 몇 가지 예로는 결측값(missing value)의 수, 특정 특성(feature)의 평균(mean), 또는 데이터셋(dataset)에서 그룹(group)의 발생 횟수 등이 있습니다.
+
+**그룹 크기에 따른 필터링**
+
+`.filter()`의 일반적인 사용 사례 중 하나는 그룹의 크기, 즉 그룹에 속한 행의 수에 따라 그룹을 필터링하는 것입니다. 예를 들어, 너무 적은 수의 관측치(observation)를 가진 그룹은 통계적으로 의미가 없을 수 있으므로 분석에서 제외하고 싶을 때가 있습니다.
+
+```python
+# 총 주문 수가 10개 미만인 요일 그룹 제외
+# len(x)는 각 그룹의 행 수를 나타냄
+filtered_by_size = restaurant.groupby(’day’).filter(lambda x: len(x) >= 10)
+print("총 주문 수가 10개 이상인 요일 그룹의 데이터 수:", len(filtered_by_size))
+print("원본 데이터의 요일 그룹 수:", restaurant[’day’].nunique())
+print("필터링된 데이터의 요일 그룹 수:", filtered_by_size[’day’].nunique())
+```
+
+위 예시에서는 `day` 특성(feature)으로 그룹화한 후, 각 요일의 주문 수가 10개 이상인 그룹만 남기도록 필터링합니다.
+
+우리는 웨이터(waiter)에게 지불된 평균 금액이 20달러를 초과하는 날에 주어진 팁(tip)의 평균 금액을 찾는 데 관심이 있습니다. `.filter()` 함수(function)는 각 그룹(group)의 데이터프레임(DataFrame)에서 작동하는 람다 함수(lambda function)를 허용합니다. 이 예시에서 람다 함수(lambda function)는 "total_bill"을 선택하고 `mean()`이 20보다 큰지 확인합니다. 만약 해당 람다 함수(lambda function)가 `True`를 반환하면, 팁(tip)의 `mean()`이 계산됩니다. 팁(tip)의 총 평균(mean)을 비교하면 두 값 사이에 차이가 있음을 알 수 있으며, 이는 필터링(filtering)이 올바르게 수행되었음을 의미합니다.
+
+```python
+restaurant_grouped = restaurant.groupby(’day’)
+filter_trans = lambda x : x[’total_bill’].mean() > 20
+restaurant_filtered = restaurant_grouped.filter(filter_trans)
+print(restaurant_filtered[’tip’].mean())
+print(restaurant[’tip’].mean())
+```
+
+**복합적인 조건으로 필터링하기**
+
+`.filter()`는 단일 조건뿐만 아니라 여러 조건을 결합하여 그룹을 필터링하는 데에도 사용될 수 있습니다. 예를 들어, `total_bill`의 평균이 특정 값을 초과하고 동시에 `tip`의 평균 비율도 특정 임계값(threshold)을 넘는 그룹을 선택할 수 있습니다.
+
+```python
+# 총 청구액 평균이 20달러 초과하고, 팁 비율(tip/total_bill) 평균이 15% 초과하는 요일 그룹 필터링
+complex_filter_trans = lambda x: (x[’total_bill’].mean() > 20) and ((x[’tip’] / x[’total_bill’]).mean() > 0.15)
+restaurant_complex_filtered = restaurant.groupby(’day’).filter(complex_filter_trans)
+print("복합 조건 필터링 후 데이터 수:", len(restaurant_complex_filtered))
+print("복합 조건 필터링 후 요일 그룹:", restaurant_complex_filtered[’day’].unique())
+```
+
+이처럼 `.filter()`를 사용하면 데이터의 특성에 따라 매우 유연하게 그룹을 선택하고 분석에 필요한 데이터만 남길 수 있습니다. 이는 데이터 전처리 과정에서 이상치 그룹을 제거하거나, 특정 기준을 만족하는 핵심 그룹만을 대상으로 분석을 수행할 때 매우 효과적입니다.
+
+`groupby()`를 사용하지 않고 이 작업을 수행하려고 하면, 비효율적인 코드(code)가 됩니다. 먼저, 리스트 컴프리헨션(list comprehension)을 사용하여 평균 식사 비용이 20달러보다 큰 날을 나타내는 데이터프레임(DataFrame)의 항목을 추출한 다음, `for` 루프(loop)를 사용하여 이를 리스트(list)에 추가하고 평균(mean)을 계산합니다. 매우 직관적으로 보일 수 있지만, 보시다시피 매우 비효율적입니다.
+
+내 모든 책을 40% 할인된 가격에 만나보세요
+
+```python
+t=[restaurant.loc[restaurant[’day’] == i][’tip’] for i in restaurant[’day’].unique() if restaurant.loc[restaurant[’day’] == i][’total_bill’].mean()>20]
+restaurant_filtered = t[0]
+for j in t[1:]:
+    restaurant_filtered=restaurant_filtered.append(j,ignore_index=True)
+```
+
+이 뉴스레터(newsletter)는 개인적인 열정 프로젝트(project)이며, 여러분의 지원은 이를 유지하는 데 도움이 됩니다. 기여하고 싶다면, 몇 가지 좋은 방법이 있습니다: 구독(Subscribe)하세요. 유료 구독(paid subscription)은 제 글쓰기를 지속 가능하게 하고 추가 콘텐츠(content)에 대한 접근 권한을 제공합니다.*
+
+제 책 번들(bundle)을 구매하세요. 제 7권의 실용서와 로드맵(roadmap)을 40% 할인된 가격으로 만나보세요.
+
+읽어주셔서 감사하며, 독립적인 글쓰기와 연구를 지원해 주셔서 감사합니다!

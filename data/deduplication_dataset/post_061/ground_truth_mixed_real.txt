@@ -1,0 +1,31 @@
+2025년 업데이트: 컨텍스트 엔지니어링(Context Engineering) 2.0, 인간-기계 커뮤니케이션(human-machine communication)의 재정의와 새로운 지평
+
+**주요 AI 개발 동향 및 도구 업데이트:**
+*   최신 LLM 성능 경쟁이 심화되는 가운데, Kimi K2 Thinking이 GPT-5 및 Claude Sonnet 4.5를 능가하며 새로운 기준을 제시합니다.
+*   코드 실행(code execution) 최적화 기술을 통해 MCP 토큰(token) 사용량이 98.7% 절감되는 등 획기적인 효율 향상이 이루어지고 있습니다.
+*   Denario AI 에이전트(agent)는 이제 엔드투엔드(end-to-end) 과학 연구를 자율적으로 수행합니다.
+*   Windsurf의 AI 생성 코드맵(Codemaps) 출시와 Cursor의 에이전트 트레이스(agent traces) 학습 시맨틱 검색(semantic search) 제공 등 개발 생산성 도구가 진화하고 있습니다.
+*   MiniMax-M2 인터리브드 씽킹 가이드(interleaved thinking guide)와 같은 기법으로 에이전트 성능(agentic performance)이 크게 향상되고 있습니다.
+*   OpenAI의 문화 인식 IndQA 벤치마크(benchmark) 공개 이후, 문화적 다양성을 고려한 AI 평가의 중요성이 강조됩니다.
+*   멀티모달 컨텍스트 처리 능력 향상과 온디바이스 AI의 발전은 개인화된 AI 서비스의 새 지평을 열고 있습니다.
+
+**주요 기사**
+**컨텍스트 엔지니어링(Context Engineering) 2.0**
+
+SJTU, SII, GAIR 연구팀은 20년 이상에 걸친 컨텍스트 엔지니어링(context engineering)의 진화를 추적하며, 이를 원시 컴퓨팅(primitive computing) (1.0 시대)부터 오늘날의 지능형 에이전트(intelligent agents) (2.0 시대) 및 그 이후에 이르는 인간-기계 커뮤니케이션(human-machine communication)의 근본적인 과제로 재정의합니다. 이 연구는 컨텍스트 인식(context-aware) AI 시스템(AI systems) 구축을 위한 체계적인 정의, 역사적 분석 및 설계 프레임워크(design framework)를 제공합니다.
+
+기계 지능(machine intelligence)을 기반으로 네 가지 진화 단계를 정의합니다: 컨텍스트 1.0 (구조화된 입력(structured inputs)을 사용하는 원시 컴퓨팅(primitive computing)), 2.0 (자연어(natural language)를 사용하는 지능형 에이전트(intelligent agents)), 3.0 (인간 수준 지능(human-level intelligence)), 그리고 4.0 (초인적 지능(superhuman intelligence)). 각 단계는 인간-AI 상호작용 비용(human-AI interaction cost)을 줄입니다.
+
+컨텍스트 엔지니어링(context engineering)을 엔트로피 감소(entropy reduction)로 규정합니다. 이는 인간이 높은 엔트로피(high-entropy) 컨텍스트(contexts)를 기계가 이해할 수 있는 낮은 엔트로피(low-entropy) 표현(representations)으로 전처리(preprocess)해야 하며, 이 격차는 기계 지능(machine intelligence)이 증가함에 따라 좁아진다는 것입니다.
+
+포괄적인 설계 고려 사항은 컨텍스트 수집(context collection) (다중 모드 센서(multimodal sensors), 계층형 저장소(layered storage)), 관리(management) (텍스트/다중 모드 처리(text/multimodal processing), 계층적 메모리(hierarchical memory), 자체 생성 추상화(self-baking abstractions)), 그리고 사용(usage) (시스템 내 공유(intra-system sharing), 시스템 간 프로토콜(cross-system protocols), 사전 예방적 추론(proactive inference))에 걸쳐 제시됩니다.
+
+실제 구현 사례로는 CLI 도구(CLI tools) (GEMINI.md 파일을 사용하는 Gemini CLI), 심층 연구 에이전트(deep research agents) (주기적 요약(periodic summarization)을 사용하는 Tongyi DeepResearch), 그리고 KV 캐싱 최적화(KV caching optimization) 및 도구 설계 전략(tool design strategies)과 같은 혁신적인 접근 방식들이 검토됩니다. 이러한 사례들은 컨텍스트 엔지니어링이 실제 문제 해결에 어떻게 적용되는지를 보여줍니다.
+
+미해결 과제로는 제한된 컨텍스트 수집 방법(context collection methods), 대규모 저장소 병목 현상(large-scale storage bottlenecks), 규모에 따른 처리 성능 저하(processing degradation at scale), 평생 기억(lifelong memory)으로 인한 시스템 불안정성(system instability) 등이 지적됩니다. 특히, 인간 인지(human cognition)처럼 컨텍스트(context)를 능동적으로 관리하는 시맨틱 운영 체제(semantic operating system)의 필요성은 여전히 중요한 연구 과제로 남아 있습니다.
+
+**2025년 컨텍스트 엔지니어링의 새로운 지평:**
+최근에는 멀티모달(multimodal) 컨텍스트 이해를 넘어, 에이전트 간 협업(agent collaboration)을 통한 컨텍스트 공유 및 활용에 대한 연구가 활발합니다. 또한, 블록체인(blockchain) 기술을 활용하여 컨텍스트 데이터의 신뢰성과 투명성을 확보하려는 시도도 이루어지고 있습니다. 온디바이스(on-device) AI의 발전은 개인화된 컨텍스트 처리의 새로운 가능성을 열고 있으며, 이로 인해 더욱 정교하고 사용자 중심적인 AI 서비스가 등장할 것으로 기대됩니다.
+
+**결론:**
+컨텍스트 엔지니어링 2.0은 AI와 인간의 상호작용 방식을 혁신할 핵심 동력이며, 이 분야의 지속적인 발전은 더욱 지능적이고 유용한 AI 시스템의 등장을 예고합니다.

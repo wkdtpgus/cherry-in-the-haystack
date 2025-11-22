@@ -1,0 +1,21 @@
+{
+  "post_id": "156",
+  "title": "**우리는 78개의 선거 딥페이크를 살펴보았습니다. 정치적 허위 정보는 AI 문제가 아닙니다.**",
+  "base_word_count": 3161,
+  "exact_30_update_wc": 2296,
+  "exact_30_ground_truth_wc": 3109,
+  "exact_30_overlap_ratio": 1.023,
+  "paraphrase_25_update_wc": 1617,
+  "paraphrase_25_ground_truth_wc": 1617,
+  "paraphrase_25_overlap_ratio": 1.955,
+  "fragment_20_update_wc": 1289,
+  "fragment_20_ground_truth_wc": 3491,
+  "fragment_20_overlap_ratio": 0.744,
+  "semantic_25_update_wc": 2723,
+  "semantic_25_ground_truth_wc": 2724,
+  "semantic_25_overlap_ratio": 1.16,
+  "mixed_real_update_wc": 2958,
+  "mixed_real_ground_truth_wc": 2671,
+  "mixed_real_overlap_ratio": 1.166,
+  "status": "generated"
+}

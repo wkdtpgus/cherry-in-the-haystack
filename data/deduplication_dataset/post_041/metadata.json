@@ -1,0 +1,21 @@
+{
+  "post_id": "041",
+  "title": "대규모 언어 모델(LLM)을 위한 프록시멀 정책 최적화(PPO): 일반인을 위한 가이드",
+  "base_word_count": 12112,
+  "exact_30_update_wc": 9251,
+  "exact_30_ground_truth_wc": 7308,
+  "exact_30_overlap_ratio": 1.519,
+  "paraphrase_25_update_wc": 5719,
+  "paraphrase_25_ground_truth_wc": 1990,
+  "paraphrase_25_overlap_ratio": 2.77,
+  "fragment_20_update_wc": 9265,
+  "fragment_20_ground_truth_wc": 8176,
+  "fragment_20_overlap_ratio": 1.425,
+  "semantic_25_update_wc": 10339,
+  "semantic_25_ground_truth_wc": 7638,
+  "semantic_25_overlap_ratio": 1.433,
+  "mixed_real_update_wc": 5968,
+  "mixed_real_ground_truth_wc": 9076,
+  "mixed_real_overlap_ratio": 1.509,
+  "status": "generated"
+}

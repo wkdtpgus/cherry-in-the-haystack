@@ -1,0 +1,21 @@
+{
+  "post_id": "074",
+  "title": "🤖 AI 에이전트 주간: 코드 월드 모델(Code World Model), 제미니 로보틱스-ER 1.5(Gemini Robotics-ER 1.5), 피그마 MCP 서버(Figma MCP server), 엿듣는 LLM 에이전트(Overhearing LLM Agents), Qwen3-Max, 감마 API(Gamma API)",
+  "base_word_count": 327,
+  "exact_30_update_wc": 770,
+  "exact_30_ground_truth_wc": 865,
+  "exact_30_overlap_ratio": 0.301,
+  "paraphrase_25_update_wc": 571,
+  "paraphrase_25_ground_truth_wc": 571,
+  "paraphrase_25_overlap_ratio": 0.573,
+  "fragment_20_update_wc": 663,
+  "fragment_20_ground_truth_wc": 686,
+  "fragment_20_overlap_ratio": 0.459,
+  "semantic_25_update_wc": 531,
+  "semantic_25_ground_truth_wc": 531,
+  "semantic_25_overlap_ratio": 0.616,
+  "mixed_real_update_wc": 435,
+  "mixed_real_ground_truth_wc": 455,
+  "mixed_real_overlap_ratio": 0.706,
+  "status": "generated"
+}

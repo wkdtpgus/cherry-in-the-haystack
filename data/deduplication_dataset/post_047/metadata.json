@@ -1,0 +1,21 @@
+{
+  "post_id": "047",
+  "title": "AI 에이전트(AI Agents), 근본 원리(First Principles)부터",
+  "base_word_count": 6756,
+  "exact_30_update_wc": 2877,
+  "exact_30_ground_truth_wc": 6287,
+  "exact_30_overlap_ratio": 1.163,
+  "paraphrase_25_update_wc": 8222,
+  "paraphrase_25_ground_truth_wc": 6015,
+  "paraphrase_25_overlap_ratio": 1.09,
+  "fragment_20_update_wc": 6564,
+  "fragment_20_ground_truth_wc": 6564,
+  "fragment_20_overlap_ratio": 1.029,
+  "semantic_25_update_wc": 5328,
+  "semantic_25_ground_truth_wc": 5256,
+  "semantic_25_overlap_ratio": 1.282,
+  "mixed_real_update_wc": 5129,
+  "mixed_real_ground_truth_wc": 5129,
+  "mixed_real_overlap_ratio": 1.317,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "018",
+  "title": "**바닥부터 LLM(대규모 언어 모델) 구축하기: 3시간 코딩 워크숍**",
+  "base_word_count": 380,
+  "exact_30_update_wc": 390,
+  "exact_30_ground_truth_wc": 487,
+  "exact_30_overlap_ratio": 0.726,
+  "paraphrase_25_update_wc": 448,
+  "paraphrase_25_ground_truth_wc": 448,
+  "paraphrase_25_overlap_ratio": 0.848,
+  "fragment_20_update_wc": 315,
+  "fragment_20_ground_truth_wc": 569,
+  "fragment_20_overlap_ratio": 0.4,
+  "semantic_25_update_wc": 433,
+  "semantic_25_ground_truth_wc": 438,
+  "semantic_25_overlap_ratio": 0.866,
+  "mixed_real_update_wc": 428,
+  "mixed_real_ground_truth_wc": 433,
+  "mixed_real_overlap_ratio": 0.876,
+  "status": "generated"
+}

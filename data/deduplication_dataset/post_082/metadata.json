@@ -1,0 +1,21 @@
+{
+  "post_id": "082",
+  "title": "**개발자: 범용 인공지능(AGI)의 배포 계층 (OpenAI 개발자 데이 2025, 셔윈 우 및 크리스티나 황 출연)**",
+  "base_word_count": 12034,
+  "exact_30_update_wc": 1267,
+  "exact_30_ground_truth_wc": 2312,
+  "exact_30_overlap_ratio": 8.673,
+  "paraphrase_25_update_wc": 7509,
+  "paraphrase_25_ground_truth_wc": 7509,
+  "paraphrase_25_overlap_ratio": 1.603,
+  "fragment_20_update_wc": 7492,
+  "fragment_20_ground_truth_wc": 7225,
+  "fragment_20_overlap_ratio": 1.642,
+  "semantic_25_update_wc": 7216,
+  "semantic_25_ground_truth_wc": 7169,
+  "semantic_25_overlap_ratio": 1.674,
+  "mixed_real_update_wc": 6797,
+  "mixed_real_ground_truth_wc": 6797,
+  "mixed_real_overlap_ratio": 1.77,
+  "status": "generated"
+}

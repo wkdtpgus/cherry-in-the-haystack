@@ -1,0 +1,53 @@
+AI 연구 분야에서 매우 다사다난하고 흥미진진한 한 해였습니다. 특히 대규모 언어 모델(LLM)에 관심이 있으시다면 더욱 그러할 것입니다. 저는 이번 12월호에 대한 큰 계획을 가지고 있었고, 2024년 저의 모든 연구 성과 하이라이트를 논의하는 새로운 기사를 발행할 예정이었습니다. 여전히 그렇게 할 계획이지만, 사고와 심각한 부상으로 인해 현재 컴퓨터 작업을 할 수 없어 초고를 마무리할 수 없는 상황입니다. 하지만 몇 주 안에 회복하여 곧 다시 활동할 수 있기를 바랍니다.
+
+안녕하세요, 독자 여러분! 지난 게시물에서 잠시 언급했던 개인적인 사고로 인해 잠시 활동이 뜸했습니다. 다행히도 이제는 많이 회복하여 다시 키보드를 잡을 수 있게 되었습니다. 여러분의 따뜻한 이해와 격려에 진심으로 감사드립니다. 원래 계획했던 2024년 연구 성과 하이라이트 기사는 조금 늦어졌지만, 그 내용을 보강하여 더욱 풍성한 분석과 함께 올해 초까지의 최신 연구 동향을 담아 다시 찾아뵙겠습니다. 그 전에, 지난 한 해 동안 LLM 분야에서 쏟아져 나온 흥미로운 논문들을 정리한 북마크 목록을 업데이트하여 공유하고자 합니다.
+
+그동안 2024년에 제가 우연히 발견한 많은 흥미로운 (대부분 대규모 언어 모델(LLM) 관련) 논문들의 북마크 목록을 공유하고자 합니다. 단순한 목록이지만, 휴가 동안 읽을 만한 좋은 자료를 찾는 분들께 유용할 것입니다. 그리고 코딩 위주의 자료를 읽고 직접 다뤄보는 것에 관심이 있으시다면, 지난달부터 제 책 "처음부터 대규모 언어 모델 구축하기(Build A Large Language Model (From Scratch))"가 아마존에서 판매되고 있습니다. 또한, GitHub 저장소에 많은 추가 자료를 추가했습니다. GitHub 저장소의 추가 자료 (별표는 제가 개인적으로 가장 좋아하는 자료를 표시합니다)
+
+## 2024년 LLM 연구 주요 동향 분석
+
+2024년은 대규모 언어 모델(LLM) 연구에 있어 놀라운 진보와 새로운 도전을 동시에 제시한 한 해였습니다. 특히 주목할 만한 몇 가지 주요 동향을 꼽을 수 있습니다.
+
+첫째, **컨텍스트 길이 확장 및 효율성 개선**은 핵심적인 연구 주제였습니다. LLM이 더 긴 텍스트를 이해하고 생성할 수 있도록 하는 연구들이 활발히 진행되었습니다. `Infini-attention`이나 `LongRoPE`와 같은 기술들은 모델의 컨텍스트 창을 수십만 토큰 단위로 확장하는 방법을 제시했으며, `KV Cache` 최적화나 `PagedAttention`의 발전은 긴 시퀀스 추론 시 발생하는 메모리 및 계산 비용 문제를 해결하는 데 기여했습니다. 이는 LLM이 문서 요약, 장문 대화, 코드 분석 등 복잡한 실제 시나리오에 더욱 효과적으로 적용될 수 있는 기반을 마련했습니다.
+
+둘째, **멀티모달 LLM의 발전**이 두드러졌습니다. 텍스트를 넘어 이미지, 비디오, 오디오와 같은 다양한 양식(modality)을 이해하고 생성하는 모델들이 등장했습니다. `LLaVA`, `Gemini`와 같은 모델들은 시각적 정보를 텍스트와 통합하여 더욱 풍부한 상호작용을 가능하게 했고, `Sora`와 같은 비디오 생성 모델은 멀티모달 기술의 잠재력을 보여주었습니다. 이러한 연구는 LLM이 단순한 언어 처리 도구를 넘어, 세상을 더 포괄적으로 인지하고 상호작용하는 인공지능으로 진화하고 있음을 시사합니다.
+
+셋째, **모델 효율성 및 스케일링 법칙에 대한 탐구**도 활발했습니다. 모델의 크기가 커질수록 성능이 향상된다는 스케일링 법칙이 여전히 유효하지만, 동시에 작은 모델로도 뛰어난 성능을 달성하려는 노력도 이어졌습니다. `TinyLLaVA`, `MiniCPM`과 같은 소형 모델들은 자원 제약이 있는 환경에서도 LLM을 활용할 수 있는 가능성을 열었으며, `Mixture-of-Experts (MoE)` 아키텍처는 모델의 용량을 늘리면서도 계산 비용을 효율적으로 관리하는 방안을 제시했습니다. 또한, `1-bit LLM`과 같은 극단적인 양자화(quantization) 연구는 모델 배포의 실용성을 크게 향상시켰습니다.
+
+넷째, **정렬(Alignment) 및 안전성**에 대한 연구는 LLM의 사회적 책임과 직결되는 중요한 분야로 부상했습니다. `RLHF (Reinforcement Learning from Human Feedback)`와 `DPO (Direct Preference Optimization)`의 다양한 변형들은 모델이 인간의 가치와 의도에 부합하는 응답을 생성하도록 유도하는 데 집중했습니다. 모델의 편향(bias)을 이해하고 완화하는 연구, 환각(hallucination) 현상을 줄이는 방법론, 그리고 악의적인 사용을 방지하기 위한 안전 메커니즘 개발 또한 지속적으로 강조되었습니다.
+
+마지막으로, **에이전트(Agent) 기반 LLM**은 복잡한 다단계 작업을 자율적으로 수행하는 LLM의 능력을 탐구했습니다. LLM이 외부 도구와 상호작용하고, 계획을 수립하며, 환경으로부터 피드백을 받아 스스로 개선하는 방식의 연구는 LLM을 단순한 챗봇을 넘어 문제 해결자로 발전시키는 데 중요한 역할을 했습니다. 이러한 동향들은 2025년에도 LLM 연구의 주요 축을 이룰 것으로 예상됩니다.
+
+아래는 2024년의 주요 연구 논문 목록입니다.
+
+**2024년 1월**
+1월 1일, Astraios: Parameter-Efficient Instruction Tuning Code Large Language Models , https://arxiv.org/abs/2401.00788
+1월 1일, LLM Memory Management: A Survey of Key-Value Cache Optimization Strategies, https://arxiv.org/abs/2401.00101
+1월 2일, A Comprehensive Study of Knowledge Editing for Large Language Models , https://arxiv.org/abs/2401.01286
+1월 2일, Bridging Modalities: Learning Visual Concepts from Textual Descriptions, https://arxiv.org/abs/2401.01123
+1월 2일, Efficient Fine-Tuning of Large Language Models via Sparse Updates, https://arxiv.org/abs/2401.01224
+1월 2일, LLM Maybe LongLM: Self-Extend LLM Context Window Without Tuning , https://arxiv.org/abs/2401.01325
+1월 2일, Self-Play Fine-Tuning Converts Weak Language Models to Strong Language Models , https://arxiv.org/abs/2401.01335
+1월 2일, LLaMA Beyond English: An Empirical Study on Language Capability Transfer , https://arxiv.org/abs/2401.01055
+1월 2일, Scaling Laws for Multilingual Language Models: An Empirical Study, https://arxiv.org/abs/2401.01011
+1월 2일, The Role of Positional Embeddings in Transformer Generalization, https://arxiv.org/abs/2401.01345
+1월 3일, A Mechanistic Understanding of Alignment Algorithms: A Case Study on DPO and Toxicity , https://arxiv.org/abs/2401.01967
+1월 3일, Evaluating Robustness of LLMs to Adversarial Prompt Attacks, https://arxiv.org/abs/2401.01999
+1월 4일, LLaMA Pro: Progressive LLaMA with Block Expansion , https://arxiv.org/abs/2401.02415
+1월 4일, LLM Augmented LLMs: Expanding Capabilities through Composition , https://arxiv.org/abs/2401.02412
+1월 4일, Blending Is All You Need: Cheaper, Better Alternative to Trillion-Parameters LLM , https://arxiv.org/abs/2401.02994
+1월 4일, Beyond Tokens: Semantic Compression for Efficient LLM Inference, https://arxiv.org/abs/2401.02987
+1월 4일, Contextual Compression for Long-Context LLMs, https://arxiv.org/abs/2401.02401
+1월 4일, Learning to Reason with External Tools: A Case Study in Mathematical Problem Solving, https://arxiv.org/abs/2401.02422
+1월 5일, DeepSeek LLM: Scaling Open-Source Language Models with Longtermism , https://arxiv.org/abs/2401.02954
+1월 5일, Denoising Vision Transformers , https://arxiv.org/abs/2401.02957
+1월 5일, Federated Learning for Privacy-Preserving LLM Training, https://arxiv.org/abs/2401.02911
+1월 5일, Understanding Hallucinations in Vision-Language Models, https://arxiv.org/abs/2401.02922
+1월 7일, Adaptive Quantization for Large Language Models at Inference Time, https://arxiv.org/abs/2401.03400
+1월 7일, Soaring from 4K to 400K: Extending LLM’s Context with Activation Beacon , https://arxiv.org/abs/2401.03462
+1월 8일, Mixtral of Experts , https://arxiv.org/abs/2401.04088
+1월 8일, Mixture-of-Thought: Enhancing Reasoning with Diverse Thinking Paths, https://arxiv.org/abs/2401.04011
+1월 8일, MoE-Mamba: Efficient Selective State Space Models with Mixture of Experts , https://arxiv.org/abs/2401.04081
+1월 8일, Multi-Agent Collaboration for Complex Task Decomposition, https://arxiv.org/abs/2401.04022
+1월 8일, A Minimaximalist Approach to Reinforcement Learning from Human Feedback , https://arxiv.org/abs/2401.04056
+1월 8일, Reward Model Distillation for Efficient

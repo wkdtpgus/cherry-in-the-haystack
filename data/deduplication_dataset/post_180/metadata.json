@@ -1,0 +1,21 @@
+{
+  "post_id": "180",
+  "title": "**LLM 주간 주목 논문**",
+  "base_word_count": 1476,
+  "exact_30_update_wc": 1172,
+  "exact_30_ground_truth_wc": 1309,
+  "exact_30_overlap_ratio": 1.142,
+  "paraphrase_25_update_wc": 1776,
+  "paraphrase_25_ground_truth_wc": 1776,
+  "paraphrase_25_overlap_ratio": 0.831,
+  "fragment_20_update_wc": 1359,
+  "fragment_20_ground_truth_wc": 2508,
+  "fragment_20_overlap_ratio": 0.241,
+  "semantic_25_update_wc": 1572,
+  "semantic_25_ground_truth_wc": 1659,
+  "semantic_25_overlap_ratio": 0.884,
+  "mixed_real_update_wc": 1780,
+  "mixed_real_ground_truth_wc": 1780,
+  "mixed_real_overlap_ratio": 0.829,
+  "status": "generated"
+}

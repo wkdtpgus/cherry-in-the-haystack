@@ -1,0 +1,21 @@
+{
+  "post_id": "130",
+  "title": "LWiAI 팟캐스트 #220 - 제미니 2.5 플래시 이미지(Gemini 2.5 Flash Image), 크롬용 클로드(Claude for Chrome)",
+  "base_word_count": 520,
+  "exact_30_update_wc": 636,
+  "exact_30_ground_truth_wc": 915,
+  "exact_30_overlap_ratio": 0.379,
+  "paraphrase_25_update_wc": 515,
+  "paraphrase_25_ground_truth_wc": 823,
+  "paraphrase_25_overlap_ratio": 0.412,
+  "fragment_20_update_wc": 431,
+  "fragment_20_ground_truth_wc": 714,
+  "fragment_20_overlap_ratio": 0.55,
+  "semantic_25_update_wc": 471,
+  "semantic_25_ground_truth_wc": 585,
+  "semantic_25_overlap_ratio": 0.862,
+  "mixed_real_update_wc": 501,
+  "mixed_real_ground_truth_wc": 597,
+  "mixed_real_overlap_ratio": 0.846,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "097",
+  "title": "**AI 엔지니어링, 주류로 부상하다**",
+  "base_word_count": 2581,
+  "exact_30_update_wc": 1221,
+  "exact_30_ground_truth_wc": 3119,
+  "exact_30_overlap_ratio": 0.559,
+  "paraphrase_25_update_wc": 2764,
+  "paraphrase_25_ground_truth_wc": 2764,
+  "paraphrase_25_overlap_ratio": 0.934,
+  "fragment_20_update_wc": 2041,
+  "fragment_20_ground_truth_wc": 2827,
+  "fragment_20_overlap_ratio": 0.879,
+  "semantic_25_update_wc": 3542,
+  "semantic_25_ground_truth_wc": 3542,
+  "semantic_25_overlap_ratio": 0.729,
+  "mixed_real_update_wc": 2698,
+  "mixed_real_ground_truth_wc": 2698,
+  "mixed_real_overlap_ratio": 0.957,
+  "status": "generated"
+}

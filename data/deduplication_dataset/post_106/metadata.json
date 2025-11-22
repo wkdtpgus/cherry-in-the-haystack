@@ -1,0 +1,21 @@
+{
+  "post_id": "106",
+  "title": "AI 너드들은 벗어나려 하고, 우리도 그들과 함께 가게 될 것이다.",
+  "base_word_count": 352,
+  "exact_30_update_wc": 186,
+  "exact_30_ground_truth_wc": 386,
+  "exact_30_overlap_ratio": 0.817,
+  "paraphrase_25_update_wc": 264,
+  "paraphrase_25_ground_truth_wc": 264,
+  "paraphrase_25_overlap_ratio": 1.333,
+  "fragment_20_update_wc": 311,
+  "fragment_20_ground_truth_wc": 380,
+  "fragment_20_overlap_ratio": 0.91,
+  "semantic_25_update_wc": 447,
+  "semantic_25_ground_truth_wc": 447,
+  "semantic_25_overlap_ratio": 0.787,
+  "mixed_real_update_wc": 264,
+  "mixed_real_ground_truth_wc": 268,
+  "mixed_real_overlap_ratio": 1.318,
+  "status": "generated"
+}

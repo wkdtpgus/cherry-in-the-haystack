@@ -1,0 +1,21 @@
+{
+  "post_id": "141",
+  "title": "**제이콥 안드레아스: 언어(Language), 접지(Grounding), 그리고 세계 모델(World Models)**",
+  "base_word_count": 490,
+  "exact_30_update_wc": 1166,
+  "exact_30_ground_truth_wc": 1418,
+  "exact_30_overlap_ratio": 0.204,
+  "paraphrase_25_update_wc": 708,
+  "paraphrase_25_ground_truth_wc": 708,
+  "paraphrase_25_overlap_ratio": 0.692,
+  "fragment_20_update_wc": 505,
+  "fragment_20_ground_truth_wc": 915,
+  "fragment_20_overlap_ratio": 0.158,
+  "semantic_25_update_wc": 561,
+  "semantic_25_ground_truth_wc": 566,
+  "semantic_25_overlap_ratio": 0.865,
+  "mixed_real_update_wc": 620,
+  "mixed_real_ground_truth_wc": 619,
+  "mixed_real_overlap_ratio": 0.792,
+  "status": "generated"
+}

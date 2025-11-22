@@ -1,0 +1,21 @@
+{
+  "post_id": "061",
+  "title": "🤖 AI 에이전트(AI Agents) 주간: 컨텍스트 엔지니어링(Context Engineering) 2.0, 키미 K2 씽킹(Kimi K2 Thinking), 윈드서프 코드맵(Windsurf Codemaps), 구글 파일 검색(Google File Search), 툴-투-에이전트 검색(Tool-to-Agent Retrieval)",
+  "base_word_count": 308,
+  "exact_30_update_wc": 373,
+  "exact_30_ground_truth_wc": 593,
+  "exact_30_overlap_ratio": 0.236,
+  "paraphrase_25_update_wc": 363,
+  "paraphrase_25_ground_truth_wc": 363,
+  "paraphrase_25_overlap_ratio": 0.848,
+  "fragment_20_update_wc": 351,
+  "fragment_20_ground_truth_wc": 398,
+  "fragment_20_overlap_ratio": 0.744,
+  "semantic_25_update_wc": 593,
+  "semantic_25_ground_truth_wc": 659,
+  "semantic_25_overlap_ratio": 0.408,
+  "mixed_real_update_wc": 470,
+  "mixed_real_ground_truth_wc": 482,
+  "mixed_real_overlap_ratio": 0.63,
+  "status": "generated"
+}

@@ -1,0 +1,50 @@
+**2026년 3월 15일 녹화 - 지난주 주요 AI 소식, 심층 분석 및 토론!**
+진행: Andrey Kurenkov, 공동 진행: Dr. Lena Park
+질문 및 피드백은 contact@lastweekinai.com 및/또는 hello@gladstone.ai로 보내주십시오.
+
+이번 에피소드는 2026년 초 AI 산업의 급변하는 풍경을 조명합니다. Anthropic과 OpenAI는 Haiku 5.0 및 새로운 다국어 기능(multilingual capabilities)을 포함하여 자사의 AI 모델(AI models) 및 도구에 대한 업데이트를 발표했습니다. 기업 환경에서는 Slack, Salesforce를 넘어 이제 Adobe와 SAP까지 AI 비서(AI assistants) 및 에이전트(agents)를 자사 플랫폼에 통합하여 작업 관리 및 비즈니스 운영 효율성을 크게 향상시키고 있습니다. 최근 멀티모달(multi-modal) 강화 학습(reinforcement learning) 및 에이전트 메모리 큐레이션(agent memory curation) 연구는 AI 모델(AI model) 성능 및 컨텍스트 관리(context management) 개선을 위한 새로운 방법들을 강조하며, 특히 장기 기억(long-term memory)과 추론(reasoning) 능력 향상에 집중하고 있습니다. 캘리포니아주는 어린이 및 취약 계층 사용자를 위한 AI 챗봇(AI chatbots)을 규제하는 법안을 통과시켰으며, 이제 유럽연합(EU)과 미국 연방 정부에서도 AI 거버넌스(AI governance)에 대한 논의가 활발히 진행되고 있습니다. 인터넷상의 AI 생성 콘텐츠(AI-generated content) 증가와 딥페이크(deepfake) 기술의 확산에 대한 우려가 커지고 있습니다.
+
+타임스탬프:
+(00:00:10) 서론 / 잡담
+(00:01:31) 뉴스 미리보기: 도구 및 앱
+(00:02:18) Anthropic, 축소형 'Haiku' 모델(model)의 새 버전 출시
+(00:04:52) OpenAI, DevDay 2025 이후 에이전트 키트(Agent Kit)와 앱 SDK(Apps SDK)의 광범위한 채택 및 영향력 확대
+(00:09:11) Anthropic, Claude를 업무에 더 유용하게 만들기 위해 '기술(skills)' 활용 | The Verge
+(00:13:20) Microsoft, Excel 및 Word에 '바이브 워킹(vibe working)' 출시 및 Copilot 통합 심화
+(00:17:22) Google, Veo 3.1 출시 및 Flow 비디오 편집기에 추가, 생성형 비디오(generative video) 시장에서의 경쟁 심화
+(00:19:40) Slack, Slackbot을 AI 비서(AI assistant)로 전환하며 기업 협업의 새로운 지평을 열다
+(00:22:52) Salesforce, 기업 AI 경쟁 심화 속 Agentforce 360 발표, 고객 관계 관리(CRM)에 AI 에이전트(AI agents) 기능 강화
+(00:24:00) 새로운 소식: Apple, 온디바이스 AI(on-device AI) 전략 발표 및 iOS 18의 AI 기능 대거 공개
+
+**애플리케이션 및 비즈니스**
+(00:24:58) Broadcom 주식, OpenAI 맞춤형 칩(custom chip) 계약으로 9% 급등, Nvidia 및 AMD 계약에 추가
+(00:27:58) ByteDance가 중국에서 가장 인기 있는 AI 챗봇(AI Chatbot)을 만든 방법과 글로벌 시장 확장 전략
+(00:30:08) Amazon의 Zoox 로보택시(Robotaxis), 라스베이거스에서 상업 운행을 확대하며 승객 만족도 향상
+(00:32:43) Waymo의 로보택시(robotaxis), 런던 진출 예정에서 실제 서비스 시작으로 도약하며 유럽 시장 공략 가속화
+(00:34:14) Reflection AI, DeepSeek에 도전하는 미국의 개방형 프론티어 AI 연구소(open frontier AI lab)가 되기 위해 20억 달러 유치 및 연구 성과 공개
+(00:35:58) General Intuition, 비디오 게임 클립(video game clips)을 사용하여 에이전트(agents)에게 공간 추론(spatial reasoning)을 가르치기 위해 1억 3,400만 달러 시드(seed) 투자 유치, 강화 학습(reinforcement learning)의 실용적 적용 사례
+(00:38:36) Supabase, 20억 달러 달성 4개월 만에 50억 달러 기업 가치 확보, AI 기반 데이터 플랫폼의 성장세 입증
+(00:39:00) 새로운 소식: 의료 AI 스타트업 MediMind, FDA 승인 임박한 진단 보조 AI 솔루션으로 1억 달러 시리즈 B 투자 유치
+
+**프로젝트 및 오픈 소스**
+(00:40:58) Neuphonic, NeuTTS Air 오픈 소스(Open-Source) 공개: 즉각적인 음성 복제(Instant Voice Cloning) 기능을 갖춘 7억 4,800만 개 매개변수(Parameter) 온디바이스 음성 언어 모델(On-Device Speech Language Model) - MarkTechPost
+(00:43:06) Anthropic AI, Petri 출시: 다양한 시나리오에서 AI 에이전트(AI Agents)를 사용하여 대상 모델(Target Models)의 동작을 테스트하는 자동화된 감사(Automated Auditing)를 위한 오픈 소스(Open-Source) 프레임워크(Framework)의 활용 사례 증가
+(00:44:00) 새로운 소식: Hugging Face, 멀티모달 LLM(multi-modal LLM) 개발을 위한 새로운 오픈 소스(Open-Source) 프로젝트 'HuggingVision' 공개
+
+**연구 및 발전**
+(00:44:25) [2602.13786] LLM(LLMs)을 위한 강화 학습(Reinforcement Learning) 컴퓨팅(Compute) 확장 기술의 발전과 최적화 방안
+(00:48:51) [2602.01171] 언어화된 샘플링(Verbalized Sampling): 모드 붕괴(Mode Collapse)를 완화하고 LLM(LLM) 다양성을 확보하는 방법론의 실제 적용
+(00:51:22) [2510.12635] 행동으로서의 기억(Memory as Action): 장기 에이전트 작업(Long-Horizon Agentic Tasks)을 위한 자율적 컨텍스트 큐레이션(Autonomous Context Curation) 연구의 최신 동향
+(00:54:31) [2602.07364] 기본 모델(Base Models)은 추론 방법을 알고, 사고 모델(Thinking Models)은 시점을 학습한다는 새로운 관점 제시
+(00:57:24) [2510.12402] 신중한 가중치 감소(Weight Decay) 기법을 통한 모델 안정성 및 성능 향상
+(00:58:00) 새로운 소식: 복합 추론(complex reasoning) 능력을 가진 차세대 멀티모달(multi-modal) 파운데이션 모델(foundation models)에 대한 연구가 활발히 진행 중이며, 인간 수준의 인지 능력에 대한 논의가 가속화되고 있습니다.
+
+**정책 및 안전**
+(01:02:03) 캘리포니아, AI 동반자 챗봇(AI companion chatbots)을 규제하는 최초의 주가 되다 | TechCrunch
+(01:04:13) 인터넷 콘텐츠의 50% 이상이 이제 AI 슬롭(AI Slop)이라는 새로운 데이터 발견과 이에 대응하기 위한 워터마킹(watermarking) 및 출처 표기 기술의 중요성 증가
+(01:05:00) 새로운 소식: 유럽연합(EU) AI 법(AI Act)의 최종 발효와 주요 조항들, 그리고 미국 연방 정부의 AI 거버넌스(AI governance) 프레임워크 구축 노력
+
+**합성 미디어 및 예술**
+(01:06:31) OpenAI, Sora에서 저작권(Copyright) 작품 사용에 대한 입장 번복 이후 창작자 보상 모델(creator compensation models)에 대한 논의 가열
+(01:08:29) Character.AI, 스튜디오 경고 후 플랫폼에서 디즈니 캐릭터(Disney characters) 삭제 및 가상 캐릭터의 저작권 문제 재조명
+(01:09:00) 새로운 소식: AI 기반 음악 생성 플랫폼의 등장과 음악 산업에 미치는 영향, 그리고 AI 아트의 상업적 활용에 대한 법적, 윤리적 쟁점들

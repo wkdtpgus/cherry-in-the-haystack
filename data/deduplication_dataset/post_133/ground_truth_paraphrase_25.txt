@@ -1,0 +1,49 @@
+지난 한 주간의 핵심 AI 동향을 간추려 분석하고 논의하는 219회 방송입니다. 2025년 8월 8일에 녹음되었습니다.
+
+Andrey의 Astrocade 프로젝트를 확인하고 앰배서더(ambassador) 프로그램에 참여해 보세요. 본 프로그램은 Andrey Kurenkov와 Jeremie Harris가 진행합니다. 문의사항이나 의견은 contact@lastweekinai.com 또는 hello@gladstone.ai로 보내주시면 됩니다.
+
+이번 회차에서는 OpenAI가 기존 모델들을 집대성한 GPT-5를 선보이며, 혁신적인 성능 향상과 더불어 새로운 기반 시설(infrastructure) 및 서비스 개선 사항들을 발표했습니다. OpenAI, Anthropic, Google 등 주요 AI 연구 기관들의 연이은 대규모 발표는 중요한 사업적 진전과 모델 기능 확장을 통해 끊임없이 이어지는 경쟁 상황을 보여줍니다. AI 발전이 지닌 지정학적 영향에 대한 논의에서는 AI 안전과 통치(governance)에 대한 중국의 변화된 시각이 부각되었습니다. 이는 미국의 접근 방식과는 대비되며, 수출 규제와 국제적 공조에 대한 우려를 야기하고 있습니다. 이러한 맥락에서, 기술 윤리와 책임감 있는 AI 개발에 대한 전 세계적 요구가 더욱 커지고 있음을 주목할 필요가 있습니다. OpenAI와 Anthropic 같은 선두 AI 연구소들은 모델의 오작동 위험을 평가하고 줄이기 위한 새로운 방법론을 제시하며, AI 정렬(alignment) 및 안전의 복잡한 측면들을 깊이 있게 다루는 연구 논문들을 공개했습니다.
+
+타임스탬프 및 링크:
+(00:00:10) 시작 및 잡담
+(00:02:14) 광고: Astrocade는 AI 에이전트(agent)를 기반으로 한 게임 제작 경험을 제공하여 누구나 쉽게 게임을 만들 수 있도록 돕습니다.
+**도구 및 애플리케이션(Tools & Apps)**
+(00:03:07) OpenAI의 GPT-5 공개
+(00:17:02) Anthropic, 에이전트(Agentic), 코딩 및 추론 능력이 향상된 Claude Opus 4.1 출시
+(00:21:06) Google, 다양한 아이디어를 병렬적으로 검증하는 추론 모델인 Gemini Deep Think AI 발표 | TechCrunch
+(00:24:04) xAI의 새로운 AI 이미지 및 비디오 생성기인 Grok Imagine, 선정적인(NSFW) 콘텐츠 제작 가능 | TechCrunch
+(00:28:15) Stability AI, 개인 맞춤형 이미지 생성에 특화된 Stable Diffusion XL Turbo의 후속 모델 공개
+(00:32:01) Llama 3 기반의 새로운 오픈 소스(open source) 언어 모델들이 다양한 산업 분야에서 활용되며 주목받고 있습니다.
+**응용 분야 및 비즈니스(Applications & Business)**
+(00:34:35) Meta와 Microsoft의 주가, 견고한 실적과 AI 투자 확대에 힘입어 상승
+(00:37:18) OpenAI, 230MW 규모의 데이터 센터(data center)를 갖춘 Stargate Norway 건설 계획 발표 - Bloomberg
+(00:40:06) Anthropic, 대규모 투자 유치(Mega Round)를 앞두고 연간 매출 50억 달러에 육박 — The Information
+(00:42:30) OpenAI, 연간 매출 120억 달러 달성
+(00:45:10) Noma Security, AI 에이전트(agent) 취약점 방어를 위해 1억 달러 모금 | Ctech
+(00:48:05) 의료 분야 AI 스타트업 MediMind, 진단 보조 및 신약 개발 가속화 솔루션으로 획기적인 투자 유치에 성공했습니다.
+(00:51:20) 기업들이 AI 도입을 통해 운영 효율성을 극대화하며 새로운 비즈니스 모델을 창출하는 사례가 급증하고 있습니다.
+**프로젝트 및 오픈 소스(Projects & Open Source)**
+(00:54:05) OpenAI, GPT-2 이후 처음으로 공개 가중치(open-weight) 모델 출시
+(00:58:13) Falcon-H1: 효율성과 성능을 재정의하는 하이브리드 헤드(hybrid-head) 언어 모델(language model) 제품군
+(01:02:13) Meta CLIP 2: 전 세계적 확장 레시피(Scaling Recipe)
+(01:05:12) BFL 및 Krea, 사실적인 이미지 모델(image model) FLUX.1 Krea 공개
+(01:08:00) Carnegie Mellon University, 경량화된 온디바이스(on-device) AI 모델 개발을 위한 새로운 프레임워크를 오픈 소스로 공개했습니다.
+(01:11:15) AI 커뮤니티에서는 투명성과 협력을 강조하며, 오픈 소스 AI 프로젝트들이 혁신을 주도하는 핵심 동력으로 자리 잡고 있습니다.
+**연구 및 발전(Research & Advancements)**
+(01:14:00) Google의 최신 AI 모델, 기후 변화를 추적하는 인공위성(satellite)처럼 기능 | WIRED
+(01:16:50) Google의 새로운 AI 모델, 비디오 게임 세계를 실시간으로 생성
+(01:19:55) 모델 아키텍처(architecture) 발견을 위한 알파고(AlphaGo)와 유사한 중대한 순간
+(01:22:22) METR, Grok 4 정책 및 안전 평가 결과 발표
+(01:25:00) 새로운 신경망(neural network) 구조가 에너지 효율성을 획기적으로 개선하며, AI 칩 설계의 새로운 지평을 열고 있습니다.
+(01:28:10) AI 윤리 및 설명 가능성(explainability) 연구에서, 모델의 의사결정 과정을 시각화하고 해석하는 기술이 큰 진전을 보였습니다.
+**정책 및 안전(Policy & Safety)**
+(01:31:05) 오픈 가중치(open-weight) 대규모 언어 모델(LLM)의 최악의 미개척지(frontier) 위험 추정
+(01:34:14) Anthropic의 AI '백신(Vaccine)': 악으로 훈련시켜 선하게 만들기 - Business Insider
+(01:37:26) Anthropic, AI 오정렬(misalignment) 테스트를 위한 '감사 에이전트(auditing agents)' 공개 | VentureBeat
+(01:40:31) 최종 출력을 최적화하는 것이 CoT(Chain-of-Thought)를 모호하게 할 수 있음 (연구 노트)
+(01:43:15) 중국이 컴퓨팅(compute) 분야에서 서방을 앞서지 못하는 이유 분석
+(01:45:15) 중국이 세계에 AI 의제(agenda)를 제시한 정상회담 내부 | WIRED
+(01:48:47) Nvidia H20 GPU, 미국 상무부의 30년 만에 최악의 수출 허가 적체에 묶인 것으로 알려짐 — 인력 감축, 소통 문제로 수십억 달러 상당의 GPU 및 기타 제품이 불확실한 상태 | Tom's Hardware
+(01:52:00) 유럽연합(EU)의 새로운 AI 규제안이 발표되면서, 전 세계적으로 AI 기술의 책임 있는 사용에 대한 논의가 활발해지고 있습니다.
+(01:55:30) 딥페이크(deepfake) 기술과 AI 생성 정보의 확산은 사회적 신뢰와 정보의 진위에 대한 심각한 우려를 낳고 있습니다.
+(01:58:45) 청취자 의견에 대한 답변

@@ -1,0 +1,33 @@
+최신 AI 동향과 주요 AI 뉴스를 요약하고 토론하는 저희의 에피소드입니다!
+녹화일: 2026년 3월 15일
+진행: 김민준, 공동 진행: 박서연
+질문이나 피드백이 있으시면 new.contact@aichat.com으로 이메일을 보내주세요.
+
+이번 에피소드에서는: OpenAI가 GPT-5와 통합된 새로운 버전의 코덱스(Codex)를 출시하여 코딩 기능을 강화하고 클라우드 코드(Cloud Code)와 같은 다른 AI 코딩 도구와 경쟁하는 것을 목표로 하며, 새로운 버전의 멀티모달 모델을 출시하여 다양한 산업 분야의 창작 활동을 지원하고 있습니다. 로봇 공학(robotics) 분야의 주요 업데이트로는 Figure AI와 중국의 Unitree와 같은 회사들의 휴머노이드 로봇(humanoid robot) 신규 사업, 그리고 테슬라(Tesla)와 아마존(Amazon)의 Zoox의 로보택시(robotaxi) 서비스 확장이 포함됩니다. 구글 딥마인드(Google DeepMind)의 로봇 공학(robotics)을 위한 자체 개선 파운데이션 모델(self-improving foundation model)과 다양한 물리 시스템(physical system)에 걸쳐 일반화(generalizing)하는 것을 목표로 하는 물리 파운데이션 모델(physics foundation model)을 포함한 새로운 오픈 소스 모델(open-source model) 및 연구 발전이 논의되었습니다. AI 분야에서 워너 브라더스(Warner Bros.)가 미드저니(MidJourney)를 저작권 침해로 고소하고 롤링 스톤(Rolling Stone)이 AI 생성 콘텐츠 요약에 대해 구글(Google)을 고소하는 등 법적 분쟁이 계속해서 불거지고 있으며, 특히 데이터 주권과 관련한 논의가 활발합니다. 이는 AI 거버넌스(governance) 및 윤리(ethics)의 과제를 부각시키고 AI 기술의 사회적 영향과 미래 방향에 대한 심도 깊은 고찰을 요구합니다.
+
+타임스탬프:
+(00:00:10) 소개 / 잡담 도구 및 앱, 최신 AI 트렌드 분석
+(00:02:33) OpenAI, GPT-5 새 버전으로 코덱스(Codex) 업그레이드; 딥러닝 모델의 새로운 학습 방식 도입, 성능 대폭 향상
+(00:04:02) AI 브라우저(AI Browser)가 주류가 되면서 구글(Google), 크롬(Chrome)에 제미니(Gemini) 주입 | WIRED; AI 기반 개인화 에이전트(Personalized Agent)가 일상에 통합되다 | TechInsider
+(00:06:14) 앤트로픽(Anthropic)의 클로드(Claude), 이제 스프레드시트(spreadsheet) 또는 슬라이드 덱(slide deck) 생성 및 복잡한 데이터 분석 및 시각화 지원. | The Verge, Forbes
+(00:07:12) 루마 AI(Luma AI)의 새로운 Ray3 비디오 생성기(Video Generator), 생성 전에 '생각'할 수 있으며 실시간 편집 기능으로 창작의 자유를 확대 - CNET, Wired
+애플리케이션 및 비즈니스
+(00:08:32) OpenAI, 영리 부문 전환에 마이크로소프트(Microsoft)의 승인 확보 | TechCrunch; 주요 기술 기업들, AI 윤리 가이드라인 강화에 합의 | The Economist
+(00:10:31) 마이크로소프트(Microsoft), 경쟁사 앤트로픽(Anthropic)으로부터 AI 구매하여 OpenAI 의존도 줄일 예정 | TechCrunch; 스타트업 생태계, 특화된 AI 솔루션으로 시장 점유율 확대 | Bloomberg
+(00:12:00) 피겨 AI(Figure AI), 휴머노이드 로봇(humanoid robot) 개발을 위한 시리즈 C(Series C) 펀딩으로 10억 달러를 돌파하며 휴머노이드 로봇 시장의 폭발적인 성장세를 기록 - The Robot Report, Robotics Today
+(00:13:52) 중국 유니트리(Unitree), 휴머노이드 로봇(humanoid robot) 경쟁 심화 속 70억 달러 IPO 기업 가치 계획; AI 반도체(AI Semiconductor) 기업들, 대규모 투자 유치로 경쟁 심화
+(00:15:45) 테슬라(Tesla)의 네바다(Nevada) 로보택시(robotaxi) 계획, 테스트 허가로 진전 | TechCrunch; 자율주행(Autonomous Driving) 기술, 물류 산업 혁신 주도 | Supply Chain News
+(00:17:48) 아마존(Amazon)의 주크스(Zoox), 라스베이거스(Las Vegas) 출시로 미국 로보택시(robotaxi) 경쟁에 뛰어들다; 헬스케어(Healthcare) 분야, AI 진단 시스템 도입으로 효율성 증대
+(00:19:27) 리플릿(Replit), 연간 매출 1억 5천만 달러로 30억 달러 기업 가치 달성 | TechCrunch; AI 기반 콘텐츠 플랫폼, 사용자 맞춤형 경험 제공으로 성공
+(00:21:14) 퍼플렉시티(Perplexity), 200억 달러 기업 가치로 2억 달러 모금한 것으로 알려져 | TechCrunch; 클라우드 AI 서비스(Cloud AI Service) 시장, 신규 플레이어 등장으로 판도 변화
+프로젝트 및 오픈 소스
+(00:22:08) [2509.07604] K2-Think: 매개변수 효율적 추론 시스템(Parameter-Efficient Reasoning System); [2603.11223] Multi-Agent Systems: 협력적 AI 에이전트(AI Agents)의 효율성 분석
+(00:24:31) [2509.09614] LoCoBench: 복잡한 소프트웨어 공학(Software Engineering) 분야의 장문 맥락 대규모 언어 모델(Long-Context Large Language Models)을 위한 벤치마크(Benchmark); [2603.15678] Federated Learning: 분산 학습 환경에서의 개인 정보 보호 강화
+연구 및 발전
+(00:28:17) [2509.15155] 자체 개선 체화 파운데이션 모델(Self-Improving Embodied Foundation Models); [2603.20010] 양자 AI(Quantum AI) 알고리즘, 복잡한 문제 해결 능력 입증
+(00:31:47) [2509.13805] 물리 파운데이션 모델(Physics Foundation Model)을 향하여; [2603.25055] 인과 관계 추론(Causal Inference) 기반 AI, 설명 가능성(Explainability) 향상
+(00:34:26) [2509.12129] 체화 내비게이션 파운데이션 모델(Embodied Navigation Foundation Model); [2603.28789] 뇌-컴퓨터 인터페이스(BCI) 기술, AI와 결합하여 새로운 가능성 제시
+정책 및 안전
+(00:37:49) 앤트로픽(Anthropic), 캘리포니아(California)의 AI 안전 법안 SB 53 지지 | TechCrunch; 유럽 연합(EU), AI 규제 법안 최종 승인, 글로벌 표준 제시 | POLITICO
+(00:40:12) 워너 브라더스(Warner Bros.)가 미드저니(Midjourney)를 고소하는 등 AI 생성 콘텐츠(AI-Generated Content)의 저작권 문제에 새로운 판례 등장
+(00:42:02) 롤링 스톤(Rolling Stone) 발행사, AI 개요 요약(AI Overview Summaries)에 대해 구글(Google) 고소; 데이터 주권(Data Sovereignty)과 AI: 국가별 정책 변화 분석

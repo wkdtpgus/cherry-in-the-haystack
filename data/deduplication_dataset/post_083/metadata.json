@@ -1,0 +1,21 @@
+{
+  "post_id": "083",
+  "title": "**감각이 당신의 해자입니다 — 딜런 필드, 피그마**",
+  "base_word_count": 12904,
+  "exact_30_update_wc": 2941,
+  "exact_30_ground_truth_wc": 10132,
+  "exact_30_overlap_ratio": 1.943,
+  "paraphrase_25_update_wc": 8710,
+  "paraphrase_25_ground_truth_wc": 8712,
+  "paraphrase_25_overlap_ratio": 1.481,
+  "fragment_20_update_wc": 353,
+  "fragment_20_ground_truth_wc": 8671,
+  "fragment_20_overlap_ratio": 12.992,
+  "semantic_25_update_wc": 9012,
+  "semantic_25_ground_truth_wc": 9012,
+  "semantic_25_overlap_ratio": 1.432,
+  "mixed_real_update_wc": 8675,
+  "mixed_real_ground_truth_wc": 8675,
+  "mixed_real_overlap_ratio": 1.487,
+  "status": "generated"
+}

@@ -1,0 +1,138 @@
+**업데이트 문서**:
+
+클라인(Cline), 시리즈 B 투자 유치 및 AI 코딩 시장 선도
+
+끊임없이 등장하는 VSCode 포크(fork)(Kiro)와 터미널 에이전트(terminal agent)(Warp 2.0, Charm Crush, Augment CLI)의 시대에, 무료 오픈 소스(open source) VSCode 확장 프로그램(extension)이 2026년에도 여전히 시장을 선도하는 이유는 무엇일까요? AI 코딩 전쟁이 격화되면서, 이 분야의 새로운 진입자들에 대한 수요는 무한해 보입니다. 2025년 초, 클라인(Cline)은 VS Code, 커서(Cursor), 윈드서프(Windsurf)와 호환되는 AI 엔지니어 확장 프로그램(extension) 출시 1주년을 맞이했습니다. 출시 1년 반 만에 500만 다운로드(download)를 돌파하며 놀라운 성장세를 보이고 있습니다. 최근 클라인(Cline)은 성공적인 시리즈 B 투자 유치를 발표하며, AI 기반 개발자 도구 시장에서의 입지를 더욱 공고히 했습니다.
+
+**플랜 & 액트(Plan & Act) 패러다임: 에이전트 중심 워크플로우의 진화**
+
+클라인(Cline) 팀이 일반적인 AI IDE 워크플로우(workflow)에 도입한 첫 번째 변화는 순차적 채팅(sequential chat)에서 모델이 필요한 변경 사항의 개요를 만들고 이를 실행하는 플랜 + 액트(plan + act) 방식으로 전환한 것입니다. 이 모드의 주요 차이점 중 하나는 RAG(Retrieval Augmented Generation, 즉, 코드베이스(codebase)를 인덱싱(indexing)하고 의미론적 검색(semantic search)을 수행)에서 에이전트 기반 검색(agentic search)으로 넘어가는 것입니다. RAG가 정신 바이러스(mind virus)라는 파쉬(Pash)의 블로그 게시물은 여전히 많은 개발자들에게 공감을 얻고 있습니다. 이 모든 것은 클라인(Cline)에게 몇 가지 다른 요소를 포함하는 "컨텍스트 엔지니어링(context engineering)" 관행과 연결됩니다. 동적 컨텍스트 관리(Dynamic Context Management)를 통해 실시간으로 파일 콘텐츠(file content)를 지능적으로 읽고 요약하여 컨텍스트 윈도우(context window)를 압도하지 않으면서 컨텍스트(context)가 관련성 있고 최신 상태를 유지하도록 합니다. 또한 추상 구문 트리(Abstract Syntax Tree, AST) 기반 분석(AST-Based Analysis)을 사용하여 코드의 관련 부분을 정확하게 식별하고 추출하며, 내러티브 무결성(Narrative Integrity)을 통해 작업 전반에 걸쳐 지속적인 일관성을 보장합니다. 최근에는 메모리 뱅크(Memory Bank) 기능이 더욱 강화되어, 명시적인 입력 없이도 필수적인 "부족 지식(tribal knowledge)"과 개발자 선호도를 캡처하고 유지하여 보다 개인화되고 컨텍스트(context)를 인지하는 상호 작용을 촉진합니다.
+
+**모두를 위한 MCP(Multi-Agent Communication Protocol) 생태계 확장**
+
+클라인(Cline)은 또한 매우 초기에 MCP(Multi-Agent Communication Protocol)에 집중했으며, 이미 자체 마켓플레이스(marketplace)를 출시했습니다. 우리는 가장 인기 있는 MCP가 무엇인지 물었고, 그들의 MCP 마켓플레이스(marketplace)에서 찾을 수 있는 "일반적인 용의자" 목록을 얻었습니다:
+
+*   **파일 시스템 MCP(File System MCP)**: 파일 및 디렉토리(directory) 관리용.
+*   **브라우저 자동화 MCP(Browser Automation MCP)**: 웹 작업을 위한 플레이라이트(Playwright), 퍼페티어(Puppeteer), 브라우저 툴(Browser Tools).
+*   **깃 툴(Git Tools)**: 저장소(repository) 상호 작용 및 버전 관리용.
+*   **문서 검색(Documentation Retrieval, Context 7)**: 문서 라이브러리(library)에 쉽게 접근할 수 있습니다.
+*   **서드파티 통합(Third-party integrations)**: 슬랙(Slack), 퍼플렉시티 리서치(Perplexity Research), 유니티(Unity), 에이블톤(Ableton) 등 일반적인 코딩 환경을 넘어선 작업을 위한 도구들.
+
+놀라운 점은 MCP가 비기술직 사람들에게도 킬러 기능(killer feature)이라는 것이었습니다. 코딩을 전혀 하지 않지만 워크플로우 자동화 플랫폼(workflow automation platform)으로 클라인(Cline)을 사용하는 사용자들이 있으며, 두 가지 주요 사용 사례는 다음과 같습니다:
+
+*   **자동화된 마케팅 및 소셜 미디어**: 레딧(Reddit) 및 트위터(Twitter) MCP 통합을 활용하여 IDE 내에서 콘텐츠 스크래핑(content scraping) 및 게시물 생성을 자동화합니다.
+*   **프레젠테이션 생성**: 비기술직 사용자들이 음성 메모(voice notes)를 필사하고 자동으로 전문적인 프레젠테이션(presentation)으로 포맷(format)하여 전체 슬라이드 덱(slide deck)을 생성했습니다.
+
+MCP의 인기가 계속 높아지고 멀티모달 텍스트박스(multi-modal textbox)가 최고의 AI 인터페이스(interface)로 계속 성장함에 따라, 이러한 사례를 더 많이 보게 될 것입니다. 최근에는 노코드(No-code) 및 로코드(Low-code) 플랫폼과의 연동을 위한 MCP도 등장하며, 개발자와 비개발자 모두에게 클라인(Cline)의 활용성을 더욱 확장하고 있습니다.
+
+**클라인(Cline) 소개**
+
+클라인(Cline)은 오픈 소스(open source) 코딩 에이전트(coding agent)입니다. 현재는 VS Code 확장 프로그램(extension)이지만, 젯브레인즈(JetBrains)와 네오빔(NeoVim), CLI(Command Line Interface)에도 출시될 예정입니다. 클라인(Cline)에게 작업을 주면, 그는 그냥 가서 작업을 수행합니다. 그는 당신의 터미널(terminal), 에디터(editor), 브라우저(browser)를 장악하고, 온갖 종류의 MCP 서비스(service)에 연결하여 본질적으로 당신의 전체 개발자 워크플로우(workflow)를 장악할 수 있습니다. 그리고 그것은 당신이 전체 작업을 완료하기 위한 접점이 됩니다. 클라인(Cline)은 에이전트(agent)를 위한, 모든 오픈 소스(open source) 에이전트(agent)를 위한 일종의 인프라 계층(infrastructure layer)이라고 생각합니다. 우리는 그것을 더 모듈화하여 그 위에 어떤 에이전트(agent)든 구축할 수 있도록 노력하고 있습니다.
+
+**플랜 앤 액트 패러다임(Plan and Act Paradigm)의 심층 분석**
+
+클라인(Cline)은 개발자가 상호 작용할 수 있는 두 가지 모드(mode)를 갖는 개념을 처음으로 제시했습니다. 사용자들과의 대화와 그들의 유기적인 워크플로우(workflow)에서 영감을 받아, 우리는 이 플랜 앤 액트(plan and act) 패러다임을 제품에 통합했습니다. 플랜 모드(plan mode)에서는 에이전트(agent)가 더 탐색적(exploratory)으로 행동하고, 더 많은 파일을 읽고, 더 많은 데이터를 얻도록 지시받습니다. 이는 사용자가 원하는 작업에 대한 공격 계획(plan of attack)을 세우기 위해 관련 정보를 이해하고 컨텍스트(context)를 채우는 단계입니다. 액트 모드(act mode)로 전환하면, 에이전트(agent)는 계획을 보고 실행하기 시작하고, 명령을 실행하고, 파일을 편집합니다. 이 방식은 에이전트(agent)와 함께 작업하는 것을 훨씬 더 쉽게 만듭니다. 특히 클라인(Cline)과 같은 복잡한 도구의 경우, 사용자는 플랜 모드에서 에이전트와 활발히 소통하며 초기 프롬프트에 담지 못한 정보를 추출하고, 액트 모드에서는 자동 승인(auto approve) 기능과 함께 에이전트가 작업을 완료하도록 맡길 수 있습니다. 이 반복적인 접근 방식은 사용자 피드백을 제품 개발에 적극적으로 반영하는 클라인(Cline)의 핵심 철학을 보여줍니다.
+
+**모델 평가 및 클라인(Cline)의 지속적인 발전**
+
+초기 클라인(Cline) 개발 당시 클라우드 3.5 소닉(Cloud 3.5 Sonic)의 에이전트 코딩(agentic coding) 능력과 단계별 작업 수행 개선은 중요한 전환점이었습니다. 특히 '건초 더미 속 바늘 찾기(needle in a haystack)' 테스트에서 보여준 긴 컨텍스트(context) 처리 능력은 클라인(Cline)의 동적 컨텍스트 관리(Dynamic Context Management) 전략의 기반이 되었습니다. 2026년 현재, 우리는 GPT-4o, 클라우드 4(Cloud 4)와 같은 최신 모델들의 더욱 향상된 추론 능력과 더 넓은 컨텍스트 윈도우(context window)를 활용하고 있습니다. 이러한 모델들은 클라인(Cline)이 더 복잡한 작업을 더 적은 오류로 처리할 수 있도록 돕습니다. 예를 들어, 최근 클라우드 4 소넷(Cloud 4 Sonnet)은 내부 벤치마크(benchmark)에서 4% 미만의 차이 편집 실패율(diff edit failure rate)을 기록하며, 모델의 발전이 에이전트의 효율성에 얼마나 큰 영향을 미치는지 보여줍니다. 클라인(Cline)은 이러한 최첨단 모델의 뉘앙스를 활용하여, 처음부터 제품을 구축함으로써 다른 제품들과 차별화되는 경험을 제공합니다.
+
+**왜 클라인(Cline)은 VS Code 확장 프로그램(Extension)인가? 포크(Fork)가 아닌 이유**
+
+VS Code 확장 프로그램(extension)이라는 것은 사용자 OS(Operating System)에 접근하고, 사용자 터미널(terminal)에 접근하며, 파일을 읽고 편집할 수 있는 흥미로운 기능을 제공합니다. 확장 프로그램(extension)은 새로운 애플리케이션(application)을 설치하거나 내부 승인 절차를 거칠 필요가 없어 개발자들의 온보딩(onboarding) 마찰을 크게 줄입니다. 마이크로소프트(Microsoft)는 VS Code 포크(fork)를 유지 관리하는 것을 악명 높게 어렵게 만들기 때문에, 포크(fork)를 유지하는 데 엄청난 자원과 노력이 필요합니다. VS Code의 끊임없는 업데이트(update)와 API(Application Programming Interface) 변경 사항을 따라잡는 것은 엄청난 골칫거리입니다. 클라인(Cline)은 확장 프로그램(extension)으로서 VS Code의 강력한 UI(User Interface)를 활용하여 파일 변경 전후의 차이 보기(diff views)와 같은 기능을 제공하며, 커서(Cursor), 윈드서프(Windsurf)와 같은 다른 IDE(Integrated Development Environment)와도 잘 보완됩니다. 우리는 핵심 에이전트 루프(agentic loop)에 집중하고, 다양한 모델 제품군(model family)에 최적화하며, 그들을 지원하는 데 주력하고 있습니다.
+
+**프로그래밍 에이전트(Agent)의 경제적 가치**
+
+경제적 가치(economic value) 측면에서, 프로그래밍(programming)은 현재 언어 모델(language models)에게 가장 높은 비용 대비 이점(cost to benefit)을 제공합니다. 이는 모델 연구소(model labs)들이 코딩(coding)을 더욱 진지하게 받아들이는 이유이기도 합니다. 예를 들어, 한 개발자가 버그(bug) 있는 클라우드플레어 워커(Cloudflare worker)를 배포한 후 센트리(Sentry) MCP 서버(server)를 사용하여 스택 트레이스(stack trace)를 가져왔습니다. 그리고 클라인(Cline)에게 스택 트레이스(stack trace) 정보를 사용하여 버그(bug)를 수정하고, 깃허브(GitHub) MCP 서버(server)에 연결하여 이슈(issue)를 닫고, 클라우드플레어(Cloudflare)에 수정 사항을 배포하도록 요청했습니다. 이 모든 것이 클라인(Cline) 내에서 자연어(natural language)를 사용하여 이루어졌습니다. 이는 개발자가 VS Code를 떠나지 않고도 복잡한 작업을 효율적으로 처리할 수 있음을 보여줍니다. 클라인(Cline)은 모델의 한계를 명확히 보여주고 사용자가 경로를 수정할 수 있는 충분한 통찰력(insight)을 제공함으로써, 이 혼란스러운 시장에서 차별점을 만들어냅니다.
+
+**MCP(Multi-Agent Communication Protocol)의 초기 도입과 생태계 성장**
+
+클라인(Cline)은 앤트로픽(Anthropic)의 MCP 출시 초기부터 낙관적인 입장을 취했으며, 그들의 런치 파트너(launch partner) 중 하나였습니다. MCP 마켓플레이스(marketplace)가 2025년 2월에 출시된 이후, 150개 이상의 서버(server)가 등록되었고, 인기 MCP는 수십만 다운로드(download)를 기록하며 빠르게 성장했습니다. 특히 21세기 개발 매직 MCP 서버(server)와 같이 표준 API 키(API key)를 통해 MCP를 수익화(monetizing)하는 사례가 등장하면서, 에이전트(agent)에게 도구를 판매하는 새로운 비즈니스 모델(business model)이 형성되고 있습니다. 이러한 생태계의 성장은 클라인(Cline)의 개발자들이 MCP의 작동 방식에 대한 통찰력(insight)과 인식을 높이는 데 큰 역할을 했습니다.
+
+**로컬(Local) 대 원격(Remote) MCP 서버(Server) 및 보안 과제**
+
+현재 대부분의 MCP는 로컬(local)에서 실행되지만, API(Application Programming Interface) 연결을 위한 원격 MCP도 점차 늘어나고 있습니다. 하지만 유니티(Unity) MCP 서버(server)나 에이블톤(Ableton) MCP 서버(server)처럼 특정 애플리케이션(application)과 연동되는 MCP는 여전히 로컬(local) 환경에서 강점을 가집니다. 따라서 로컬과 원격 MCP 서버의 혼합은 계속될 것입니다. MCP 생태계는 여전히 초기 단계에 있으며, 보안과 편의성 사이의 균형을 찾는 것이 중요합니다. 특히, MCP 서버(server)를 설치하는 데는 악성 코드(malicious code)의 위험이 항상 존재하며, 신뢰할 수 없는 개발자가 만든 MCP는 심각한 보안 문제를 야기할 수 있습니다. 클라인(Cline)은 이러한 위험을 인지하고, 마켓플레이스에서 MCP를 검증하고 필요에 따라 포크(fork)하여 버전의 안정성과 보안을 확보하는 데 노력하고 있습니다. 산업 전반에서 MCP 보안 표준에 대한 논의가 활발히 진행 중이며, 클라인(Cline)은 이러한 논의에 적극적으로 참여하고 있습니다.
+
+**MCP 레지스트리(Registry)에서 앤트로픽(Anthropic)의 역할**
+
+앤트로픽(Anthropic)이 공식 MCP 레지스트리(registry)를 출시한다면, 그들이 기본적으로 시장을 지배할 것이라는 전망은 여전히 유효합니다. 앤트로픽(Anthropic)은 강력한 배포(distribution) 채널을 가지고 있으며, MCP 프로토콜(protocol)의 창시자로서 그들의 영향력은 막대합니다. 클라인(Cline)은 앤트로픽(Anthropic)의 움직임을 주시하며, 어떤 변화에도 유연하게 대응할 준비가 되어 있습니다.
+
+**가장 인기 있는 MCP(Multi-Agent Communication Protocol) 및 사용 사례**
+
+가장 많이 사용되는 MCP로는 파일 시스템 MCP(File System MCP), 브라우저 툴(Browser tools), 컨텍스트 7(Context 7) (문서 검색), 깃 툴(Git tools), 퍼플렉시티 리서치(Perplexity Research) 등이 있습니다. 특히 브라우저 자동화와 슬랙(Slack) MCP를 통한 자동화는 개발자들의 일상 업무를 혁신하고 있습니다. 예를 들어, 클라이언트(Client)는 GH 명령줄 도구(command line tool)를 사용하여 PR(Pull Request)을 가져오고, PR의 설명과 토론, 전체 차이(diff)를 가져와 검토한 다음, 슬랙(Slack) MCP를 사용하여 팀에 메시지를 보내는 등의 작업을 자동화할 수 있습니다. 이러한 MCP들은 개발자가 반복적이고 시간이 많이 소요되는 작업을 줄이고, 더 중요한 문제 해결에 집중할 수 있도록 돕습니다.
+
+**MCP(Multi-Agent Communication Protocol) 수익화의 과제와 미래**
+
+MCP 생태계의 수익화(monetization)는 여전히 큰 과제입니다. 스트라이프(Stripe)와 같은 기업들이 MCP 수익화 계층을 구축하는 데 관심을 보이고 있지만, 에이전트(agent)가 직접 도구 사용에 대한 비용을 지불하고, 수많은 API 키(API key)를 관리할 필요 없이 통합된 결제 계층이 필요하다는 의견이 많습니다. 스테이블 코인(stable coins)이나 X402와 같은 결제 프로토콜(payment protocol)에 대한 논의가 진행 중이지만, 아직은 초기 단계입니다. 클라인(Cline)은 기업 고객을 위한 중앙 집중식 결제 및 관리 시스템을 구축하여 이러한 문제를 해결하고 있습니다.
+
+**MCP(Multi-Agent Communication Protocol)의 보안 및 신뢰 문제**
+
+MCP를 로컬(local) 기기에 설치하는 것은 항상 상당한 위험을 수반합니다. 출처를 알 수 없는 MCP가 악성 코드(malicious code)를 포함하거나 업데이트(update)를 통해 악성 기능을 추가할 가능성이 있기 때문입니다. 클라인(Cline)은 이러한 문제를 해결하기 위해 인기 있는 MCP를 직접 포크(fork)하여 버전의 안정성을 확보하고, 커뮤니티(community)에 보안 의식(security conscious)을 높이도록 권장합니다. 기업 환경에서는 MCP 사용에 대한 엄격한 보안 프로토콜(protocol)과 검증 절차가 필수적입니다.
+
+**MCP(Multi-Agent Communication Protocol) 없는 대체 역사**
+
+MCP가 없었다면, 경쟁사들은 각자의 에이전트(agent)에 플러그 앤 플레이(plug and play) 도구를 자체적으로 개발해야 했을 것입니다. 이는 막대한 시간과 노력이 필요한 작업입니다. 앤트로픽(Anthropic)이 MCP를 오픈 소스(open source)화함으로써, 개발자들은 커뮤니티(community) 주도 개발의 힘을 활용하여 상상할 수 있는 모든 것에 대한 MCP를 만들 수 있게 되었습니다. 이는 AI 에이전트(agent) 분야의 잠재력을 최대한 발휘하는 데 필수적인 요소였습니다.
+
+**코딩 에이전트(Agent)의 시장 포지셔닝(Positioning) 및 IDE 통합 매트릭스(Matrix)**
+
+클라인(Cline)의 핵심 철학은 개발자들이 현재 있는 곳에서 그들을 만나는 것입니다. IDE(Integrated Development Environment)는 에이전트(agent)가 수행하는 편집 내용, 실행하는 명령, 호출하는 도구를 볼 수 있게 하여 완벽한 통로 역할을 합니다. 이는 오늘날 모델의 한계(model limitations)를 고려할 때, 개발자가 충분한 통찰력(insight)과 제어력을 가지고 경로를 수정할 수 있도록 하는 데 필수적인 UX(User Experience)를 제공합니다. 모델이 더욱 발전함에 따라, 개발자들은 초기 계획과 프롬프팅(prompting)에 더 집중하고, 에이전트(agent)가 작업을 완료할 것이라는 신뢰를 갖게 될 것입니다. 시장에는 다양한 도구들이 존재하며, 완전히 자율적인 에이전트(agent)는 프로젝트 스캐폴딩(scaffolding)에 유용할 수 있지만, 복잡한 작업에는 클라인(Cline)과 같이 더 많은 통찰력(insight)과 참여를 제공하는 도구가 적합합니다.
+
+**코딩 에이전트(Agent)의 가시성 및 자율성**
+
+코딩 에이전트(agent)의 스펙트럼은 가시성(visibility)과 자율성(autonomy)이라는 두 축으로 나눌 수 있습니다. 코드를 보지 않으려는 비개발자(예: 러버블스, 리플릿)를 위한 도구, 엔지니어를 위한 하이브리드(hybrid) 도구(예: 바이브 코더), 그리고 높은 가시성(visibility)이 필수적인 진지한 엔지니어링 팀(engineering team)을 위한 도구가 있습니다. 개인적으로는 모든 단계에서 에이전트(agent)를 안내하며 올바른 방향으로 이끄는 하이브리드(hybrid) 워크플로우(workflow)를 선호합니다. 이를 통해 모든 파일이 편집될 때마다 승인하고, 개발 과정에서 일이 어떻게 진행되는지 정확히 이해할 수 있습니다. 물론, 가끔은 모든 것을 자동 승인(auto approve)하고 커피 한 잔 마시러 나갔다가 돌아와서 작업을 검토하는 'YOLO 모드(mode)'도 가능합니다.
+
+**프로그래밍 작업 복잡성의 진화하는 정의**
+
+몇 년 전에는 복잡하다고 여겨졌던 많은 작업들이 이제 모델에게는 사소한 일이 되었습니다. 이제 우리가 더 의도적으로 생각해야 할 부분은 초기 단계에서 내리는 아키텍처(architecture) 결정과 모델이 그 위에 구축해 나가는 방식입니다. 명확한 방향성과 비전이 있다면, 모델은 알고리즘(algorithm)과 같은 기술적인 세부 사항을 완벽하게 처리할 수 있습니다. 이는 시니어 소프트웨어 엔지니어(senior software engineer)들이 알고리즘 구현보다는 더 높은 수준의 아키텍처(architecture) 설계에 집중할 수 있도록 해줍니다. 주니어 엔지니어(junior engineer)들에게는 클라인(Cline)과 같은 에이전트(agent)가 코드베이스(codebase)를 학습하고, 특정 기능을 구현하기 위해 어떤 파일을 봐야 하는지 이해하는 데 도움을 주는 훌륭한 도구가 됩니다. AI는 엔지니어의 역할을 변화시키고 있으며, 이제 인간은 더 창의적이고 전략적인 문제 해결에 집중할 수 있게 되었습니다.
+
+**클라인(Cline)의 포크(Fork) 및 오픈 소스(Open Source) 후회**
+
+클라인(Cline)은 수많은 포크(fork)를 낳았으며, 심지어 포크(fork)된 프로젝트들이 수천만 달러의 투자를 유치하기도 했습니다. 이는 오픈 소스(open source) 프로젝트의 숙명이자 강력한 영향력을 보여주는 증거입니다. 삼성(Samsung)과 같은 대기업조차 클라인(Cline)의 포크(fork) 버전을 사용한다는 월스트리트 저널(Wall Street Journal) 기사는 이러한 현상을 잘 보여줍니다. 우리는 이러한 포크(fork)들을 장려하며, 클라인(Cline)이 코딩 에이전트(coding agent)의 훌륭한 기반을 제공하고 있다고 생각합니다. 오픈 소스(open source)를 후회하지 않습니다. 오히려 클라인(Cline)은 이 분야에서 리더(leader)로서 산업 전체의 방향을 제시하고 있다고 믿습니다.
+
+**에이전트(Agent) 설계의 단순성 대 복잡성**
+
+클라인(Cline)은 '단순함이 승리한다'는 철학을 가지고 있습니다. RAG(Retrieval Augmented Generation)는 컨텍스트 윈도우(context window)가 작았던 2022년 초기에 유용했지만, 모델의 컨텍스트 처리 능력이 비약적으로 발전한 지금은 오히려 모델의 추론을 방해할 수 있습니다. RAG는 코드베이스(codebase)를 작은 조각으로 나누어 검색하는 방식인데, 이는 코드의 본질적인 논리적 흐름을 왜곡할 수 있습니다. 클라인(Cline)은 시니어 소프트웨어 엔지니어(senior software engineer)가 새로운 저장소(repository)를 탐색하듯이 에이전트(agent)가 코드베이스(codebase)를 탐색하도록 합니다.
+
+과거 커서(Cursor)에서 도입했던 패스트 어플라이(Fast Apply) 기능도 마찬가지입니다. 이 기능은 모델이 파일 편집에 능숙하지 않았을 때, 모호한 코드 스니펫(code snippet)을 작은 파인튜닝(fine-tuned) 모델이 전체 파일로 확장하는 방식이었습니다. 하지만 이는 '하나의 모델 대신 두 개의 모델이 일을 망칠 가능성'을 만들었으며, 작은 모델의 한계로 인해 미묘한 버그(bug)를 유발했습니다. AI 모델이 발전함에 따라, 이러한 복잡한 우회책들은 더 이상 필요하지 않습니다. 최신 모델들은 높은 정확도로 직접적인 차이 편집(diff edit)을 수행할 수 있습니다. 클라우드 4 소넷(Cloud 4 Sonnet)은 4% 미만의 차이 편집 실패율(diff edit failure rate)을 기록하며, 패스트 어플라이(Fast Apply) 시대가 끝나가고 있음을 보여줍니다.
+
+**패스트 어플라이(Fast Apply)가 비터 레슨(Bitter Lesson)을 얻은 방법**
+
+RAG와 패스트 어플라이(Fast Apply)는 모델의 컨텍스트 처리 능력이나 차이 편집(diff editing) 능력이 부족했을 때 유용한 도구였습니다. 하지만 이제 모델들이 훨씬 더 강력해지면서, 이러한 '추가 재료'들은 오히려 일을 그르칠 수 있는 위험 요소가 되었습니다. 코그니션 랩스(Cognition Labs)의 연구에서 언급되었듯이, 다중 에이전트(multi-agent) 오케스트레이션(orchestration)에서도 세부 사항이 중요하며, 모델에게 필요한 모든 컨텍스트(context)를 제공하는 것이 중요합니다. 클라인(Cline)은 비용 최적화보다는 모델에 최대한의 컨텍스트(context)를 제공하는 방식을 택합니다. 이는 더 비쌀 수 있지만, '지능의 대가(cost of intelligence)'이며, 그에 상응하는 가치를 제공합니다. 오픈 소스(open source)로서 개발자들이 내부 작동 방식을 투명하게 볼 수 있다는 점은 이러한 접근 방식에 대한 신뢰를 높입니다.
+
+**클라인(Cline)의 비즈니스 모델(Business Model) 및 BYO-API 키(Bring-Your-Own-API-Key) 접근 방식**
+
+클라인(Cline)의 비즈니스 모델(business model)은 'BYO-API 키(Bring-Your-Own-API-Key)' 접근 방식을 기반으로 합니다. 사용자는 자신의 앤트로픽(Anthropic), OpenAI, OpenRouter 등 원하는 모델 제공업체의 API 키(API key)를 연결하여 사용합니다. 우리는 추론(inference) 비용으로 수익을 창출하는 대신, 최고 품질의 에이전트(agent) 제품을 만드는 데 집중합니다. 이러한 투명성은 사용자가 자신이 지불하는 비용과 사용되는 모델에 대한 완전한 통제권을 가질 수 있게 합니다.
+
+기업 고객의 경우, 데이터 프라이버시(data privacy), 제어, 보안이 최우선 고려 사항입니다. 클라인(Cline)은 오픈 소스(open source)이기 때문에, 기업들은 데이터가 외부 서버로 전송되지 않고 자체 인프라(infrastructure) 내에서 처리된다는 확신을 가질 수 있습니다. 실제로 포춘(Fortune) 500대 기업 중 한 곳이 클라인(Cline)의 엔터프라이즈(enterprise) 솔루션에 대한 강력한 수요를 표명하며, 중앙 집중식 관리, 비용 추적, 거버넌스(governance) 기능의 필요성을 강조했습니다. 클라인(Cline)은 이러한 수요를 충족하기 위해 엔터프라이즈(enterprise) 제품을 개발했으며, 현재는 수많은 대기업들이 클라인(Cline)을 통해 개발 워크플로우(workflow)를 혁신하고 있습니다. 우리는 고객들에게 지출 내역에 대한 청구서(invoice)를 제공하고, 클라인(Cline)이 제공하는 ROI(투자 수익률)를 측정할 수 있는 지표(예: 코드 라인 수, 버그 해결 시간 단축)를 제공하여 내부적인 채택을 돕습니다.
+
+**오픈라우터(OpenRouter) 및 엔터프라이즈(Enterprise) 인프라(Infrastructure) 통합**
+
+클라인(Cline)은 오픈라우터(OpenRouter)와 같은 플랫폼과의 통합을 통해 다양한 모델에 대한 접근성을 제공합니다. 엔터프라이즈(enterprise) 환경에서는 자체 호스팅(self-hosted) 옵션을 통해 기업 내부에서 모든 트래픽을 처리하고, 엄격한 보안 및 제어 요구 사항을 충족할 수 있습니다. 클라인(Cline)의 엔터프라이즈(enterprise) 솔루션은 기업의 기존 인프라(infrastructure)와 원활하게 통합되어, 개발 팀이 안전하고 효율적으로 AI 에이전트(agent)를 활용할 수 있도록 지원합니다.
+
+**모델 비용 감소의 영향**
+
+모델 비용이 제로(zero)에 가까워진다 해도, 클라인(Cline)의 비즈니스 모델(business model)에는 큰 영향을 미치지 않습니다. 우리의 핵심 가설은 '추론(inference) 자체가 비즈니스가 아니다'는 것입니다. 우리는 사용자에게 가격에 대한 완전한 투명성(transparency)을 제공하며, 이는 사용자가 AI 에이전트(agent) 사용에 익숙해지는 데 매우 중요합니다. 코딩 에이전트(coding agent)가 제공하는 ROI(투자 수익률)는 비용을 상회하며, 이는 사용자들이 작업을 완료하기 위해 기꺼이 지불할 용의가 있음을 의미합니다. 클라인(Cline)은 개발자들이 이전에는 시도조차 하지 않았을 복잡한 실험이나 사이드 프로젝트를 가능하게 함으로써, 측정하기 어려운 막대한 가치를 창출합니다.
+
+**백그라운드 에이전트(Background Agent) 및 다중 에이전트 시스템(Multi-Agent System)**
+
+클라인(Cline)은 CLI(Command Line Interface) 버전을 출시하여 모듈성(modularity)을 극대화하고 있습니다. 이를 통해 사용자는 클라인(Cline) CLI를 사용하여 더 많은 클라인(Cline) 인스턴스(instance)를 스핀업(spin up)하거나, 깃허브 액션(GitHub action)과 같은 클라우드 프로세스(cloud process)에서 클라인(Cline)을 실행할 수 있습니다. 이는 백그라운드 에이전트(background agent) 및 다중 에이전트 시스템(multi-agent system)의 기반이 됩니다. 우리는 모든 도구가 서로를 보완한다고 생각하며, 특정 종류의 작업에는 백그라운드 에이전트(background agent)가, 실험적이고 반복적인 작업에는 병렬 칸반(Kanban) 다중 에이전트(multi-agent)가 유용할 수 있습니다. 클라인(Cline)은 오픈 소스(open source) 프레임워크(framework)와 SDK(Software Development Kit)를 구축하여, 클라인(Cline)을 VS Code, Jupyter 노트북, 심지어 스마트카(smart car)나 냉장고(fridge)와 같은 다양한 플랫폼으로 확장하는 비전을 가지고 있습니다. 우리는 미래의 에이전트(agent) 기술을 위한 '빌딩 블록(building blocks)'을 제공하는 데 집중하고 있습니다.
+
+**컨텍스트 엔지니어링(Context Engineering)의 현황**
+
+컨텍스트 엔지니어링(context engineering)은 본질적으로 프롬프트 엔지니어링(prompt engineering)과 깊은 관련이 있습니다. 컨텍스트(context)에 무엇을 넣을지, 그리고 컨텍스트 윈도우(context window)가 가득 찼을 때 어떻게 정리할지는 에이전트(agent)의 성능에 결정적인 영향을 미칩니다. 클라인(Cline)은 에이전트(agent)가 도구를 사용하여 관련 컨텍스트(context)를 가져오고, 모델이 컨텍스트(context)에 무엇이 속하는지 스스로 결정하도록 합니다. AST(Abstract Syntax Tree) 기반 분석은 에이전트(agent)가 대규모 코드베이스(codebase)를 탐색하고, 디렉토리(directory)의 언어적 특징(예: 클래스 이름, 함수 이름)을 파악하여 관련 파일을 읽는 데 도움을 줍니다. 이는 마치 에이전트가 코드베이스의 '지식 그래프(knowledge graph)'를 탐색하는 것과 같습니다. 컨텍스트 윈도우(context window)를 관리하기 위해 클라인(Cline)은 단순한 내용 자르기(truncation) 대신, 중복 파일 읽기를 정리하고, 관련 세부 정보를 요약하는 방식을 사용합니다. 이는 에이전트가 작업의 '내러티브 무결성(narrative integrity)'을 유지하면서 장기적인 작업을 수행할 수 있도록 돕습니다.
+
+**코딩 에이전트(Agent)의 메모리 시스템(Memory System)**
+
+현재 대부분의 에이전트(agent) 메모리 시스템(memory system)은 제한적입니다. 개발자들이 명시적으로 문서화하거나 규칙 파일에 넣지 않는 '부족 지식(tribal knowledge)'을 에이전트가 학습하고 유지하는 것이 중요합니다. 클라인(Cline)은 에이전트가 작업 중에 '스크래치패드(scratchpad)'처럼 현재 진행 중인 작업과 남은 작업을 기록하도록 하는 내부 실험을 통해, 컨텍스트 요약 및 압축 후에도 에이전트가 목표를 유지하는 데 매우 효과적임을 발견했습니다. 이는 에이전트가 여러 세션에 걸쳐 컨텍스트(context)를 유지하고, 복잡한 작업을 처음부터 끝까지 수행할 수 있도록 돕는 장기 메모리(long-term memory) 시스템의 기반이 될 것입니다.
+
+**에이전트(Agent) 도구 전반의 규칙 파일 표준화**
+
+클라우드MD(CloudMD), 에이전트MD(AgentsMD)와 같은 다양한 규칙 파일 형식에 대한 논의가 있지만, 클라인(Cline)은 각 도구가 자신만의 특정 지침을 갖는 것이 유용하다고 봅니다. 개발자들은 클라인(Cline)과 커서(Cursor)에 대해 서로 다른 규칙을 설정하여, 각 도구가 특정 작업을 수행하는 방식에 따라 맞춤형 지침을 제공할 수 있습니다. 이는 코드베이스(codebase)를 약간 지저분하게 만들 수 있지만, 도구의 유연성과 효율성을 높이는 데 기여합니다.
+
+**클라인(Cline)의 성격 및 의인화**
+
+클라인(Cline)은 CLI(Command Line Interface)와 에디터(editor)의 합성어이지만, 사용자들은 그를 '그(he)'라고 지칭하며 의인화하는 경향이 있습니다. 이는 클라인(Cline)이 다른 에이전트(agent)들과 달리 '인간화된' 특성을 가지고 있기 때문입니다. 에이전트(agent)를 의인화하는 것은 신뢰를 구축하고, 에이전트(agent)가 수행하는 모든 작업이 '이야기'처럼 느껴지도록 하는 데 중요합니다. 에이전트(agent)에게 명확한 정체성을 부여하면 더 나은 결과를 얻을 수 있으며, 개발자들은 마치 할리우드 감독처럼 에이전트(agent)의 '이야기'를 만들어가는 경험을 할 수 있습니다.
+
+**클라인(Cline) 채용 및 팀 문화**
+
+클라인(Cline)은 현재 100명 이상의 직원을 보유하고 있으며, 연말까지 200명 규모로 성장하는 것을 목표로 하고 있습니다. 우리의 채용은 주로 기존 네트워크 내의 신뢰할 수 있는 인재들을 중심으로 이루어집니다. 엔지니어(engineer)들은 자신의 삶을 더 쉽게 만드는 것에 열정을 느끼며, 코딩 에이전트(coding agent)는 현재 가장 흥미로운 문제 영역 중 하나입니다. 오픈 소스(open source)라는 점은 커뮤니티(community)와의 강력한 유대감을 형성하고, 건설적인 피드백을 통해 제품 로드맵(roadmap)을 형성하는 데 큰 도움을 줍니다. 우리는 경쟁이 매우 치열한 시장에서 빠르게 성장하고 있지만, '그들이 복사하게 두라'는 정신으로 산업을 선도하고 있습니다. 고카트(go-karting)와 카약(kayaking)과 같은 팀 활동을 통해 어려운 작업 속에서도 즐거움을 잃지 않는 문화를 유지하고 있습니다. 클라인(Cline)은 미래의 소프트웨어 개발 방식을 정의하고, 차세대 에이전트(agent) 기술의 기반을 구축하는 데 기여하고자 하는 열정적인 인재들을 찾고 있습니다.

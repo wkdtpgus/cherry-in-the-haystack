@@ -1,0 +1,21 @@
+{
+  "post_id": "136",
+  "title": "**범용 인공지능(AGI)은 멀티모달(multimodal)이 아니다.**",
+  "base_word_count": 208,
+  "exact_30_update_wc": 212,
+  "exact_30_ground_truth_wc": 315,
+  "exact_30_overlap_ratio": 0.495,
+  "paraphrase_25_update_wc": 168,
+  "paraphrase_25_ground_truth_wc": 231,
+  "paraphrase_25_overlap_ratio": 0.863,
+  "fragment_20_update_wc": 299,
+  "fragment_20_ground_truth_wc": 424,
+  "fragment_20_overlap_ratio": 0.278,
+  "semantic_25_update_wc": 139,
+  "semantic_25_ground_truth_wc": 154,
+  "semantic_25_overlap_ratio": 1.388,
+  "mixed_real_update_wc": 208,
+  "mixed_real_ground_truth_wc": 208,
+  "mixed_real_overlap_ratio": 1.0,
+  "status": "generated"
+}

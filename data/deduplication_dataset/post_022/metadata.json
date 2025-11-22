@@ -1,0 +1,21 @@
+{
+  "post_id": "022",
+  "title": "**실제 AI 에이전트(AI Agents)와 실제 업무**",
+  "base_word_count": 1463,
+  "exact_30_update_wc": 1363,
+  "exact_30_ground_truth_wc": 1500,
+  "exact_30_overlap_ratio": 0.973,
+  "paraphrase_25_update_wc": 1429,
+  "paraphrase_25_ground_truth_wc": 1428,
+  "paraphrase_25_overlap_ratio": 1.024,
+  "fragment_20_update_wc": 1189,
+  "fragment_20_ground_truth_wc": 1708,
+  "fragment_20_overlap_ratio": 0.794,
+  "semantic_25_update_wc": 1378,
+  "semantic_25_ground_truth_wc": 1377,
+  "semantic_25_overlap_ratio": 1.062,
+  "mixed_real_update_wc": 1356,
+  "mixed_real_ground_truth_wc": 1356,
+  "mixed_real_overlap_ratio": 1.079,
+  "status": "generated"
+}

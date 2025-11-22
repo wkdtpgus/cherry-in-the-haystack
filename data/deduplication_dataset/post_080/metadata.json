@@ -1,0 +1,21 @@
+{
+  "post_id": "080",
+  "title": "**🤖 AI 에이전트(AI Agents) 주간 소식: 범용 딥 리서치(Universal Deep Research), GPT-4b 마이크로(GPT-4b micro), 자가 진화 에이전트(Self-Evolving Agents), 다중 에이전트 실패(Multi-Agent Failures) 추적**",
+  "base_word_count": 361,
+  "exact_30_update_wc": 363,
+  "exact_30_ground_truth_wc": 558,
+  "exact_30_overlap_ratio": 0.457,
+  "paraphrase_25_update_wc": 841,
+  "paraphrase_25_ground_truth_wc": 841,
+  "paraphrase_25_overlap_ratio": 0.429,
+  "fragment_20_update_wc": 338,
+  "fragment_20_ground_truth_wc": 681,
+  "fragment_20_overlap_ratio": 0.053,
+  "semantic_25_update_wc": 743,
+  "semantic_25_ground_truth_wc": 892,
+  "semantic_25_overlap_ratio": 0.285,
+  "mixed_real_update_wc": 471,
+  "mixed_real_ground_truth_wc": 477,
+  "mixed_real_overlap_ratio": 0.754,
+  "status": "generated"
+}

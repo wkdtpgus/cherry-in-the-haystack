@@ -1,0 +1,21 @@
+지금 무료로 등록하세요: https://bit.ly/4aRnn7Z 깃허브 저장소(Github Repo): https://github.com/HandsOnLLM/Hands-On-Large-Language-Models
+
+우리는 '트랜스포머 기반 LLM의 동작 원리(How Transformer LLMs Work)' 강좌를 선보이게 되어 큰 보람을 느낍니다. 본 무상 교육 프로그램은 약 90분에 달하는 영상 콘텐츠, 실습 코드, 그리고 최신 트랜스포머 구조(Transformer architecture), 토크나이저(tokenizer), 임베딩(embedding), 전문가 혼합 모델(mixture-of-expert models)을 상세히 다루는 명확한 시각 자료와 동적인 애니메이션으로 구성되어 있습니다. 지난 몇 년간, 마르텐 그루텐도르스트(Maarten Grootendorst)와 저는 수백 장의 그림과 수만 번의 반복 작업을 통해 이 강좌를 위한 풍부한 시각적 언어를 구축했습니다. 이는 Cohere, C4AI, 그리고 오픈 소스 및 오픈 사이언스 ML 커뮤니티의 수많은 뛰어난 동료들로부터 영감을 받았습니다. 특히, 전설적인 앤드류 응(Andrew Ng)과 DeepLearning.ai 팀과의 협력 기회는 이 작업을 애니메이션과 간결한 설명으로 더욱 발전시키는 계기가 되었습니다. 우리의 목표는 기술 학습자들이 머신러닝(ML) 분야의 복잡한 논문을 쉽게 접하고, 최신 아키텍처(architecture) 설명을 심도 있게 이해할 수 있도록 돕는 것입니다.
+
+**왜 트랜스포머 아키텍처를 깊이 이해해야 하는가?**
+
+트랜스포머 아키텍처는 2017년 등장 이후 자연어 처리(NLP) 분야에 혁명적인 변화를 가져왔습니다. 이는 단순히 텍스트를 넘어 컴퓨터 비전(Vision Transformer) 등 다양한 인공지능 영역으로 확장되며 현대 AI의 근간을 이루고 있습니다. 이 강좌는 이처럼 강력한 기술의 핵심 원리를 파악하고, 실제 LLM 개발 및 응용에 필요한 실질적인 지식을 제공합니다. 빠르게 발전하는 AI 시대에 발맞춰, 트랜스포머에 대한 깊은 이해는 여러분의 경쟁력을 한층 강화시켜 줄 것입니다.
+
+본 학습 과정을 통해 참가자들은 거대 언어 모델(LLM)의 핵심 동력인 트랜스포머 신경망 구조(transformer network architecture)의 작동 방식을 익히게 됩니다. 또한, LLM이 문자를 처리하는 과정에 대한 심층적인 이해를 얻고, 트랜스포머 구조(transformer architecture)의 필수 요소를 설명하는 실용적인 코드 예시들을 직접 다뤄볼 기회를 갖게 될 것입니다.
+
+이 강좌에서 다루는 주요 주제는 다음과 같습니다.
+*   **언어 표현의 진화:** 언어의 수치적 표현이 Bag-of-Words 모델(Bag-of-Words model)에서 Word2Vec 임베딩(Word2Vec embeddings)을 지나, 단어의 문맥적 의미를 정교하게 포착하는 트랜스포머 아키텍처(transformer architecture)로 어떻게 발전해왔는지 그 역사적 흐름을 다룹니다. 특히, 트랜스포머가 긴 문맥 의존성을 효과적으로 처리하는 방식에 주목합니다.
+*   **토큰화 과정의 이해:** LLM 입력이 언어 모델(language model)로 전달되기 전, 텍스트가 단어나 하위 단어 조각을 나타내는 토큰(token)으로 어떻게 분해되는지 상세히 설명합니다. BPE(Byte Pair Encoding)와 같은 현대적인 서브워드 토큰화(subword tokenization) 기법의 중요성과 그 이점을 탐구합니다.
+*   **트랜스포머의 핵심 단계:** 토큰화(tokenization) 및 임베딩(embedding), 트랜스포머 블록(transformer blocks)의 스택 구성, 그리고 언어 모델 헤드(language model head)로 이루어진 트랜스포머(transformer)의 세 가지 주요 처리 단계에 대한 심도 있는 분석을 제공합니다.
+*   **어텐션 메커니즘의 작동 방식:** 트랜스포머 블록(transformer block)의 핵심인 어텐션(attention)이 어떻게 관련성 점수를 계산하고, 이어서 훈련을 통해 학습된 정보를 통합하는 피드포워드 레이어(feedforward layer)와 결합되는지 자세히 살펴봅니다. 특히, 멀티 헤드 어텐션(multi-head attention)이 다양한 관점에서 정보를 포착하는 방식을 조명합니다.
+*   **트랜스포머 블록의 진화와 최적화:** 캐시된 계산(cached calculations)이 트랜스포머(transformer)의 추론 속도를 어떻게 향상시키는지, 그리고 원본 논문 발표 이후 수년 동안 트랜스포머 블록(transformer block)이 Reformer, Longformer와 같은 다양한 변형 아키텍처로 어떻게 발전해왔으며, 현재까지도 광범위하게 활용되는 이유를 분석합니다.
+*   **Hugging Face 라이브러리 활용:** Hugging Face 트랜스포머 라이브러리(Hugging Face transformer library)를 통해 최신 모델의 실제 구현 사례를 탐색하고, 사전 학습된 모델을 활용한 전이 학습(transfer learning) 및 파인튜닝(fine-tuning) 기법을 소개합니다.
+
+이 교육을 수료한 후에는 LLM이 언어를 해석하는 방식에 대한 포괄적인 통찰력을 얻게 되며, 모델 관련 연구 논문을 분석하고 해당 구조(architecture)를 설명하는 세부 개념들을 명확히 파악할 수 있게 될 것입니다. 이러한 실질적인 통찰력은 LLM 기반 애플리케이션(application) 개발 전략을 한층 더 발전시키는 데 기여할 것입니다. 나아가, 잠재적인 모델의 한계점(예: 편향, 환각 현상)을 인식하고 이를 완화하는 데 필요한 기초 지식도 얻게 될 것입니다.
+
+즐겁게 수강하시길 바랍니다! Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요. 구독하기

@@ -1,0 +1,582 @@
+# **거대 언어 모델(LLM) 아키텍처 종합 비교**
+
+Author: Sebastian Raschka
+URL: https://magazine.sebastianraschka.com/p/the-big-llm-architecture-comparison
+
+============================================================
+
+원본 GPT 아키텍처(architecture)가 개발된 지 7년이 지났습니다. GPT-2(2019)를 되돌아보고 DeepSeek-V3 및 Llama 4(2024-2025)를 내다보면, 이 모델들이 여전히 구조적으로 얼마나 유사한지 놀랄 수도 있습니다. 물론, 위치 임베딩(positional embeddings)은 절대적(absolute) 방식에서 회전적(rotational, RoPE) 방식으로 발전했고, 멀티 헤드 어텐션(Multi-Head Attention)은 대부분 그룹화된 쿼리 어텐션(Grouped-Query Attention)으로 대체되었으며, 더 효율적인 SwiGLU는 GELU와 같은 활성화 함수(activation functions)를 대체했습니다. 하지만 이러한 사소한 개선점들 아래에서, 우리는 진정으로 획기적인 변화를 보았을까요, 아니면 단순히 동일한 아키텍처 기반(architectural foundations)을 다듬고 있는 것일까요? LLM(Large Language Model)들을 비교하여 성능(좋든 나쁘든)에 기여하는 핵심 요소를 파악하는 것은 매우 어렵습니다. 데이터셋(datasets), 훈련 기법(training techniques), 하이퍼파라미터(hyperparameters)는 매우 다양하며 종종 잘 문서화되어 있지 않습니다. 그러나 저는 2025년에 LLM 개발자들이 무엇을 하고 있는지 알아보기 위해 아키텍처 자체의 구조적 변화를 살펴보는 것이 여전히 많은 가치가 있다고 생각합니다. (그 중 일부는 아래 그림 1에 나와 있습니다.)
+
+그림 1: 이 글에서 다루는 아키텍처의 일부.
+
+따라서 이 글에서는 벤치마크 성능(benchmark performance)이나 훈련 알고리즘(training algorithms)에 대해 쓰는 대신, 오늘날의 대표적인 오픈 모델(open models)을 정의하는 아키텍처 개발에 초점을 맞출 것입니다. (기억하시겠지만, 저는 얼마 전 멀티모달 LLM(multimodal LLMs)에 대해 썼습니다. 이 글에서는 최근 모델들의 텍스트 기능에 집중하고 멀티모달 기능에 대한 논의는 다음으로 미루겠습니다.)
+
+팁: 이 글은 상당히 포괄적이므로, 목차에 접근하려면 내비게이션 바(navigation bar)를 사용하는 것을 권장합니다 (Substack 페이지 왼쪽 위에 마우스를 올리세요).
+
+선택 사항: 아래 비디오는 이 글의 내레이션이 포함된 요약 버전입니다.
+
+---
+
+### 1. DeepSeek V3/R1
+
+지금까지 여러 번 들으셨겠지만, DeepSeek R1은 2025년 1월에 출시되었을 때 큰 반향을 일으켰습니다. DeepSeek R1은 2024년 12월에 소개된 DeepSeek V3 아키텍처를 기반으로 구축된 추론 모델(reasoning model)입니다. 여기서 제 초점은 2025년에 출시된 아키텍처에 있지만, DeepSeek V3는 2025년 DeepSeek R1 출시 이후에야 광범위한 관심과 채택을 얻었으므로 DeepSeek V3를 포함하는 것이 합리적이라고 생각합니다.
+
+DeepSeek R1의 훈련에 특히 관심이 있다면, 올해 초에 제가 쓴 다음 글도 유용할 것입니다:
+
+**Understanding Reasoning LLMs**
+Sebastian Raschka, PhD · Feb 5
+[Read full story]
+
+이 섹션에서는 DeepSeek V3에 도입되어 계산 효율성(computational efficiency)을 향상시키고 다른 많은 LLM과 차별화되는 두 가지 핵심 아키텍처 기술에 초점을 맞출 것입니다.
+
+*   멀티 헤드 잠재 어텐션(Multi-Head Latent Attention, MLA)
+*   전문가 혼합(Mixture-of-Experts, MoE)
+
+#### 1.1 멀티 헤드 잠재 어텐션(Multi-Head Latent Attention, MLA)
+
+멀티 헤드 잠재 어텐션(MLA)을 논하기 전에, 왜 이것이 사용되는지 동기를 부여하기 위해 몇 가지 배경 지식을 간략하게 살펴보겠습니다. 이를 위해 최근 몇 년간 멀티 헤드 어텐션(MHA)의 더 계산 및 파라미터 효율적인 대안으로 새로운 표준이 된 그룹화된 쿼리 어텐션(Grouped-Query Attention, GQA)부터 시작하겠습니다.
+
+다음은 GQA에 대한 간략한 요약입니다. MHA와 달리 각 헤드(head)가 자체 키(key)와 값(value) 세트를 가지는 것과 달리, 메모리 사용량(memory usage)을 줄이기 위해 GQA는 여러 헤드를 그룹화하여 동일한 키 및 값 투영(key and value projections)을 공유합니다. 예를 들어, 아래 그림 2에 추가로 설명된 바와 같이, 2개의 키-값 그룹(key-value groups)과 4개의 어텐션 헤드(attention heads)가 있다면, 헤드 1과 2는 하나의 키 및 값 세트를 공유하고, 헤드 3과 4는 다른 세트를 공유할 수 있습니다. 이는 총 키 및 값 계산 수를 줄여 메모리 사용량을 낮추고 효율성을 향상시킵니다 (어블레이션 연구(ablation studies)에 따르면 모델링 성능(modeling performance)에 눈에 띄는 영향을 미치지 않습니다).
+
+그림 2: MHA와 GQA의 비교. 여기서 그룹 크기는 2이며, 키와 값 쌍은 2개의 쿼리(query)에 걸쳐 공유됩니다.
+
+따라서 GQA의 핵심 아이디어는 여러 쿼리 헤드에 걸쳐 키와 값을 공유함으로써 키 및 값 헤드의 수를 줄이는 것입니다. 이는 (1) 모델의 파라미터 수(parameter count)를 낮추고 (2) 추론(inference) 시 KV 캐시(KV cache)에서 저장하고 검색해야 하는 키와 값의 수가 줄어들기 때문에 키 및 값 텐서(tensor)의 메모리 대역폭(memory bandwidth) 사용량을 줄입니다. (GQA가 코드에서 어떻게 보이는지 궁금하다면, KV 캐시가 없는 버전에 대해서는 제 GPT-2 to Llama 3 변환 가이드를, KV 캐시 변형에 대해서는 여기를 참조하세요.)
+
+GQA는 주로 MHA의 계산 효율성(computational-efficiency)을 위한 해결책이지만, 어블레이션 연구(예: 원본 GQA 논문 및 Llama 2 논문)는 LLM 모델링 성능 면에서 표준 MHA와 유사한 성능을 보인다는 것을 보여줍니다.
+
+이제 멀티 헤드 잠재 어텐션(MLA)은 KV 캐싱(KV caching)과 특히 잘 어울리는 다른 메모리 절약 전략을 제공합니다. GQA처럼 키와 값 헤드를 공유하는 대신, MLA는 키와 값 텐서를 KV 캐시에 저장하기 전에 더 낮은 차원의 공간(lower-dimensional space)으로 압축합니다. 추론 시에는 아래 그림 3에 표시된 것처럼 이 압축된 텐서가 사용되기 전에 원래 크기로 다시 투영(projected back)됩니다. 이는 추가적인 행렬 곱셈(matrix multiplication)을 추가하지만 메모리 사용량을 줄입니다.
+
+그림 3: MLA(DeepSeek V3 및 R1에서 사용)와 일반 MHA의 비교. (참고로, 쿼리(query)도 압축되지만, 훈련 시에만 압축되고 추론 시에는 압축되지 않습니다.)
+
+참고로, MLA는 DeepSeek V3에서 새로운 것이 아닙니다. 이전 버전인 DeepSeek-V2에서도 MLA를 사용했으며 심지어 도입하기도 했습니다. 또한, V2 논문에는 DeepSeek 팀이 GQA 대신 MLA를 선택한 이유를 설명할 수 있는 몇 가지 흥미로운 어블레이션 연구가 포함되어 있습니다 (아래 그림 4 참조).
+
+그림 4: DeepSeek-V2 논문에서 발췌한 주석이 달린 표, https://arxiv.org/abs/2405.04434
+
+위 그림 4에서 볼 수 있듯이, GQA는 MHA보다 성능이 떨어지는 것으로 보이며, MLA는 MHA보다 더 나은 모델링 성능을 제공합니다. 이것이 DeepSeek 팀이 GQA 대신 MLA를 선택한 이유일 것입니다. (MLA와 GQA 간의 "토큰당 KV 캐시(KV Cache per Token)" 절약 비교도 볼 수 있었다면 흥미로웠을 것입니다!)
+
+다음 아키텍처 구성 요소로 넘어가기 전에 이 섹션을 요약하자면, MLA는 모델링 성능 면에서 MHA를 약간 능가하면서도 KV 캐시 메모리 사용량을 줄이는 영리한 기술입니다.
+
+#### 1.2 전문가 혼합(Mixture-of-Experts, MoE)
+
+DeepSeek에서 강조할 만한 또 다른 주요 아키텍처 구성 요소는 전문가 혼합(MoE) 레이어(layer)의 사용입니다. DeepSeek이 MoE를 발명한 것은 아니지만, 올해 다시 부활했으며, 나중에 다룰 많은 아키텍처도 이를 채택하고 있습니다.
+
+여러분은 이미 MoE에 익숙할 수도 있지만, 간략한 요약이 도움이 될 수 있습니다. MoE의 핵심 아이디어는 트랜스포머 블록(transformer block)의 각 피드포워드 모듈(FeedForward module)을 여러 전문가 레이어(expert layers)로 대체하는 것입니다. 여기서 각 전문가 레이어는 또한 피드포워드 모듈입니다. 이는 아래 그림 5에 설명된 것처럼 단일 피드포워드 블록을 여러 피드포워드 블록으로 교체한다는 것을 의미합니다.
+
+그림 5: DeepSeek V3/R1의 전문가 혼합(MoE) 모듈(오른쪽)과 표준 피드포워드 블록을 사용하는 LLM(왼쪽)의 비교 그림.
+
+트랜스포머 블록 내부의 피드포워드 블록(위 그림에서 진회색 블록으로 표시)은 일반적으로 모델 전체 파라미터의 상당 부분을 차지합니다. (트랜스포머 블록, 그리고 그에 따라 피드포워드 블록은 LLM에서 여러 번 반복됩니다. DeepSeek-V3의 경우 61번 반복됩니다.) 따라서 단일 피드포워드 블록을 여러 피드포워드 블록으로 교체하는 것(MoE 설정에서 수행되는 것처럼)은 모델의 총 파라미터 수(total parameter count)를 상당히 증가시킵니다.
+
+그러나 핵심 기술은 모든 토큰에 대해 모든 전문가를 사용("활성화")하지 않는다는 것입니다. 대신, 라우터(router)는 토큰당 소수의 전문가만 선택합니다. (시간, 또는 오히려 글의 지면 관계상, 라우터에 대해서는 다음에 더 자세히 다루겠습니다.)
+
+한 번에 소수의 전문가만 활성화되기 때문에, MoE 모듈은 항상 전체 파라미터 세트를 사용하는 밀집 모듈(dense modules)과 대조적으로 희소(sparse)하다고 불립니다. 그러나 MoE를 통한 총 파라미터 수가 많아지면 LLM의 용량(capacity)이 증가하여 훈련 중에 더 많은 지식을 습득할 수 있습니다. 하지만 추론 시에는 모든 파라미터를 동시에 사용하지 않으므로 희소성(sparsity)이 효율성을 유지합니다.
+
+예를 들어, DeepSeek-V3는 MoE 모듈당 256개의 전문가와 총 6,710억 개의 파라미터를 가지고 있습니다. 그러나 추론 시에는 한 번에 9개의 전문가만 활성화됩니다 (1개의 공유 전문가(shared expert)와 라우터가 선택한 8개). 이는 6,710억 개 전체가 아닌 370억 개의 파라미터만 추론 단계당 사용된다는 것을 의미합니다.
+
+DeepSeek-V3의 MoE 설계에서 주목할 만한 특징 중 하나는 공유 전문가의 사용입니다. 이것은 모든 토큰에 대해 항상 활성화되는 전문가입니다. 이 아이디어는 새로운 것이 아니며, DeepSeek 2024 MoE 및 2022 DeepSpeedMoE 논문에서 이미 소개되었습니다.
+
+그림 6: "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models"에서 발췌한 주석이 달린 그림, https://arxiv.org/abs/2401.06066
+
+공유 전문가를 갖는 것의 이점은 DeepSpeedMoE 논문에서 처음 언급되었는데, 그들은 공유 전문가가 없는 경우보다 전반적인 모델링 성능을 향상시킨다는 것을 발견했습니다. 이는 일반적이거나 반복되는 패턴을 여러 개별 전문가가 학습할 필요가 없으므로, 더 전문화된 패턴을 학습할 여지가 많아지기 때문일 것입니다.
+
+#### 1.3 DeepSeek 요약
+
+요약하자면, DeepSeek-V3는 6,710억 개의 파라미터를 가진 거대한 모델로, 출시 당시 4,050억 개의 Llama 3를 포함한 다른 오픈 웨이트 모델(open-weight models)들을 능가했습니다. 더 크지만, 토큰당 소수의 (단 370억 개의) 파라미터만 활성화하는 전문가 혼합(MoE) 아키텍처 덕분에 추론 시 훨씬 더 효율적입니다. 또 다른 주요 차별점은 DeepSeek-V3가 그룹화된 쿼리 어텐션(GQA) 대신 멀티 헤드 잠재 어텐션(MLA)을 사용한다는 것입니다. MLA와 GQA는 모두 표준 멀티 헤드 어텐션(MHA)에 대한 추론 효율적인 대안이며, 특히 KV 캐싱(KV caching)을 사용할 때 그렇습니다. MLA는 구현하기 더 복잡하지만, DeepSeek-V2 논문의 연구에서는 GQA보다 더 나은 모델링 성능을 제공한다는 것을 보여주었습니다.
+
+---
+
+### 2. OLMo 2
+
+비영리 단체인 Allen Institute for AI의 OLMo 모델 시리즈는 훈련 데이터와 코드의 투명성, 그리고 비교적 상세한 기술 보고서 덕분에 주목할 만합니다. OLMo 모델이 어떤 벤치마크(benchmark)나 리더보드(leaderboard)의 최상위에 있지는 않겠지만, 상당히 깔끔하며, 더 중요한 것은 투명성 덕분에 LLM 개발을 위한 훌륭한 청사진(blueprint)이 된다는 점입니다. 그리고 OLMo 모델은 투명성 때문에 인기가 있지만, 성능도 나쁘지 않습니다. 실제로 1월 출시 당시 (Llama 4, Gemma 3, Qwen 3 이전에) OLMo 2 모델은 아래 그림 7에 표시된 것처럼 계산 대비 성능(compute to performance)의 파레토 프론티어(Pareto frontier)에 있었습니다.
+
+그림 7: 다양한 LLM의 모델링 벤치마크 성능(높을수록 좋음) 대 사전 훈련 비용(FLOPs; 낮을수록 좋음). OLMo 2 논문에서 발췌한 주석이 달린 그림, https://arxiv.org/abs/2501.00656
+
+이 글의 앞부분에서 언급했듯이, 저는 관리 가능한 길이를 유지하기 위해 LLM 아키텍처 세부 사항(훈련이나 데이터가 아님)에만 집중하고자 합니다. 그렇다면 OLMo2의 흥미로운 아키텍처 설계 선택은 무엇이었을까요? 주로 정규화(normalizations)에 달려 있습니다: RMSNorm 레이어의 배치와 아래에서 논의할 QK-norm의 추가입니다. 언급할 가치가 있는 또 다른 점은 OLMo 2가 MLA나 GQA 대신 여전히 전통적인 멀티 헤드 어텐션(MHA)을 사용한다는 것입니다.
+
+#### 2.1 정규화 레이어 배치(Normalization Layer Placement)
+
+전반적으로 OLMo 2는 다른 현대 LLM과 유사하게 원본 GPT 모델의 아키텍처를 대체로 따릅니다. 그러나 몇 가지 주목할 만한 차이점이 있습니다. 정규화 레이어부터 시작하겠습니다. Llama, Gemma 및 대부분의 다른 LLM과 유사하게 OLMo 2는 LayerNorm에서 RMSNorm으로 전환했습니다. 하지만 RMSNorm은 오래된 기술(기본적으로 훈련 가능한 파라미터가 더 적은 LayerNorm의 단순화된 버전)이므로 RMSNorm 대 LayerNorm에 대한 논의는 건너뛰겠습니다. (궁금한 독자는 제 GPT-2 to Llama 변환 가이드에서 RMSNorm 코드 구현을 찾을 수 있습니다.)
+
+그러나 RMSNorm 레이어의 배치에 대해 논의할 가치가 있습니다. 원본 트랜스포머("Attention is all you need" 논문에서)는 트랜스포머 블록에서 어텐션 모듈(attention module)과 피드포워드 모듈(FeedForward module) 뒤에 각각 두 개의 정규화 레이어를 배치했습니다. 이는 Post-LN 또는 Post-Norm으로도 알려져 있습니다. GPT와 그 이후에 나온 대부분의 다른 LLM은 어텐션 및 피드포워드 모듈 전에 정규화 레이어를 배치했으며, 이는 Pre-LN 또는 Pre-Norm으로 알려져 있습니다. Post-Norm과 Pre-Norm의 비교는 아래 그림에 나와 있습니다.
+
+그림 8: Post-Norm, Pre-Norm, 그리고 OLMo 2의 Post-Norm 방식의 비교.
+
+2020년에 Xiong et al.은 Pre-LN이 초기화 시 더 잘 작동하는 기울기(gradients)를 초래한다는 것을 보여주었습니다. 또한 연구자들은 Pre-LN이 Post-LN에 필수적인 학습률 웜업(learning rate warm-up) 없이도 잘 작동한다고 언급했습니다.
+
+제가 이 점을 언급하는 이유는 OLMo 2가 Post-LN의 한 형태를 채택했기 때문입니다 (하지만 LayerNorm 대신 RMSNorm을 사용했으므로 저는 이를 Post-Norm이라고 부릅니다). OLMo 2에서는 정규화 레이어를 어텐션 및 피드포워드 레이어 앞에 배치하는 대신, 위 그림에 표시된 것처럼 뒤에 배치합니다. 그러나 원본 트랜스포머 아키텍처와 달리 정규화 레이어는 여전히 잔차 레이어(residual layers, skip connections) 내부에 있습니다.
+
+그렇다면 왜 정규화 레이어의 위치를 옮겼을까요? 아래 그림에 표시된 것처럼 훈련 안정성(training stability)에 도움이 되었기 때문입니다.
+
+그림 9: Pre-Norm(GPT-2, Llama 3 등 다수에서 사용)과 OLMo 2의 Post-Norm 방식의 훈련 안정성을 보여주는 그래프. OLMo 2 논문에서 발췌한 주석이 달린 그림, https://arxiv.org/abs/2501.00656
+
+불행히도 이 그림은 재배열 결과와 QK-Norm을 함께 보여주는데, QK-Norm은 별개의 개념입니다. 따라서 정규화 레이어 재배열 자체가 얼마나 기여했는지 알기 어렵습니다.
+
+#### 2.2 QK-Norm
+
+이전 섹션에서 이미 QK-norm을 언급했고, 나중에 논의할 Gemma 2 및 Gemma 3과 같은 다른 LLM도 QK-norm을 사용하므로, 이것이 무엇인지 간략하게 논의해 봅시다. QK-Norm은 본질적으로 또 다른 RMSNorm 레이어입니다. 멀티 헤드 어텐션(MHA) 모듈 내부에 배치되며, RoPE를 적용하기 전에 쿼리(q)와 키(k)에 적용됩니다.
+
+이를 설명하기 위해, 제가 Qwen3 from-scratch 구현을 위해 작성한 그룹화된 쿼리 어텐션(GQA) 레이어의 일부를 아래에 발췌했습니다 (GQA에서 QK-norm 적용은 OLMo의 MHA와 유사합니다):
+
+```python
+class GroupedQueryAttention(nn.Module):
+    def __init__(
+        self, d_in, num_heads, num_kv_groups, head_dim=None, qk_norm=False, dtype=None
+    ):
+        # ...
+        if qk_norm:
+            self.q_norm = RMSNorm(head_dim, eps=1e-6)
+            self.k_norm = RMSNorm(head_dim, eps=1e-6)
+        else:
+            self.q_norm = self.k_norm = None
+
+    def forward(self, x, mask, cos, sin):
+        b, num_tokens, _ = x.shape
+
+        # Apply projections
+        queries = self.W_query(x)
+        keys = self.W_key(x)
+        values = self.W_value(x)
+
+        # ...
+
+        # Optional normalization
+        if self.q_norm:
+            queries = self.q_norm(queries)
+        if self.k_norm:
+            keys = self.k_norm(keys)
+
+        # Apply RoPE
+        queries = apply_rope(queries, cos, sin)
+        keys = apply_rope(keys, cos, sin)
+
+        # Expand K and V to match number of heads
+        keys = keys.repeat_interleave(self.group_size, dim=1)
+        values = values.repeat_interleave(self.group_size, dim=1)
+
+        # Attention
+        attn_scores = queries @ keys.transpose(2, 3)
+        # ...
+```
+
+앞서 언급했듯이, Post-Norm과 함께 QK-Norm은 훈련을 안정화합니다. QK-Norm은 OLMo 2가 발명한 것이 아니라 2023년 Scaling Vision Transformers 논문으로 거슬러 올라간다는 점에 유의하십시오.
+
+#### 2.3 OLMo 2 요약
+
+요컨대, OLMo 2의 주목할 만한 아키텍처 설계 결정은 주로 RMSNorm 배치에 있습니다: 어텐션 및 피드포워드 모듈 전이 아닌 후에 RMSNorm을 배치한 것(Post-Norm의 한 형태), 그리고 어텐션 메커니즘(attention mechanism) 내부에 쿼리 및 키를 위한 RMSNorm(QK-Norm)을 추가한 것인데, 이 두 가지 모두 훈련 손실(training loss)을 안정화하는 데 도움이 됩니다.
+
+아래는 OLMo 2와 Llama 3를 나란히 비교한 그림입니다. 보시다시피, OLMo 2가 GQA 대신 전통적인 MHA를 여전히 사용한다는 점을 제외하고는 아키텍처는 상대적으로 유사합니다. (그러나 OLMo 2 팀은 3개월 후에 GQA를 사용하는 32B 변형을 출시했습니다.)
+
+그림 10: Llama 3와 OLMo 2의 아키텍처 비교.
+
+---
+
+### 3. Gemma 3
+
+Google의 Gemma 모델은 항상 정말 좋았고, Llama 시리즈와 같은 다른 인기 모델에 비해 항상 약간 과소평가되었다고 생각합니다. Gemma의 차별점 중 하나는 상당히 큰 어휘 크기(vocabulary size)(여러 언어를 더 잘 지원하기 위함)와 27B 크기에 대한 더 강한 초점(8B 또는 70B 대비)입니다. 하지만 Gemma 2도 1B, 4B, 12B와 같은 더 작은 크기로 제공됩니다. 27B 크기는 정말 좋은 스위트 스팟(sweet spot)을 차지합니다: 8B 모델보다 훨씬 더 유능하지만 70B 모델만큼 리소스 집약적이지 않으며, 제 Mac Mini에서 로컬로 잘 실행됩니다.
+
+그렇다면 Gemma 3에서 또 무엇이 흥미로울까요? 앞서 논의했듯이, Deepseek-V3/R1과 같은 다른 모델은 고정된 모델 크기에서 추론 시 메모리 요구 사항을 줄이기 위해 전문가 혼합(MoE) 아키텍처를 사용합니다. (MoE 접근 방식은 나중에 논의할 다른 여러 모델에서도 사용됩니다.) Gemma 3는 계산 비용을 줄이기 위해 다른 "트릭"을 사용하는데, 바로 슬라이딩 윈도우 어텐션(sliding window attention)입니다.
+
+#### 3.1 슬라이딩 윈도우 어텐션(Sliding Window Attention)
+
+슬라이딩 윈도우 어텐션(원래 2020년 LongFormer 논문에서 소개되었고 Gemma 2에서도 이미 사용됨)을 통해 Gemma 3 팀은 아래 그림에 표시된 것처럼 KV 캐시의 메모리 요구 사항을 상당량 줄일 수 있었습니다.
+
+그림 11: Gemma 3 논문(https://arxiv.org/abs/2503.19786)에서 발췌한 주석이 달린 그림으로, 슬라이딩 윈도우 어텐션을 통한 KV 캐시 메모리 절약을 보여줍니다.
+
+그렇다면 슬라이딩 윈도우 어텐션이란 무엇일까요? 각 시퀀스 요소가 다른 모든 시퀀스 요소에 접근할 수 있으므로 일반적인 셀프 어텐션(self-attention)을 전역 어텐션 메커니즘(global attention mechanism)으로 생각한다면, 슬라이딩 윈도우 어텐션은 현재 쿼리 위치 주변의 컨텍스트 크기(context size)를 제한하므로 로컬 어텐션(local attention)으로 생각할 수 있습니다. 이는 아래 그림에 설명되어 있습니다.
+
+그림 12: 일반 어텐션(왼쪽)과 슬라이딩 윈도우 어텐션(오른쪽)의 비교. 슬라이딩 윈도우 어텐션은 멀티 헤드 어텐션과 그룹화된 쿼리 어텐션 모두에서 사용될 수 있습니다. Gemma 3는 그룹화된 쿼리 어텐션을 사용합니다.
+
+위에서 언급했듯이, 슬라이딩 윈도우 어텐션은 로컬 윈도우(local window)가 현재 쿼리 위치를 둘러싸고 함께 이동하기 때문에 로컬 어텐션이라고도 불립니다. 대조적으로, 일반 어텐션은 각 토큰이 모든 다른 토큰에 접근할 수 있으므로 전역적(global)입니다.
+
+이제 위에서 간략하게 언급했듯이, Gemma 2 이전 아키텍처도 이전에 슬라이딩 윈도우 어텐션을 사용했습니다. Gemma 3의 차이점은 전역(일반) 어텐션과 로컬(슬라이딩) 어텐션 간의 비율을 조정했다는 것입니다. 예를 들어, Gemma 2는 슬라이딩 윈도우(로컬)와 전역 어텐션을 1:1 비율로 결합하는 하이브리드 어텐션 메커니즘(hybrid attention mechanism)을 사용합니다. 각 토큰은 주변 컨텍스트의 4k-토큰 윈도우에 주의를 기울일 수 있습니다. Gemma 2가 격층마다 슬라이딩 윈도우 어텐션을 사용한 반면, Gemma 3는 이제 5:1 비율을 가지며, 이는 5개의 슬라이딩 윈도우(로컬) 어텐션 레이어마다 1개의 전체 어텐션 레이어가 있다는 것을 의미합니다. 또한, 슬라이딩 윈도우 크기는 4096(Gemma 2)에서 1024(Gemma 3)로 줄었습니다. 이는 모델의 초점을 더 효율적인 지역화된 계산으로 전환합니다.
+
+그들의 어블레이션 연구에 따르면, 슬라이딩 윈도우 어텐션의 사용은 모델링 성능에 미치는 영향이 미미하다고 아래 그림에 나와 있습니다.
+
+그림 13: Gemma 3 논문(https://arxiv.org/abs/2503.19786)에서 발췌한 주석이 달린 그림으로, 슬라이딩 윈도우 어텐션이 LLM 생성 출력의 혼란도(perplexity)에 거의 영향을 미치지 않음을 보여줍니다.
+
+슬라이딩 윈도우 어텐션이 Gemma 3의 가장 주목할 만한 아키텍처 측면이지만, 이전 OLMo 2 섹션의 후속으로 정규화 레이어의 배치에 대해서도 간략하게 다루고 싶습니다.
+
+#### 3.2 Gemma 3의 정규화 레이어 배치(Normalization Layer Placement)
+
+작지만 흥미로운 점은 Gemma 3가 그룹화된 쿼리 어텐션 모듈 주변에 Pre-Norm과 Post-Norm 설정 모두에서 RMSNorm을 사용한다는 것입니다. 이는 Gemma 2와 유사하지만, (1) 원본 트랜스포머("Attention is all you need")에서 사용된 Post-Norm, (2) GPT-2에 의해 대중화되고 이후 많은 다른 아키텍처에서 사용된 Pre-Norm, 그리고 (3) 이전에 보았던 OLMo 2의 Post-Norm 방식과 다르기 때문에 여전히 강조할 가치가 있습니다.
+
+그림 14: OLMo2와 Gemma 3의 아키텍처 비교; Gemma 3의 추가 정규화 레이어에 주목하십시오.
+
+저는 이러한 정규화 레이어 배치가 Pre-Norm과 Post-Norm의 장점을 모두 취하는 비교적 직관적인 접근 방식이라고 생각합니다. 제 생각에는 약간의 추가 정규화는 해가 되지 않습니다. 최악의 경우, 추가 정규화가 중복된다면, 이는 중복으로 인해 약간의 비효율성을 추가합니다. 실제로는 RMSNorm이 전체적인 관점에서 비교적 저렴하기 때문에, 눈에 띄는 영향은 없을 것입니다.
+
+#### 3.3 Gemma 3 요약
+
+Gemma 3는 제 생각에 오픈 소스 커뮤니티에서 약간 과소평가된, 성능이 좋은 오픈 웨이트 LLM입니다. 가장 흥미로운 부분은 효율성을 향상시키기 위한 슬라이딩 윈도우 어텐션의 사용입니다 (미래에 MoE와 결합하는 것이 흥미로울 것입니다). 또한, Gemma 3는 어텐션 및 피드포워드 모듈 전후에 RMSNorm 레이어를 배치하는 독특한 정규화 레이어 배치를 가지고 있습니다.
+
+#### 3.4 보너스: Gemma 3n
+
+Gemma 3 출시 몇 달 후, Google은 Gemma 3n을 공개했습니다. 이는 휴대폰에서 실행하는 것을 목표로 소형 장치 효율성(small-device efficiency)에 최적화된 Gemma 3 모델입니다. Gemma 3n에서 더 나은 효율성을 달성하기 위한 변경 사항 중 하나는 소위 레이어별 임베딩(Per-Layer Embedding, PLE) 파라미터 레이어입니다. 여기서 핵심 아이디어는 모델 파라미터의 일부만 GPU 메모리에 유지하는 것입니다. 텍스트, 오디오, 비전 모달리티(modality)와 같은 토큰-레이어 특정 임베딩(token-layer specific embeddings)은 필요에 따라 CPU 또는 SSD에서 스트리밍됩니다. 아래 그림은 PLE 메모리 절약을 보여주며, 표준 Gemma 3 모델의 54.4억 파라미터를 나열합니다. 이는 아마도 Gemma 3 40억 변형을 의미할 것입니다.
+
+그림 15: Google의 Gemma 3n 블로그(https://developers.googleblog.com/en/introducing-gemma-3n/)에서 발췌한 주석이 달린 그림으로, PLE 메모리 절약을 보여줍니다.
+
+54.4억 대 40억 파라미터의 불일치는 Google이 LLM에서 파라미터 수를 보고하는 흥미로운 방식 때문입니다. 그들은 종종 모델을 더 작게 보이게 하기 위해 임베딩 파라미터를 제외하지만, 이 경우처럼 모델을 더 크게 보이게 하기 위해 포함하는 것이 편리할 때는 예외입니다. 이러한 접근 방식은 업계 전반에 걸쳐 일반적인 관행이 되었으므로 Google에만 국한된 것은 아닙니다.
+
+또 다른 흥미로운 트릭은 MatFormer 개념(Matryoshka Transformer의 약자)입니다. 예를 들어, Gemma 3n은 더 작고 독립적으로 사용 가능한 모델로 분할될 수 있는 단일 공유 LLM(트랜스포머) 아키텍처를 사용합니다. 각 슬라이스(slice)는 자체적으로 기능하도록 훈련되므로, 추론 시에는 필요한 부분만 실행할 수 있습니다 (큰 모델 전체 대신).
+
+---
+
+### 4. Mistral Small 3.1
+
+Gemma 3 출시 직후인 3월에 출시된 Mistral Small 3.1 24B는 여러 벤치마크(수학 제외)에서 Gemma 3 27B를 능가하면서도 더 빠르다는 점에서 주목할 만합니다. Mistral Small 3.1이 Gemma 3보다 추론 지연 시간(inference latency)이 낮은 이유는 맞춤형 토크나이저(custom tokenizer)와 KV 캐시 및 레이어 수 축소 때문일 것입니다. 그 외에는 아래 그림에 표시된 것처럼 표준 아키텍처입니다.
+
+그림 16: Gemma 3 27B와 Mistral 3.1 Small 24B의 아키텍처 비교.
+
+흥미롭게도, 이전 Mistral 모델은 슬라이딩 윈도우 어텐션을 활용했지만, 공식 모델 허브 구성 파일의 기본 설정("sliding_window": null)을 고려하면 Mistral Small 3.1에서는 이를 포기한 것으로 보입니다. 또한, 모델 카드(model card)에는 이에 대한 언급이 없습니다. 따라서 Mistral이 Gemma 3처럼 슬라이딩 윈도우가 있는 그룹화된 쿼리 어텐션 대신 일반 그룹화된 쿼리 어텐션을 사용하므로, 더 최적화된 코드(예: FlashAttention)를 사용할 수 있어 추가적인 추론 계산 절약이 있을 수 있습니다. 예를 들어, 슬라이딩 윈도우 어텐션이 메모리 사용량을 줄이는 반면, Mistral Small 3.1이 초점을 맞추는 추론 지연 시간을 반드시 줄이지는 않는다고 추측합니다.
+
+---
+
+### 5. Llama 4
+
+이 글의 앞부분에서 전문가 혼합(MoE)에 대한 광범위한 서론적 논의가 다시 한번 빛을 발합니다. Llama 4도 MoE 접근 방식을 채택했으며, 그 외에는 아래 그림에 표시된 것처럼 DeepSeek-V3와 매우 유사한 비교적 표준적인 아키텍처를 따릅니다. (Llama 4는 Gemma 및 Mistral과 유사하게 기본 멀티모달(multimodal) 지원을 포함합니다. 그러나 이 글은 언어 모델링(language modeling)에 초점을 맞추므로 텍스트 모델에만 집중합니다.)
+
+그림 17: DeepSeek V3(6,710억 파라미터)와 Llama 4 Maverick(4,000억 파라미터)의 아키텍처 비교.
+
+Llama 4 Maverick 아키텍처는 전반적으로 DeepSeek-V3와 매우 유사해 보이지만, 강조할 만한 몇 가지 흥미로운 차이점이 있습니다. 첫째, Llama 4는 이전 모델과 유사하게 그룹화된 쿼리 어텐션(Grouped-Query Attention)을 사용하는 반면, DeepSeek-V3는 이 글의 시작 부분에서 논의했던 멀티 헤드 잠재 어텐션(Multi-Head Latent Attention)을 사용합니다.
+
+이제 DeepSeek-V3와 Llama 4 Maverick은 모두 매우 큰 아키텍처이며, DeepSeek-V3는 총 파라미터 수에서 약 68% 더 큽니다. 그러나 370억 개의 활성 파라미터(active parameters)를 가진 DeepSeek-V3는 Llama 4 Maverick(170억 개)보다 두 배 이상 많은 활성 파라미터를 가지고 있습니다. Llama 4 Maverick은 DeepSeek-V3(각각 2,048개의 히든 사이즈(hidden size)를 가진 9개의 활성 전문가)에 비해 더 적지만 더 큰 전문가(각각 8,192개의 히든 사이즈를 가진 2개의 활성 전문가)를 가진 더 고전적인 MoE 설정을 사용합니다. 또한, DeepSeek은 각 트랜스포머 블록(처음 3개 제외)에 MoE 레이어를 사용하는 반면, Llama 4는 격층마다 MoE와 밀집 모듈(dense modules)을 번갈아 사용합니다.
+
+아키텍처 간의 많은 작은 차이점을 고려할 때, 최종 모델 성능에 미치는 정확한 영향을 결정하기는 어렵습니다. 그러나 주요 시사점은 MoE 아키텍처가 2025년에 인기가 크게 상승했다는 것입니다.
+
+---
+
+### 6. Qwen3
+
+Qwen 팀은 지속적으로 고품질의 오픈 웨이트 LLM을 제공합니다. 제가 NeurIPS 2023에서 LLM 효율성 챌린지(LLM efficiency challenge)를 공동 자문했을 때, 상위 수상 솔루션들이 모두 Qwen2 기반이었다는 것을 기억합니다. 이제 Qwen3는 그들의 크기 클래스에서 리더보드(leaderboards)의 최상위에 있는 또 다른 히트 모델 시리즈입니다.
+
+7개의 밀집 모델(dense models)이 있습니다: 0.6B, 1.7B, 4B, 8B, 14B, 32B. 그리고 2개의 MoE 모델이 있습니다: 30B-A3B 및 235B-A22B. (참고로, "Qwen3"의 누락된 공백은 오타가 아닙니다. 저는 Qwen 개발자들이 선택한 원본 철자를 보존하려고 노력할 뿐입니다.)
+
+#### 6.1 Qwen3 (밀집 모델)
+
+먼저 밀집 모델 아키텍처에 대해 논의해 봅시다. 이 글을 쓰는 시점에서 0.6B 모델은 현재 세대의 가장 작은 오픈 웨이트 모델일 수 있습니다. 그리고 제 개인적인 경험에 따르면, 작은 크기에도 불구하고 정말 잘 작동합니다. 로컬에서 실행할 계획이라면 토큰/초 처리량(token/sec throughput)이 뛰어나고 메모리 사용량(memory footprint)이 낮습니다. 하지만 더 중요한 것은, 작은 크기 때문에 로컬에서 훈련하기 쉽다는 것입니다 (교육 목적으로). 따라서 Qwen3 0.6B는 대부분의 목적에서 Llama 3 1B를 대체했습니다. 이 두 아키텍처의 비교는 아래에 나와 있습니다.
+
+그림 18: Qwen3 0.6B와 Llama 3 1B의 아키텍처 비교; Qwen3는 더 많은 레이어를 가진 더 깊은 아키텍처인 반면, Llama 3는 더 많은 어텐션 헤드를 가진 더 넓은 아키텍처입니다.
+
+외부 서드파티 LLM 라이브러리 종속성(dependencies) 없이 사람이 읽을 수 있는 Qwen3 구현에 관심이 있다면, 저는 최근 Qwen3를 처음부터 (순수 PyTorch로) 구현했습니다. 위 그림의 계산 성능 수치는 A100 GPU에서 실행했을 때 제 from-scratch PyTorch 구현을 기반으로 합니다. 보시다시피, Qwen3는 전체적으로 더 작은 아키텍처이므로 메모리 사용량이 더 작지만, 더 작은 히든 레이어(hidden layers)와 더 적은 어텐션 헤드(attention heads)를 사용합니다. 그러나 Llama 3보다 더 많은 트랜스포머 블록(transformer blocks)을 사용하므로 실행 시간이 더 느립니다 (토큰/초 생성 속도가 낮습니다).
+
+#### 6.2 Qwen3 (MoE)
+
+앞서 언급했듯이, Qwen3는 30B-A3B 및 235B-A22B의 두 가지 MoE 변형으로도 제공됩니다. Qwen3와 같은 일부 아키텍처는 왜 일반(밀집) 및 MoE(희소) 변형으로 제공될까요? 이 글의 시작 부분에서 언급했듯이, MoE 변형은 대규모 기본 모델(base models)의 추론 비용을 줄이는 데 도움이 됩니다. 밀집 및 MoE 버전을 모두 제공하면 사용자의 목표와 제약 조건에 따라 유연성을 제공합니다.
+
+밀집 모델은 일반적으로 다양한 하드웨어에서 미세 조정(fine-tune), 배포(deploy) 및 최적화(optimize)하기 더 간단합니다. 반면에 MoE 모델은 추론 확장(scaling inference)에 최적화되어 있습니다. 예를 들어, 고정된 추론 예산에서, 그들은 추론 비용을 비례적으로 증가시키지 않고도 더 높은 전체 모델 용량(즉, 더 크기 때문에 훈련 중 지식 습득)을 달성할 수 있습니다. 두 가지 유형을 모두 출시함으로써 Qwen3 시리즈는 더 넓은 범위의 사용 사례를 지원할 수 있습니다: 견고성, 단순성 및 미세 조정을 위한 밀집 모델, 그리고 대규모 효율적인 서비스를 위한 MoE 모델.
+
+이 섹션을 마무리하기 위해, Qwen3 235B-A22B(A22B는 "220억 활성 파라미터"를 의미함)를 DeepSeek-V3와 비교해 봅시다. DeepSeek-V3는 거의 두 배 많은 활성 파라미터(370억 개)를 가지고 있습니다.
+
+그림 19: DeepSeek-V3와 Qwen3 235B-A22B의 아키텍처 비교.
+
+위 그림에서 볼 수 있듯이, DeepSeek-V3와 Qwen3 235B-A22B 아키텍처는 놀랍도록 유사합니다. 그러나 주목할 만한 점은 Qwen3 모델이 공유 전문가(shared expert) 사용을 중단했다는 것입니다 (Qwen2.5-MoE와 같은 이전 Qwen 모델은 공유 전문가를 사용했습니다). 불행히도 Qwen3 팀은 공유 전문가를 사용하지 않은 이유를 밝히지 않았습니다. 제가 추측해야 한다면, 전문가 수를 2개(Qwen2.5-MoE)에서 8개(Qwen3)로 늘렸을 때 그들의 설정에서 훈련 안정성을 위해 단순히 필요하지 않았을 수도 있습니다. 그리고 그들은 8+1 전문가 대신 8개만 사용하여 추가 계산/메모리 비용을 절약할 수 있었습니다. (그러나 이것은 DeepSeek-V3가 왜 여전히 공유 전문가를 유지하는지 설명하지 못합니다.)
+
+업데이트. Qwen3 개발자 중 한 명인 Junyang Lin이 다음과 같이 답변했습니다:
+
+"그 당시 우리는 공유 전문가에서 충분히 유의미한 개선을 찾지 못했고, 공유 전문가로 인해 발생하는 추론 최적화에 대해 우려하고 있었습니다. 솔직히 이 질문에 대한 명확한 답변은 없습니다."
+
+---
+
+### 7. SmolLM3
+
+SmolLM3는 이 글에서 다루는 다른 LLM만큼 인기가 많지는 않지만, 아래 그림에 표시된 것처럼 1.7B와 4B Qwen3 모델 사이에 위치하는 비교적 작고 편리한 30억 파라미터 모델 크기에서 정말 좋은 모델링 성능을 제공하므로 포함할 가치가 있는 흥미로운 모델이라고 생각했습니다. 더욱이, OLMo와 유사하게 많은 훈련 세부 사항을 공유했는데, 이는 드물고 항상 감사할 일입니다!
+
+그림 20: SmolLM3 발표 게시물(https://huggingface.co/blog/smollm3)에서 발췌한 주석이 달린 그림으로, SmolLM3의 승률을 Qwen3 1.7B 및 4B, Llama 3 3B 및 Gemma 3 4B와 비교합니다.
+
+아래 아키텍처 비교 그림에서 볼 수 있듯이, SmolLM3 아키텍처는 상당히 표준적으로 보입니다. 그러나 아마도 가장 흥미로운 측면은 NoPE(No Positional Embeddings)의 사용일 것입니다.
+
+그림 21: Qwen3 4B와 SmolLM3 3B의 나란히 아키텍처 비교.
+
+#### 7.1 위치 임베딩 없음(No Positional Embeddings, NoPE)
+
+LLM 컨텍스트에서 NoPE는 2023년 논문("The Impact of Positional Encoding on Length Generalization in Transformers")으로 거슬러 올라가는 오래된 아이디어로, 초기 GPT 아키텍처의 고전적인 절대 위치 임베딩(absolute positional embedding) 레이어나 오늘날의 RoPE와 같은 명시적인 위치 정보 주입(explicit positional information injection)을 제거하는 것입니다.
+
+트랜스포머 기반 LLM에서 위치 인코딩(positional encoding)은 일반적으로 셀프 어텐션이 토큰을 순서와 독립적으로 처리하기 때문에 필요합니다. 절대 위치 임베딩은 토큰 임베딩(token embeddings)에 정보를 추가하는 추가 임베딩 레이어를 추가하여 이 문제를 해결합니다.
+
+그림 22: 제 "Build A Large Language Model (From Scratch)" 책(https://www.amazon.com/Build-Large-Language-Model-Scratch/dp/1633437167)에서 수정된 그림으로, 절대 위치 임베딩을 설명합니다.
+
+반면에 RoPE는 쿼리 및 키 벡터(query and key vectors)를 토큰 위치에 상대적으로 회전시켜 이 문제를 해결합니다. 그러나 NoPE 레이어에서는 고정된, 학습된, 상대적인 어떤 위치 신호도 전혀 추가되지 않습니다. 아무것도 없습니다.
+
+위치 임베딩이 없더라도 모델은 인과적 어텐션 마스크(causal attention mask) 덕분에 어떤 토큰이 먼저 오는지 여전히 알고 있습니다. 이 마스크는 각 토큰이 미래의 토큰에 주의를 기울이는 것을 방지합니다. 결과적으로, 위치 t의 토큰은 위치 ≤ t의 토큰만 볼 수 있으며, 이는 자동회귀 순서(autoregressive ordering)를 보존합니다. 따라서 명시적으로 추가되는 위치 정보는 없지만, 모델의 구조에 내재된 암묵적인 방향 감각이 여전히 존재하며, LLM은 일반적인 경사 하강법(gradient-descent-based) 기반 훈련에서 최적화 목표에 유익하다고 판단되면 이를 활용하는 방법을 학습할 수 있습니다. (더 자세한 정보는 NoPE 논문의 정리(theorems)를 확인하십시오.)
+
+따라서 전반적으로 NoPE 논문은 위치 정보 주입이 필요 없을 뿐만 아니라, NoPE가 더 나은 길이 일반화(length generalization)를 가지고 있다는 것을 발견했습니다. 이는 아래 그림에 표시된 것처럼 시퀀스 길이가 증가함에 따라 LLM 답변 성능이 덜 저하된다는 것을 의미합니다.
+
+그림 23: NoPE 논문(https://arxiv.org/abs/2305.19466)에서 발췌한 주석이 달린 그림으로, NoPE를 사용한 더 나은 길이 일반화를 보여줍니다.
+
+위에 표시된 실험은 약 1억 개의 파라미터를 가진 비교적 작은 GPT 스타일 모델과 비교적 작은 컨텍스트 크기(context sizes)로 수행되었다는 점에 유의하십시오. 이러한 결과가 더 크고 현대적인 LLM에 얼마나 잘 일반화될지는 불분명합니다. 이러한 이유로 SmolLM3 팀은 아마도 4번째 레이어마다 NoPE를 "적용"(또는 RoPE를 생략)했을 것입니다.
+
+---
+
+### 8. Kimi K2 및 Kimi K2 Thinking
+
+Kimi K2는 최근 놀랍도록 좋은 성능을 가진 오픈 웨이트 모델로서 AI 커뮤니티에서 큰 파장을 일으켰습니다. 벤치마크에 따르면, Google의 Gemini, Anthropic의 Claude, OpenAI의 ChatGPT 모델과 같은 최고의 독점 모델(proprietary models)과 동등합니다. 주목할 만한 점은 AdamW 대신 비교적 새로운 Muon 최적화기(optimizer)의 변형을 사용한다는 것입니다. 제가 아는 한, 이 크기의 프로덕션 모델(production model)에 Muon이 AdamW 대신 사용된 것은 이번이 처음입니다 (이전에는 16B까지 확장되는 것으로만 나타났습니다). 이는 매우 좋은 훈련 손실 곡선(training loss curves)을 가져왔으며, 아마도 이 모델을 앞서 언급된 벤치마크의 최상위로 끌어올리는 데 도움이 되었을 것입니다.
+
+사람들은 손실이 예외적으로 부드럽다고(스파이크가 없기 때문에) 언급했지만, 저는 예외적으로 부드럽다고 생각하지 않습니다 (예: 아래 그림에서 OLMo 2 손실 곡선을 참조하십시오; 또한, 기울기의 L2 노름(L2 norm of the gradient)이 훈련 안정성을 추적하는 더 좋은 지표일 것입니다). 그러나 주목할 만한 점은 손실 곡선이 얼마나 잘 감소하는지입니다. 그러나 이 글의 서론에서 언급했듯이, 훈련 방법론(training methodologies)은 다음 번에 다룰 주제입니다.
+
+그림 24: Kimi K2 발표 블로그 기사(https://moonshotai.github.io/Kimi-K2/)와 OLMo 2 논문(https://arxiv.org/abs/2305.19466)에서 발췌한 주석이 달린 그림.
+
+모델 자체는 1조 개의 파라미터(trillion parameters)로, 정말 인상적입니다. 이 글을 쓰는 시점에서 (Llama 4 Behemoth가 출시되지 않았고, 독점 LLM은 계산에 포함되지 않으며, Google의 1.6조 Switch Transformer는 다른 세대의 인코더-디코더 아키텍처(encoder-decoder architecture)라는 제약 조건 하에) 이 세대에서 가장 큰 LLM일 수 있습니다. 또한 Kimi K2는 이 글의 시작 부분에서 다루었던 DeepSeek-V3 아키텍처를 사용하며, 아래 그림에 표시된 것처럼 더 크게 만들었다는 점에서 완전한 순환을 이룹니다.
+
+그림 25.1: DeepSeek V3와 Kimi K2의 아키텍처 비교.
+
+위 그림에서 볼 수 있듯이, Kimi K2는 MoE 모듈에서 더 많은 전문가를 사용하고 멀티 헤드 잠재 어텐션(MLA) 모듈에서 더 적은 헤드를 사용한다는 점을 제외하고는 DeepSeek V3와 기본적으로 동일합니다.
+
+Kimi K2는 갑자기 나타난 것이 아닙니다. "Kimi k1.5: Scaling Reinforcement Learning with LLMs" 논문에서 논의된 이전 Kimi 1.5 모델도 인상적이었습니다. 그러나 DeepSeek R1 모델 논문이 정확히 같은 날인 1월 22일에 출판되는 불운을 겪었습니다. 더욱이, 제가 아는 한 Kimi 1.5 가중치(weights)는 공개적으로 공유된 적이 없습니다. 따라서 Kimi K2 팀은 이러한 교훈을 마음에 새기고 DeepSeek R2가 출시되기 전에 Kimi K2를 오픈 웨이트 모델로 공유했을 가능성이 큽니다. 이 글을 쓰는 시점에서 Kimi K2는 가장 인상적인 오픈 웨이트 모델입니다.
+
+업데이트: 2025년 11월 6일, Kimi K2 팀은 새로운 "Thinking" 모델 변형도 출시했습니다. 아키텍처는 위 Kimi K2와 동일하며, 컨텍스트 크기(context size)만 128k에서 256k로 확장되었습니다. Kimi 팀이 공유한 벤치마크에 따르면, 이 모델은 선도적인 독점 LLM의 성능을 능가합니다. (불행히도 DeepSeek R1과의 직접적인 비교는 없습니다.)
+
+그림 25.2: DeepSeek R1 대 Kimi K2 Thinking 아키텍처(상단) 및 Kimi K2 Thinking 벤치마크(하단).
+
+---
+
+### 9. GPT-OSS
+
+OpenAI는 제가 이 글을 쓴 지 약 일주일 후에 2019년 GPT-2 이후 첫 오픈 웨이트 모델인 gpt-oss-120b와 gpt-oss-20b를 출시했습니다. OpenAI의 오픈 웨이트 모델은 매우 큰 기대를 모았으므로, 이 글에 포함하기 위해 업데이트했습니다. 이 섹션은 간략하게 다루겠지만, gpt-oss 모델에 대한 훨씬 더 자세한 글을 여기에서 작성했습니다:
+
+**From GPT-2 to gpt-oss: Analyzing the Architectural Advances**
+Sebastian Raschka, PhD · Aug 9
+[Read full story]
+
+흥미로운 세부 사항들을 요약하기 전에, 아래 그림 26에 표시된 두 모델, gpt-oss-20b와 gpt-oss-120b의 개요부터 시작하겠습니다.
+
+그림 26: 두 gpt-oss 모델의 아키텍처 개요.
+
+그림 26을 보면, 이 아키텍처는 이전에 논의된 다른 아키텍처에서 보았던 모든 익숙한 구성 요소를 포함하고 있습니다. 예를 들어, 그림 27은 더 작은 gpt-oss 아키텍처를 Qwen3 30B-A3B 옆에 배치합니다. Qwen3 30B-A3B도 유사한 수의 활성 파라미터(gpt-oss는 36억 활성 파라미터, Qwen3 30B-A3B는 33억 활성 파라미터)를 가진 MoE 모델입니다.
+
+그림 27: gpt-oss와 Qwen3의 아키텍처 비교.
+
+그림 27에 표시되지 않은 한 가지 측면은 gpt-oss가 슬라이딩 윈도우 어텐션(sliding window attention)을 사용한다는 것입니다 (Gemma 3와 유사하지만, 5:1 비율 대신 격층마다 사용합니다).
+
+#### 9.1 너비 대 깊이(Width Versus Depth)
+
+그림 27은 gpt-oss와 Qwen3가 유사한 구성 요소를 사용한다는 것을 보여줍니다. 그러나 두 모델을 자세히 살펴보면, Qwen3는 24개의 트랜스포머 블록 대신 48개의 트랜스포머 블록을 가진 훨씬 더 깊은 아키텍처인 반면, gpt-oss는 훨씬 더 넓은 아키텍처입니다:
+
+*   2048 대신 2880의 임베딩 차원(embedding dimension)
+*   768 대신 2880의 중간 전문가(피드포워드) 투영 차원(intermediate expert (feed forward) projection dimension)
+
+gpt-oss가 두 배 많은 어텐션 헤드를 사용한다는 점도 주목할 가치가 있지만, 이는 모델의 너비를 직접적으로 증가시키지는 않습니다. 너비는 임베딩 차원에 의해 결정됩니다.
+
+고정된 파라미터 수에서 한 접근 방식이 다른 접근 방식보다 이점을 제공할까요? 경험적으로, 더 깊은 모델은 더 많은 유연성을 가지지만, 폭발 및 소실 기울기(exploding and vanishing gradients)로 인한 불안정성 문제 때문에 훈련하기 더 어려울 수 있습니다 (RMSNorm과 지름길 연결(shortcut connections)이 완화하려는 목표입니다). 더 넓은 아키텍처는 더 높은 메모리 비용으로 더 나은 병렬화(parallelization) 덕분에 추론 시 더 빠르다는(더 높은 토큰/초 처리량(tokens/second throughput)) 장점이 있습니다.
+
+모델링 성능에 관해서는, 불행히도 제가 아는 한 (파라미터 크기와 데이터셋이 일정하게 유지되는) 좋은 동등 비교(apples-to-apples comparison)는 없습니다. Gemma 2 논문(표 9)의 어블레이션 연구(ablation study)를 제외하고는, 90억 파라미터 아키텍처의 경우 더 넓은 설정이 더 깊은 설정보다 약간 더 좋다는 것을 발견했습니다. 4개의 벤치마크에서 더 넓은 모델은 평균 52.0점을 달성했고, 더 깊은 모델은 평균 50.8점을 달성했습니다.
+
+#### 9.2 적은 수의 큰 전문가 대 많은 수의 작은 전문가(Few Large Versus Many Small Expert)
+
+위 그림 27에서 볼 수 있듯이, gpt-oss가 놀랍도록 적은 수의 전문가(128개 대신 32개)를 가지고 있으며, 토큰당 8개 대신 4개의 활성 전문가만 사용한다는 점도 주목할 만합니다. 그러나 각 전문가는 Qwen3의 전문가보다 훨씬 더 큽니다. 이는 최근의 추세와 발전이 더 많고 작은 모델이 유익하다는 것을 가리키기 때문에 흥미롭습니다. 일정한 총 파라미터 크기에서 이러한 변화는 아래 그림 28에서 DeepSeekMoE 논문에서 잘 설명되어 있습니다.
+
+그림 28: "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models"에서 발췌한 주석이 달린 그림, https://arxiv.org/abs/2401.06066
+
+특히, DeepSeek 모델과 달리 gpt-oss나 Qwen3 모두 공유 전문가를 사용하지 않습니다.
+
+#### 9.3 어텐션 바이어스(Attention Bias) 및 어텐션 싱크(Attention Sinks)
+
+gpt-oss와 Qwen3 모두 그룹화된 쿼리 어텐션(grouped query attention)을 사용합니다. 주요 차이점은 gpt-oss가 앞서 언급했듯이 격층마다 슬라이딩 윈도우 어텐션을 통해 컨텍스트 크기를 제한한다는 것입니다. 그러나 제 눈길을 끈 흥미로운 세부 사항이 하나 있습니다. 아래 그림 29에 표시된 것처럼 gpt-oss는 어텐션 가중치(attention weights)에 바이어스 유닛(bias units)을 사용하는 것으로 보입니다.
+
+그림 29: gpt-oss 모델은 어텐션 레이어에서 바이어스 유닛을 사용합니다. 코드 예시는 여기를 참조하십시오.
+
+저는 GPT-2 시절 이후로 이러한 바이어스 유닛이 사용되는 것을 본 적이 없으며, 일반적으로 중복되는 것으로 간주됩니다. 실제로, 저는 최근 논문에서 이것이 적어도 키 변환(key transformation, k_proj)에 대해서는 사실이라는 것을 수학적으로 보여주는 것을 발견했습니다. 더욱이, 경험적 결과는 바이어스 유닛의 유무에 따른 차이가 거의 없다는 것을 보여줍니다 (아래 그림 30 참조).
+
+그림 30: https://arxiv.org/pdf/2302.08626에서 발췌한 표로, 바이어스 유닛의 유무에 따라 모델을 처음부터 훈련했을 때의 평균 테스트 손실을 보여줍니다.
+
+여러분은 그림 30의 코드 스크린샷에서 싱크(sinks)의 정의를 눈치챘을 수도 있습니다. 일반적으로 모델에서 어텐션 싱크(attention sinks)는 시퀀스 시작 부분에 배치되어 어텐션을 안정화하는 특별한 "항상 주의를 기울이는(always-attended)" 토큰이며, 이는 긴 컨텍스트 시나리오(long-context scenarios)에서 특히 유용합니다. 즉, 컨텍스트가 매우 길어지면, 시작 부분의 이 특별한 주의를 기울이는 토큰은 여전히 주의를 받으며, 전체 시퀀스에 대한 일반적으로 유용한 정보를 저장하는 방법을 학습할 수 있습니다. (원래 "Efficient Streaming Language Models with Attention Sinks" 논문에서 제안된 것으로 생각합니다.)
+
+gpt-oss 구현에서 어텐션 싱크는 입력 시퀀스의 실제 토큰이 아닙니다. 대신, 어텐션 점수(attention scores)에 추가되는 학습된 헤드별 바이어스 로짓(learned per-head bias logits)입니다 (그림 31). 목표는 위에서 언급된 어텐션 싱크와 동일하지만, 토큰화된 입력(tokenized inputs)을 수정하지 않습니다.
+
+그림 31: gpt-oss에서 어텐션 싱크의 사용; 여기 Hugging Face 코드를 기반으로 함.
+
+gpt-oss에 대한 자세한 정보와 GPT-2와의 비교는 제 다른 gpt-oss 글을 참조하십시오:
+
+**From GPT-2 to gpt-oss: Analyzing the Architectural Advances**
+Sebastian Raschka, PhD · Aug 9
+[Read full story]
+
+---
+
+### 10. Grok 2.5
+
+이 글이 처음 온라인에 게시된 지 몇 주 후, xAI는 2,700억 파라미터 Grok 2.5 모델의 가중치(weights)를 공개했습니다. Grok 2.5는 작년에 xAI의 대표적인 프로덕션 모델이었기 때문에 여기에 포함할 가치가 있다고 생각했습니다. 지금까지 논의한 모든 모델은 처음부터 오픈 웨이트 모델로 출시되었습니다. 예를 들어, gpt-oss는 GPT-4의 오픈 웨이트 클론(clone)이 아니라 오픈 소스 커뮤니티를 위해 특별히 훈련된 맞춤형 모델일 가능성이 높습니다. Grok 2.5를 통해 우리는 비록 작년 모델일지라도 실제 프로덕션 시스템을 드물게 엿볼 수 있습니다.
+
+아키텍처적으로 Grok 2.5는 전반적으로 상당히 표준적으로 보이지만 (그림 32), 몇 가지 주목할 만한 세부 사항이 있습니다.
+
+그림 32: Grok 2.5와 유사한 크기의 Qwen3 모델.
+
+예를 들어, Grok 2.5는 적은 수의 큰 전문가(8개)를 사용하는데, 이는 오래된 추세를 반영합니다. 앞서 논의했듯이, DeepSeekMoE 논문과 같은 최신 디자인은 더 많은 수의 작은 전문가를 선호합니다 (이는 Qwen3에도 존재합니다). 또 다른 흥미로운 선택은 공유 전문가와 같은 것을 사용한다는 것입니다. 그림 32의 왼쪽에 표시된 추가 SwiGLU 모듈은 항상 켜져 있는(always-on) 공유 전문가 역할을 합니다. 중간 차원(intermediate dimension)이 두 배로 늘어났기 때문에 고전적인 공유 전문가 설계와 동일하지는 않지만, 아이디어는 같습니다. (Qwen3가 공유 전문가를 생략했다는 점이 여전히 흥미롭고, Qwen4 및 이후 모델에서 변경될지 지켜보는 것이 흥미로울 것입니다.)
+
+---
+
+### 11. GLM-4.5
+
+GLM-4.5는 올해의 또 다른 주요 출시작입니다. Qwen3와 유사한 지시/추론 하이브리드(instruction/reasoning hybrid)이지만, 함수 호출(function calling) 및 에이전트 스타일 컨텍스트(agent-style contexts)에 더 최적화되어 있습니다.
+
+그림 33: 공식 GitHub 저장소(https://github.com/zai-org/GLM-4.5)의 GLM-4.5 벤치마크.
+
+그림 34에 표시된 것처럼 GLM-4.5는 두 가지 변형으로 제공됩니다. 대표적인 3,550억 파라미터 모델은 12개 벤치마크에서 Claude 4 Opus를 평균적으로 능가하며, OpenAI의 o3 및 xAI의 Grok 4에 약간 뒤처집니다. 또한 3,550억 모델보다 성능이 약간 낮은 더 컴팩트한 1,060억 파라미터 버전인 GLM-4.5-Air도 있습니다. 그림 35는 3,550억 아키텍처를 Qwen3와 비교합니다.
+
+그림 34: GLM-4.5와 유사한 크기의 Qwen3 모델.
+
+설계는 대체로 유사하지만, GLM-4.5는 DeepSeek V3에서 처음 도입된 구조적 선택을 채택합니다: 3개의 밀집 레이어(dense layers)가 전문가 혼합(MoE) 블록 앞에 옵니다. 왜 그럴까요? 여러 밀집 레이어로 시작하면 대규모 MoE 시스템에서 수렴 안정성(convergence stability)과 전반적인 성능이 향상됩니다. MoE 라우팅(routing)이 즉시 도입되면, 희소 전문가 선택(sparse expert selection)의 불안정성이 초기 구문 및 의미론적 특징 추출(syntactic and semantic feature extraction)을 방해할 수 있습니다. 따라서 초기 레이어를 밀집 상태로 유지함으로써 라우팅 결정이 고수준 처리(higher-level processing)를 형성하기 시작하기 전에 모델이 안정적인 저수준 표현(low-level representations)을 형성하도록 보장한다고 말할 수 있습니다. 또한, GLM-4.5는 DeepSeek-V3와 유사하게 공유 전문가를 사용합니다 (Qwen3와는 다릅니다). (흥미롭게도, GLM-4.5는 GPT-2 및 gpt-oss에서 사용된 어텐션 바이어스 메커니즘(attention bias mechanism)도 유지합니다.)
+
+---
+
+### 12. Qwen3-Next
+
+2025년 9월 11일, Qwen3 팀은 Instruct 및 Thinking 변형으로 Qwen3 Next 80B-A3B(그림 35)를 출시했습니다. 이 설계는 이전에 논의된 Qwen3 아키텍처를 기반으로 하지만, 그림 번호 매기기를 일관되게 유지하고 일부 설계 변경 사항에 주의를 환기시키기 위해 별도의 항목으로 포함했습니다.
+
+#### 12.1 전문가 크기 및 수(Expert Size and Number)
+
+새로운 Qwen3 Next 아키텍처는 이전 235B-A22B 모델보다 3배 작음에도 불구하고 (그림 35), 4배 많은 전문가를 도입하고 심지어 공유 전문가(shared expert)를 추가했다는 점에서 두드러집니다. 이 두 가지 설계 선택(높은 전문가 수와 공유 전문가 포함)은 제가 이 출시 이전에, 특히 상단에 링크된 글의 비디오 버전에서 강조했던 미래 방향이었습니다.
+
+그림 35: 5월에 출시된 원본 Qwen3 모델(왼쪽)과 9월에 출시된 Qwen3 Next 모델(오른쪽).
+
+#### 12.2 게이티드 델타넷 + 게이티드 어텐션 하이브리드(Gated DeltaNet + Gated Attention Hybrid)
+
+또 다른 하이라이트는 일반 어텐션 메커니즘을 게이티드 델타넷(Gated DeltaNet) + 게이티드 어텐션(Gated Attention) 하이브리드로 대체했다는 것입니다. 이는 메모리 사용량 측면에서 기본 262k 토큰 컨텍스트 길이(context length)를 가능하게 합니다 (이전 235B-A22B 모델은 기본적으로 32k를 지원했으며, YaRN 스케일링(scaling)으로 131k를 지원했습니다).
+
+그렇다면 이 새로운 어텐션 하이브리드는 어떻게 작동할까요? 그룹화된 쿼리 어텐션(GQA)과 비교할 때, GQA는 여전히 표준 스케일드 닷-프로덕트 어텐션(scaled dot-product attention)이며 (이전에 논의했듯이 KV 캐시 크기와 메모리 대역폭을 줄이기 위해 쿼리 헤드 그룹 간에 K/V를 공유하지만, 디코딩 비용과 캐시는 여전히 시퀀스 길이에 따라 증가합니다), 그들의 하이브리드 메커니즘은 그림 36에 표시된 것처럼 게이티드 델타넷 블록과 게이티드 어텐션 블록을 3:1 비율로 혼합합니다.
+
+그림 36: 게이티드 델타넷 + 게이티드 어텐션 하이브리드 메커니즘. 3:1 비율로 배열되어 있으며, 이는 3개의 게이티드 델타넷 트랜스포머 블록 뒤에 1개의 게이티드 어텐션 트랜스포머 블록이 온다는 것을 의미합니다. 오른쪽 하위 그림은 공식 Qwen3 블로그에서 가져왔습니다: https://qwen.ai/blog?id=4074cca80393150c248e508aa62983f9cb7d27cd&from=research.latest-advancements-list
+
+게이티드 어텐션 블록은 GQA에서 사용될 수 있는 표준 스케일드 닷-프로덕트 어텐션으로 생각할 수 있지만, 몇 가지 추가적인 조정이 있습니다. 게이티드 어텐션과 일반 GQA 블록의 주요 차이점은 다음과 같습니다:
+
+*   잔차(residual)에 다시 추가되기 전에 어텐션 결과를 스케일링하는 출력 게이트(output gate, 시그모이드(sigmoid) 제어, 일반적으로 채널별(per-channel))
+*   표준 RMSNorm 대신 QKNorm을 위한 제로 중심 RMSNorm(zero-centered RMSNorm)
+*   부분 RoPE(partial RoPE, 차원의 일부에 적용)
+
+이것들은 본질적으로 GQA의 안정성 변경일 뿐이라는 점에 유의하십시오. 게이티드 델타넷(Gated DeltaNet)은 더 중요한 변경 사항입니다. 델타넷 블록(DeltaNet block)에서는 q, k, v 및 두 개의 게이트(α, β)가 정규화가 있는 선형 및 경량 컨볼루션 레이어(lightweight convolutional layers)에 의해 생성되며, 이 레이어는 어텐션을 빠른 가중치 델타 규칙 업데이트(fast-weight delta rule update)로 대체합니다. 그러나 절충점은 델타넷이 전체 어텐션(full attention)보다 덜 정확한 콘텐츠 기반 검색(content-based retrieval)을 제공한다는 것입니다. 이것이 하나의 게이티드 어텐션 레이어가 남아있는 이유입니다. 어텐션이 2차적으로 증가한다는 점을 고려할 때, 델타넷 구성 요소는 메모리 효율성을 돕기 위해 추가되었습니다.
+
+"선형 시간, 캐시 없는(linear-time, cache-free)" 계열에서 델타넷 블록은 본질적으로 Mamba의 대안입니다. Mamba는 학습된 상태 공간 필터(state-space filter, 본질적으로 시간에 따른 동적 컨볼루션)로 상태를 유지합니다. 델타넷은 α와 β로 업데이트되는 작은 빠른 가중치 메모리(tiny fast-weight memory)를 유지하고 q로 읽으며, 작은 컨볼루션은 q, k, v, α, β를 형성하는 데만 사용됩니다.
+
+#### 12.3 다중 토큰 예측(Multi-Token Prediction)
+
+위의 두 하위 섹션은 효율성을 목표로 하는 두 가지 설계 결정을 설명합니다. 모든 좋은 것은 세 가지로 오기 때문에, Qwen3는 또 다른 기술을 추가했습니다: 다중 토큰 예측(Multi-Token Prediction, MTP).
+
+다중 토큰 예측은 LLM이 각 단계에서 단일 토큰 대신 여러 미래 토큰을 예측하도록 훈련합니다. 여기서 각 위치 t에서 작은 추가 헤드(선형 레이어)는 t+1...t+k에 대한 로짓(logits)을 출력하고, 이러한 오프셋에 대한 교차 엔트로피 손실(cross-entropy losses)을 합산합니다 (MTP 논문에서 연구자들은 k=4를 권장했습니다). 이 추가 신호는 훈련 속도를 높이며, 추론은 한 번에 하나의 토큰으로 유지될 수 있습니다. 그러나 추가 헤드는 추측적 다중 토큰 디코딩(speculative multi-token decoding)에 사용될 수 있으며, Qwen3-Next가 그렇게 하는 것으로 보이지만, 세부 사항은 아직 약간 부족합니다:
+
+"Qwen3-Next는 기본 다중 토큰 예측(MTP) 메커니즘을 도입하여, 추측적 디코딩(Speculative Decoding)을 위한 높은 수용률(acceptance rate)을 가진 MTP 모듈을 제공할 뿐만 아니라 전반적인 성능을 향상시킵니다. 또한, Qwen3-Next는 MTP의 다단계 추론 성능을 특별히 최적화하여, 훈련과 추론 간의 일관성을 유지하는 다단계 훈련을 통해 실제 시나리오에서 추측적 디코딩의 수용률을 더욱 향상시킵니다."
+출처: Qwen3-Next 블로그 게시물
+
+---
+
+### 13. MiniMax-M2
+
+최근 오픈 웨이트 LLM 개발자들은 효율성에 최적화된 핵심 아키텍처의 변형을 공유했습니다. 한 가지 예는 Qwen3-Next(이전 섹션 참조)로, 일부 전체 어텐션 블록을 빠른 게이티드 델타넷 모듈로 대체합니다. 또 다른 예는 DeepSeek V3.2로, 일부 모델링 성능을 계산 성능 향상과 교환하는 선형 어텐션(linear attention) 변형인 희소 어텐션(sparse attention)을 사용합니다 (이 메커니즘은 향후 글에서 더 자세히 다룰 예정입니다).
+
+이제 MiniMax-M1은 위 모델들과 유사한 범주에 속하는데, 이는 일반(전체) 어텐션보다 효율성을 향상시키는 선형 어텐션 변형(라이트닝 어텐션(lightning attention))을 사용하기 때문입니다. 저는 원래 MiniMax M1이 여기서 논의된 다른 모델만큼 인기가 많지 않았기 때문에 다루지 않았습니다. 그러나 그들의 새로운 MiniMax-M2 출시는 현재 최고의 오픈 웨이트 모델로 간주되므로 (벤치마크 성능에 따르면) 무시하기에는 너무 큽니다.
+
+그림 37: MiniMax-M2 벤치마크 성능을 다른 인기 있는 오픈 웨이트 및 독점 LLM과 비교. 공식 모델 허브 출시 README 파일의 이미지.
+
+아래 개요 그림에 표시된 것처럼, MiniMax-M2는 MiniMax-M1에서 제안된 효율적인 라이트닝 어텐션 변형을 사용하지 않으므로 다른 디코더 스타일 트랜스포머 LLM과 함께 그룹화했습니다. 대신, 개발자들은 모델링(및 벤치마크) 성능을 향상시키기 위해 전체 어텐션(full attention)으로 돌아갔습니다.
+
+그림 38: 이 글에서 다루는 주요 LLM의 타임라인과, 효율성 향상을 위해 일부 모델링 성능을 희생하는 더 효율적인 대안을 구성하는 일부 어텐션-하이브리드 모델.
+
+전반적으로 MiniMax-M2는 Qwen3와 놀랍도록 유사합니다. 레이어 수, 크기 등을 변경하는 것 외에는 전반적으로 동일한 구성 요소를 사용합니다.
+
+#### 13.1 레이어별 QK-Norm(Per-Layer QK-Norm)
+
+여기서 주목할 만한 한 가지 하이라이트는 MiniMax-M2가 일반 QK-Norm 대신 소위 "레이어별(per_layer)" QK-Norm을 사용한다는 것입니다. 코드를 자세히 살펴보면 어텐션 메커니즘 내부에 다음과 같이 구현되어 있습니다:
+
+```python
+self.q_norm = MiniMaxText01RMSNormTP(self.head_dim * self.total_num_heads, eps=...)
+self.k_norm = MiniMaxText01RMSNormTP(self.head_dim * self.total_num_kv_heads, eps=...)
+```
+
+여기서 hidden_size는 연결된 헤드(num_heads * head_dim)와 같으므로, RMSNorm은 각 헤드(및 각 헤드 차원)에 대해 고유한 파라미터를 가진 스케일 벡터(scale vector)를 가집니다. 따라서 "레이어별(per_layer)"은 RMSNorm(이전에 설명했듯이 QK-Norm에 사용됨)이 각 트랜스포머 블록에 정의되지만 (일반 QK-Norm과 같이), 추가적으로 어텐션 헤드 전체에서 재사용되는 대신 각 어텐션 헤드에 대해 고유한 QK-Norm이라는 것을 의미합니다.
+
+모델 구성 파일에는 슬라이딩 윈도우 어텐션 설정도 포함되어 있지만 (섹션 3의 Gemma 3와 유사), Mistral 3.1(섹션 4에서 논의됨)과 마찬가지로 기본적으로 비활성화되어 있습니다. 그 외에는 레이어별 QK-Norm을 제외하고는 아래 그림에 표시된 것처럼 아키텍처가 Qwen3와 매우 유사합니다.
+
+그림 39: Qwen3와 MiniMax-M2의 비교.
+
+#### 13.2 MoE 희소성(MoE Sparsity)
+
+아래 그림에 표시된 다른 흥미로운 세부 사항으로는 공유 전문가를 사용하지 않는다는 점입니다 (Qwen3와 유사하지만 Qwen3-Next와는 다릅니다). 앞서 언급했듯이, 제 생각에는 공유 전문가는 다른 전문가들 사이의 중복을 줄여주기 때문에 유용합니다. 또한, 위 그림에서 알 수 있듯이 MiniMax-M2는 Qwen3보다 두 배 더 "희소(sparse)"합니다. 즉, Qwen3 235B-A22B와 거의 같은 크기에서 MiniMax-M2는 토큰당 220억 대신 100억 활성 전문가만 가집니다 (즉, MiniMax-M2에서는 각 추론 단계에서 파라미터의 4.37%가 사용되는 반면, Qwen3는 9.36%의 활성 토큰을 사용합니다).
+
+#### 13.3 부분 RoPE(Partial RoPE)
+
+마지막으로, MiniMax-M1과 유사하게 MiniMax-M2는 어텐션 모듈 내부에 위치 정보를 인코딩하기 위해 일반 RoPE 대신 "부분(partial)" RoPE를 사용합니다. 일반 RoPE와 유사하게, QK-Norm을 적용한 후 쿼리와 키에 회전이 적용됩니다. 여기서 부분 RoPE는 각 헤드의 첫 번째 rotary_dim 채널만 회전 위치 인코딩(rotary position encodings)을 받고, 나머지 head_dim - rotary_dim 채널은 변경되지 않는다는 것을 의미합니다.
+
+공식 M1 README 파일에서 개발자들은 다음과 같이 언급합니다:
+
+"어텐션 헤드 차원의 절반에 10,000,000의 기본 주파수(base frequency)로 적용된 회전 위치 임베딩(Rotary Position Embedding, RoPE)"
+
+개념적으로 다음과 같이 나타낼 수 있습니다:
+
+전체 RoPE: [r r r r r r r r]
+부분 RoPE: [r r r r — — — —]
+
+위 개념적 그림에서 "r"은 회전된 (위치 인코딩된) 차원을 나타내고, 대시(—)는 변경되지 않은 차원을 나타냅니다.
+
+이것의 요점은 무엇일까요? M1 논문에서 개발자들은 다음과 같이 언급했습니다:
+
+"...소프트맥스 어텐션 차원의 절반에 RoPE를 구현하면 성능 저하 없이 길이 외삽(length extrapolation)이 가능합니다."
+
+제 추측으로는 이것이 긴 시퀀스, 특히 훈련 데이터셋에서 가장 긴 문서보다 긴 시퀀스에 대해 "너무 많은" 회전을 방지하는 것입니다. 즉, 여기서의 근거는 모델이 훈련에서 이전에 본 적이 없는 "나쁜" 또는 "너무 극단적인" 회전보다 회전이 없는 것이 더 낫다는 것일 수 있습니다.
+
+---
+
+### 14. Kimi Linear
+
+최근 LLM의 효율성을 향상시키기 위한 선형 어텐션(linear attention) 메커니즘의 부활이 있었습니다. "Attention Is All You Need" 논문(2017)에서 소개된 어텐션 메커니즘, 즉 스케일드 닷-프로덕트 어텐션(scaled-dot-product attention)은 오늘날 LLM에서 가장 인기 있는 어텐션 변형으로 남아 있습니다. 전통적인 멀티 헤드 어텐션 외에도, 그룹화된 쿼리 어텐션, 슬라이딩 윈도우 어텐션, 멀티 헤드 잠재 어텐션과 같은 더 효율적인 변형에서도 사용됩니다.
+
+#### 14.1 전통적인 어텐션과 2차 비용(Traditional Attention and Quadratic Costs)
+
+원본 어텐션 메커니즘은 시퀀스 길이(sequence length)에 따라 2차적으로 확장됩니다:
+
+\[
+\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d}}\right)V
+\]
+
+이는 쿼리(Q), 키(K), 값(V)이 n-by-d 행렬이기 때문입니다. 여기서 d는 임베딩 차원(embedding dimension, 하이퍼파라미터)이고 n은 시퀀스 길이(즉, 토큰 수)입니다. 어텐션에 대한 자세한 내용은 제 다른 글에서 찾을 수 있습니다:
+
+**Understanding and Coding Self-Attention, Multi-Head Attention, Causal-Attention, and Cross-Attention in LLMs**
+January 14, 2024
+[Read full story]
+
+그림 40: 시퀀스 길이 n으로 인한 어텐션의 2차 비용(quadratic cost) 그림.
+
+#### 14.2 선형 어텐션(Linear attention)
+
+선형 어텐션 변형은 오랫동안 존재해 왔으며, 2020년대에 수많은 논문을 본 기억이 납니다. 예를 들어, 제가 기억하는 가장 초기 논문 중 하나는 2020년 "Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention" 논문으로, 연구자들은 어텐션 메커니즘을 다음과 같이 근사했습니다:
+
+\[
+\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d}}\right)V \approx \phi(Q)\big(\phi(K)^\top V\big)
+\]
+
+여기서 φ(·)는 커널 특징 함수(kernel feature function)이며, φ(x) = elu(x) + 1로 설정됩니다. 이 근사는 n x n 어텐션 행렬 QK^T를 명시적으로 계산하는 것을 피하기 때문에 효율적입니다. 모든 쌍별 토큰 상호 작용(pairwise token interactions)을 수행하는 대신 (이는 O(n^2d) 시간과 메모리 비용이 듭니다).
+
+이러한 오래된 시도에 너무 오래 머물고 싶지는 않습니다. 하지만 핵심은 시간 및 메모리 복잡도를 O(n^2)에서 O(n)으로 줄여 긴 시퀀스에 대한 어텐션을 훨씬 더 효율적으로 만들었다는 것입니다. 그러나 모델 정확도를 저하시켰기 때문에 실제로 인기를 얻지 못했으며, 저는 이러한 변형 중 하나가 오픈 웨이트 최첨단 LLM에 적용되는 것을 본 적이 없습니다.
+
+#### 14.3 선형 어텐션의 부활(Linear Attention Revival)
+
+올해 하반기에 선형 어텐션 변형이 약간 부활했습니다. 첫 번째 주목할 만한 모델은 6월에 출시된 4,560억 파라미터 전문가 혼합(MoE) 모델인 MiniMax-M1으로, 460억 활성 파라미터를 가진 라이트닝 어텐션(lightning attention)을 사용했습니다. 그리고 8월에는 Qwen3 팀이 Qwen3-Next를 출시했으며, 이에 대해서는 위에서 더 자세히 논의했습니다. 그리고 9월에는 DeepSeek 팀이 DeepSeek V3.2를 발표했습니다. 이 세 모델(MiniMax-M1, Qwen3-Next, DeepSeek V3.2)은 대부분 또는 모든 레이어에서 전통적인 2차 어텐션 변형을 효율적인 선형 변형으로 대체합니다.
+
+흥미롭게도, 최근에는 MiniMax 팀이 선형 어텐션 없이 새로운 2,300억 파라미터 M2 모델(섹션 13에서 논의됨)을 출시하면서 일반 어텐션으로 돌아가는 반전이 있었습니다. 팀은 선형 어텐션이 프로덕션 LLM에서 까다롭다고 밝혔습니다. 일반적인 프롬프트에서는 잘 작동하는 것처럼 보였지만, 추론 및 다중 턴 작업(multi-turn tasks)에서 정확도가 좋지 않았는데, 이는 일반적인 채팅 세션뿐만 아니라 에이전트 애플리케이션(agentic applications)에도 중요합니다. 이것은 선형 어텐션이 결국 추구할 가치가 없을 수도 있는 전환점이 될 수 있었습니다.
+
+그러나 더 흥미로운 점이 있습니다. 10월에 Kimi 팀은 선형 어텐션을 사용하는 새로운 Kimi Linear 모델을 출시했습니다.
+
+그림 41: 선형 어텐션 하이브리드 아키텍처의 개요.
+
+참고: Qwen3-Next와 Kimi Linear를 개요 그림의 다른 트랜스포머-상태 공간 모델(transformer-state space model, SSM) 하이브리드와 함께 그룹화할 수도 있었습니다. 개인적으로, 저는 이러한 다른 트랜스포머-SSM 하이브리드를 트랜스포머 구성 요소를 가진 SSM으로 보는 반면, 여기서 논의된 모델(Qwen3-Next 및 Kimi Linear)은 SSM 구성 요소를 가진 트랜스포머로 봅니다. 그러나 IBM Granite 4.0 및 NVIDIA Nemotron Nano 2를 트랜스포머-SSM 상자에 나열했으므로, 이들을 단일 범주에 넣을 수도 있다는 주장이 있을 수 있습니다.
+
+#### 14.4 Kimi Linear 대 Qwen3-Next
+
+Kimi Linear는 Qwen3-Next와 여러 구조적 유사점을 공유합니다. 두 모델 모두 하이브리드 어텐션 전략에 의존합니다. 구체적으로, 그들은 경량 선형 어텐션(lightweight linear attention)과 더 무거운 전체 어텐션 레이어를 결합합니다. 특히, 둘 다 3:1 비율을 사용하며, 이는 아래 그림에 표시된 것처럼 선형 게이티드 델타넷 변형을 사용하는 3개의 트랜스포머 블록마다 전체 어텐션을 사용하는 1개의 블록이 있다는 것을 의미합니다.
+
+그림 42: Qwen3-Next와 Kimi Linear를 나란히 비교.
+
+게이티드 델타넷(Gated DeltaNet)은 순환 신경망(recurrent neural networks)에서 영감을 받은 선형 어텐션 변형으로, "Gated Delta Networks: Improving Mamba2 with Delta Rule" 논문의 게이팅 메커니즘(gating mechanism)을 포함합니다. 어떤 의미에서 게이티드 델타넷은 Mamba 스타일 게이팅(Mamba-style gating)을 가진 델타넷이며, 델타넷은 선형 어텐션 메커니즘입니다. 이 글의 개요 특성상 델타넷은 미래에 별도의 글의 좋은 주제가 될 것입니다.
+
+위 그림의 Kimi Linear 부분에서 RoPE 상자가 생략된 것은 의도적이라는 점에 유의하십시오. Kimi는 멀티 헤드 잠재 어텐션(MLA) 레이어(전역 어텐션)에 NoPE(No Positional Embedding)를 적용합니다. 저자들이 언급했듯이, 이는 MLA가 추론 시 순수한 멀티 쿼리 어텐션(multi-query attention)으로 실행되도록 하고, 긴 컨텍스트 스케일링(long-context scaling)을 위한 RoPE 재조정(retuning)을 피합니다 (위치 바이어스(positional bias)는 Kimi 델타 어텐션 블록(Kimi Delta Attention blocks)에 의해 처리되는 것으로 추정됩니다). MLA 및 그룹화된 쿼리 어텐션의 특수한 경우인 멀티 쿼리 어텐션에 대한 자세한 내용은 제 "The Big LLM Architecture Comparison" 글을 참조하십시오. 또한, 저는 게이티드 델타넷에 대해 여기에서 더 많이 썼습니다.
+
+#### 14.5 Kimi 델타 어텐션(Kimi Delta Attention)
+
+Kimi Linear는 Qwen3-Next의 선형 어텐션 메커니즘을 Kimi 델타 어텐션(Kimi Delta Attention, KDA) 메커니즘으로 수정하는데, 이는 본질적으로 게이티드 델타넷의 개선입니다. Qwen3-Next가 메모리 감쇠율(memory decay rate)을 제어하기 위해 스칼라 게이트(scalar gate, 어텐션 헤드당 하나의 값)를 적용하는 반면, Kimi Linear는 이를 각 특징 차원(feature dimension)에 대한 채널별 게이팅(channel-wise gating)으로 대체합니다. 저자들에 따르면, 이는 메모리에 대한 더 많은 제어를 제공하며, 이는 다시 긴 컨텍스트 추론(long-context reasoning)을 향상시킵니다.
+
+또한, 전체 어텐션 레이어의 경우 Kimi Linear는 Qwen3-Next의 게이티드 어텐션 레이어(본질적으로 출력 게이팅이 있는 표준 멀티 헤드 어텐션 레이어)를 멀티 헤드 잠재 어텐션(MLA)으로 대체합니다. 이는 DeepSeek V3/R1 섹션에서 이전에 논의했던 것과 동일한 MLA 메커니즘이지만, 추가 게이트가 있습니다. (요약하자면, MLA는 KV 캐시 크기를 줄이기 위해 키/값 공간을 압축합니다.)
+
+Qwen3-Next와의 직접적인 비교는 없지만, 게이티드 델타넷 논문의 GatedDeltaNet-H1 모델(본질적으로 슬라이딩 윈도우 어텐션이 있는 게이티드 델타넷)과 비교할 때, Kimi Linear는 동일한 토큰 생성 속도를 유지하면서 더 높은 모델링 정확도를 달성합니다.
+
+그림 43: Kimi Linear 논문에서 발췌한 주석이 달린 그림으로, Kimi Linear가 GatedDeltaNet만큼 빠르고, 멀티 헤드 잠재 어텐션(DeepSeek V3/R1과 같은)을 가진 아키텍처보다 훨씬 빠르면서도 더 높은 벤치마크 성능을 가짐을 보여줍니다.
+
+더욱이, DeepSeek-V2 논문의 어블레이션 연구에 따르면, 하이퍼파라미터가 신중하게 선택되면 MLA는 일반 전체 어텐션과 동등합니다. 그리고 Kimi Linear가 긴 컨텍스트 및 추론 벤치마크에서 MLA보다 유리하게 비교된다는 사실은 선형 어텐션 변형이 더 큰 최첨단 모델에 대해 다시 한번 유망하다는 것을 의미합니다.
+
+그렇긴 하지만, Kimi Linear는 480억 파라미터 크기이지만, Kimi K2보다 20배 작습니다. Kimi 팀이 다가오는 K3 모델에 이 접근 방식을 채택할지 지켜보는 것이 흥미로울 것입니다.
+
+이 모든 세월이 지난 후에도 LLM 출시는 여전히 흥미진진하며, 다음에는 무엇이 나올지 궁금합니다!

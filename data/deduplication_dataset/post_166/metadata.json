@@ -1,0 +1,21 @@
+{
+  "post_id": "166",
+  "title": "**NeurIPS 2025 속으로: 올해의 AI 연구 지도**",
+  "base_word_count": 2206,
+  "exact_30_update_wc": 2359,
+  "exact_30_ground_truth_wc": 2426,
+  "exact_30_overlap_ratio": 0.907,
+  "paraphrase_25_update_wc": 2193,
+  "paraphrase_25_ground_truth_wc": 2193,
+  "paraphrase_25_overlap_ratio": 1.006,
+  "fragment_20_update_wc": 2153,
+  "fragment_20_ground_truth_wc": 2325,
+  "fragment_20_overlap_ratio": 0.945,
+  "semantic_25_update_wc": 2643,
+  "semantic_25_ground_truth_wc": 2604,
+  "semantic_25_overlap_ratio": 0.849,
+  "mixed_real_update_wc": 2054,
+  "mixed_real_ground_truth_wc": 2054,
+  "mixed_real_overlap_ratio": 1.074,
+  "status": "generated"
+}

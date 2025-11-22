@@ -1,0 +1,21 @@
+{
+  "post_id": "079",
+  "title": "🥇**이번 주 주요 AI(인공지능) 논문**",
+  "base_word_count": 2375,
+  "exact_30_update_wc": 1561,
+  "exact_30_ground_truth_wc": 932,
+  "exact_30_overlap_ratio": 1.924,
+  "paraphrase_25_update_wc": 2338,
+  "paraphrase_25_ground_truth_wc": 3168,
+  "paraphrase_25_overlap_ratio": 0.661,
+  "fragment_20_update_wc": 1866,
+  "fragment_20_ground_truth_wc": 3129,
+  "fragment_20_overlap_ratio": 0.596,
+  "semantic_25_update_wc": 2019,
+  "semantic_25_ground_truth_wc": 2594,
+  "semantic_25_overlap_ratio": 0.892,
+  "mixed_real_update_wc": 2515,
+  "mixed_real_ground_truth_wc": 2553,
+  "mixed_real_overlap_ratio": 0.929,
+  "status": "generated"
+}

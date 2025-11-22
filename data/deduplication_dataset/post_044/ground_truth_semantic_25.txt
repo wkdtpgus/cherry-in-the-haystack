@@ -1,0 +1,64 @@
+(출처 [18, 20, 21]) 최근 OpenAI는 5년 전 GPT-2 [13] 발표 이후, 대규모 언어 모델(LLM) 분야의 연구 흐름이 끊임없이 진화했음을 보여주는 GPT-oss [1, 2]를 공개했습니다. GPT-2와 GPT-oss 출시 사이의 기간 동안, 거대 언어 모델(LLM) 기술은 눈에 띄는 발전을 거듭했습니다. 이 시기 동안 OpenAI는 LLM 연구에서 수많은 핵심 혁신을 주도했지만, 그들의 연구 결과는 대부분 내부적으로만 활용되었습니다. GPT-oss는 OpenAI의 최신 LLM 연구 성과를 엿볼 수 있는 드문 기회를 제공합니다. 이 글에서는 이러한 특별한 기회를 활용하여 다음을 깊이 있게 다룰 것입니다: OpenAI가 발표한 보고서에서 GPT-oss에 대해 공개된 모든 기술적 상세 내용을 면밀히 분석합니다. 그리고 이러한 각 요소들이 어떻게 작동하는지 기초부터 설명합니다 1. 본 개요는 상당한 분량이며(어쩌면 지나치게 길 수도 있습니다), 거대 언어 모델(LLM) 연구의 여러 관련 주제들을 포괄합니다. 하지만 각 주제를 충분히 시간을 들여 탐구한다면, GPT-oss의 동작 원리에 대한 심층적인 이해를 얻고, 나아가 OpenAI의 LLM 연구 현황에 대한 보다 명확한 통찰력을 형성할 수 있을 것입니다. 딥 (러닝) 포커스(Deep (Learning) Focus)를 통해 인공지능(AI) 연구의 최신 동향을 파악하는 50,000명 이상의 독자들과 함께하세요. 구독하기
+
+### GPT-oss 개요
+
+“이 모델들은 강화 학습과 o3 및 기타 최첨단 시스템을 포함한 OpenAI의 가장 진보된 내부 모델에서 얻은 기술을 혼합하여 훈련되었습니다.” - 출처 [1]
+
+GPT-oss 공개는 GPT-oss-20b와 GPT-oss-120b라는 두 가지 다른 모델을 포함하며, 이들은 모두 관대한 Apache-2.0 라이선스 아래 배포되었습니다. 해당 모델들은 다수의 전문가(Mixture-of-Experts, MoE) 구조를 활용한 추론 기능을 갖추고 있으며, 오직 텍스트 형태의 영어 자료만을 사용하여 학습되었습니다. 전문가 혼합(MoE) 구조와 양자화 인지 학습(quantization-aware training) 기법의 도입 덕분에, 이 모델들은 계산 및 메모리 효율성이 뛰어납니다. 20b 및 120b 모델은 각각 50억 개와 35억 개의 활성 매개변수(active parameters)를 포함합니다. MXFP4 (대략 4비트) 방식으로 정밀도를 구현함으로써, 대형 모델도 하나의 80기가바이트 GPU에서 구동 가능하며, GPT-oss-20b는 운영에 대략 16기가바이트의 메모리만을 요구합니다. 이 모델들은 사고 과정(chain of thought, CoT) 기반의 추론 능력과 안정성을 극대화하고자 심층적인 후속 학습 과정을 거쳤습니다.
+
+**에이전트(agents) 기능 강화.** GPT-oss의 두 모델 모두 에이전트 기반 작업 흐름(agentic workflows)에 최적화되어 있으며, 131k 토큰에 달하는 긴 문맥 창(context window)과 더불어 강력한 도구 활용(tool use), 추론, 그리고 지시 이행(instruction-following) 역량을 지니고 있습니다. OpenAI는 에이전트 작업 흐름(예: 함수 호출(function calling), 도구 활용(tool use), 추론, 구조화된 출력(structured outputs) 등)을 보다 원활하게 처리하기 위해 GPT-oss의 학습 및 상호작용에 특화된 새로운 하모니 프롬프트 형식(Harmony prompt format)을 선보였습니다. 이는 다양한 거대 언어 모델(LLM) 상호작용 패턴을 유연하게 포착할 수 있는 계층적 대화 템플릿(chat template)입니다. GPT-oss 모델은 또한 시스템 메시지(system message)를 통해 추론 노력 수준(즉, 낮음, 중간 또는 높음 수준)을 명시적으로 조절할 수 있는 기능을 제공합니다.
+
+(출처 [1]) **내부 성능 평가.** OpenAI가 공개한 자체 평가 결과에 따르면, GPT-oss-120b는 o4-mini와 유사한 성능을 보이며, GPT-oss-20b는 o3-mini와 견줄 만한 역량을 나타냅니다. (자세한 내용은 위를 참조하십시오.) 또한 OpenAI는 출시와 함께 발표된 HealthBench 벤치마크 평가를 기반으로, 이 모델들이 건강 관련 작업에서 보여주는 강력한 능력에 큰 비중을 두어 강조했습니다. (관련 내용은 아래를 참조하십시오.) 하지만 GPT-oss 모델들은 이 벤치마크에서 전체 o3 모델의 성능에는 여전히 미치지 못하는 것으로 확인되었습니다.
+
+(출처 [1]) 예상대로 OpenAI는 GPT-oss 모델이 추론에 필요한 노력에 따라 일반적인 추론 시점의 스케일링 법칙(inference-time scaling laws)을 따른다는 점을 강조합니다. 모델은 점진적으로 더 긴 추론 경로(reasoning traces)를 생성할수록 성능이 향상되며, 이 과정에서 더 많은 연산 자원을 소모합니다. 관련 내용은 아래를 참조하십시오.
+
+(출처 [1]) **대중의 반응.** 공개된 거대 언어 모델(LLM) 커뮤니티에 GPT-oss 모델이 출시된 후, 다양한 평가가 엇갈렸습니다. 예를 들어, 일부 사용자들은 이 모델들이 높은 환각률(hallucination rate)을 보인다고 지적했지만, 다른 사용자들은 초기 모델 설정과 관련된 문제들이 해결된 후에는 모델의 성능이 상당히 우수하다고 평가했습니다. GPT-oss 모델에 대한 다른 일반적인 비판으로는 프롬프트에 대한 과도한 거부(over-refusal of prompts), 모델 양자화(quantization) 설정의 어려움, 그리고 하모니 프롬프트 형식(Harmony prompt format)이 지나치게 복잡하거나 사용하기 어렵다는 점 등이 있었습니다. 요약하자면, 초기에는 인식이 좋지 않았으나, ollama, llama.cpp, unsloth와 같은 보편적인 도구에서 발생했던 잔존 문제들이 해결되면서 점차 개선되었습니다. GPT-oss의 실제 가치는 온라인상의 양극화되고 자극적인 반응의 중간 어딘가에 있습니다. 이 모델들이 (분명히) 역대 최고는 아니지만, 세계 최고 수준의 거대 언어 모델(LLM) 연구소 중 하나가 공개한 가중치(open weights) 모델이라는 점은 중요합니다. AI2, Cohere, Meta를 제외하고는 소수의 미국 최상위 LLM 연구소만이 활발하게 오픈 웨이트(open weights) 모델을 출시하고 있다는 점을 고려할 때, 이 모델들을 직접 사용해보고 그 작동 방식을 깊이 이해하지 못한다면 현명하지 못한 일일 것입니다. 그러므로 이제 OpenAI가 GPT-oss에 대해 제공한 관련 기술적 세부 사항들을 자세히 살펴보겠습니다.
+
+### 모델 구조(Model Architecture)
+
+“GPT-oss 모델은 GPT-2 및 GPT-3 아키텍처를 기반으로 구축된 자기회귀(autoregressive) 전문가 혼합(Mixture-of-Experts, MoE) 트랜스포머(transformers)입니다.” - 출처 [1]
+
+먼저 GPT-oss 모델의 전반적인 구조(model architecture)를 다룰 것입니다. 이 논의는 트랜스포머 구조(transformer architecture) 2에 대한 기본적인 이해를 전제로 합니다. 여기서는 GPT-oss 구조의 각 고유한 구성 요소를 기초부터 설명할 것입니다. 이 주제에 대한 추가 자료 및 다른 공개 모델과의 비교는 Sebastian Raschka 박사의 뛰어난 개요를 참고하시기 바랍니다.
+
+**AI의 미래**
+**GPT-2에서 gpt-oss까지: 구조 발전 분석**
+OpenAI는 이번 주에 새로운 오픈 웨이트(open-weight) 거대 언어 모델(LLM)인 gpt-oss-120b와 gpt-oss-20b를 출시했습니다. 이는 2019년 GPT-2 이후 첫 오픈 웨이트 모델입니다. 그리고 네, 몇 가지 영리한 최적화 덕분에 로컬에서 실행할 수 있습니다 (하지만 이에 대해서는 나중에 더 자세히… 더 읽기).
+3개월 전 · 좋아요 169개 · 댓글 17개 · Sebastian Raschka, PhD
+
+#### 트랜스포머 구성(Transformer Structure)
+
+**디코더 전용 트랜스포머 구조(Decoder-only transformer architecture)**
+표준적인 디코더 전용 트랜스포머 구조(decoder-only transformer architecture)의 개념도가 위에 제시되어 있습니다. 이 구조는 현대 GPT 계열의 거대 언어 모델(LLM)에서 사실상 보편적으로 활용됩니다.
+
+**내재화 차원(Embedding dimension).** 이 모델에 주어지는 입력은 텍스트(또는 프롬프트)를 토큰 단위로 분할하고 이를 벡터로 변환하여 생성된 토큰 벡터(token vectors)들의 연속체입니다. GPT-oss 모델의 경우, 이 벡터들은 2,880이라는 고정된 크기를 가지며, 이 동일한 내재화 차원(embedding dimension)은 거대 언어 모델(LLM)의 모든 계층(layer)을 통해 유지됩니다.
+
+**블록 구성(Block structure).** 디코더 전용 구조(decoder-only architecture)는 반복되는 디코더 단위(decoder blocks)로 이루어져 있습니다. GPT-oss 모델은 이러한 단위를 24개(GPT-oss-20b) 또는 36개(GPT-oss-120b) 포함합니다. 위에 제시된 바와 같이, 각 디코더 단위는 동일한 핵심 요소들로 구성됩니다: 정규화(normalization), 마스크된 다중 헤드 자체 주의(masked multi-headed self-attention), 피드포워드 변환(feed-forward transformation), 그리고 잔차 연결(residual connections). GPT-oss 모델은 현재 거대 언어 모델(LLM) 구조에서 가장 일반적인 선택인 사전 정규화 방식(pre-normalization structure) 3을 채택합니다. 이는 디코더 단위의 정규화 계층(normalization layers)이 주의(attention) 및 피드포워드 계층(feed-forward layers) 이전에 위치하여 다음의 구조를 형성함을 의미합니다:
+
+**디코더 블록(Decoder Block)**
+입력 → 정규화 → 마스크된 자체 주의 → 잔차 연결 → 정규화 → 피드포워드 네트워크 → 잔차 연결 → 디코더 블록 출력
+
+사전 정규화 구조(pre-normalization structure)가 가장 보편적으로 사용되지만, 사전 정규화(pre-normalization)와 사후 정규화(post-normalization) 중 어느 것이 더 우수한지에 대한 명확한 결론은 없습니다. 실제로, 최근 연구에서는 사후 정규화(post-normalization)가 훈련 안정성에 긍정적인 영향을 미칠 수 있음을 시사하기도 했습니다 [3]. 관련 내용은 아래를 참조하십시오.
+
+(출처 [3]) **정규화(Normalization).** 초기 트랜스포머(transformers)는 계층 정규화(layer normalization)를 표준 정규화 계층(normalization layer)으로 활용했습니다. 그러나 최근에는 많은 거대 언어 모델(LLM)이 계층 정규화(layer normalization)를 제곱평균제곱근 계층 정규화(root mean square layer normalization, RMSNorm) [4]로 대체하고 있습니다. 이는 계층 정규화(layer normalization)보다 더 간결하고 계산 효율적인 형태로, 학습 가능한 매개변수(trainable parameters)가 적으면서도 유사한 성능을 제공합니다. GPT-oss 모델은 모든 디코더 블록(decoder blocks)에서 제곱평균제곱근 계층 정규화(RMSNorm)를 사용하여 이러한 흐름에 동참합니다. 제곱평균제곱근 계층 정규화(RMSNorm)에 대한 설명 (및 계층 정규화(layer normalization)와의 비교)은 여기를 참조하십시오.
+
+#### 주의 메커니즘 구현(Attention Implementation)
+
+**단일 주의 헤드(attention head)를 사용한 마스크된 자체 주의(masked self-attention)의 개념도**
+
+**마스크된 자체 주의(Masked self-attention).** 마스크된 자체 주의(masked self-attention) 연산의 개념도가 위에 제시되어 있습니다. 더 자세한 내용은 여기를 참조하십시오. GPT-oss를 포함한 대부분의 거대 언어 모델(LLM)은 다중 헤드 마스크된 자체 주의(multi-headed masked self-attention)를 사용합니다. 이는 각 자체 주의 계층(self-attention layer)에서 여러 자체 주의(self-attention) 연산이 동시에 실행됨을 의미합니다. GPT-oss 모델의 경우, 각 자체 주의 계층(self-attention layer)은 64개의 병렬 주의 헤드(attention heads)를 포함합니다. 이 각각의 주의 헤드(attention heads)는 64차원의 벡터를 사용합니다. 이는 키, 쿼리, 값 투영(key, query, value projections) (위에 표시됨)이 내재화 벡터(embedding vectors)를 2,880에서 64의 크기로 변환한다는 것을 의미합니다.
+
+(출처 [6]) **다중 및 그룹 쿼리 주의(Multi and grouped-query attention).** 다중 헤드 자체 주의(multi-headed self-attention)의 개념을 확장하여, 이전 연구에서는 다중 쿼리 [5]와 그룹 쿼리 주의 [6]를 모두 제안했습니다. 위에 묘사된 바와 같이, 각 주의 헤드(attention head)가 고유한 키(keys)와 값(values)을 가지는 대신, 이 기법들은 여러 주의 헤드(attention heads) 간에 키(keys)와 값(values)을 공유합니다 (쿼리(queries)는 제외!). 예를 들어, 다중 쿼리 주의(multi-query attention)는 모든 주의 헤드(attention heads)에서 재사용되는 단일 키(keys) 및 값(values) 세트를 가지는 반면, 그룹 쿼리 주의(grouped-query attention)는 정해진 크기의 주의 헤드(attention heads) 그룹 간에 키(keys)와 값(values)을 공유합니다.
+
+“키(keys)와 값(values)을 불러오는 데 필요한 메모리 대역폭(memory bandwidth)은 다중 쿼리 주의(multi-query attention)를 통해 현저히 감소시킬 수 있습니다. 이는 여러 쿼리 헤드(query heads)를 사용하면서도 단일 키(key) 및 값 헤드(value heads)를 활용하기 때문입니다. 그러나 다중 쿼리 주의(MQA)는 성능 저하 및 훈련 불안정성(training instability)을 초래할 수 있습니다.” - 출처 [6]
+
+여러 주의 헤드(attention heads) 간에 키(keys)와 쿼리(queries)를 공유하는 것은 매개변수(parameter) 및 연산 효율성(compute efficiency) 모두에 이점을 제공하지만, 그룹 쿼리 주의(grouped-query attention)의 가장 큰 장점은 추론 시점(inference time)에 발휘됩니다. 모델의 KV 캐시(KV cache)에서 검색해야 하는 키(keys)와 값(values)이 더 적기 때문에 추론 시 메모리 대역폭(memory bandwidth) 사용량이 감소합니다. 메모리 대역폭(memory bandwidth)이 트랜스포머(transformer) 추론 속도에 결정적인 병목 현상이 될 수 있다는 점을 고려할 때, 이러한 구조적 변경은 추론 과정(inference process)을 크게 가속화합니다. 그러나 키(keys)와 값(values) 공유에 너무 극단적이어서는 안 됩니다. [6]에서 모든 주의 헤드(attention heads)가 동일한 키(key) 및 값 벡터(value vectors)를 공유하면 성능이 저하된다는 것을 알 수 있습니다. 그룹 쿼리 주의(grouped-query attention)는 더 작은 그룹 간에 키(keys)와 값(values)을 공유함으로써 성능과 효율성 사이의 균형을 맞추어, 표준 다중 헤드 주의(multi-headed attention)와 다중 쿼리 주의(multi-query attention) 사이의 절충점을 찾습니다. 특히, GPT-oss는 두 모델 크기 모두에서 그룹 쿼리 주의(grouped-query attention)에 대해 8개의 그룹 크기를 사용합니다. 이는 8개의 주의 헤드(attention heads) 그룹 간에 키(keys)와 값(values)이 공유된다는 것을 의미합니다.
+
+**희소 주의(Sparse attention).** GPT-oss 모델의 디코더 블록(decoder blocks) 내부에서는 각 블록 내에서 밀집(dense) 주의와 국소적으로 밴드화된 희소 주의(locally-banded sparse attention) [7]를 교대로 사용합니다. 마스크된 자체 주의(masked self-attention)에서 우리는 아래와 같이 주의 행렬(attention matrix)을 계산합니다. 여기서 인과적 마스크(causal mask)가 적용되어 주의 행렬(attention matrix)의 모든 마스크된 값(즉, 시퀀스(sequence)의 각 토큰(token) 뒤에 오는 값)을 음의 무한대 4로 설정합니다. 이는 자체 주의(self-attention) 연산에 의해 고려되어서는 안 되는 토큰(token)이 소프트맥스 변환(softmax transformation)이 적용된 후 0의 확률을 갖도록 보장합니다.
+
+**인과적 자체 주의(causal self-attention)에서의 마스킹(Masking)**
+
+자체 주의(self-attention)를 계산하는 것은 이차 복잡도(quadratic complexity)를 가집니다. 즉, 시퀀스(sequence) 길이가 S일 때 O(S^2)입니다. 간단히 말해, 이는 자체 주의(self-attention)가 긴 시퀀스(sequence)에 적용될 때 계산 비용이 많이 든다는 것을 의미합니다. 그러나 위의 마스킹 패턴을 보면, 거대 언어 모델(LLM)이 각 토큰(token)에 선행하는 전체 시퀀스(sequence)를 실제로 볼 필요가 있는지 의문이 들 수 있습니다. Longformer [7]에서 제안한 바와 같이, 자체 주의(self-attention)가 계산되는 범위(window)를 제한함으로써 연산 비용을 절감할 수 있습니다.
+
+**마스크된 주의(Masked attention) 대 슬라이딩 윈도우 주의(sliding window attention)**
+
+이 아이디어(위에 묘사됨)는 슬라이딩 윈도우 주의(sliding window attention) 5라고 불리며 Mistral 및 Gemma와 같은 여러 거대 언어 모델(LLM)에서 성공적으로 채택되었습니다. 우리는 자체 주의(self-attention) 연산에 의해 고려되는 선행 토큰(token)의 범위를 제한하기 위해 마스킹 행렬(masking matrix)을 수정합니다. 이전에는 각 토큰(token) 뒤에 오는 토큰(token)만 마스크했습니다. 이제는 과거에 충분히 멀리 떨어진 토큰(token)도 마스크합니다. 이 아이디어는 GPT-oss 모델 [1, 2]에서 "지역적으로 밴드화된 희소 주의(locally banded sparse attention)"라고 불립니다. GPT-oss 모델은 모든 마스크된 자체 주의 모듈(즉, 1:1 비율)을 슬라이딩 윈도우 주의(sliding window attention)로 대체합니다. 첫 번째 주의 계층(attention layer)은 밀집 자체 주의(dense self-attention)를 사용하고, 두 번째 계층은 슬라이딩 윈도우 주의(sliding window attention)를 사용하는 식입니다. 일부 계층(layer)에서 슬라이딩 윈도우 주의(sliding window attention)를 채택함으로써, 더 작은 고정 윈도우(window) 크기로 자체 주의(self-attention)의 이차 복잡도(quadratic complexity)를 피하여 모델 구조(model architecture)의 효율성을 향상시킵니다. 이상적으로는 이러한 효율성 향상이 모델 품질의 상응하는 저하 없이 이루어지지만, 이는 채택된 정확한 설정(예: 윈도우(window) 크기 또는 계층(layer) 비율)에 따라 달라질 수 있습니다. GPT-oss에서 사용되는 윈도우(window) 크기는 128 토큰(token)으로, 다른 모델에 비해 작습니다. 예를 들어, Gemma-2 및 3은 각각 4K 및 1K 토큰(token)의 윈도우(window) 크기를 사용합니다. 그러나 밀집(dense) 및 희소 주의 계층(sparse attention

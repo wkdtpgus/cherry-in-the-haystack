@@ -1,0 +1,297 @@
+**거대 언어 모델(LLM)의 사고 역량 증진**
+
+2025년 인공지능 분야에서 가장 주목받는 연구 영역 중 하나는 대규모 언어 모델(LLM)의 추론 능력(reasoning abilities)을 고도화하는 것이며, 이는 분명히 상당한 중요성을 가집니다. 보다 정교한 논리적 사고 기술은 LLM이 더욱 복잡한 문제들을 다룰 수 있게 하여, 사용자들에게 실질적인 가치를 제공하는 다양한 과업에서 그 활용 범위를 확장시킵니다. 최근 몇 주간, 연구자들은 추론 역량을 개선하기 위한 다채로운 신규 전략들을 공개했습니다. 여기에는 추론 과정에서 소모되는 연산 자원(inference-time compute)의 규모를 조절하는 기법, 강화 학습(reinforcement learning)의 적용, 지도 미세 조정(supervised fine-tuning), 그리고 지식 증류(distillation) 등이 포함됩니다. 많은 접근 방식들은 이러한 여러 방법론을 결합하여 더 큰 시너지를 창출하기도 합니다. 본문에서는 DeepSeek R1 출시 이후 발표된 추론 최적화 LLM 관련 최신 연구 성과들을 심층적으로 탐구하며, 특히 추론 단계에서의 연산 자원 활용 증대에 초점을 맞출 것입니다. 과거 '추론 LLM 이해하기(Understanding Reasoning LLMs)'에서 제시했던 추론 모델 구현의 네 가지 핵심 분류를 바탕으로, 본 글은 추론 시점 연산 확장(inference-time-scaling) 방식에 집중하여 논의를 전개합니다.
+
+**LLM 내 추론 기능 구현 및 발전: 네 가지 핵심 유형**
+
+대부분의 독자분들이 이미 LLM 기반 추론 모델에 대해 잘 알고 계실 것이므로, 정의는 간략히 다루겠습니다. LLM 기반 추론 모델은 여러 단계를 거쳐야 하는 문제(multi-step problems)를 해결하기 위해, 중간 과정이나 체계적인 '사고' 절차(structured "thought" processes)를 생성하도록 고안된 언어 모델입니다. 단순히 최종 답변만 제시하는 일반적인 질의응답 LLM(question-answering LLMs)과 달리, 추론 모델은 사고의 흐름을 명시적으로 보여주거나 내부적으로 처리합니다. 이러한 특성은 퍼즐 풀이, 코딩 과제, 복잡한 수학 문제 등 난이도 높은 작업에서 탁월한 성능을 발휘하는 데 기여합니다.
+
+기본 LLM의 단답형 응답과 추론 LLM의 상세한 설명 응답 비교.
+
+일반적으로 추론 능력을 향상시키는 데는 두 가지 주요 전략이 존재합니다. 첫째는 훈련에 필요한 연산량(training compute)을 증대시키는 것이고, 둘째는 추론에 소요되는 연산량(inference compute)을 늘리는 것입니다. 후자는 '추론 시점 스케일링(inference-time scaling)' 또는 '테스트 시점 스케일링(test-time scaling)'으로도 불립니다. 여기서 추론 연산이란, 모델 훈련이 완료된 후 사용자의 질문(user query)에 대한 응답(model outputs)을 생성하는 데 요구되는 처리 역량을 의미합니다. 정확도 향상은 훈련 또는 테스트 시점의 연산 증대를 통해 달성될 수 있으며, 테스트 시점 연산은 추론 시점 연산 및 추론 시점 스케일링과 동일한 맥락에서 사용됩니다.
+
+출처: https://openai.com/index/learning-to-reason-with-llms/의 주석이 달린 도표
+
+위 도표는 훈련 단계 또는 테스트 단계에서 사용되는 연산 자원의 증대가 추론 성능을 개선하는 것처럼 보이게 합니다. 그러나 LLM은 대개 상당한 훈련 연산(광범위한 학습 또는 미세 조정, 종종 강화 학습이나 특수 데이터 활용)과 증가된 테스트 연산(모델이 더 오랫동안 '사고'하거나 추론 과정에서 추가적인 연산을 수행하도록 허용)을 결합하여 추론 능력을 향상시키도록 설계됩니다.
+
+추론 시점 스케일링과 동의어로 사용되는 다양한 용어들.
+
+추론 모델이 어떻게 개발되고 개선되는지를 이해하기 위해, 저는 다양한 기술들을 개별적으로 살펴보는 것이 여전히 유용하다고 생각합니다. 이전 글인 '추론 LLM 이해하기(Understanding Reasoning LLMs)'에서 저는 아래 그림에 요약된 바와 같이 더 세분화된 네 가지 범주에 대해 논했습니다.
+
+위 그림의 방법 2-4는 일반적으로 출력에 중간 단계와 상세한 설명을 포함하므로, 자연스럽게 더 긴 응답을 생성하는 모델을 만듭니다. 추론 비용은 응답 길이에 비례합니다(예: 두 배 긴 응답은 두 배의 연산을 요구). 따라서 이러한 훈련 접근 방식은 본질적으로 추론 스케일링과 밀접하게 연관됩니다. 그러나 이 '추론 시점 연산(inference-time compute) 스케일링' 섹션에서는 추가적인 샘플링 전략(sampling strategies), 자체 교정 메커니즘(self-correction mechanisms) 또는 기타 방법을 통해 생성되는 토큰의 양을 명시적으로 조절하는 기술에 특별히 초점을 맞춥니다.
+
+이 글에서는 2025년 1월 22일 DeepSeek R1 출시 이후 발표된, 추론 시점 연산(inference-time compute) 스케일링에 중점을 둔 흥미로운 최신 연구 논문과 모델 출시 소식에 집중합니다. (원래는 이 글에서 모든 범주의 방법을 다루려 했으나, 내용이 너무 길어져 나중에 훈련 시점 연산(train-time compute) 방법에 초점을 맞춘 별도의 글을 발행하기로 결정했습니다.)
+
+이전 글인 '추론 LLM 이해하기(Understanding Reasoning LLMs)' (https://magazine.sebastianraschka.com/p/understanding-reasoning-llms)에서 논의했던 DeepSeek 추론 모델의 개발 과정.
+
+추론 시점 연산(Inference-time compute) 스케일링 방법과 이 범주에 초점을 맞춘 추론 모델의 다양한 발전 영역을 살펴보기 전에, 모든 다른 범주에 대한 간략한 개요를 제공하겠습니다. 이는 독자들이 전체적인 맥락을 이해하는 데 도움이 될 것입니다.
+
+**1. 추론 시점 연산(Inference-time compute) 스케일링**
+
+이 영역은 모델의 기본 가중치(model weights)를 변경하거나 재훈련하지 않고도, 실제 추론이 이루어지는 시점에서 모델의 논리적 사고 능력(reasoning capabilities)을 향상시키는 기법들을 포괄합니다. 핵심적인 발상은 성능 개선을 위해 더 많은 연산 자원(computational resources)을 투입하는 것으로, 이는 CoT(chain-of-thought) 추론(chain-of-thought reasoning)이나 다양한 샘플링 절차(sampling procedures)와 같은 방법론을 통해 이미 학습된 모델조차도 더 뛰어난 역량을 발휘하도록 돕습니다. 본 글에서는 이 맥락의 방법론에 집중하기 위해 추론 시점 연산(inference-time compute) 스케일링을 별도의 범주로 분류했지만, 이 기술이 모든 LLM에 적용될 수 있다는 점은 중요합니다. 예를 들어, OpenAI는 강화 학습(reinforcement learning)으로 o1 모델을 개발한 후, 추가적으로 추론 시점 연산(inference-time compute) 스케일링을 활용하여 성능을 더욱 끌어올렸습니다.
+
+흥미롭게도, 제가 추론 모델에 대한 이전 글('추론 LLM 이해하기(Understanding Reasoning LLMs)')에서 다루었듯이, DeepSeek R1 논문은 일반적인 추론 시점 스케일링 기법들(예: 프로세스 보상 모델(Process Reward Model) 기반 및 몬테카를로 트리 탐색(Monte Carlo Tree Search) 기반 접근 방식)을 "실패한 시도"로 명시적으로 언급했습니다. 이는 DeepSeek이 R1 모델의 V3 기본 모델에 비해 더 긴 응답을 생성하는 자연스러운 경향(이는 추론 시점 스케일링의 암묵적인 형태로 작용함) 외에는 이러한 기술들을 명시적으로 사용하지 않았음을 시사합니다. 그러나 명시적인 추론 시점 스케일링은 LLM 자체 내부보다는 애플리케이션 계층(application layer)에서 구현되는 경우가 잦기 때문에, DeepSeek은 R1 배포나 애플리케이션에 쉽게 통합될 수 있음을 인정했습니다.
+
+**2. 순수 강화 학습(Pure reinforcement learning)**
+
+이 접근 방식은 모델의 추론 능력(reasoning capabilities)을 개발하거나 개선하기 위해 오직 강화 학습(RL)에만 집중합니다. 일반적으로 수학이나 코딩 영역에서 검증 가능한 보상 신호(reward signals)를 사용하여 모델을 훈련시키는 과정을 포함합니다. RL은 모델이 더욱 전략적인 사고와 스스로 개선하는 능력을 함양하도록 돕지만, 보상 해킹(reward hacking), 학습 불안정성, 그리고 높은 연산 비용과 같은 난제들을 수반합니다. 이러한 문제점들 때문에 순수 RL은 실질적인 배포 단계에서 다른 방법론들과 결합되는 경우가 많습니다.
+
+**3. 강화 학습(Reinforcement learning) 및 지도 미세 조정(supervised fine-tuning)의 병합**
+
+이 혼합 접근법은 순수 RL보다 더 안정적이고 일반화 가능한 성능 향상을 이루기 위해 RL과 지도 미세 조정(SFT)을 결합합니다. 통상적으로 모델은 고품질의 지시 데이터(instruction data)로 SFT를 통해 1차 훈련을 거치며, 이후 특정 동작을 최적화하기 위해 RL을 사용하여 추가적으로 개선됩니다. 이 방식은 SFT가 제공하는 안정성과 RL이 주는 유연성을 동시에 활용하여 모델의 추론 능력을 효과적으로 강화합니다.
+
+**4. 지도 미세 조정(Supervised fine-tuning) 및 모델 증류(model distillation) 기법**
+
+이 방법은 고품질의 레이블이 지정된 데이터셋(SFT)을 통한 지시 미세 조정을 통해 모델의 추론 능력(reasoning capabilities)을 향상시킵니다. 만약 이 고품질 데이터셋이 더 큰 LLM에 의해 생성된 경우, 이 방법론은 LLM 맥락에서 "지식 증류(knowledge distillation)" 또는 단순히 "증류(distillation)"라고도 지칭됩니다. 단, 이는 일반적으로 더 큰 교사 모델(teacher model)의 출력(레이블)뿐만 아니라 로짓(logits)까지 활용하여 더 작은 모델을 훈련하는 딥러닝의 전통적인 지식 증류와는 약간의 차이가 있다는 점을 유념해야 합니다. LLM에서의 증류는 주로 대규모 모델의 복잡한 추론 패턴을 소규모 모델에 전이시키는 데 중점을 둡니다.
+
+Ahead of AI는 독자 지원 출판물입니다. 새로운 게시물을 받고 제 작업을 지원하려면 무료 또는 유료 구독자가 되는 것을 고려해 보세요. 구독
+
+**추론 시점 연산(Inference-time compute) 스케일링의 세부 방법론**
+
+이전 섹션에서는 추론 시점 연산(inference-time compute) 스케일링을 간략하게 요약했습니다. 이제 이 범주 내의 최근 연구들을 논하기에 앞서, 추론 시점 스케일링(inference-time scaling)에 대해 좀 더 상세히 설명하겠습니다.
+
+이러한 방식이 추론을 효율적으로 향상시킬 수 있는 이유는 간단한 비유를 통해 명확히 이해할 수 있습니다. 인간이 어떤 문제에 대해 더 많은 시간을 들여 생각할 때 더 나은 해결책을 제시하는 것처럼, LLM 역시 답변 생성 과정에서 더 깊이 있는 '사고'를 유도하는 기술들을 통해 그 역량을 증진시킬 수 있습니다. 이는 단순히 계산 자원을 늘리는 것을 넘어, 모델이 내부적으로 더 많은 탐색, 검증, 그리고 정제 과정을 거치도록 돕는 것을 의미합니다.
+
+여기서 하나의 접근법은 CoT(chain-of-thought) 프롬프팅(chain-of-thought (CoT) prompting)과 같은 지시어 설계(prompt engineering) 기법을 사용하는 것입니다. 이는 "단계별로 생각하라(think step by step)"와 같은 특정 문구를 통해 모델이 문제 해결의 중간 과정을 명시적으로 생성하도록 유도합니다. 이 방법은 복잡한 문제의 정확도를 향상시키는 데 기여하지만, 단순한 사실 확인성 질의에는 불필요하게 많은 자원을 소모할 수 있습니다. CoT 프롬프트는 더 많은 토큰을 생성하므로, 결과적으로 추론 비용을 효과적으로 증가시킵니다. 하지만 그만큼 문제 해결의 투명성과 신뢰성을 높여준다는 장점도 있습니다.
+
+2022년 논문 "대규모 언어 모델은 제로샷 추론기(Large Language Models are Zero-Shot Reasoners)"(https://arxiv.org/abs/2205.11916)의 고전적인 CoT 프롬프팅 예시.
+
+또 다른 유효한 기법으로는 다수결 투표(majority voting)나 빔 탐색(beam search)과 같은 투표 및 탐색 전략이 있습니다. 이들은 여러 가능한 결과물 중에서 가장 적합한 것을 선택하여 응답의 품질을 개선합니다. 다양한 탐색 기반 방법론들은 최적의 답변을 선별하기 위해 '과정 보상 모델(process-reward-based model)'에 의존하는 경향이 있습니다. 이 모델은 모델이 생성한 중간 단계들의 품질을 평가하여 최종 답변의 신뢰도를 높이는 데 기여합니다.
+
+LLM 테스트 시점 연산(LLM Test-Time Compute) 논문(https://arxiv.org/abs/2408.03314)의 주석이 달린 그림.
+
+**1. "s1: 단순 테스트 시점 스케일링(Simple test-time scaling)"**
+
+이 글의 남은 부분은 LLM의 추론 능력(reasoning capabilities)을 향상시키기 위한 추론 시점 스케일링(inference-time scaling) 범주의 최근 연구 발전에 초점을 맞출 것입니다. 먼저 추론 시점 스케일링(inference-time scaling)의 대표적인 예시가 되는 논문에 대한 좀 더 심층적인 논의로 시작하겠습니다.
+
+이 범주에서 눈에 띄는 최근 연구 논문 중 하나는 "s1: 단순 테스트 시점 스케일링(Simple Test-Time Scaling)"(2025년 1월 31일)입니다. 이 연구는 이전에 언급되었던 "단계별로 생각하라(think step by step)"와 같은 프롬프트 수정의 현대적인 변형으로 볼 수 있는, 소위 "Wait" 토큰을 도입합니다. 이 접근 방식은 초기 모델을 생성하기 위한 지도 미세 조정(SFT)을 포함하므로 순수한 추론 시점 스케일링(inference-time scaling)으로만 분류하기는 어렵습니다. 그러나 최종 목표는 추론 시점 스케일링(inference-time scaling)을 통해 추론 동작을 적극적으로 제어하는 데 있기 때문에, 이 논문을 "1. 추론 시점 연산(Inference-time compute) 스케일링" 범주에 포함시켰습니다.
+
+핵심 내용을 요약하자면, 이들의 접근 방식은 크게 두 가지로 나뉩니다.
+*   추론의 흔적(reasoning traces)을 포함하는 1천 개의 훈련 예시로 구성된 정교하게 선별된 SFT 데이터셋을 구축합니다.
+*   다음과 같은 방식으로 응답 길이를 제어합니다:
+    *   a) LLM이 더 길고 상세한 응답을 생성하고, 스스로 검증하며, 오류를 수정하도록 유도하는 "Wait" 토큰을 삽입하거나,
+    *   b) 사고 종료를 알리는 토큰 구분자("Final Answer:")를 추가하여 생성을 명확하게 중단시킵니다.
+    *   이들은 이러한 길이 제어 방식을 "예산 강제(budget forcing)"라고 명명합니다. 이는 모델에게 할당된 연산 예산 내에서 최적의 추론 깊이를 탐색하도록 유도하는 메커니즘입니다.
+
+출력 길이를 제어하기 위한 "Wait" 토큰 삽입 그림. https://arxiv.org/abs/2501.19393의 주석이 달린 그림.
+
+예산 강제(Budget forcing)는 한 번에 하나의 토큰을 순차적으로 생성하며(단지 더 많은 토큰을 생성할 뿐), 이는 순차적 추론 스케일링(sequential inference scaling) 기술의 한 형태로 볼 수 있습니다. 이와 대조적으로, 여러 독립적인 완성을 병렬적으로 집계하는 다수결 투표(majority voting)와 같은 병렬 처리 기술도 존재합니다. 이 두 방식은 연산 자원을 활용하는 방식에서 근본적인 차이를 보입니다.
+
+응답 정확도와 길이 간의 상관관계. https://arxiv.org/abs/2501.19393의 주석이 달린 그림.
+
+연구자들은 자신들의 예산 강제(budget-forcing) 방법이 제가 논의했던 다수결 투표(majority voting)와 같은 다른 추론 스케일링 기술보다 더 효과적임을 발견했습니다. 비판하거나 개선할 점이 있다면, 저는 빔 탐색(beam search), 선행 탐색(lookahead search) 또는 작년 Google의 "LLM 테스트 시점 연산 최적 스케일링이 모델 매개변수 스케일링보다 더 효과적일 수 있다(Scaling LLM Test-Time Compute Optimally Can Be More Effective Than Scaling Model Parameters)" 논문에서 설명된 최적 연산 탐색과 같은 더 정교한 병렬 추론 스케일링 방법에 대한 비교 결과를 보고 싶었을 것입니다. 또는 CoT(chain-of-thought) 프롬프팅("단계별로 생각하라(Think step by step)")과 같은 고전적인 순차적 방법과의 간단한 비교라도 말입니다. 어쨌든, 정말 흥미로운 논문이자 접근 방식입니다! 이 연구는 모델이 내부적인 사고 과정을 더 깊이 파고들도록 유도하는 새로운 방안을 제시하며, 향후 추론 시점 스케일링 연구의 방향성을 제시하는 중요한 이정표가 될 수 있습니다.
+
+PS: 왜 "Wait" 토큰일까요? 제 생각에는 연구자들이 DeepSeek-R1 논문의 "아하 모멘트(Aha moment)" 그림에서 영감을 받았을 것입니다. 거기서 연구자들은 LLM이 "잠깐, 잠깐. 잠깐. 이건 내가 여기서 표시할 수 있는 아하 모멘트야(Wait, wait. Wait. That's an aha moment I can flag here.)"와 같은 것을 생각해내는 것을 보았는데, 이는 순수 강화 학습(reinforcement learning)이 LLM에서 추론 동작을 유도할 수 있음을 보여주었습니다. 흥미롭게도, 그들은 "Hmm"과 같은 다른 토큰도 시도했지만 "Wait"이 약간 더 나은 성능을 보인다는 것을 발견했습니다. 이는 특정 메타-인지적 지시어가 모델의 내부 작동 방식에 미묘하지만 유의미한 영향을 미칠 수 있음을 시사합니다.
+
+"Wait" 대 "Hmm" 토큰. https://arxiv.org/abs/2501.19393의 주석이 달린 그림.
+
+**추론 시점 연산(inference-time compute) 스케일링 관련 기타 주목할 만한 연구 논문**
+
+추론 모델 연구 분야는 최근 한 달 동안 매우 활발한 움직임을 보였습니다. 따라서 이 글의 적절한 길이를 유지하기 위해 다른 논문들의 요약을 상대적으로 간결하게 정리해야 할 필요가 있습니다. 아래에는 출판 날짜 오름차순으로 배열된, 추론 시점 연산(inference-time compute) 스케일링과 관련된 기타 흥미로운 연구 논문들의 간략한 요약이 제시되어 있습니다.
+
+앞서 언급했듯이, 이 모든 논문이 추론 시점 연산(inference-time compute) 스케일링 범주에 완벽하게 들어맞는 것은 아닙니다. 일부는 특정 훈련 과정을 포함하기도 합니다. 그러나 이 논문들은 추론 시점 연산(inference-time compute) 제어가 특정 작용 메커니즘이라는 공통점을 가지고 있습니다. (제가 앞으로 다룰 많은 증류(distilled) 또는 SFT 방법들은 더 긴 응답을 유도할 것이며, 이는 추론 시점 연산(inference-time compute) 스케일링의 한 형태로 볼 수 있습니다. 그러나 이들은 추론 중에 길이를 적극적으로 제어하지 않으므로, 여기서 다루는 방법들과는 구별됩니다.)
+
+**2. 테스트 시점 선호도 최적화(Test-Time Preference Optimization)**
+📄 1월 22일, 테스트 시점 선호도 최적화: 반복적인 텍스트 피드백을 통한 즉석 정렬(Test-Time Preference Optimization: On-the-Fly Alignment via Iterative Textual Feedback), https://arxiv.org/abs/2501.12895
+
+테스트 시점 선호도 최적화(Test-Time Preference Optimization, TPO)는 추론 과정에서 LLM의 결과물을 인간의 선호도에 맞춰 반복적으로 조정하는 기법입니다. 이는 모델의 근본적인 가중치(underlying model weights)를 변경하지 않고 수행됩니다. 각 반복 단계에서 모델은 다음과 같은 일련의 작업을 수행합니다.
+*   주어진 지시에 대해 여러 가지 가능한 응답을 생성합니다.
+*   보상 모델(reward model)을 사용하여 각 응답에 점수를 부여하고, 가장 높은 점수와 가장 낮은 점수를 받은 응답을 각각 '선택된(chosen)' 응답과 '거부된(rejected)' 응답으로 지정합니다.
+*   모델에게 '선택된' 응답과 '거부된' 응답을 비교하고, 그 차이점을 비판적으로 분석하도록 지시합니다.
+*   이러한 비판 내용을 텍스트 형태의 제안으로 변환하여, 원래 모델의 응답을 업데이트함으로써 결과물의 품질을 개선합니다.
+
+이 1단계부터 4단계까지의 과정을 반복적으로 수행함으로써, 모델은 최초의 응답을 점진적으로 개선해 나갑니다. 이 방법은 LLM이 사용자 피드백이나 내부적인 평가를 통해 스스로 학습하고 진화하는 능력을 추론 시점에 부여한다는 점에서 주목할 만합니다.
+
+"테스트 시점 선호도 최적화: 반복적인 텍스트 피드백을 통한 즉석 정렬(Test-Time Preference Optimization: On-the-Fly Alignment via Iterative Textual Feedback)"의 주석이 달린 그림, https://arxiv.org/abs/2501.12895
+
+**3. 사고는 여기저기 흩어져 있다(Thoughts Are All Over the Place)**
+📄 1월 30일, 사고는 여기저기 흩어져 있다: o1과 같은 LLM의 과소 사고에 대하여(Thoughts Are All Over the Place: On the Underthinking of o1-Like LLMs), https://arxiv.org/abs/2501.18585
+
+연구진은 '과소 사고(underthinking)'라는 현상을 깊이 탐구합니다. 이는 추론 모델이 유망한 해결 경로를 충분히 심층적으로 탐색하지 않고, 너무 성급하게 추론 경로를 변경하여 문제 해결의 정확도가 저하되는 현상을 일컫습니다. 이러한 '과소 사고' 문제를 해결하기 위해, 그들은 '사고 전환 페널티(Thought Switching Penalty, TIP)'라는 독창적인 방법을 제시합니다. 이 방법은 사고 전환 토큰(thought-switching tokens)의 로짓(logits)을 조절하여, 모델이 섣부른 추론 경로 변경을 억제하도록 만듭니다. 이들의 접근 방식은 모델 미세 조정(model fine-tuning)을 필요로 하지 않으며, 여러 난이도 높은 테스트 세트에서 경험적으로 정확도 향상을 입증했습니다. 이는 모델의 내부적인 의사결정 과정을 미묘하게 조작하여 추론의 깊이를 강화하는 효과적인 방안을 제시합니다.
+
+"사고는 여기저기 흩어져 있다: o1과 같은 LLM의 과소 사고에 대하여(Thoughts Are All Over the Place: On the Underthinking of o1-Like LLMs)"의 주석이 달린 그림, https://arxiv.org/abs/2501.18585
+
+**4. 적대적 강건성(Adversarial Robustness)을 위한 추론 시점 연산(Inference-Time Compute) 교환**
+📄 1월 31일, 적대적 강건성(Adversarial Robustness)을 위한 추론 시점 연산(Inference-Time Compute) 교환, https://arxiv.org/abs/2501.18841
+
+추론 시점 연산(inference-time compute)을 증대시키는 것은 많은 경우 추론 LLM의 적대적 강건성(adversarial robustness)을 향상시킵니다. 이는 악의적인 공격의 성공률을 낮추는 효과를 가져옵니다. 적대적 훈련(adversarial training)과 달리, 이 방법은 특별한 훈련 과정이나 특정 공격 유형에 대한 사전 지식을 요구하지 않는다는 장점이 있습니다. 그러나 몇 가지 중요한 예외가 존재합니다. 예를 들어, 정책의 모호성(policy ambiguities)이나 허점 악용(loophole exploitation)과 관련된 상황에서는 개선 효과가 제한적입니다. 또한, "덜 생각하기(Think Less)" 및 "너드 스나이핑(Nerd Sniping)"과 같은 새로운 공격 전략에 의해 추론 개선을 통한 강건성(reasoning-improved robustness) 증가가 감소될 수 있습니다. 따라서 이러한 발견들은 추론 시점 연산(inference-time compute) 스케일링이 LLM의 안전성을 높일 수 있음을 시사하지만, 이것만으로는 적대적 강건성(adversarial robustness)에 대한 완벽한 해결책이 될 수 없음을 강조합니다. 이는 LLM 보안에 대한 다각적인 접근의 필요성을 보여줍니다.
+
+"적대적 강건성(Adversarial Robustness)을 위한 추론 시점 연산(Inference-Time Compute) 교환"의 주석이 달린 그림, https://arxiv.org/abs/2501.18841
+
+**5. 연관 사고 연쇄(Chain-of-Associated-Thoughts)**
+📄 2월 4일, CoAT: 대규모 언어 모델 추론 강화를 위한 연관 사고 연쇄 프레임워크(CoAT: Chain-of-Associated-Thoughts Framework for Enhancing Large Language Models Reasoning), https://arxiv.org/abs/2502.02390
+
+연구자들은 고전적인 몬테카를로 트리 탐색(Monte Carlo Tree Search) 기반 추론 시점 스케일링(inference-time scaling) 기법에 '연관 기억(associative memory)' 개념을 결합합니다. 이 연관 기억은 추론 경로를 탐색하는 동안 LLM의 지식 기반 역할을 수행합니다. 이른바 연관 기억(associative memory)을 활용함으로써, LLM은 이전 추론 경로들을 더욱 쉽게 고려하고, 응답 생성 과정에서 관련 정보를 동적으로 활용할 수 있게 됩니다. 이는 모델이 과거의 경험이나 학습된 지식을 바탕으로 현재의 문제를 해결하는 인간의 인지 과정을 모방하려는 시도로 볼 수 있습니다. 결과적으로 모델은 더 효율적이고 정확한 추론을 수행할 수 있게 됩니다.
+
+"CoAT: 대규모 언어 모델 추론 강화를 위한 연관 사고 연쇄 프레임워크(CoAT: Chain-of-Associated-Thoughts Framework for Enhancing Large Language Models Reasoning)"의 주석이 달린 그림, https://arxiv.org/abs/2502.02390
+
+**6. 도약을 위한 후퇴(Step Back to Leap Forward)**
+📄 2월 6일, 도약을 위한 후퇴: 언어 모델의 추론 강화를 위한 자체 백트래킹(Self-Backtracking for Boosting Reasoning of Language Models), https://arxiv.org/abs/2502.0440
+
+이 논문은 LLM이 훈련 및 추론 중에 언제, 어디서 '백트래킹(backtrack)'해야 하는지를 스스로 학습함으로써 추론 성능을 향상시킬 수 있는 '자체 백트래킹(self-backtracking)' 메커니즘을 제안합니다. 훈련 과정은 `<backtrack>` 토큰을 활용하여 모델이 최적이 아닌 추론 경로를 인식하고 수정하도록 가르치는 것을 포함합니다. 하지만 이 연구의 핵심적인 기여는 학습된 백트래킹(backtracking) 능력을 활용하여 대안적인 해결책을 탐색하는 '추론 시점 트리 기반 탐색(inference-time tree-based search)'에 있습니다. 특히 독특한 점은 이 탐색 과정이 외부 보상 모델(external reward models)에 의존하지 않는다는 것입니다(이 글의 "1. 추론 시점 연산(Inference-time compute) 스케일링 방법" 섹션 시작 부분에서 언급했던 과정 보상 모델(process-reward-based model)을 사용하는 탐색 기반 방법과 대조적입니다).
+
+"도약을 위한 후퇴: 언어 모델의 추론 강화를 위한 자체 백트래킹(Self-Backtracking for Boosting Reasoning of Language Models)"의 주석이 달린 그림, https://arxiv.org/abs/2502.04404
+
+이 논문은 제안된 백트래킹(backtracking) 기반 추론 시점 스케일링(inference-time scaling) 방법에 크게 중점을 두고 있기 때문에 여기에 추가했습니다. 이 방법은 훈련 패러다임을 근본적으로 변경하기보다는(비록 `<backtrack>` 토큰을 사용한 훈련이 필요하지만) 탐색의 깊이와 폭을 동적으로 조절하여 추론을 개선합니다. 이는 모델이 스스로 시행착오를 겪고 배우는 능력을 강화함으로써, 더욱 견고하고 유연한 문제 해결 능력을 갖추도록 돕습니다.
+
+**7. 잠재 추론(Latent Reasoning)을 통한 테스트 시점 연산(Test-Time Compute) 확장**
+📄 2월 7일, 잠재 추론(Latent Reasoning)을 통한 테스트 시점 연산(Test-Time Compute) 확장: 순환 깊이 접근 방식(A Recurrent Depth Approach), https://arxiv.org/abs/2502.05171
+
+연구자들은 단순히 더 많은 토큰을 생성하여 추론을 개선하는 대신, 잠재 공간(latent space)에서 순환 깊이 블록(recurrent depth block)을 반복적으로 적용함으로써 추론 시점 연산(inference-time compute)을 확장하는 새로운 모델을 제안합니다. 이 블록은 RNN(Recurrent Neural Networks)의 은닉 상태(hidden state)와 유사하게 작동하여, 모델이 더 긴 토큰 출력을 요구하지 않고도 추론 능력을 향상시킬 수 있도록 합니다. 그러나 이 접근 방식의 주요 단점은 명시적인 추론 단계가 부재하다는 것입니다. 이는 (제 생각에는) 인간의 해석 가능성 측면에서 중요한 요소이며, CoT(chain-of-thought) 방법론의 핵심적인 장점 중 하나입니다. 즉, 모델이 어떻게 결론에 도달했는지 설명하기 어렵다는 한계가 있습니다.
+
+"잠재 추론(Latent Reasoning)을 통한 테스트 시점 연산(Test-Time Compute) 확장: 순환 깊이 접근 방식(Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach)"의 주석이 달린 그림, https://arxiv.org/abs/2502.05171
+
+**8. 1B LLM이 405B LLM을 능가할 수 있을까?**
+📄 2월 10일, 1B LLM이 405B LLM을 능가할 수 있을까? 연산 최적 테스트 시점 스케일링 재고(Can 1B LLM Surpass 405B LLM? Rethinking Compute-Optimal Test-Time Scaling), https://arxiv.org/abs/2502.06703
+
+많은 추론 시점 스케일링(inference-time scaling) 기술은 최적의 해결책을 선정하기 위해 프로세스 보상 모델(Process Reward Model, PRM)을 필요로 하는 샘플링(sampling) 기법에 의존합니다. 이 논문은 추론 시점 연산(inference-time compute) 스케일링이 PRM 및 문제 난이도와 어떻게 상호 작용하는지를 체계적으로 분석합니다. 연구자들은 PRM, 정책 모델, 그리고 작업의 복잡성 선택에 적응하는 '연산 최적 스케일링 전략(compute-optimal scaling strategy)'을 개발합니다. 그들의 연구 결과는 올바른 추론 시점 스케일링(inference-time scaling) 접근 방식을 사용할 경우, 1B 매개변수 모델이 추론 시점 스케일링(inference-time scaling)이 적용되지 않은 405B Llama 3 모델보다 우수한 성능을 보일 수 있음을 시사합니다. 유사하게, 그들은 추론 시점 스케일링(inference-time scaling)을 활용하는 7B 모델이 더 높은 추론 효율성을 유지하면서 DeepSeek-R1을 능가하는 방법을 보여줍니다. 이러한 발견들은 추론 시점 스케일링(inference-time scaling)이 LLM 성능을 크게 향상시킬 수 있으며, 적절한 추론 연산 예산(inference compute budget)을 가진 소형 LLM이 훨씬 더 큰 모델을 능가할 수 있음을 강력히 시사합니다. 이는 모델 크기만이 성능을 결정하는 유일한 요소가 아님을 강조하는 중요한 통찰입니다.
+
+"1B LLM이 405B LLM을 능가할 수 있을까? 연산 최적 테스트 시점 스케일링 재고(Can 1B LLM Surpass 405B LLM? Rethinking Compute-Optimal Test-Time Scaling)"의 주석이 달린 그림, https://arxiv.org/abs/2502.06703
+
+**9. 테스트 시점에서 피드백으로부터 추론 학습(Learning to Reason from Feedback at Test-Time)**
+📄 2월 16일, 테스트 시점에서 피드백으로부터 추론 학습(Learning to Reason from Feedback at Test-Time), https://www.arxiv.org/abs/2502.12521
+
+이 연구는 추론 시점(inference-time)에 LLM을 최적화하고 가중치 매개변수(weight parameters)를 변경하기 때문에, 추론 시점(inference-time) 방법인지 훈련 시점(training-time) 방법인지 분류하기가 다소 모호합니다. 이 논문은 LLM이 프롬프트에 실패한 시도를 저장할 필요 없이(이는 비용이 많이 들 수 있기 때문에), 추론 시점(inference time)에 실수로부터 학습하는 방법을 탐구합니다. 이전 시도를 컨텍스트에 추가하여 답변을 개선하는 일반적인 방식(순차적 수정)이나 맹목적으로 새로운 답변을 생성하는 방식(병렬 샘플링)과는 다르게, 이 접근 방식은 추론 시점(inference time)에 모델의 가중치(weights)를 직접 업데이트합니다. 이를 위해 저자들은 이전 시도에서 모델이 저지른 실수를 기반으로 모델의 가중치(weights)를 업데이트하는 작고 훈련 가능한 최적화 도구인 OpTune을 도입합니다. 이는 모델이 프롬프트/컨텍스트에 잘못된 답변을 계속 유지할 필요 없이, 무엇을 잘못했는지 기억하고 이를 바탕으로 스스로를 조정한다는 것을 의미합니다. 이로써 모델은 더욱 효율적이고 적응적인 방식으로 학습하며, 지속적으로 성능을 향상시킬 수 있습니다.
+
+"테스트 시점에서 피드백으로부터 추론 학습(Learning to Reason from Feedback at Test-Time)"의 주석이 달린 그림, https://www.arxiv.org/abs/2502.12521
+
+**10. LLM 추론 및 계획을 위한 추론 시점 연산(Inference-Time Computations)**
+📄 2월 18일, LLM 추론 및 계획을 위한 추론 시점 연산(Inference-Time Computations): 벤치마크 및 통찰력(A Benchmark and Insights), https://www.arxiv.org/abs/2502.12521
+
+이 논문은 연산 비용과 성능 간의 균형 분석에 초점을 맞춰, 추론 및 계획 작업에 대한 다양한 추론 시점 연산(inference-time compute) 스케일링 기술들을 벤치마킹합니다. 저자들은 산술, 논리, 상식, 알고리즘 추론 및 계획을 아우르는 11가지 작업에 걸쳐 CoT(Chain-of-Thought), ToT(Tree-of-Thought), 계획으로서의 추론(Reasoning as Planning)과 같은 여러 기술을 평가합니다. 주요 발견은 추론 시점 연산(inference-time computation)을 스케일링하면 추론 능력이 향상될 수 있지만, 단일 기술이 모든 작업에서 다른 기술보다 일관되게 뛰어난 성능을 발휘하지는 않는다는 것입니다. 이는 특정 문제 유형에 따라 최적의 추론 기법이 달라질 수 있음을 시사하며, 범용적인 '만능' 솔루션보다는 상황에 맞는 전략 선택의 중요성을 강조합니다.
+
+LLM 추론 및 계획을 위한 추론 시점 연산(Inference-Time Computations): 벤치마크 및 통찰력(A Benchmark and Insights)의 주석이 달린 그림, https://www.arxiv.org/abs/2502.12521
+
+**11. 내부 사고 트랜스포머(Inner Thinking Transformer)**
+📄 2월 19일, 내부 사고 트랜스포머: 적응형 내부 사고를 촉진하기 위한 동적 깊이 스케일링(Inner Thinking Transformer: Leveraging Dynamic Depth Scaling to Foster Adaptive Internal Thinking), https://arxiv.org/abs/2502.13842
+
+내부 사고 트랜스포머(Inner Thinking Transformer, ITT)는 추론 과정에서 더 많은 연산(compute) 자원을 동적으로 할당하는 혁신적인 접근 방식을 제안합니다. 일반적인 트랜스포머 기반 LLM들이 모든 토큰에 대해 고정된 깊이(즉, 동일한 수의 레이어 사용)를 적용하는 것과 달리, ITT는 '적응형 토큰 라우팅(Adaptive Token Routing)' 기법을 활용하여 난이도가 높은 토큰에 더 많은 연산(compute)을 집중적으로 할당합니다. 이러한 어려운 토큰들은 추가적인 처리를 위해 동일한 레이어를 여러 번 통과하게 되며, 이는 결과적으로 해당 토큰에 대한 추론 연산 예산(inference-compute budget)을 효과적으로 증대시킵니다. 이 메커니즘을 통해 ITT는 모델이 문제의 복잡성에 따라 내부적인 사고의 깊이를 유연하게 조절할 수 있도록 하여, 전반적인 추론 효율성과 정확도를 향상시킵니다.
+
+"내부 사고 트랜스포머: 적응형 내부 사고를 촉진하기 위한 동적 깊이 스케일링(Inner Thinking Transformer: Leveraging Dynamic Depth Scaling to Foster Adaptive Internal Thinking)"의 주석이 달린 그림, https://arxiv.org/abs/2502.13842
+
+**12. 코드 생성(Code Generation)을 위한 테스트 시점 스케일링(Test Time Scaling)**
+📄 2월 20일, S*: 코드 생성(Code Generation)을 위한 테스트 시점 스케일링(Test Time Scaling), https://arxiv.org/abs/2502.14382
+
+추론 시점 스케일링(Inference-time scaling)은 병렬 스케일링(parallel scaling)(여러 답변 생성), 순차 스케일링(sequential scaling)(답변 반복 개선) 또는 2024년 여름 Google 논문(모델 매개변수 스케일링보다 LLM 테스트 시점 연산 최적 스케일링이 더 효과적일 수 있다(Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters))에 설명된 대로 이 두 가지를 조합하는 방식으로 달성될 수 있습니다. S*는 코드 생성(code generation) 작업을 위해 특별히 고안된 테스트 시점 연산(test-time compute) 스케일링 방법으로, 병렬 스케일링(parallel scaling)(여러 솔루션 생성)과 순차 스케일링(sequential scaling)(반복 디버깅(iterative debugging))이라는 두 가지 핵심 요소를 모두 개선합니다.
+
+"S*: 코드 생성(Code Generation)을 위한 테스트 시점 스케일링(Test Time Scaling)"의 주석이 달린 그림, https://arxiv.org/abs/2502.14382
+
+이 독창적인 접근 방식은 두 단계로 작동합니다.
+
+**1단계: 생성 및 정제(Generation and Refinement)**
+모델은 여러 잠재적 코드 해결책을 생성하고, 문제 프롬프트에 제공된 실행 결과 및 테스트 케이스를 활용하여 이들을 반복적으로 개선합니다. 이는 마치 코딩 대회에서 참가자가 솔루션을 제출하고, 테스트를 실행하며, 오류를 수정하는 과정과 매우 유사합니다.
+1.  모델은 문제에 대한 여러 후보 솔루션을 동시에 생성합니다.
+2.  각 솔루션은 공개 테스트 케이스(미리 정의된 입력-출력 쌍)에서 실행되어 검증됩니다.
+3.  만약 솔루션이 테스트에 실패하면(예: 잘못된 출력 생성 또는 충돌 발생), 모델은 해당 실행 결과(오류 메시지, 출력 내용)를 분석하고 이를 바탕으로 코드 자체를 수정하여 개선합니다.
+4.  이러한 개선 과정은 모델이 모든 테스트 케이스를 성공적으로 통과하는 솔루션을 찾을 때까지 반복적으로 지속됩니다. 이 반복적인 디버깅 루프는 모델이 스스로 코드의 결함을 찾아내고 수정하는 능력을 강화합니다.
+
+예를 들어, 모델에게 `is_even(n)` 함수를 구현하여 짝수에 대해 True를, 홀수에 대해 False를 반환하도록 요청했다고 가정해 봅시다. 모델의 초기 시도는 다음과 같을 수 있습니다.
+
+```python
+def is_even(n):
+    return n % 2 # ❌ Incorrect: should be `== 0`
+```
+
+모델은 이 구현을 공개 테스트 케이스로 테스트합니다.
+
+| 입력      | 예상       | 모델 출력 | 상태 |
+| :-------- | :--------- | :-------- | :--- |
+| is_even(4) | True       | False     | ❌ 실패 |
+| is_even(3) | False      | True      | ❌ 실패 |
+
+결과를 검토한 후, 모델은 `4 % 2`가 True가 아니라 0을 반환한다는 것을 인지하고 함수를 수정합니다.
+
+```python
+def is_even(n):
+    return n % 2 == 0 # ✅ Corrected
+```
+
+이제 함수는 모든 공개 테스트를 통과하여 디버깅 단계(debugging phase)를 성공적으로 완료합니다.
+
+**2단계: 최적 솔루션 선택(Optimal Solution Selection)**
+여러 솔루션이 공개 테스트를 모두 통과했을 때, 모델은 그 중에서 최상의 솔루션을 선택해야 합니다(가능하다면). 여기서 S*는 무작위 선택을 피하기 위해 '적응형 입력 합성(adaptive input synthesis)'이라는 기법을 도입합니다.
+1.  모델은 공개 테스트를 모두 통과한 두 개의 솔루션을 비교 대상으로 선정합니다.
+2.  모델은 스스로에게 다음과 같이 질문합니다: "이 두 솔루션 간의 미묘한 차이를 명확히 드러낼 수 있는 새로운 테스트 입력(edge case)을 생성할 수 있을까?"
+3.  새로운 테스트 입력을 생성한 후, 두 솔루션을 모두 이 입력으로 실행하여 결과를 관찰합니다.
+4.  만약 한 솔루션이 새로운 입력에 대해 올바른 출력을 생성하고 다른 솔루션이 실패한다면, 모델은 더 우수한 솔루션을 선택합니다.
+5.  두 솔루션이 새로운 입력에 대해서도 동일하게 작동한다면, 모델은 무작위로 둘 중 하나를 선택합니다. 이 과정은 모델이 단순한 기능적 정확성을 넘어, 더욱 견고하고 포괄적인 솔루션을 식별하도록 돕습니다.
+
+예를 들어, `is_perfect_square(n)`의 두 가지 다른 구현을 고려해 봅시다.
+
+```python
+import math
+
+def is_perfect_square_A(n):
+    return math.isqrt(n) ** 2 == n
+
+def is_perfect_square_B(n):
+    return math.sqrt(n).is_integer()
+```
+
+둘 다 간단한 예시에 대한 제공된 테스트 케이스를 통과합니다.
+
+```python
+n = 25
+print(is_perfect_square_A(n)) # ✅ True (Correct)
+print(is_perfect_square_B(n)) # ✅ True (Correct)
+```
+
+그러나 LLM이 엣지 케이스(edge cases)를 생성하면 그 중 하나가 실패하는 것을 발견할 수 있습니다. 이 경우 모델은 솔루션 A를 선택할 것입니다.
+
+```python
+n = 10**16 + 1
+print(is_perfect_square_A(n)) # ✅ False (Correct)
+print(is_perfect_square_B(n)) # ❌ True (Incorrect)
+```
+
+**13. 초안 연쇄(Chain of Draft)**
+📄 2월 25일, 초안 연쇄: 적게 쓰고 더 빠르게 생각하기(Chain of Draft: Thinking Faster by Writing Less), https://arxiv.org/abs/2502.18600
+
+연구자들은 추론 LLM이 종종 장황한 단계별 설명을 생성하는 반면, 인간은 핵심적인 정보만을 담은 간결한 초안에 의존한다는 점에 주목합니다. 이러한 관찰에서 영감을 받아, 그들은 최소한이면서도 유익한 중간 단계(intermediate steps)만을 생성하여 불필요한 장황함을 줄이는 프롬프팅 전략인 '초안 연쇄(Chain of Draft, CoD)'를 제안합니다. 따라서 어떤 의미에서는 토큰 생성을 줄임으로써 추론 시점 스케일링(inference-time scaling)의 효율성을 향상시키는 추론 시점 스케일링(inference-time scaling) 방법이라고 할 수 있습니다.
+
+"초안 연쇄: 적게 쓰고 더 빠르게 생각하기(Chain of Draft: Thinking Faster by Writing Less)"의 주석이 달린 그림, https://arxiv.org/abs/2502.18600
+
+결과를 살펴보면, CoD는 표준 프롬프팅만큼 간결하면서도 CoT(Chain of Thought) 프롬프팅만큼 정확한 성능을 보이는 것으로 나타납니다. 앞서 언급했듯이, 제 생각에는 추론 모델의 중요한 장점 중 하나는 사용자가 추론 흔적(reasoning traces)을 읽고 학습하며 응답을 더 잘 평가하고 신뢰할 수 있다는 점입니다. CoD는 이러한 CoT의 장점을 다소 약화시킬 수 있습니다. 그러나 CoT의 정확도를 유지하면서 생성 속도를 높여주므로, 장황한 중간 단계가 필수가 아닌 상황에서는 매우 유용하게 활용될 수 있습니다. 이는 효율성과 성능 간의 새로운 균형점을 제시합니다.
+
+**14. 더 나은 피드백 및 편집 모델(Better Feedback and Edit Models)**
+📄 3월 6일, 전용 피드백 및 편집 모델이 개방형 일반 도메인 작업에 대한 추론 시점 스케일링(Inference-Time Scaling)을 강화한다(Dedicated Feedback and Edit Models Empower Inference-Time Scaling for Open-Ended General-Domain Tasks), https://arxiv.org/abs/2503.04378
+
+추론 시점 추론(inference-time reasoning)을 스케일링하는 많은 기술들은 검증 가능한 답변(예: 명확하게 확인 가능한 수학 문제나 코드)이 있는 작업에 주로 의존합니다. 이로 인해 글쓰기나 일반적인 문제 해결과 같은 개방형 작업에는 적용하기 어렵다는 한계가 있습니다. 이러한 검증 가능한 답변과의 연관성에서 오는 제약을 극복하기 위해, 연구자들은 한 모델이 초기 응답을 생성하고, 다른 모델이 피드백('피드백 모델(feedback model)')을 제공하며, 세 번째 모델이 해당 피드백을 기반으로 응답을 개선('편집 모델(edit model)')하는 시스템을 개발했습니다. 그들은 인간이 주석을 단 응답 및 피드백으로 구성된 대규모 데이터셋을 활용하여 이러한 전문화된 '피드백' 및 '편집' 모델을 훈련시킵니다. 이 모델들은 추론 시점(inference time)에 더 정교한 피드백을 생성하고 더욱 효과적인 편집을 수행함으로써, LLM의 응답 품질을 향상시키는 데 기여합니다. 이 시스템은 복잡한 인간의 평가 과정을 모방하여 LLM의 성능을 비약적으로 발전시킬 잠재력을 가집니다.
+
+Ahead of AI는 독자 지원 출판물입니다. 새로운 게시물을 받고 제 작업을 지원하려면 무료 또는 유료 구독자가 되는 것을 고려해 보세요. 구독
+
+**결론 및 전망**
+
+추론 시점 연산(Inference-time compute) 스케일링은 모델의 가중치(model weights)를 수정할 필요 없이 대규모 언어 모델(LLM)의 추론 능력(reasoning abilities)을 향상시키는, 올해 가장 활발하게 연구되는 주제 중 하나로 부상했습니다. 위에서 요약된 수많은 기술들은 "Wait" 토큰과 같은 간단한 토큰 기반의 개입에서부터, 테스트 시점 선호도 최적화(Test-Time Preference Optimization) 및 연관 사고 연쇄(Chain-of-Associated-Thoughts)와 같이 정교한 탐색 및 최적화 기반 전략에 이르기까지 매우 다양합니다.
+
+거시적인 관점에서 볼 때, 반복적으로 나타나는 핵심적인 주제는 추론 시점(inference)에 연산(compute) 자원을 증대시키면 상대적으로 작은 모델들조차도 표준 접근 방식에 비해 (추론 벤치마크에서) 상당한 성능 향상을 이룰 수 있다는 점입니다. 이는 추론 전략이 소규모의 비용 효율적인 모델과 대규모 모델 간의 성능 격차를 효과적으로 줄이는 데 기여할 수 있음을 강력히 시사합니다.
+
+**비용 고려사항**
+
+다만, 한 가지 주의할 점은 추론 시점 스케일링(inference-time scaling)이 필연적으로 추론 비용을 증가시킨다는 것입니다. 따라서 상당한 추론 스케일링(inference scaling)을 적용한 소형 모델을 사용할 것인지, 아니면 더 큰 모델을 훈련하고 추론 스케일링(inference scaling)을 덜 사용하거나 전혀 사용하지 않을 것인지는 모델 사용 시나리오에 따라 신중하게 계산해야 할 문제입니다. 예를 들어, 많은 추론 시점 스케일링(inference time scaling)을 사용하는 o1 모델은 추론 시점 스케일링(inference time scaling)을 사용하지 않을 가능성이 있는 더 큰 GPT-4.5 모델보다 실제로는 약간 더 저렴할 수 있습니다. (GPT-4.5가 o1 또는 o3 스타일의 추론 시점 스케일링(inference-time scaling)으로 얼마나 잘 작동할지 지켜보는 것은 흥미로울 것입니다.)
+
+**어떤 기술을 선택할 것인가?**
+
+그럼에도 불구하고, 추론 시점 연산(inference-time compute) 스케일링이 모든 문제에 대한 만능 해결책은 아닙니다. 몬테카를로 트리 탐색(Monte Carlo Tree Search), 자체 백트래킹(self-backtracking), 동적 깊이 스케일링(dynamic-depth scaling)과 같은 방법들이 추론 성능을 크게 향상시킬 수 있지만, 그 효과는 여전히 특정 작업의 특성과 난이도에 따라 달라집니다. 초기 연구 논문 중 하나가 보여주었듯이, 모든 작업에서 일관되게 가장 뛰어난 성능을 발휘하는 단일 추론 시점 연산(inference-time compute) 스케일링 기술은 존재하지 않습니다. 또한, 이러한 접근 방식 중 상당수는 향상된 추론을 위해 응답 지연 시간(response latency)을 희생하는데, 느린 응답은 일부 사용자에게 불편함을 초래할 수 있습니다. 예를 들어, 저는 더 빠른 응답 시간을 선호하여 간단한 작업의 경우 보통 o1에서 GPT4o로 전환하여 사용합니다.
+
+**다음 단계는 무엇인가?**
+
+앞으로 "추론 시점 연산(inference-time compute) 스케일링을 통한 추론" 연구는 크게 두 가지 방향으로 발전하며 올해 더 많은 주목할 만한 논문들이 발표될 것으로 예상합니다.
+1.  벤치마크에서 최고의 성능을 달성하는 모델 개발에 순수하게 초점을 맞춘 연구. 이는 이론적 한계를 탐색하고 최첨단 기술을 제시할 것입니다.
+2.  다양한 추론 작업에서 연산 비용과 성능 사이의 최적의 균형점을 찾는 데 관련된 연구. 이는 실용적인 애플리케이션과 상업적 활용 가능성을 높이는 데 기여할 것입니다.
+
+어떤 경우든, 추론 시점 연산(inference-time compute) 스케일링의 가장 큰 장점은 기존 LLM의 어떤 유형에도 적용하여 특정 작업에 더욱 적합하도록 만들 수 있다는 유연성입니다. 이는 모델의 활용도를 극대화하고 맞춤형 AI 솔루션 개발을 촉진할 것입니다.
+
+**주문형 사고(Thinking on Demand)**
+
+산업적인 측면에서 흥미로운 추세는 제가 "주문형 사고(thinking on demand)"라고 부르는 현상입니다. DeepSeek R1 출시 이후, 많은 기업들이 자사의 제품에 추론 능력(reasoning capabilities)을 추가하기 위해 발 빠르게 움직이는 것처럼 보입니다. 여기서 주목할 만한 발전은 대부분의 LLM 제공업체가 이제 사용자들이 '사고(thinking)' 기능을 활성화하거나 비활성화할 수 있는 선택권을 제공하기 시작했다는 것입니다. 이 메커니즘이 공개적으로 공유되지는 않지만, 이는 추론 시점 연산(inference-time compute) 스케일링이 조절된 동일 모델일 가능성이 높습니다. 예를 들어, Claude 3.7 Sonnet과 Grok 3는 이제 사용자가 모델에 대해 활성화할 수 있는 '사고(thinking)' 기능을 내장하고 있습니다. 반면, OpenAI는 사용자가 명시적인 추론 모델(reasoning models)을 사용하려면 모델을 직접 전환해야 합니다(예: GPT4o/4.5와 o1/o3-mini). 그러나 OpenAI CEO는 GPT4.5가 추론 또는 '사고(thinking)' 모드를 명시적으로 가지고 있지 않은 마지막 모델이 될 가능성이 높다고 언급했습니다. 오픈 소스 진영에서는 IBM조차도 Granite 모델에 명시적인 '사고(thinking)' 토글 기능을 추가했습니다.
+
+전반적으로, 추론 시점(inference-time) 또는 훈련 시점 연산(train-time compute) 스케일링을 통한 추론 능력(reasoning capabilities) 추가 추세는 2025년 LLM 분야의 주요 발전 동력입니다. 시간이 흐르면 추론은 더 이상 선택 사항이나 특별한 기능으로 취급되지 않을 것이며, 지시 미세 조정(instruction-finetuned) 또는 RLHF 미세 조정(RLHF-tuned) 모델이 현재 원시 사전 훈련(raw pretrained) 모델에 대한 표준이 된 것처럼, 추론 기능 또한 LLM의 기본적인 표준이 될 것이라고 예상합니다.
+
+앞서 언급했듯이, 이 글은 최근 활발한 추론 연구 활동으로 인해 이미 긴 분량 때문에 추론 시점 연산(inference-time compute) 스케일링에만 초점을 맞췄습니다. 다음 글에서는 추론을 위한 모든 흥미로운 훈련 시점 연산(train-time compute) 스케일링 방법들을 심층적으로 다룰 계획입니다.
+
+이 잡지는 개인적인 열정 프로젝트입니다. 독립 연구자로서 저를 지원하려면 제 책인 "대규모 언어 모델 구축(처음부터)(Build a Large Language Model (From Scratch))"을 구매하거나 유료 구독을 신청하는 것을 고려해 주세요.
+
+지금 Amazon에서 "대규모 언어 모델 구축(처음부터)(Build a Large Language Model (From Scratch))"을 구매할 수 있습니다.
+
+책을 읽고 몇 분의 여유가 있다면, 간단한 리뷰를 남겨주시면 정말 감사하겠습니다. 저자들에게 큰 도움이 됩니다! 여러분의 지원은 큰 의미가 있습니다! 감사합니다!

@@ -1,0 +1,21 @@
+{
+  "post_id": "049",
+  "title": "**Llama 4: 프론티어 수준의 대규모 언어 모델(Large Language Model) 개발의 도전 과제**",
+  "base_word_count": 10941,
+  "exact_30_update_wc": 3896,
+  "exact_30_ground_truth_wc": 3896,
+  "exact_30_overlap_ratio": 2.808,
+  "paraphrase_25_update_wc": 3239,
+  "paraphrase_25_ground_truth_wc": 3239,
+  "paraphrase_25_overlap_ratio": 3.378,
+  "fragment_20_update_wc": 2733,
+  "fragment_20_ground_truth_wc": 965,
+  "fragment_20_overlap_ratio": 4.65,
+  "semantic_25_update_wc": 3106,
+  "semantic_25_ground_truth_wc": 3102,
+  "semantic_25_overlap_ratio": 3.524,
+  "mixed_real_update_wc": 2879,
+  "mixed_real_ground_truth_wc": 2879,
+  "mixed_real_overlap_ratio": 3.8,
+  "status": "generated"
+}

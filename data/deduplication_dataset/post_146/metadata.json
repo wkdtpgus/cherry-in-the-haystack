@@ -1,0 +1,21 @@
+{
+  "post_id": "146",
+  "title": "**대규모 언어 모델(LLM) 챗봇에 부족한 것: 목적 의식**",
+  "base_word_count": 126,
+  "exact_30_update_wc": 104,
+  "exact_30_ground_truth_wc": 118,
+  "exact_30_overlap_ratio": 1.077,
+  "paraphrase_25_update_wc": 309,
+  "paraphrase_25_ground_truth_wc": 309,
+  "paraphrase_25_overlap_ratio": 0.408,
+  "fragment_20_update_wc": 98,
+  "fragment_20_ground_truth_wc": 149,
+  "fragment_20_overlap_ratio": 0.765,
+  "semantic_25_update_wc": 214,
+  "semantic_25_ground_truth_wc": 214,
+  "semantic_25_overlap_ratio": 0.589,
+  "mixed_real_update_wc": 109,
+  "mixed_real_ground_truth_wc": 111,
+  "mixed_real_overlap_ratio": 1.138,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "171",
+  "title": "**저희 책, Hands-On Large Language Models이 드디어 출간되었습니다!**",
+  "base_word_count": 583,
+  "exact_30_update_wc": 710,
+  "exact_30_ground_truth_wc": 786,
+  "exact_30_overlap_ratio": 0.714,
+  "paraphrase_25_update_wc": 538,
+  "paraphrase_25_ground_truth_wc": 550,
+  "paraphrase_25_overlap_ratio": 1.061,
+  "fragment_20_update_wc": 379,
+  "fragment_20_ground_truth_wc": 663,
+  "fragment_20_overlap_ratio": 0.789,
+  "semantic_25_update_wc": 875,
+  "semantic_25_ground_truth_wc": 875,
+  "semantic_25_overlap_ratio": 0.666,
+  "mixed_real_update_wc": 472,
+  "mixed_real_ground_truth_wc": 472,
+  "mixed_real_overlap_ratio": 1.235,
+  "status": "generated"
+}

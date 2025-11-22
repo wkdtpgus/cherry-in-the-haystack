@@ -1,0 +1,21 @@
+{
+  "post_id": "118",
+  "title": "**휴대폰 없이 사는 법**",
+  "base_word_count": 1421,
+  "exact_30_update_wc": 676,
+  "exact_30_ground_truth_wc": 1417,
+  "exact_30_overlap_ratio": 1.006,
+  "paraphrase_25_update_wc": 1082,
+  "paraphrase_25_ground_truth_wc": 1082,
+  "paraphrase_25_overlap_ratio": 1.313,
+  "fragment_20_update_wc": 1003,
+  "fragment_20_ground_truth_wc": 1467,
+  "fragment_20_overlap_ratio": 0.954,
+  "semantic_25_update_wc": 1308,
+  "semantic_25_ground_truth_wc": 1308,
+  "semantic_25_overlap_ratio": 1.086,
+  "mixed_real_update_wc": 1170,
+  "mixed_real_ground_truth_wc": 1170,
+  "mixed_real_overlap_ratio": 1.215,
+  "status": "generated"
+}

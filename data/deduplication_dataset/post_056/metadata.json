@@ -1,0 +1,21 @@
+{
+  "post_id": "056",
+  "title": "**자동 프롬프트(prompt) 최적화**",
+  "base_word_count": 11548,
+  "exact_30_update_wc": 9874,
+  "exact_30_ground_truth_wc": 9299,
+  "exact_30_overlap_ratio": 1.228,
+  "paraphrase_25_update_wc": 9008,
+  "paraphrase_25_ground_truth_wc": 9008,
+  "paraphrase_25_overlap_ratio": 1.282,
+  "fragment_20_update_wc": 8915,
+  "fragment_20_ground_truth_wc": 9411,
+  "fragment_20_overlap_ratio": 1.24,
+  "semantic_25_update_wc": 9213,
+  "semantic_25_ground_truth_wc": 976,
+  "semantic_25_overlap_ratio": 2.148,
+  "mixed_real_update_wc": 9168,
+  "mixed_real_ground_truth_wc": 9168,
+  "mixed_real_overlap_ratio": 1.26,
+  "status": "generated"
+}

@@ -1,0 +1,42 @@
+환영합니다, 독자 여러분! 이번 주 LLM Watch에서는 언어 모델을 위한 강화 학습(reinforcement learning) 확장, 신경망(neural) AI와 심볼릭(symbolic) AI의 통합, LLM 기반 에이전트(agent)를 위한 새로운 전략 등 다양한 내용을 다룹니다! 다시는 업데이트를 놓치지 않도록 구독하는 것을 잊지 마세요.
+
+가장 빠르게 AI 엔지니어가 되는 방법은? 직접 만들어보는 것입니다! Towards AI의 산업 중심 코스인 '초급부터 고급 LLM 개발자까지(약 90개 강의)'를 통해 실습 경험을 쌓으세요. 실제 세상에 영향을 미치기 위해 좌절했던 전직 박사들과 개발자들이 만들었습니다.
+
+*   **프로덕션(production) 수준의 앱 구축**: RAG, 미세 조정(fine-tuning), 에이전트(agent)
+*   **지도**: 디스코드(Discord)를 통한 강사 지원
+*   **선수 과목**: 기본 파이썬(Python)
+*   **결과**: 인증된 제품 출시
+*   **가치 보장**: 30일 환불 보장
+
+**기술 향상**
+최첨단 AI 분야에서는 끊임없이 학습하고 새로운 기술을 습득하는 것이 중요합니다. 이론적 지식과 실질적인 구현 경험을 모두 갖춰야 빠르게 변화하는 LLM 생태계에 적응할 수 있습니다.
+**전문가 팁**: 이 코스와 LLM Watch 모두 회사 학습 및 개발 예산에 해당될 수 있습니다.
+
+### LLM을 위한 강화 학습(RL) 확장
+
+**RL 컴퓨팅(compute)의 예측 가능한 확장( [paper](https://arxiv.org/abs/2405.14590) )**: 메타(Meta)와 협력자들의 연구는 LLM을 위한 강화 학습(RL) 미세 조정(fine-tuning)이 어떻게 확장되는지에 대한 최초의 대규모 분석(40만 GPU-시간!)을 제공합니다. 그들은 시그모이드(sigmoidal) 컴퓨팅-성능 곡선에 맞춰보고, 많은 설계 선택(손실 집계(loss aggregation), 정규화(normalization) 등)이 주로 컴퓨팅 효율성에 영향을 미치지만 최종 성능에는 영향을 미치지 않는다는 것을 발견했습니다. 이러한 통찰력을 바탕으로, 그들은 소규모 실행 학습 곡선을 외삽(extrapolate)하여 최종 성능을 예측하는 모범 사례 레시피인 “**ScaleRL**”을 소개합니다. ScaleRL을 사용하여 그들은 10만 GPU-시간 실행의 결과를 성공적으로 예측했으며, 이는 강화 학습(RL) 훈련을 사전 훈련(pre-training)의 예측 가능성에 더 가깝게 만듭니다.
+
+**장기 추론을 위한 “마르코프 사상가(Markovian Thinker)”( [paper](https://arxiv.org/abs/2405.14590) )**: 긴 체인 오브 스루트(chain-of-thought) 추론은 일반적으로 LLM 에이전트(agent)가 계속 증가하는 프롬프트(prompt)에 의존하도록 강제합니다(생각이 길어질수록 강화 학습(RL) 정책이 이차 비용을 지불하게 됨). Aghajohari 등은 **마르코프 사상(Markovian Thinking)**을 제안하며, 강화 학습(RL) “사고 환경(thinking environment)”을 재구성하여 모델이 항상 **고정된 크기의 상태(state)**만 보도록 합니다. 그들의 Delethink 설정에서 추론은 세그먼트(segment)로 분할됩니다. 모델은 각 청크(chunk)의 끝에서 간략한 상태 요약(state summary)을 생성한 다음, 컨텍스트(context)를 재설정하고 해당 요약으로 새로 시작합니다. 이는 선형 시간(linear-time), 상수 메모리(constant-memory) 확장을 가능하게 합니다. Delethink로 훈련된 15억(1.5B) 모델은 8천 토큰(8k-token) 청크(chunk)로 2만 4천 토큰(24k tokens)을 추론할 수 있으며, 전체 2만 4천 토큰(24k-token) 컨텍스트(context)로 훈련된 기준선(baseline)과 같거나 능가합니다. 더욱 인상적인 것은, 더 긴 추론(9만 6천 토큰(96k tokens))에서도 계속 개선되는 반면, 기준선은 정체됩니다. 컴퓨팅 비용은 대략 4분의 1 수준입니다(기준선의 27 H100-개월 대비 7 H100-개월 추정). 따라서 모델뿐만 아니라 환경을 재설계하는 것이 효율적이고 확장 가능한 장기 추론을 가능하게 합니다.
+
+### 강화 학습(RL) 미세 조정(Fine-Tuning)이 추론 능력을 해제하다
+
+**강화 학습(RL)이 LLM 추론에 도움이 되는 이유( [paper](https://arxiv.org/abs/2405.14590) )**: Tsilivis 등은 사전 훈련(pre-training) 후 강화 학습(RL) 미세 조정(fine-tuning)이 LLM 추론을 어떻게 향상시키는지 탐구합니다. 그들은 RL이 다음 토큰(next-token) 예측만으로는 해결하기 어려운 긴 연쇄 사고(chain-of-thought) 작업을 훨씬 적은 데이터로도 해결할 수 있음을 이론적으로 보여줍니다. 본질적으로 RL은 다단계 추론 체인(reasoning chain)의 최종 결과에 보상을 제공하여, 모델이 더 긴 테스트 시간 컴퓨팅(test-time computation)을 활용하여 작업을 학습하도록 유도합니다. 예를 들어, 짧은 예시 위주의 패리티(parity) 작업에서 RL로 미세 조정된 트랜스포머(transformer)는 긴 체인을 통해 올바르게 일반화(generalize)하는 반면, 순수하게 다음 토큰으로 훈련된 모델은 훨씬 더 많은 데이터를 필요로 합니다. 실제 LLaMA 모델에 대한 실험에서도 전문가 혼합(mixture-of-experts) 수학 문제에서 RL 미세 조정이 더 긴 추론 단계를 통해 더 나은 일반화(generalization)를 가져옴을 확인했습니다.
+
+**“기반(Base)” 모델 vs “사고(Thinking)” 모델 - 방법을 아는 것 vs 시기를 아는 것( [paper](https://arxiv.org/abs/2405.14590) )**: 체인 오브 스루트(chain-of-thought) “사고(thinking)” 모델이 근본적으로 더 유능한가, 아니면 단순히 기반 모델(base model) 기술을 더 잘 활용하는가? Venhoff 등은 대체로 후자임을 발견했습니다. 고정된 기반 모델(base model)의 활성화(activation)에 약 12%의 위치에서 작은 조향 벡터(steering vector)를 주입함으로써, 그들은 모델의 잠재된 추론 능력(reasoning abilities)을 촉발하고 완전한 체인 오브 스루트(chain-of-thought) 훈련 모델까지의 성능 격차의 약 91%를 회복할 수 있었습니다. 이 모든 것은 **가중치 업데이트(weight updates) 없이** 이루어졌습니다. 이는 대규모 사전 훈련(pre-trained) LLM이 이미 추론 “**방법**”을 알고 있으며, 특화된 미세 조정(finetuning)이 실제로 하는 일은 이러한 기술을 **언제** 배포할지 가르치는 것임을 시사합니다. 다시 말해, 사전 훈련(pre-training)은 모델에 추론 메커니즘(reasoning mechanisms)을 부여하고, 사후 훈련(“사고(thinking)” 모델 훈련)은 주로 적절한 시기에 이러한 메커니즘을 효율적으로 사용하는 방법을 가르칩니다. 이러한 통찰력은 고급 추론 LLM을 보는 우리의 관점을 재구성합니다. 추론 능력의 대부분은 처음부터 기반 모델(base model)에 잠재되어 있었습니다.
+
+### LLM 에이전트(Agent) 및 도구 사용을 위한 새로운 패러다임
+
+**순수 모방 대신 초기 경험( [paper](https://arxiv.org/abs/2405.14590) )**: 메타(Meta)의 연구는 정적 모방 학습(static imitation learning)과 완전한 강화 학습(full reinforcement learning) 사이의 중간 지점을 제안합니다. 에이전트(agent)가 보상 없이 자체 상호작용 데이터(interaction data)를 수집하는 "초기 경험(early experience)"을 통해 학습합니다. 이 데이터는 (1) **암묵적 세계 모델(Implicit world models)** 구축을 통해 환경 작동 방식을 학습하고, (2) **자기 성찰(Self-reflection)**을 통해 실수를 개선하는 데 활용됩니다. 8가지 환경에서 이러한 전략은 성능과 도메인 외 일반화(out-of-domain generalization)를 향상시키며, 모방(imitation)과 완전 자율 에이전트(fully autonomous agents) 사이의 간극을 메웁니다. 초기 경험(early experience)은 후속 강화 학습(RL)을 더욱 효과적으로 만드는 강력한 기반을 제공합니다.
+
+**에이전트 강화 학습(Agentic RL)을 위한 모범 사례( [paper](https://arxiv.org/abs/2405.14590) )**: “에이전트 추론에서의 강화 학습(RL) 이해(Demystifying RL in Agentic Reasoning)”에서 Yu 등은 도구 사용 LLM 에이전트(agent)를 훈련할 때 강화 학습(RL)을 최대한 활용하는 방법을 체계적으로 평가합니다. 그들은 몇 가지 간단하지만 강력한 관행을 식별합니다. (i) 조각조각 이어진 스니펫(snippet) 대신 실제의, 종단 간(end-to-end) 도구 사용 궤적(trajectory)을 사용합니다. 이는 지도 미세 조정(supervised fine-tuning)을 위한 훨씬 강력한 초기화(initialization)를 제공하고 다양하며 모델 인지적인 경험 데이터(experience data)를 보장합니다. 높은 다양성을 가진 데이터셋(dataset)은 에이전트(agent)의 과적합(overfitting)을 방지하고 탐색(exploration)을 유지하는 데 도움이 됩니다. (ii) 탐색 친화적인 기술을 사용합니다. 예를 들어, 더 높은 클리핑 임계값(clipping thresholds)을 허용하고, 더 긴 시간 범위(longer horizons)에 걸쳐 보상을 형성하며, 충분한 정책 엔트로피(policy entropy)를 유지하여 에이전트(agent)가 새로운 해결책을 시도하도록 장려함으로써 강화 학습(RL) 훈련 효율성을 크게 높입니다. (iii) 매우 빈번한 호출이나 지나치게 장황한 자기 대화(self-dialogues)보다 더 적고 더 목표 지향적인 도구 호출을 사용하는 신중한 추론 전략(deliberative reasoning strategy)을 선호합니다. 다시 말해, 에이전트(agent)에게 행동하기 전에 조금 더 생각하도록 가르치는 것이 더 나은 도구 효율성과 최종 정확도로 이어집니다. 이러한 팁을 사용하여 그들은 더 작은 LLM으로도 어려운 벤치마크(benchmark)에서 최첨단 결과(state-of-the-art results)를 달성했으며, 심지어 40억(4B) 모델이 에이전트 추론 작업에서 320억(32B) 모델을 능가하도록 만들었습니다. 그들은 또한 다른 사람들이 이러한 성과를 재현하는 데 도움이 되도록 고품질의 지도 및 강화 학습(RL) 에이전트 궤적(trajectory) 데이터셋(dataset)을 공개합니다.
+
+**토큰 사전 확률(Token Priors)을 통한 훈련 없는 강화 학습(RL)( [paper](https://arxiv.org/abs/2405.14590) )**: Cai 등은 모델 가중치(model weights) 업데이트 없이도 정책 개선(policy improvements)을 얻을 수 있음을 보여줍니다. 그들의 "훈련 없는 그룹 RPO(Training-Free Group RPO)" 방법은 기반 LLM을 고정하고, 경험을 사용하여 출력 토큰 분포(output token distribution)를 즉석에서 조정합니다. 배포 중에 에이전트(agent)는 여러 롤아웃(rollout)을 생성하고, 각 그룹 내에서 토큰의 "그룹 상대 의미론적 이점(group relative semantic advantage)"(어떤 토큰이 더 나은 결과로 이어졌는지 생각해보세요)을 계산합니다. 이를 토큰 수준의 사전 확률(token-level prior)로 증류하여 모델의 다음 결정을 편향되게 만듭니다. 이 과정을 몇 번의 에포크(epoch) 동안 반복함으로써(소수의 예시만 사용), LLM은 경사 업데이트(gradient updates) 없이 출력을 조종하는 "경험적 지식(experiential knowledge)"을 습득합니다. 수학 추론 및 웹 검색에서 이 경량 루프(lightweight loop)를 최첨단 에이전트(DeepSeek)에 추가했을 때 도메인 외 성능(out-of-domain performance)이 크게 향상되었습니다. 단 몇십 개의 예시만으로도 이 훈련 없는 접근 방식은 전통적인 RL 훈련 단계를 피하여 비용과 시간의 극히 일부만으로도 완전히 미세 조정된 더 작은 LLM을 능가했습니다.
+
+### 텐서 로직(Tensor Logic): 신경망(Neural) 및 심볼릭(Symbolic) AI 통합
+
+페드로 도밍고스(Pedro Domingos)는 **텐서 로직(Tensor Logic)**( [paper](https://arxiv.org/abs/2405.14590) )을 제안합니다. 이는 신경망(neural) 및 심볼릭(symbolic) 접근 방식을 기본적으로 융합하는 “AI의 언어”로 설계된 야심찬 새 프로그래밍 언어입니다. 그 동기는 현재 도구가 부족하다는 것입니다. 파이토치(PyTorch)/텐서플로우(TF)와 같은 프레임워크(framework)는 GPU에서 자동 미분(auto-differentiation)을 제공하지만 파이썬(Python)에 부착되어 있습니다(파이썬은 논리적 추론이나 지식에 대한 내장 지원이 없음). 반면 고전적인 AI 언어(프롤로그(Prolog), 리스프(Lisp))는 기호와 논리를 처리하지만 데이터로부터 확장하거나 학습할 수 없습니다. 텐서 로직(Tensor Logic)은 텐서 방정식(tensor equation)을 하나의 **핵심 구성 요소(core construct)**로 만듦으로써 이 문제를 해결합니다. 도밍고스는 논리적 추론 규칙(logical inference rules)이 수학적으로 텐서 인덱스 합산(tensor index summation)(아인슈타인 합산(Einstein summation))과 유사하다고 관찰했기 때문입니다. AI의 다른 모든 것은 그 형태로 환원될 수 있습니다. 이 논문은 트랜스포머(transformer)와 신경망(neural nets)부터 형식 논리 증명(formal logic proofs), 커널 메서드(kernel methods), 그래픽 모델(graphical models)에 이르기까지 주요 패러다임(paradigm)이 텐서 로직(Tensor Logic)의 통합 프레임워크(unified framework)에서 어떻게 우아하게 구현될 수 있는지를 보여줍니다. 결정적으로, 이는 신경망(neural)의 확장성/학습 가능성과 심볼릭 추론(symbolic reasoning)의 엄격함을 결합하는 “**임베딩 공간(embedding space)에서의 건전한 추론(sound reasoning)**”과 같은 새로운 가능성을 열어줍니다. 따라서 텐서 로직(Tensor Logic)은 앞으로 AI의 기반이 되어 기호의 투명성과 텐서(tensor)의 힘을 제공함으로써, 오랫동안 지속되어 온 신경-심볼릭(neuro-symbolic) 분열을 해소하여 AI의 더 넓은 채택을 촉진할 잠재력을 가집니다.
+
+구독하기 ❤️
+이번 주 LLM Watch 업데이트가 유용하셨기를 바랍니다. 최신 AI 동향과 심층 분석을 계속 받아보시려면 구독해주시고, 이 기사가 마음에 드셨다면 좋아요를 누르고 동료들과 공유해주세요. 여러분의 의견은 언제나 환영입니다! 댓글을 남겨주세요.
+LLM Watch를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받고 제 작업을 지원하려면 구독해주세요.
+구독하기

@@ -1,0 +1,438 @@
+(출처: [1, 2, 4, 14]) 대규모 언어 모델(LLM) 분야에서 보상 모델(RM)은 인간의 선호도를 학습 과정에 반영하여 눈부신 발전을 이끌어낸 핵심 요소입니다. 이는 단순히 모델의 성능을 향상시키는 것을 넘어, AI 시스템이 인간의 가치와 의도에 부합하도록 정렬(alignment)하는 데 결정적인 역할을 합니다. 이러한 중추적인 역할에도 불구하고, RM은 때때로 그 중요성이 충분히 인식되지 못하는 경향이 있습니다. 특히 검증 가능한 보상(verifiable rewards)을 활용하는 강화 학습(reinforcement learning)과 같은 RM을 사용하지 않는 접근 방식들이 부상하고 있음에도 불구하고, RM을 효율적으로 구축하고 활용하는 데 필요한 실질적인 가이드라인은 여전히 부족한 실정입니다. 하지만, PPO(Proximal Policy Optimization) 기반 강화 학습을 통해 LLM을 훈련하는 것은 최상급 기반 모델(foundation models)을 개발하는 데 필수적인 기법으로 자리 잡고 있습니다. 본 글에서는 급변하는 LLM 환경 속에서 보상 모델의 과거와 현재의 중요성을 심층적으로 탐구하며, 이에 대한 포괄적인 이해를 돕고자 합니다. 구독하기
+
+**보상 모델이란 무엇인가?**
+
+"보상 모델은 강화 학습(reinforcement learning) 연구에서 환경이 주는 보상(environment rewards)을 대신하는 대리자(proxy)로서 널리 활용되어 왔습니다... 가장 보편적인 보상 모델은 학습 과정에서 비교된 텍스트들 중 특정 텍스트가 인간이 선호하는 텍스트에 얼마나 근접한지 그 확률을 예측합니다." - RLHF 책
+
+보상 모델(RM)은 특정 프롬프트(prompt)와 제안된 응답(candidate completion)을 입력으로 받아 사람이 선호할 만한 점수(human preference score)를 예상하도록 학습된 특수 목적의 대규모 언어 모델(specialized LLMs)입니다. 이 모델은 대개 현재 미세 조정(finetuning) 중인 LLM에서 그 기반을 가져옵니다. RM이 부여하는 점수가 높을수록 해당 응답이 인간 사용자에게 더 높은 만족도를 줄 가능성이 크다는 것을 의미합니다. 이를 이해하기 위한 첫걸음으로, RM의 본질과 생성 방식, 그리고 LLM 환경 내에서의 활용법에 대한 기본적인 지식을 쌓아야 합니다. 이번 섹션에서는 다음 핵심 개념들을 중점적으로 다룰 예정입니다.
+
+*   인간의 선호도를 모델링하기 위한 통계적 방법론(statistical models)에서 RM이 등장하게 된 배경.
+*   대부분의 보상 모델이 채택하는 신경망 구조(architecture)와 구성 요소.
+*   보상 모델의 학습 절차(training process).
+
+RM의 실제적인 적용 방식을 파악하기 위해서는 강화 학습(RL)과 LLM의 후처리 훈련(post-training)에 대한 더 넓은 맥락이 필요하며, 이는 다음 섹션에서 상세히 설명될 것입니다. RM은 단순한 점수 예측을 넘어, 복잡한 언어 모델이 인간의 의도를 정확히 파악하고 반영하도록 돕는 필수적인 '판단자' 역할을 수행합니다.
+
+**브래들리-테리 선호도 모델(The Bradley-Terry Model of Preference)**
+
+보상 모델의 전형적인 구현은 브래들리-테리 선호도 모델(Bradley-Terry model of preference)에 그 뿌리를 두고 있습니다. 이 모델은 원래 스포츠 경기나 심리학 연구에서 쌍으로 이루어진 항목들의 상대적인 우위나 성능을 평가하기 위해 개발된 통계적 프레임워크(statistical model)입니다. 동일한 확률 분포에서 추출된 두 가지 사건, 즉 항목 i와 j가 있을 때, 브래들리-테리 모델은 항목 i가 항목 j보다 우세하거나(또는 선호될) 확률을 다음 수식으로 정의합니다.
+
+**브래들리-테리 모델에 따른 쌍별 비교 확률(Pairwise comparison probability from the Bradley-Terry model)**
+$$P(i \text{ is preferred to } j) = \frac{e^{s_i}}{e^{s_i} + e^{s_j}}$$
+
+대규모 언어 모델(LLM)의 관점에서, 여기서 항목 i와 j는 동일한 LLM이 동일한 프롬프트(prompt)에 대해 생성한 두 가지 결과물(completion)을 의미합니다. 즉, 이 결과물들은 동일한 확률적 특성을 공유합니다. 보상 모델은 이 각각의 결과물에 특정 점수(score)를 부여한 후, 위 브래들리-테리 모델의 수식을 활용하여 결과물 i가 결과물 j보다 선호될 가능성을 산출합니다. 요약하자면, 우리는 브래들리-테리 모델을 통해 두 결과물 간의 쌍별 비교 확률(pairwise comparisons)을 정량적으로 나타낼 수 있습니다. 이 모델은 인간의 미묘한 선호도를 수학적으로 포착하려는 시도의 핵심입니다.
+
+(출처: [14]) **선호도 데이터(Preference data).** 쌍으로 이루어진 선호도 데이터(pairwise preference data)는 LLM의 후처리 학습(post-training) 과정에서 매우 중요하게 활용되어 왔으며, 그 역사는 꽤 오래되었습니다 [14]. 이러한 데이터는 다양한 유형의 프롬프트(prompt)로 구성되며, 우리는 이 프롬프트들의 폭넓은 다양성(diversity)을 확보하는 데 주력합니다. 프롬프트의 분포(prompt distribution)는 모델이 실제 사용 환경에서 마주할 질문들을 정확하게 반영해야 합니다. 각 프롬프트에 대해 한 쌍의 제안된 응답(candidate completions)이 주어지며, 이들 중 하나는 주로 사람에 의해, 때로는 다른 모델에 의해 더 선호되는 것으로 지정됩니다. 이렇게 선택된 응답(chosen completions)과 거부된 응답(rejected completions)을 포함하는 프롬프트 데이터셋을 (인간) 선호도 데이터셋(preference dataset)이라고 부릅니다.
+
+선호도 데이터 수집은 비용이 많이 들고 시간 소모적인 작업이며, 데이터의 품질과 양은 RM의 성능에 직접적인 영향을 미칩니다. 이러한 문제점을 해결하기 위해 최근에는 LLM 자체를 사용하여 합성 선호도 데이터(synthetic preference data)를 생성하거나, 능동 학습(active learning) 기법을 통해 가장 유용한 데이터를 선별적으로 수집하는 연구가 활발히 진행되고 있습니다. 이는 데이터 수집의 효율성을 높이고, 편향(bias)을 줄이며, 모델 정렬(alignment)을 가속화하는 데 기여합니다.
+
+**RM은 어떻게 작동하는가?**
+
+우리는 RM이 브래들리-테리 선호도 모델(Bradley-Terry model of preference)에 기반을 두고 있다는 것을 알고 있지만, 이러한 통계 모델(statistical model)을 실용적으로 구현하는 방법은 많습니다. LLM 도메인에서는 이러한 모델이 LLM으로 구현됩니다(아마도 놀랄 일은 아닐 것입니다). 그러나 표준 (생성형) 디코더 전용 LLM(decoder-only LLMs)과 비교할 때, RM은 기본 아키텍처(architecture)와 훈련 목표(training objective)를 모두 수정합니다.
+
+**RM 아키텍처(architecture)의 개략도(Schematic depiction of RM architecture)**
+(Image of RM architecture)
+
+**RM의 구조(architecture).** 보상 모델은 대규모 언어 모델로부터 프롬프트와 응답의 쌍(prompt-completion pair)을 입력으로 받아들이고, 그 결과로 단일 스칼라 값(scalar preference score)을 출력합니다. 실제 구현에서 RM은 기존의 디코더 전용 LLM(decoder-only architecture)의 마지막 부분에 선형 레이어(linear head)를 추가하는 방식으로 구성됩니다. 구체적으로, LLM은 입력 토큰 각각에 해당하는 벡터들의 시퀀스(token vectors)를 생성하며, 이 시퀀스의 마지막 벡터가 선형 헤드를 통과하여 최종적인 단일 점수를 산출합니다. 따라서 RM은 주어진 응답이 선호될 가능성을 판단하는 추가적인 분류기(classification head)를 갖춘 LLM으로 이해할 수 있습니다. 이 선형 헤드는 모델이 복잡한 텍스트 표현을 단순한 선호도 점수로 압축하는 역할을 하며, 이는 모델이 명확한 판단 기준을 학습하도록 돕습니다.
+
+**학습 절차(Training process).** 보상 모델의 매개변수(parameters)는 일반적으로 기존의 정책 모델(policy) 2로부터 초기화됩니다. 우리는 이 초기화 모델을 RM의 "기반(base)" 모델이라 지칭할 것입니다. RM 초기화에 사용될 정책 모델로는 현재 훈련 중인 LLM, 또는 사전 학습된 기반(pretrained base) 모델, 혹은 SFT 모델(SFT model)과 같은 이전 버전의 모델 등 여러 선택지가 있습니다. RM이 초기화된 후에는 이 모델에 선형 헤드(linear head)를 추가하고, 인간 선호도 데이터셋(preference dataset), 즉 프롬프트에 대한 선택된 모델 응답과 거부된 모델 응답 쌍을 사용하여 학습을 진행합니다.
+
+**RM 결과에 대한 쌍별 확률 표현(Pairwise probability expressed with respect to the output of an RM)**
+$$P(\text{chosen is preferred to rejected}) = \frac{e^{s_{\text{chosen}}}}{e^{s_{\text{chosen}}} + e^{s_{\text{rejected}}}}$$
+
+선호도 쌍이 제공되었을 때, 우리는 보상 모델이 거부된 응답보다 선택된 응답에 더 높은 점수를 할당하기를 기대합니다. 다시 말해, 이상적인 RM은 선택된 응답이 거부된 응답보다 선호될 확률을 최대화해야 합니다. 앞서 살펴본 바와 같이, 우리는 브래들리-테리 모델을 활용하여 이 확률을 표현할 수 있습니다. 이 확률 표현식을 재구성하면 아래에 제시된 손실 함수(loss function)를 유도할 수 있습니다. 이 손실 함수는 모델이 선택된 응답에 더 높은 점수를 부여하도록 유도하는 쌍별 순위 손실(pairwise ranking loss)입니다.
+
+**RM의 표준 손실 함수(loss function) 공식(Standard loss function formulation for an RM)**
+$$L = -\log \left( \frac{e^{s_{\text{chosen}}}}{e^{s_{\text{chosen}}} + e^{s_{\text{rejected}}}} \right) = -\log(\text{sigmoid}(s_{\text{chosen}} - s_{\text{rejected}}))$$
+
+이것은 음의 로그 우도(NLL) 손실(negative log likelihood (NLL) loss)로 간주될 수 있으며, NLL에 대한 확률은 브래들리-테리 모델에 의해 결정됩니다. 이 손실 함수의 특성을 시각화한 결과는 아래 그림에서 확인할 수 있으며, 선택된 응답의 점수가 극대화되고 거부된 응답의 점수가 최소화될 때 손실이 가장 낮아짐을 알 수 있습니다.
+
+(Image of loss landscape)
+
+방대한 선호도 데이터셋에 대해 이 손실 함수를 경험적으로 최소화함으로써, 우리는 선택된 응답이 거부된 응답보다 선호될 예상 확률(expected probability)을 효과적으로 최대화할 수 있습니다. 실질적인 훈련 과정에서는 학습률(learning rate) 스케줄링, 옵티마이저(optimizer) 선택, 배치 크기(batch size) 최적화 등 다양한 하이퍼파라미터(hyperparameter) 튜닝이 RM의 안정적인 학습과 성능 향상에 중요한 영향을 미칩니다. 특히, 다양한 유형의 프롬프트와 응답 쌍을 학습 배치에 고르게 포함시켜 모델이 특정 데이터 패턴에 과적합되지 않도록 하는 것이 중요합니다.
+
+**보상 값의 표준화(Normalizing the reward).** 학습이 완료된 후, 보상 모델은 스케일이 조정되지 않은 스칼라 값(unnormalized scalar values)을 결과로 내놓습니다. 보상 함수(reward function)의 변동성(variance)을 줄이고, RM의 결과값이 예측 가능한 표준 범위(standard range) 내에 있도록 하기 위해, 학습에 사용된 선호도 데이터셋에 대해 평균 보상값이 0이 되도록 RM의 출력을 표준화할 수 있습니다. [14]의 연구자들은 이러한 보상 표준화 기법(reward normalization approach)을 자신들의 작업에서 활용했다고 밝히고 있습니다.
+
+"학습 과정이 마무리될 때, 우리는 보상 모델의 결과물을 표준화하여, 데이터셋 내의 참조 요약이 평균 점수 0을 갖도록 조정합니다." - [14]에서
+이러한 정규화 과정은 특히 강화 학습 단계에서 RM의 출력을 안정적인 보상 신호로 활용하는 데 필수적입니다. 보상 값의 스케일이 일정하지 않으면 강화 학습 에이전트(agent)의 학습이 불안정해지거나 최적화가 어려워질 수 있기 때문입니다.
+
+**RM 구현하기**
+
+이제까지 다룬 이론적 배경을 바탕으로, 실제 환경에서 보상 모델(RM)의 아키텍처(architecture)와 손실 함수(loss function)가 일반적인 딥러닝 프레임워크(deep learning frameworks)를 통해 어떻게 구현될 수 있는지 살펴보겠습니다. 본질적으로 RM은 텍스트 시퀀스(textual sequences)를 분류하는 모델(classification model)의 한 형태입니다. 즉, 프롬프트(prompt)와 그에 대한 응답이 주어졌을 때, RM은 이 프롬프트-응답 쌍이 인간에게 얼마나 선호될지(단일 스칼라 점수로 표현) 예측하는 역할을 수행합니다. 현대 딥러닝 라이브러리 덕분에 이 과정은 생각보다 훨씬 간단하게 이루어질 수 있습니다.
+
+**예시(Toy example).** HuggingFace의 `AutoModelForSequenceClassification`과 같은 추상화(abstraction)를 통해 이를 구현할 수 있습니다. 로컬에서 실행할 수 있는 작은 (BERT 기반) RM 구현은 아래에 제공되어 있으며, 여기서 우리는 다음을 수행합니다.
+
+*   `AutoModelForSequenceClassification`을 사용하여 RM을 생성합니다.
+*   모든 선택된 시퀀스(chosen sequences) 및 거부된 시퀀스(rejected sequences) 3에 대해 RM의 출력(단일 로짓(logit) 형태)을 계산합니다.
+*   위에 설명된 대로 RM의 손실을 계산합니다.
+
+```python
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
+)
+import torch
+
+# Load a tiny model for sequence classification
+model_name = "google-bert/bert-bert-base-uncased"
+tokenizer = AutoTokenizer.from_pretrained(
+    model_name, trust_remote_code=True,
+)
+model = AutoModelForSequenceClassification.from_pretrained(
+    model_name, trust_remote_code=True,
+)
+
+# Chosen prompt-response sequences
+chosen_seqs = [
+    "I love deep (learning) focus!",
+    "Cameron is great at explaining stuff",
+    "AGI is coming very soon...",
+]
+
+# Rejected prompt-response sequences
+rejected_seqs = [
+    "I'm not a fan of deep (learning) focus",
+    "Cameron doesn't know what he's talking about",
+    "AGI is fake and LLMs can't reason!",
+]
+
+# Tokenize the chosen / rejected sequences
+chosen_inps = tokenizer(
+    chosen_seqs, return_tensors="pt", padding=True,
+)
+rejected_inps = tokenizer(
+    rejected_seqs, return_tensors="pt", padding=True,
+)
+
+# Compute the RM's output
+rewards_chosen = model(**chosen_inps).logits[:, 0]
+rewards_rejected = model(**rejected_inps).logits[:, 0]
+
+# Compute the RM's loss
+loss = -torch.nn.functional.logsigmoid(
+    rewards_chosen - rewards_rejected
+).mean()
+print(loss)
+```
+
+여기서부터 우리는 다른 모델과 유사하게 RM을 훈련합니다. 즉, i) 선호도 데이터셋(preference dataset)을 반복하고, ii) 위에 설명된 대로 손실을 계산하고, iii) 역전파(backpropagation)를 통해 기울기(gradient)를 얻고, iv) 기울기 업데이트(gradient update)를 수행하고, v) 반복합니다.
+
+**실제 RM 훈련 예시(Real RM training example).** LLM 연구소에서 RM 훈련이 어떻게 보이는지에 대한 더 실용적인 관점을 위해, AI2의 OpenInstruct에 있는 RM 훈련 스크립트(training script)를 살펴볼 수 있습니다. 이 스크립트는 `accelerate`를 사용하여 OLMo-2 또는 OLMoE를 기반으로 하는 RM의 분산 훈련(distributed training)을 구현합니다. 스크립트는 매우 간단하며, 대부분의 코드는 실제로 훈련 과정(training process)을 구성하는 것입니다. 이 훈련 스크립트(training script)를 분석하여 핵심 RM 훈련 루프(training loop)를 찾을 수 있으며, 참고용으로 아래에 복사했습니다.
+
+```python
+for _ in range(args.num_train_epochs):
+    for data in dataloader:
+        training_step += 1
+        # Concat the chosen / rejected sequences
+        query_responses = torch.cat(
+            (
+                data[CHOSEN_INPUT_IDS_KEY],
+                data[REJECTED_INPUT_IDS_KEY]
+            ),
+            dim=0,
+        )
+        with accelerator.accumulate(model):
+            # Predict reward for each sequence with RM
+            _, predicted_reward, _ = get_reward(
+                model,
+                query_responses,
+                tokenizer.pad_token_id,
+                0,
+            )
+            # Parse chosen / rejected rewards from output
+            chosen_reward = predicted_reward[
+                :data[CHOSEN_INPUT_IDS_KEY].shape[0]
+            ]
+            rejected_reward = predicted_reward[
+                data[CHOSEN_INPUT_IDS_KEY].shape[0]
+                :
+            ]
+            # Compute loss and gradient for RM
+            loss = -F.logsigmoid(chosen_reward - rejected_reward).mean()
+            accelerator.backward(loss)
+            # Perform parameter update for RM
+            optimizer.step()
+            optimizer.zero_grad()
+```
+
+보시다시피, 최고 연구소에서 대규모 RM 훈련에 사용되는 이 코드는 우리의 예시(toy example)와 크게 다르지 않습니다! 물론, 훈련 루프(training loop)는 HuggingFace와 같은 최신 딥러닝 패키지(deep learning packages)가 제공하는 추상화(abstraction) 덕분에 크게 단순화되었습니다. 그러나 여기서 핵심 시사점(key takeaway)은 우리가 지금까지 배운 개념이 RM의 실제 훈련(training) 및 사용에 직접적으로 적용된다는 것입니다.
+
+**다양한 보상 모델 유형**
+
+지금까지 우리는 주로 분류기 기반 RM(classifier-based RM)으로 불리는 표준적인 보상 모델 형태에 집중했습니다. 그러나 보상 모델은 본질적으로 프롬프트(prompt)와 응답에 대한 선호도 점수(preference score)를 예측하는 모델이며, 이를 구현하는 방식은 다양할 수 있습니다. 예를 들어, ArmoRM처럼 특정 목적에 맞게 설계된 맞춤형 분류기(custom classifier)를 보상 모델로 학습시킬 수도 있습니다.
+
+(출처: [9]) LLM-as-a-Judge 모델(LLM-as-a-Judge models) 또한 LLM 자체를 심판으로 활용하여 선호도 점수(preference score)를 부여하도록 간단히 프롬프트(prompt)를 주는 방식으로 RM의 역할을 수행할 수 있습니다. 이러한 선호도 점수는 강화 학습(RL) 훈련(training) 과정에서 보상 신호(reward signal)로 사용됩니다. LLM-as-a-Judge 방식은 인간의 판단과 유사한 복잡한 평가 기준을 적용할 수 있다는 장점이 있지만, 모델의 환각(hallucination) 문제나 프롬프트 내 포지션 편향(position bias)에 취약할 수 있으며, 기존 분류기 기반 RM에 비해 추론 비용이 높다는 단점도 존재합니다. LLM-as-a-Judge에 대한 보다 심층적인 정보는 아래 링크된 글을 참고해 주십시오.
+
+**LLM을 평가에 사용하기(Using LLMs for Evaluation)**
+Cameron R. Wolfe, Ph.D. · 2024년 7월 22일
+전체 이야기 읽기
+
+다른 방법으로는, LLM 심판을 활용하여 합성 선호도 데이터(synthetic preference data)를 생성하고(아래 AlpacaEval 예시와 같은 프롬프트를 사용하여), Constitutional AI [10] 및 RLAIF [11]에서처럼 이 합성 데이터를 기반으로 RM을 일반적인 방식으로 학습시키는 것도 가능합니다.
+
+(출처)
+(Image of AlpacaEval prompt example)
+
+문헌에서 흔히 찾아볼 수 있는 두 가지 다른 보상 모델 변형으로는 결과 보상 모델(Outcome Reward Models, ORM) [12]과 프로세스 보상 모델(Process Reward Models, PRM) [11]이 있습니다. 주로 추론 작업(reasoning tasks)에 적용되는 ORM은 주어진 완성(completion)이 해당 작업의 정답(correct answer)일 확률을 예측합니다. ORM을 학습시키기 위해 기존과 유사하게 선호도 데이터셋(preference dataset)을 수집하지만, 각 선호도 쌍에는 질문에 대한 오답과 정답이 모두 포함됩니다. 일반적인 RM이 시퀀스 전체 수준(sequence level)에서 보상(reward)을 예측하는 것과 달리, ORM은 토큰별(per-token)로 정확성을 평가합니다. 이러한 세분화된 평가는 복잡한 추론 과정의 특정 오류 지점을 식별하는 데 유용합니다.
+
+"우리의 검증기(verifiers)는 언어 모델(language models)이며, 토큰별(per-token) 예측을 출력하는 작은 스칼라 헤드(scalar head)를 가지고 있습니다." - [12]에서
+
+(출처: [12]) ORM과 유사하게, PRM도 주로 추론 작업(reasoning tasks)에 활용되며 보다 세밀한 출력(granular outputs)을 예측합니다. 하지만 PRM은 각 토큰(token) 단위가 아닌, 추론 과정(reasoning process)의 각 단계 이후에 예측을 수행합니다. PRM은 다양한 연구에서 사용되었지만, PRM을 위한 학습 데이터(training data)를 수집하는 것은 매우 까다롭습니다. 이는 추론 과정의 각 단계마다 정확성 신호와 같은 세분화된 감독(granular supervision)이 요구되기 때문입니다.
+
+"PRM은 사고 과정 추론 프로세스(chain of thought reasoning process)의 모든 단계에서 점수를 출력하도록 훈련된 보상 모델(reward models)입니다. 이는 EOS 토큰(EOS token)에서만 점수를 출력하는 표준 RM 또는 모든 토큰(token)에서 점수를 출력하는 ORM과 다릅니다. 프로세스 보상 모델(Process Reward Models)은 각 추론 단계(reasoning step)의 끝에서 감독(supervision)을 필요로 합니다." - 출처
+이 외에도 최근에는 다중 모드(multimodal) 데이터를 평가하는 RM이나, 장문 컨텍스트(long-context) 이해 능력을 평가하기 위한 특화된 RM 등 새로운 유형의 보상 모델에 대한 연구가 활발히 진행되고 있습니다. 이는 RM이 단순한 텍스트 평가를 넘어, 더 복잡하고 다양한 AI 응용 분야로 확장되고 있음을 보여줍니다.
+
+**후처리 훈련(Post-Training)에서 보상 모델의 역할**
+
+(출처: [3]) 초기 ChatGPT의 등장 이후, 대규모 언어 모델(LLM)들은 InstructGPT [3]가 제시한 3단계 정렬 절차(alignment procedure)를 활용하여 거의 예외 없이 후처리 훈련(post-trained) 과정을 거쳤습니다. 이 과정은 다음과 같은 세 가지 주요 단계로 구성됩니다.
+
+*   **지도 미세 조정(Supervised finetuning, SFT)** — 즉, 명령어 미세 조정(instruction finetuning, IFT) — 이 단계에서는 바람직한 응답 예시를 바탕으로 다음 토큰 예측(next-token prediction) 방식으로 모델을 학습시킵니다.
+*   **보상 모델(RM)**은 인간의 선호도 데이터셋(human preference dataset)을 사용하여 학습됩니다.
+*   **강화 학습(RL)**은 보상 모델의 결과값을 학습 신호로 활용하여 LLM을 세밀하게 조정(finetune)하는 데 사용됩니다.
+
+이 절차의 두 번째와 세 번째 단계는 통합하여 인간 피드백 기반 강화 학습(reinforcement learning from human feedback, RLHF)이라고 불립니다. 이 방식은 강화 학습 옵티마이저(optimizer)를 통해 LLM을 미세 조정하고, 선호도 레이블(preference labels)을 통해 인간의 피드백을 모델에 반영합니다.
+
+(출처: [4]) 하지만 현재의 상황은 과거보다 다소 복잡해졌습니다. 위에 제시된 Tulu-3 [4]에서 사용된 것과 같은 최신 후처리 훈련 파이프라인(post-training pipeline) 예시는 이러한 변화를 잘 보여줍니다. 원래의 3단계 정렬 절차와 비교했을 때 주요 차이점은 다음과 같습니다.
+
+*   SFT 단계는 여전히 보편적이지만, 특히 최근의 추론 모델(reasoning models)에서는 항상 사용되는 것은 아닙니다. 예를 들어, DeepSeek-R1의 일부 변형은 SFT 없이 사전 학습된 모델(pretrained model)에 직접 강화 학습을 적용하기도 합니다. 이는 SFT가 가져오는 '정렬세(alignment tax)'로 인해 모델의 일반적인 능력, 특히 추론 능력이 저해될 수 있다는 우려 때문입니다.
+*   강화 학습 훈련은 일반적으로 여러 차례의 라운드(round)로 진행되며, 각 라운드마다 새로운 데이터가 수집되어 LLM의 역량(capabilities)을 지속적으로 향상시킵니다.
+*   보상 모델의 필요 여부에 따라 다양한 강화 학습 변형(및 비 RL 기반 대안)이 병합되어 사용될 수 있습니다.
+
+이러한 복잡성 증가에도 불구하고, 오늘날에도 데이터의 품질은 성공적인 후처리 훈련의 핵심 결정 요인으로 남아 있습니다. 본 섹션에서는 강화 학습 훈련 프레임워크(frameworks)를 개괄적으로 다루며, 각 프레임워크 내에서 보상 모델의 역할(존재하는 경우)에 중점을 둘 것입니다.
+
+**LLM을 위한 강화 학습 훈련 전략(RL Training Strategies for LLMs)**
+
+LLM을 위한 RL 훈련(training)에 사용되는 높은 수준의 설정(setup)에 익숙하지 않은 분들을 위해 아래 개요를 참조하십시오. LLM 맥락에서 RL에 대한 기본적인 이해는 이 논의의 필수 전제 조건입니다.
+
+**LLM을 위한 강화 학습(Reinforcement Learning)의 기초(Basics of Reinforcement Learning for LLMs)**
+Cameron R. Wolfe, Ph.D. · 2023년 9월 25일
+전체 이야기 읽기
+
+**LLM을 위한 강화 학습.** LLM이 광범위하게 활용하는 강화 학습(RL) 훈련(training)은 크게 두 가지 범주로 나눌 수 있습니다. 첫째는 RLHF(즉, 위에서 설명된 후처리 훈련 설정의 2단계 및 3단계)이며, 둘째는 검증 가능한 보상(verifiable rewards)을 사용하는 강화 학습(reinforcement learning, RLVR)입니다. 이 두 가지 RL 변형은 아래 그림에 잘 나타나 있습니다.
+
+(출처: [4])
+(Image comparing RLHF and RLVR)
+
+강화 학습의 관점에서 볼 때, 이 두 기술은 유사한 측면을 가집니다. 둘 다 기본적인 훈련 환경(setup)을 공유하며, 정책 기울기 알고리즘(policy gradient algorithms) 4를 기반으로 하는 RL 옵티마이저(optimizer)를 사용하여 모델 매개변수(parameter)를 갱신합니다. 이 기술들 간의 핵심적인 차이점은 보상(reward)을 정의하고 획득하는 방식에 있습니다.
+
+*   RLHF에서는 보상이 보상 모델(RM)에서 생성됩니다. 이 RM은 LLM이 생성하는 각 응답(completion)에 대해 인간의 선호도를 반영하는 점수(human preference score)를 제공합니다.
+*   RLVR은 결정론적(deterministic)이거나 검증 가능한 보상(rewards)을 사용합니다. LLM이 제공한 답변이 정답인지 오답인지 명확히 판별할 수 있는 시나리오에 적합합니다. 특히, RLVR의 결정론적(일반적으로 규칙 기반) 보상은 보상 모델의 필요성을 제거합니다! 일반적으로 보상은 LLM이 생성한 출력에서 최종 답변을 추출하고, 이를 알려진 정답(ground truth answer)과 비교하여(예를 들어, 정확한 문자열 일치(exact string match) 또는 퍼지 매칭(fuzzy matching) 기법을 통해) 도출됩니다. 이 비교를 통해 LLM 출력의 정확성 여부를 판단하고, 이 이진 신호(binary signal)를 강화 학습 훈련을 위한 보상으로 활용합니다. 이는 특히 코딩이나 수학 문제 풀이와 같이 명확한 정답이 존재하는 작업에서 매우 효과적입니다.
+
+**RLHF 대 RLVR 및 직접 정렬 기법.** 최근 최첨단 모델(frontier models) 개발에서는 두 가지 주요 강화 학습(RL) 방식이 후처리 훈련(post-training process)에서 중요한 역할을 수행합니다. 우리는 여전히 3단계 후처리 훈련 절차(SFT → RLHF)를 통해 LLM에게 적절한 형식 지정(formatting)을 교육하고 인간의 선호도에 맞춰 정렬(align)합니다. 그러나 이제는 추론 능력(reasoning capabilities)과 검증 가능한 작업(verifiable tasks)에서의 성능을 향상시키는 추가 RLVR 단계(step)가 도입되었습니다(아래 참조).
+
+(출처)
+(Image showing RLHF and RLVR in a modern pipeline)
+
+더 나아가, 강화 학습 미세 조정(finetuning) — 특히 RLVR과 같은 방법론 — 에 투입되는 컴퓨팅 자원(compute)의 양도 급격히 증가하고 있습니다. 이러한 변화는 강화 학습 훈련에 사용되는 컴퓨팅 자원과 모델 성능 간의 명확한 스케일링 법칙(scaling laws)을 보여주는 추론 모델(reasoning models)에 대한 최근 연구 결과에 의해 더욱 가속화되고 있습니다(아래 참조).
+
+(출처: [5])
+(Image showing scaling laws for reasoning models)
+
+"RLHF는 복잡하고 종종 불안정한 과정(procedure)입니다... 우리는 표준 RLHF 문제를 간단한 분류 손실(classification loss)만으로 해결할 수 있도록 하는, RLHF의 보상 모델(reward model)에 대한 새로운 매개변수화(parameterization)를 제시합니다." - [6]에서
+
+**직접 정렬(Direct alignment) 기법.** RLVR만이 보상 모델(RM) 사용을 회피하는 유일한 방법은 아닙니다. 실제로, 우리는 RM을 완전히 사용하지 않으면서도 RLHF와 유사하게 모델을 인간의 선호도에 맞춰 정렬(align)할 수 있습니다. 이러한 기술들을 직접 정렬 알고리즘(direct alignment algorithms)이라 부르며, 이 범주에서 가장 널리 사용되는 알고리즘은 직접 선호도 최적화(direct preference optimization, DPO) [6]입니다. DPO와 같은 직접 정렬 알고리즘은 RLHF와 동일한 훈련 목표(training objective)를 최적화하면서도, RM의 생성을 포기할 뿐만 아니라, 강화 학습 훈련 자체를 완전히 배제합니다. 이는 RLHF에 비해 구현 복잡성을 크게 줄이고 계산 효율성을 높이는 장점이 있습니다. RLHF와 DPO의 비교는 아래에 제시되어 있습니다.
+
+(출처: [6])
+(Image comparing RLHF and DPO)
+
+DPO 훈련(training)에 사용되는 손실 함수(loss function)는 아래에 나타나 있습니다. 보시다시피, 이 손실 함수는 RM이 사용하는 손실 함수와 매우 유사한 형태를 가집니다. 그러나 DPO에서는 더 이상 명시적인 RM을 통해 보상(reward)을 예측하지 않습니다. 대신, 현재 정책(current policy)과 참조 정책(reference policy)이 할당한 선택된 응답(chosen completions) 및 거부된 응답(rejected completions)의 확률을 직접 활용하여 보상을 암묵적(implicitly)으로 추정합니다. 직관적으로, 이 손실은 선택된 응답의 로그 비율(log-ratio)이 거부된 응답의 로그 비율보다 클 때 최소화됩니다. DPO는 현재 정책이 거부된 응답에 비해 선택된 응답에 더 높은 (암묵적인) 보상을 할당하도록 학습시킵니다. DPO 외에도 IPO(Identity Preference Optimization), KTO(Kahneman-Tversky Optimization)와 같은 다른 직접 선호도 최적화 방법론들이 연구되고 있으며, 이들 역시 RM 없이 효율적인 정렬을 목표로 합니다.
+
+**DPO 훈련 손실(training loss)**
+$$L_{DPO}(\pi, \pi_{ref}) = -\mathbb{E}_{(x, y_c, y_r) \sim D} \left[ \log \sigma \left( \log \frac{\pi(y_c|x)}{\pi_{ref}(y_c|x)} - \log \frac{\pi(y_r|x)}{\pi_{ref}(y_r|x)} \right) \right]$$
+
+(출처: [6]) DPO는 중간 단계의 보상 모델 생성을 필요로 하지 않습니다. 그럼에도 불구하고, 그 손실 함수는 여전히 브래들리-테리 모델(Bradley-Terry model)에서 유래하며, 우리는 여전히 보상 모델의 기능을 학습하고 있습니다. 여기서 핵심적인 차이점은 보상 모델이 명시적(explicitly)이 아닌 암묵적(implicitly)으로 학습된다는 점입니다. 이러한 통찰력을 바탕으로 DPO 논문 [6]의 제목은 "당신의 언어 모델은 비밀리에 보상 모델입니다(Your Language Model is Secretly a Reward Model)"입니다. 우리는 RM과 유사하게 DPO 모델에서 이 암묵적인 보상 추정치를 직접 추출하여 활용할 수 있습니다. DPO의 전체적인 유도 과정과 분석은 여기를 참조하십시오.
+
+**보상 모델의 가치와 도전 과제**
+
+보상 모델(RM)의 도입은 대규모 언어 모델(LLM) 훈련 과정(training process)에 분명한 추가적인 복잡성을 수반합니다. 첫째, 방대한 선호도 데이터셋(preference dataset)을 기반으로 별도의 모델을 학습시켜야 하며, 이는 상당한 비용과 구현의 복잡성을 야기합니다. 일단 학습된 RM은 강화 학습(RL) 훈련 중에 온라인 방식(online fashion)으로 활용됩니다. 즉, RM은 훈련 중인 정책(policy) 모델이 생성한 응답(completion)에 실시간으로 점수를 부여합니다. RM 또한 LLM의 일종이라는 점을 고려하면, 이는 훈련 도중 별도의 LLM에 대한 추론(inference)을 호스팅하고 실행해야 함을 의미하며, 이를 효율적으로 조율하는 것은 쉽지 않은 과제입니다(위 참조).
+
+"우리는 신경망 기반의 보상 모델이 대규모 강화 학습 과정에서 '보상 해킹(reward hacking)'에 취약할 수 있음을 확인했습니다. 보상 모델을 재학습하는 것은 추가적인 훈련 자원을 요구하며, 전체 훈련 파이프라인(training pipeline)을 더욱 복잡하게 만듭니다." - [7]에서
+
+**보상 해킹(Reward hacking) 문제.** 더욱이, 보상 모델은 '보상 해킹(reward hacking)'의 위험에 노출되어 있습니다. 이는 RM이 실제로는 품질이 낮은 응답에 부당하게 높은 보상을 할당하거나, 더 일반적인 경우, 정책 모델이 의도된 작업을 해결하지 않고도 RM으로부터 높은 보상을 얻을 수 있는 맹점을 찾아 악용하는 현상을 말합니다. 예를 들어, RM이 단순히 '긍정적인 단어'의 출현 빈도에만 민감하게 반응하도록 학습되었다면, 모델은 내용의 정확성이나 유용성과 무관하게 긍정적인 단어만 나열하는 응답을 생성하여 높은 보상을 받을 수 있습니다. 흥미롭게도, 보상 해킹은 RLHF를 통한 훈련의 확장성을 저해하는 주요 한계점 중 하나입니다. 만약 우리가 충분히 긴 시간 동안 훈련을 지속한다면, 정책 모델은 결국 RM의 취약점을 찾아 악용하게 될 것입니다. 이와 대조적으로, 검증 가능한 보상(verifiable rewards)은 해킹하기가 더 어렵기 때문에(불가능하지는 않지만), RLVR을 사용할 경우 추론 모델(reasoning models)을 더 광범위하게(즉, 더 많은 학습 반복(iterations) 동안) 훈련할 수 있습니다. 이러한 문제에 대응하기 위해, RM의 견고성(robustness)을 높이고 해킹에 덜 취약하도록 설계하는 연구가 활발히 진행 중입니다.
+
+**보상 모델을 반드시 피해야 할까?**
+
+보상 모델(RM) 사용에 따르는 추가적인 비용과 복잡성을 고려할 때, 과연 RM을 완전히 배제해야 하는가라는 의문이 생길 수 있습니다. 이 질문에 대한 명확하고 단정적인 답변은 없습니다. 검증 가능한 보상(verifiable rewards)을 활용하는 RLVR과 같은 방법으로도 인상적인 성과를 거두었으며, 직접 선호도 최적화(DPO)와 같이 보상 모델을 사용하지 않으면서도 모델을 인간의 선호도에 맞춰 정렬(align)하는 기술도 존재합니다. 많은 연구들이 RLHF와 DPO 간의 성능 차이(performance gap)에 대해 다양한 관점과 상이한 결과를 제시하며 논의를 이어가고 있습니다. DPO가 보상 모델 없이 선호도를 조정하는 효과적인 대안이 될 수 있는지 여부는 특정 사용 사례에 따라 달라지지만, 일반적으로 이들 기술 사이에 성능 차이가 존재한다는 사실은 널리 인정되고 있습니다.
+
+"RLHF가 널리 보급된 이유는 인간의 가치와 선호도를 언어 모델에 통합하는 데 가장 큰 난관 중 하나인 명시적인 보상(reward) 정의의 어려움을 효과적으로 회피할 수 있었기 때문입니다." - [1]에서
+
+**RM의 핵심적인 효용성(utility).** 이러한 여러 논의에도 불구하고, 보상 모델(RM)이 지닌 엄청난 중요성과 강력한 개념적 가치를 간과해서는 안 됩니다. 어떤 형태의 강화 학습(RL) 훈련에서든 가장 어려운 과제 중 하나는 바로 보상(reward)을 명확하게 정의하는 것입니다. 대규모 언어 모델(LLM)의 경우, "좋은" 응답이 무엇인지 명시적으로 규정하는 것은 특히 난해합니다. 불행히도, 이를 판단할 수 있는 단일한 속성이나 품질 기준은 존재하지 않으며, 유효한 모델 응답의 범위는 사실상 무한합니다. 보상 모델을 활용하면, 인간에게 선호도 피드백(preference feedback)을 제공하도록 요청하는(즉, 모델 응답 쌍 중에서 더 나은 것을 선택하는) 훨씬 간단한 작업으로 이 과정을 단순화함으로써, 명시적인 보상을 직접 지정해야 하는 어려움을 회피할 수 있습니다(아래 참조).
+
+**인간 선호도 데이터(human preference data) 수집을 위한 인터페이스(Interface)**
+(Image of human preference data collection interface)
+
+두 응답 중 더 나은 모델 응답을 선택하는 것은 개별 응답을 수동으로 일일이 작성하거나 평가하는 것보다 훨씬 간편한 작업입니다. 인간은 단지 이진 선호도(binary preference)만 제공하면 됩니다. 우리는 이러한 선호도 피드백을 바탕으로 RM을 훈련할 수 있으며, 이는 보상(reward)을 명시적으로 지정하지 않고도 강화 학습 훈련을 위한 보상을 효과적으로 도출할 수 있게 합니다. 이러한 접근 방식은 인간의 피드백을 LLM 훈련에 유연하고 효율적으로 통합하는 혁신적인 방법을 제공합니다.
+
+**Best-of-N 샘플링(sampling)을 위한 RM 활용(Using an RM to perform Best-of-N sampling)**
+(Image showing Best-of-N sampling with RM)
+
+**RM의 다양한 활용 사례.** 강화 학습 훈련에서의 역할 외에도 보상 모델은 여러 다른 유용한 활용 사례를 가지고 있습니다. 예를 들어, RM은 일반적으로 i) Best-of-N 샘플링(sampling) 및 추론 시간 성능 향상(inference-time scaling)(위 참조), ii) 모델 평가(evaluation), iii) 거부 샘플링(rejection sampling), iv) 데이터 필터링(data filtering) 등에 사용됩니다. Best-of-N 샘플링에서는 LLM이 여러 후보 응답을 생성한 후 RM이 가장 높은 점수를 받은 응답을 선택하여 최종 출력으로 제공함으로써 모델의 품질을 향상시킵니다. 거부 샘플링은 낮은 RM 점수를 받은 응답을 사전에 필터링하여 부적절하거나 유해한 내용을 줄이는 데 사용될 수 있습니다. 이러한 다양한 사용 사례에도 불구하고, 우리는 보통 RM의 성능을 다음 기준들을 기반으로 평가합니다.
+
+*   **정확도(Accuracy)**: 주어진 쌍에서 더 선호되는 응답을 RM이 얼마나 정확하게 식별하는지.
+*   **다운스트림 성능(Downstream performance)**: 특정 RM으로 강화 학습 미세 조정(finetuned)된 LLM이 실제 태스크에서 보이는 성능.
+*   **추론 시간 스케일링(Inference-time scaling)**: Best-of-N 샘플링 파이프라인에서 특정 RM을 사용하여 얻어지는 성능 향상(Performance boost)의 정도.
+이러한 다면적인 평가를 통해 RM의 진정한 가치를 판단할 수 있습니다.
+
+**현실 세계에서의 보상 모델(Reward Models in Practice)**
+
+이제 보상 모델(RM)에 대한 기본적인 이해를 바탕으로, 이 분야의 최신 연구 동향을 살펴보겠습니다. 특히, RM의 효과를 객관적으로 평가하기 위해 개발된 벤치마크(benchmark)인 RewardBench [1]에 주목할 것입니다. 이 벤치마크는 다양한 시나리오에서 수백 가지의 RM을 평가하는 데 활용되었으며, 실제 환경에서 RM을 효과적으로 학습시키고 사용하는 데 귀중한 통찰력(takeaways)을 제공합니다. 최근에는 RewardBench의 개선된 버전인 RewardBench 2 [2]도 발표되어, 기존의 발견들을 최신 기술에 맞춰 확장하고 현대화했습니다.
+
+**Rewardbench: 언어 모델링을 위한 보상 모델 평가(Rewardbench: Evaluating Reward Models for Language Modeling) [1]**
+(출처: [1])
+(Image of RewardBench overview)
+
+보상 모델을 훈련하는 과정에는 수많은 실질적인 결정들이 수반됩니다. 예를 들어, 어떤 유형의 보상 모델을 선택할지, RM을 어떤 정책 모델로 초기화할지, 그리고 훈련 에포크(epoch) 수를 어떻게 설정할지 등입니다. 하지만 이러한 RM 생성의 실질적인 세부 사항들은 충분히 문서화되지 않는 경우가 많았습니다. [1]의 저자들은 이러한 문제점을 해결하기 위해 RM 평가의 표준 벤치마크인 RewardBench를 개발했습니다. RewardBench를 통해 광범위한 RM들을 평가함으로써, 우리는 다양한 실제적 선택들이 RM의 성능과 특정 RM으로 훈련된 다운스트림 LLM(downstream LLMs)의 성능 모두에 미치는 영향을 체계적으로 분석할 수 있습니다. 이 분석은 RM의 작동 원리에 대한 더 깊은 이해와 함께 고품질 RM을 구축하기 위한 모범 사례(best practices)를 정립하는 데 기여합니다. RewardBench는 RM 연구의 투명성을 높이고, 개발자들이 자신의 모델을 객관적으로 비교할 수 있는 기반을 마련했다는 점에서 큰 의미를 가집니다.
+
+"보상 모델(RM)은 사전 학습된 모델(pretrained models)을 인간의 선호도에 정렬(align)시키는 성공적인 RLHF의 핵심 요소이지만, 이러한 보상 모델의 평가에 초점을 맞춘 연구는 상대적으로 부족했습니다." - [8]에서
+
+**RewardBench의 정의.** RewardBench는 보상 모델(RM)의 평가를 위한 프레임워크(framework)이자 데이터셋(dataset)입니다. 이 공개적으로 이용 가능한(즉, 데이터 및 평가 코드 공개) 벤치마크는 [1]에서 현재 시점에서 사용 가능한 RM들의 성능 현황을 파악하는 데 활용됩니다(리더보드는 여기에서 확인 가능합니다). RewardBench는 다양한 역량(capabilities)에 걸쳐 RM에 대한 체계적인 평가를 제공함으로써, 특정 유형의 RM이 어떻게 그리고 왜 효과적으로 작동하는지에 대한 이해를 증진시킵니다.
+
+**RM 성능의 정량화.** RewardBench는 하나의 프롬프트(prompt)에 대해 두 가지 응답(하나의 선호되는 응답과 하나의 거부된 응답)이 쌍으로 구성된 데이터로 이루어져 있습니다. RM을 평가하기 위해, RM이 선호되는 응답을 정확히 식별할 수 있는지 여부를 간단히 테스트할 수 있습니다. 구체적으로, 이는 선택된 응답과 거부된 응답 모두에 대해 RM의 출력 점수를 계산한 다음, 이 점수들을 비교하는 방식으로 이루어집니다. RM의 "올바른" 작동 방식은 선호되는 응답에 더 높은 점수를 부여하는 것입니다(아래 참조). DPO 모델 또한 암묵적인 보상 추정치를 활용하여 이러한 방식으로 RM으로서 평가될 수 있습니다.
+
+**RewardBench에서 활용되는 채점 기법(Scoring technique used by RewardBench)**
+(Image showing RewardBench scoring)
+
+선호되는 응답을 올바르게 식별하는 이 능력은, 선택된 응답과 거부된 응답이 포함된 프롬프트 데이터셋에서 RM이 올바르게 출력한 횟수를 세는 정확도 지표(accuracy metric)를 통해 손쉽게 측정될 수 있습니다. 서로 다른 RM들을 비교하기 위해, 고정된 데이터셋에 대해 이 정확도 지표를 계산하여 상대적인 성능을 파악할 수 있습니다.
+
+(출처: [1])
+(Image showing RewardBench data composition)
+
+**데이터 구성(Data composition).** 보상 모델은 그 적용 분야에 따라 광범위하고 다양한 역량(capabilities)을 포괄해야 합니다. RM 성능에 대한 종합적인 관점(comprehensive view)을 제공하기 위해, RewardBench는 여러 다른 도메인(domains)에서 RM의 품질을 측정합니다(위 표에 요약됨).
+
+*   **채팅(Chat)**: RM이 일반적인 대화 응답의 품질을 구별하는 능력을 시험합니다.
+*   **어려운 채팅(Chat Hard)**: RM이 함정 질문(trick questions)이나 응답 간의 미묘한 차이(subtle differences)를 식별하는 복잡한 능력을 테스트합니다.
+*   **안전(Safety)**: 안전하지 않은 프롬프트(prompt)를 거부하고, 동시에 잘못된 거부를 방지하는 RM의 역량을 평가합니다.
+*   **추론(Reasoning)**: 좋은 코딩 및 추론 응답을 구별하는 RM의 능력을 측정합니다.
+*   **이전 데이터셋(Prior datasets)**: 이전 연구와의 일관성(consistency) 유지를 위해 기존의 선호도 데이터셋(preference datasets)(예: Anthropic의 HH 데이터셋, 스탠포드 인간 선호도 데이터셋, OpenAI의 요약 학습 데이터셋)도 포함됩니다.
+
+RewardBench의 각 범주 내에서 모델은 정확도(accuracy)를 기준으로 평가됩니다. 각 범주별 종합 점수(aggregate score)를 산출하기 위해 해당 범주 내 예시들의 가중 평균(weighted average)이 사용됩니다. 여러 도메인에 걸쳐 RM을 평가함으로써, 우리는 RM 성능에 대한 보다 세분화된 관점(granular view)을 얻을 수 있습니다. 특정 범주의 RM은 종종 일부 도메인에서는 뛰어난 성능을 보이지만, 다른 도메인에서는 그렇지 못한 경우가 있기 때문입니다.
+
+(출처: [1])
+(Image showing difficult preference examples)
+
+응답 품질의 미묘한 차이(subtle differences)를 파악하는 RM의 역량을 탐구하기 위해, 연구자들은 선택된 응답과 거부된 응답 사이에 아주 작은 차이만 존재하는 '어려운 선호도 예시'를 고안했습니다(위 예시 참조). 이상적으로는 RM이 이러한 미묘한 차이를 정확히 인지하고 안정적인 방식으로 선호되는 응답에 높은 점수를 부여할 수 있어야 합니다. 결과의 왜곡을 방지하기 위해, 연구자들은 RewardBench 내의 모든 응답 쌍이 유사한 길이(similar length)를 갖도록 세심하게 조절했습니다.
+
+(출처: [8])
+(Image showing empirical performance of top-20 RMs on RewardBench)
+
+**RM에 대한 심층 분석(Analysis of RMs).** [1]에서 검토된 총 50개 이상의 보상 모델(RM) 중, 상위 20개 RM의 실제 성능(empirical performance)은 위에 요약되어 있습니다. 이 RM들은 400M에서 70B 매개변수(parameters)에 이르는 다양한 크기를 가지며, 소형, 중형, 대형 그룹으로 분류됩니다. 이 모델들에 대한 주요 발견 사항은 다음과 같습니다.
+
+*   모든 RM에서 '어려운 채팅(Chat Hard)' 및 '추론(Reasoning)' 하위 집합에 대한 성능이 전반적으로 낮게 나타났으며, 이는 해당 영역에서의 개선 가능성을 시사합니다.
+*   오직 더 큰 규모의 RM만이 '어려운 채팅' 및 '추론' 하위 집합에서 일관되게 우수한 성능을 보였습니다.
+*   RM 구축 시 더 강력한 기반 모델(base model)을 활용하는 것이 유리합니다. 예를 들어, Llama-3 기반 5 RM은 RewardBench에서 뛰어난 성능을 입증했습니다.
+*   RM의 기반 모델에 대한 미세한 조정(예: 훈련 데이터(training data) 구성 또는 전략(strategy) 변경) 또한 RM 성능에 영향을 미칠 수 있습니다.
+*   모델 크기는 LLM-as-a-Judge 스타일 RM의 성능에 긍정적인 영향을 미치지만, 분류기 기반 RM(classifier-based RMs)은 여전히 눈에 띄게 더 나은 성능을 보여주었습니다. 이는 LLM-as-a-Judge 방식이 갖는 내재적인 한계점을 드러내는 결과일 수 있습니다.
+*   RM의 스케일링 특성(scaling properties)은 RM의 유형(예: 분류기 기반, DPO, LLM-as-a-Judge) 및 기반 모델(base model) 선택에 따라 상이하게 나타납니다. 예를 들어, 아래 표는 LLaMA-2 DPO 모델들이 크기 증가에 따라 RM 성능이 향상되는 반면, 분류기 기반 Qwen-1.5 RM은 그렇지 않은 사례를 보여줍니다.
+*   이전 평가 데이터셋(datasets)의 결과는 RewardBench의 결과와 일치하지 않는 경우가 많았으며, 이는 기존 벤치마크들이 성능을 포괄적으로 측정하지 못했을 가능성을 시사합니다. 예를 들어, DPO 모델들은 RewardBench에서 RM으로 평가될 때 좋은 성능을 보이지만, 과거 벤치마크에서는 어려움을 겪습니다.
+
+"Llama 2는 RewardBench의 모든 영역에서 스케일링에 따른 명확한 성능 개선을 보였지만, Qwen 1.5는 단조로운 개선(monotonic improvement)이 덜하며, 이는 분포 외 일반화(generalization) 문제에서 기인했을 가능성이 높습니다." - [1]에서
+
+(출처: [1])
+(Image showing scaling properties of LLaMA-2 DPO vs Qwen-1.5 RMs)
+
+**DPO 및 PPO 심층 분석: 선호도 피드백 학습을 위한 최적의 방법론 탐색 [13]**
+
+보상 모델(RM)에 대한 모범 사례(best practices)를 파악한 다음 단계는 이러한 통찰력을 활용하여 더욱 우수한 LLM을 훈련하는 것입니다. [13]의 저자들은 RewardBench에서 얻은 교훈을 적용하여 강화 학습(RL) 미세 조정(finetuning) 분야를 심도 있게 연구했습니다. 특히, 이 논문은 DPO와 PPO의 성능 비교에 초점을 맞추지만, 이 분석에는 RM을 생성하여 훈련에 사용되는 LLM의 다운스트림 성능(downstream performance)을 극대화하기 위한 수많은 실질적인 지침도 포함되어 있습니다.
+
+(출처: [13])
+(Image showing experimental results on data quality and RM size)
+
+**데이터 품질의 중요성.** [13]에서 제시된 핵심 실험 결과는 위에 요약되어 있습니다. 실험은 Anthropic의 HH RLHF 데이터셋(dataset)을 사용하여 DPO 모델을 훈련하는 것으로 시작됩니다. 이 데이터셋은 오래되고 노이즈가 많은 데이터셋으로 알려져 있습니다. 이 데이터를 통해 모델 성능이 향상되기는 하지만, 최신 고품질 선호도 데이터셋인 UltraFeedback으로 훈련했을 때 훨씬 더 큰 성능 향상이 나타났습니다. 동일한 데이터를 PPO로 훈련으로 전환할 때(즉, RM이 사용됨을 의미), 명확한 성능 향상이 관찰되었으며, 이는 명시적인 RM과 함께 PPO를 사용하는 것이 성능 면에서 다운스트림 이점(downstream benefit)을 제공함을 시사합니다. 그러나 이 이점은 더 나은 데이터 사용이 가져오는 영향에 비해 상대적으로 작다는 점에 유의해야 합니다. 이는 '데이터가 왕'이라는 격언이 RM 훈련에도 여전히 유효함을 보여줍니다.
+
+**더 큰 보상 모델의 효과.** PPO를 통한 훈련의 명확한 이점을 고려할 때, LLM이 더 큰 RM을 사용하는 것으로부터도 이점을 얻을 수 있는지 의문이 생길 수 있습니다. 이는 LLM 스케일링 법칙(scaling laws)을 고려할 때 직관적으로 타당해 보이지만, [13]의 관찰은 그리 간단하지 않습니다. RM의 크기를 13B에서 70B 매개변수(parameters)로 확장했을 때, 다운스트림 LLM 성능은 동일한 SFT 체크포인트(checkpoint)에서 초기화된 모델에서도 정체된(stagnant) 상태를 유지했습니다. 관찰 가능한 성능 이점은 오직 추론 도메인(reasoning domain)에서만 발생했으며, 이는 더 큰 RM의 이점이 더 큰 모델의 우수한 역량(capabilities)이 유용하거나 필수적인 시나리오에서만 명확하게 나타난다는 것을 시사합니다. 즉, 이러한 대규모 RM이 진정으로 유용하려면, 모델에 더 큰 도전 과제를 제시하는 복잡한 데이터가 필요하다는 결론을 내릴 수 있습니다.
+
+"더 큰 보상 모델을 효과적으로 활용하려면, 그 보상 모델의 능력을 시험할 만한 고난이도 데이터가 필수적입니다." - 출처
+
+**더 나은 데이터 + 더 큰 RM의 시너지.** 위에서 얻은 교훈들을 종합하여, [13]의 저자들은 보상 모델 훈련을 위해 코딩 및 추론 작업(tasks)에 중점을 둔 더 크고 복잡한 프롬프트(prompts) 세트를 수집하고, 대규모 RM이 실제로 유익한지 다시 검증했습니다. 이러한 실험 결과, RM 품질 향상의 명확한 긍정적 신호(signals)를 확인할 수 있었습니다. 예를 들어, 이처럼 개선된 대규모 RM은 아래 그림에서 볼 수 있듯이 Best-of-N 샘플링(sampling)에 적용될 때 현저한 성능 향상(boost in performance)을 가져왔습니다. 그러나 RewardBench 자체의 점수와 다운스트림 성능(downstream performance)을 종합적으로 고려할 때, 이러한 개선 효과는 상대적으로 덜 명확하게 나타났습니다.
+
+(출처: [13])
+(Image showing Best-of-N sampling performance with different RMs)
+
+간단히 말해, 단순히 더 크고 더 나은 RM을 사용하는 것이 해당 RM이 강화 학습 미세 조정(finetuning)에 활용될 때 LLM의 성능이 반드시 향상될 것이라는 직접적인 의미는 아닙니다. 실제로, [13]의 연구에서는 더 큰 RM을 사용했을 때 일부 도메인(domains)에서 오히려 성능 저하(performance regression)가 관찰되기도 했습니다. 이러한 발견들은 보상 모델의 평가를 매우 복잡한 문제로 만듭니다. 즉, RM의 정확도(accuracy)만을 측정하는 것만으로는 해당 RM이 실제 응용에서 얼마나 유용할지 온전히 이해하기 어렵다는 것을 의미합니다.
+
+**RewardBench 2: 보상 모델 평가의 진보(Advancing Reward Model Evaluation) [2]**
+
+(출처: [2])
+(Image of RewardBench 2 overview)
+
+최근에 소개된 RewardBench 2 [2] 6는 기존 RewardBench를 개선하여 보상 모델(RM) 평가를 더욱 실용적이고 유익하게 만드는 것을 목표로 합니다. 이 벤치마크는 LLM이 갖추어야 할 훨씬 더 광범위한 기술(skills)을 다루는 새로운 데이터를 포함하며, 이 벤치마크에서 RM들은 평균적으로 약 20점 더 낮은 점수를 받습니다. 이는 RewardBench 2가 훨씬 더 도전적인 평가 기준을 제시한다는 것을 의미합니다. 여전히 정확도 기반 접근 방식(accuracy-based approach)을 사용하여 RM을 평가하지만, RewardBench 2는 다운스트림 RM 사용(예: Best-of-N 샘플링용)과 명확한 상관관계를 보이며, 특정 RM이 강화 학습 미세 조정(finetuning)에 효과적일지 판단하는 데 중요한 교훈을 제공합니다.
+
+**RM 성능 측정 방식.** 선택된 응답과 거부된 응답을 단순히 구별하는 RM의 정확도(accuracy)를 측정하는 대신, RewardBench 2는 각 프롬프트(prompt)에 대해 네 가지 가능한 응답(하나의 선택된 응답과 세 개의 거부된 응답)을 제시합니다. 이 응답들 중에서 RM은 선택된 응답에 모든 거부된 응답보다 더 높은 점수를 부여해야 합니다(아래 참조). 이러한 '4개 중 최고(best-of-4)' 접근 방식(approach)은 초기 RewardBench와 마찬가지로 정확도 기반이지만, 훨씬 더 높은 난이도를 가지며, 강력한 RM의 성능조차 무작위 기준선(random baseline)(즉, 25% 정확도)에 더 가깝게 만듭니다.
+
+(출처: [2])
+(Image showing RewardBench 2 scoring technique)
+
+또한, RewardBench 2는 다음 두 가지 경우에 LLM의 성능을 측정함으로써 단순 정확도 기반 평가를 뛰어넘습니다.
+
+*   특정 RM이 Best-of-N 샘플링(sampling)에 활용될 때.
+*   특정 RM이 RL 훈련(training)에 사용될 때.
+
+이러한 확장된 평가 덕분에, 우리는 RM의 품질을 파악하는 것을 넘어, 이 품질이 추론 시간 스케일링(inference-time scaling) 및 강화 학습 훈련에 사용될 때 다운스트림 성능(downstream performance)에 미치는 영향을 직접적으로 관찰할 수 있습니다. 다른 벤치마크(benchmarks)와 비교했을 때, 이 평가 과정은 매우 포괄적이고 실제 적용에 대한 통찰력을 제공합니다(아래 참조).
+
+(출처: [2])
+(Image comparing RewardBench 2 evaluation with other benchmarks)
+
+**데이터 구성(Data composition).** RewardBench 2는 RM을 평가할 때 6가지 다른 도메인(domains) 또는 역량(capabilities)에 중점을 둡니다. 이 도메인들 중 3가지(집중, 수학, 안전)는 기존 벤치마크(benchmarks)와 겹치지만, 나머지 3가지(사실성, 정확한 명령어 따르기, 동점(ties)(즉, 동등하게 유효한 답변을 처리하는 RM의 능력 테스트))는 보상 모델에 완전히 새로운 도전 과제를 제시합니다.
+
+"이 벤치마크는 WildChat 파이프라인(pipeline)에서 이전에 사용되지 않은 대부분의 인간 프롬프트(prompts)를 활용하여 광범위한 수동, 프로그래밍 방식 및 LM 기반 필터링 기술(filtering techniques)을 통해 생성되었습니다." - [2]에서
+
+RewardBench 2는 실제 사용자로부터 수집된 ChatGPT 로그 데이터셋(dataset)인 WildChat에서 주로 샘플링된, 이전에 공개되지 않은 인간 작성 프롬프트(prompts)를 사용합니다. 데이터 오염(data contamination)의 위험 때문에 이전에 보지 못한 프롬프트(prompts)를 사용하는 것이 매우 중요합니다. 데이터가 오염 7되면, 동일한 데이터가 훈련과 평가 모두에 사용되어 RM 벤치마크가 다운스트림 성능과 인위적으로 높은 상관관계(highly correlated)를 보일 수 있기 때문입니다. 상관관계의 정당성을 확보하려면 데이터를 오염 제거하고 데이터 유출(leakage)을 방지해야 합니다. 이 목표를 달성하기 위해 [2]의 저자들은 다음을 포함하는 다단계 데이터 큐레이션 파이프라인(data curation pipeline)을 채택했습니다.
+
+*   WildChat에서 이전에 노출되지 않은 인간 작성 프롬프트 확보.
+*   수동 검토 및 분류기(classifiers)(예: QuRater 및 도메인 분류기)를 사용하여 각 프롬프트의 도메인 및 품질 식별.
+*   다운스트림 평가 데이터셋과의 중복이 거의 없도록 광범위한 데이터 오염 제거 작업 수행.
+*   남아있는 프롬프트 중에서 최적의 프롬프트들을 수동으로 선별.
+*   최신 LLM의 역량(capabilities)을 정확하게 반영하는 다양한 소스에서 각 프롬프트에 대한 응답(completions) 샘플링.
+*   LLM-as-a-Judge, 자동 검증기(automatic verifiers), 다수결 투표(majority voting) 등 다양한 신호를 활용하여 정확성을 기반으로 응답들을 필터링.
+
+RewardBench 2를 위해 생성된 최종 데이터셋의 세부 사항과 이 데이터셋의 각 구성 요소가 생성되는 방법은 아래에 요약되어 있습니다. 최종 벤치마크 점수를 도출하기 위해 각 도메인(domain)에서 RM 성능 8의 비가중 평균(unweighted average)을 계산합니다.
+
+(출처: [2])
+(Image showing RewardBench 2 dataset composition)
+
+**RewardBench 2의 성능 분석.** RewardBench 2는 [2]에서 100개 이상의 다양한 보상 모델(RM)을 평가하는 데 활용되었습니다. 상위 20개 모델의 성능은 아래 표에 제시되어 있습니다. 이 새로운 벤치마크에서 전반적인 점수가 더 낮게 나타났을 뿐만 아니라, Gemini 및 Claude와 같은 기반 모델(foundation model) 기반의 LLM-as-a-Judge 모델들이 매우 우수한 성능을 보였다는 점이 주목할 만합니다. 이러한 관찰 결과는 기반 모델들의 향상된 역량(capabilities)과 일치하지만, LLM-as-a-Judge 모델들이 분류기 기반 RM보다 일관되게 낮은 성능을 보였던 초기 RewardBench의 결과와는 극명한 대조(stark contrast)를 이룹니다. 이는 LLM의 발전이 평가 모델 자체의 성능에도 영향을 미치고 있음을 보여줍니다.
+
+(출처: [2])
+(Image showing RewardBench 2 performance of top-20 RMs)
+
+[2]의 저자들은 또한 다양한 기반 모델(base models) 및 하이퍼파라미터(hyperparameter) 설정을 사용하여 다양한 자체 RM을 훈련했으며, RM을 초기화하는 데 사용된 기반 모델(base model)이 RM에 명확하게 영향을 미친다는 것을 발견했습니다. 즉, 기반 모델(base model)에 있는 기술(skills)이 RM으로 이전됩니다. 모델 계열, 훈련 데이터(training data) 혼합, 사용된 훈련(training) 방식 또는 후처리 훈련(post-training) 단계와 같은 요소는 도메인(domains) 전반에 걸쳐 RM의 성능에 명확하게 영향을 미칩니다. 또한, [2]의 저자들은 일반적인 1 에포크(epoch) 대신 2 에포크(epochs) 동안 RM을 훈련하는 것이 유익할 수 있음을 발견했습니다.
+
+**다운스트림 성능(Downstream performance)과의 관계.** 마지막으로, [2]의 RM 분석은 추론 시간 스케일링(inference-time scaling) 및 RL 훈련(training) 시나리오까지 확장됩니다. 놀랍게도, RewardBench 2의 성능은 Best-of-N 샘플링(sampling)과 매우 높은 상관관계(highly correlated)를 보였습니다. 이는 정확한 보상 모델이 후보 응답 세트(candidate set) 내에서 최상의 완성(completions)을 효과적으로 식별할 수 있음을 의미합니다. RewardBench 2 점수와 RL 훈련 시의 다운스트림 성능(downstream performance) 간의 상관관계는 다소 덜 명확하지만, [2]의 저자들은 RL 훈련에서 RM의 성공에 영향을 미치는 한 가지 핵심 요소(key factor)를 식별했습니다. 그것은 바로 훈련 중인 RM과 정책 모델(policy)이 동일한 모델 계보(model lineage)에서 파생되었는지 여부입니다. 다시 말해, 우리는 다음을 관찰할 수 있었습니다.
+
+*   RM 벤치마크에서 높은 점수는 강화 학습 훈련에서 높은 다운스트림 성능을 달성하기 위한 필요 조건(필요하지만 충분하지는 않음)이지만, RM 품질이 일정 수준 이상으로 향상되면 다운스트림 성능은 빠르게 포화됩니다 9. 이는 RM의 품질 향상이 특정 지점 이후에는 다운스트림 성능에 미치는 영향이 줄어든다는 것을 시사합니다.
+*   강화 학습 훈련을 위한 정책 모델과 RM의 기반 모델 간의 불일치(misalignment) — 또는 강화 학습 훈련에 사용된 프롬프트(prompts) 분포와 RM 훈련에 사용된 프롬프트 분포 간의 불일치 — 는 다운스트림 성능의 상당한 하락을 초래합니다. 이는 모델 계보의 일관성과 데이터 분포의 중요성을 강조합니다.
+
+이러한 발견들을 바탕으로, [2]의 저자들은 아래 인용문에서 요약된 RM 훈련에 대한 최종 권장 사항을 제시하며 연구를 마무리합니다.
+
+"이러한 발견은 보상 모델 평가 벤치마크(benchmarks)를 활용할 때 신중을 기해야 함을 시사합니다. 벤치마크는 Best-of-N 샘플링(sampling)과 같은 특정 환경에서 즉시 사용 가능한 보상 모델을 선택하는 데 유용한 가이드 역할을 할 수 있지만... PPO와 같은 정책 기울기 알고리즘(policy-gradient algorithms)의 경우, 벤치마크 결과는 각자의 훈련 설정(training setup) 맥락에서 고려되어야 합니다. 단순히 RewardBench 2에서 최고 성능 모델을 선택하는 것을 넘어, 우리는 해당 모델의 '레시피'를 파악하여 체크포인트(checkpoint) 자체보다는 특정 워크플로우(workflow)에 통합하는 것이 중요함을 보여줍니다." - [2]에서
+
+**결론**
+
+보상 모델(RM)은 대규모 언어 모델(LLM) 연구에서 가장 강력하고 유연한 도구 중 하나로 확고히 자리매김했습니다. 우리가 살펴보았듯이, 표준적인 분류기 기반 RM(classifier-based RM) 외에도 다양한 스타일의 RM이 존재하며, 효과적인 RM을 구축하는 것은 수많은 실질적인 고려 사항들의 총체적인 결과입니다. 또한, RM 생성에 대한 올바른 선택은 Best-of-N 샘플링과 같은 적용 분야와 강화 학습 미세 조정(finetuning)과 같은 목적에 따라 달라집니다. 본 개요에서는 브래들리-테리(Bradley-Terry)와 같은 기본적인 통계 모델(statistical models)에서 시작하여 대규모 LLM 기반 RM 훈련에 이르기까지, 보상 모델에 대한 포괄적인 이해를 구축했습니다. LLM을 위한 대규모 강화 학습 훈련에 대한 관심이 더욱 집중됨에 따라, 보상 모델에 대한 연구는 빠르게 진화할 것이며, 인공지능 분야에서 그 역할은 더욱 중추적(pivotal role)이 될 것입니다. 미래에는 RM이 단순히 선호도를 예측하는 것을 넘어, 모델의 안전성, 견고성, 그리고 설명 가능성(explainability)을 높이는 데 더욱 기여할 것으로 기대됩니다.
+
+**뉴스레터가 처음이신가요?**
+안녕하세요! 저는 Cameron R. Wolfe입니다. 딥러닝(Deep Learning) 박사이자 넷플릭스(Netflix)의 선임 연구 과학자입니다. 이것은 독자들이 AI 연구의 중요한 주제를 더 잘 이해하도록 돕는 Deep (Learning) Focus 뉴스레터입니다. 뉴스레터는 항상 무료이며 공개적으로 읽을 수 있습니다. 뉴스레터가 마음에 드시면 구독하거나, 유료 구독을 고려하거나, 공유하거나, X 및 LinkedIn에서 저를 팔로우해주세요! 구독하기
+
+**참고문헌(Bibliography)**
+[1] Lambert, Nathan, et al. "Rewardbench: Evaluating reward models for language modeling." arXiv preprint arXiv:2403.13787 (2024).
+[2] Malik, Saumya, et al. "RewardBench 2: Advancing Reward Model Evaluation." arXiv preprint arXiv:2506.01937 (2025).
+[3] Ouyang, Long, et al. "Training language models to follow instructions with human feedback." Advances in neural information processing systems 35 (2022): 27730-27744.
+[4] Lambert, Nathan, et al. "T\" ulu 3: Pushing frontiers in open language model post-training." arXiv preprint arXiv:2411.15124 (2024).
+[5] OpenAI et al. “Learning to Reason with LLMs.” https://openai.com/index/learning-to-reason-with-llms/ (2024).
+[6] Rafailov, Rafael, et al. "Direct preference optimization: Your language model is secretly a reward model." Advances in Neural Information Processing Systems 36 (2023): 53728-53741.
+[7] Guo, Daya, et al. "Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning." arXiv preprint arXiv:2501.12948 (2025).
+[8] Bai, Yuntao, et al. "Training a helpful and harmless assistant with reinforcement learning from human feedback." arXiv preprint arXiv:2204.05862 (2022).
+[9] Zheng, Lianmin, et al. "Judging llm-as-a-judge with mt-bench and chatbot arena." Advances in Neural Information Processing Systems 36 (2023): 46595-46623.
+[10] Bai, Yuntao, et al. "Constitutional ai: Harmlessness from ai feedback." arXiv preprint arXiv:2212.08073 (2022).
+[11] Zheng, Lianmin, et al. "Judging llm-as-a-judge with mt-bench and chatbot arena." Advances in Neural Information Processing Systems 36 (2023): 46595-46623.
+[12] Cobbe, Karl, et al. "Training verifiers to solve math word problems." arXiv preprint arXiv:2110.14168 (2021).
+[13] Ivison, Hamish, et al. "Unpacking dpo and ppo: Disentangling best practices for learning from preference feedback." Advances in neural information processing systems 37 (2024): 36602-36633.
+[14] Stiennon, Nisan, et al. "Learning to summarize with human feedback." Advances in neural information processing systems 33 (2020): 3008-3021.
+
+1.  때로는 프롬프트(prompt)당 두 개 이상의 후보 완성(candidate completions)이 있을 수 있습니다. 이 경우, 선호도는 완성(completion)의 선호도 측면에서 순위를 매겨 포착됩니다. 그러나 최근 연구에서는 이진 선호도 데이터(binary preference data)가 더 일반적으로 사용됩니다.
+2.  여기서 우리는 현재 훈련 중인 LLM을 지칭하기 위해 정책(policy)이라는 용어를 사용합니다. 이는 강화 학습(reinforcement learning)에서 사용되는 표준 용어(terminology)입니다. 여기를 참조하십시오.
+3.  실제로 이 시퀀스(sequences)는 모든 선택된 시퀀스(chosen sequences) 및 거부된 시퀀스(rejected sequences)에 대한 프롬프트(prompt)와 완성(completion) 모두가 될 것입니다. 여기서는 단순화를 위해 명확한 프롬프트(prompt) 또는 완성(completion) 구조가 없는 평면 텍스트 시퀀스(textual sequences)만 있습니다.
+4.  그러나 LLM 훈련(training)에 사용되는 정책 기울기 알고리즘(policy gradient algorithms)에는 PPO, REINFORCE, GRPO 등 다양한 변형이 있으며, 각각의 이점(benefits)이 있습니다.
+5.  작성 시점에 Llama-3는 사용 가능한 최고의 오픈소스 모델(open-source model)이었습니다.
+6.  이 벤치마크(benchmark)에는 데이터, 리더보드(leaderboard) 및 광범위한 기술 보고서(technical report)가 함께 제공됩니다!
+7.  데이터 오염(Data contamination)은 훈련 세트(training set)에 데이터가 존재하여 나중에 동일한 모델을 평가하는 데 사용될 수 있다는 아이디어를 의미합니다. 상관관계가 합법적인지 확인하려면 데이터를 오염 제거하고 유출을 방지해야 합니다.
+8.  성능은 동점(ties)을 제외한 모든 도메인(domains)에서 정확도(accuracy)로 측정되며, 동점(ties)에서는 올바른 예시와 잘못된 예시 사이의 올바른 마진(margin)을 확인합니다.
+9.  이는 [13]의 결과와 일치하며, 다양한 강점의 RM이 RL 훈련(training)에 사용될 때 모두 비교적 잘 수행됨을 알 수 있습니다.

@@ -1,0 +1,21 @@
+{
+  "post_id": "114",
+  "title": "AI 기업들, 당신의 영혼을 훔치려 자신들의 영혼을 팔아넘겼다",
+  "base_word_count": 1862,
+  "exact_30_update_wc": 1280,
+  "exact_30_ground_truth_wc": 1814,
+  "exact_30_overlap_ratio": 1.038,
+  "paraphrase_25_update_wc": 1660,
+  "paraphrase_25_ground_truth_wc": 1660,
+  "paraphrase_25_overlap_ratio": 1.122,
+  "fragment_20_update_wc": 930,
+  "fragment_20_ground_truth_wc": 1399,
+  "fragment_20_overlap_ratio": 1.498,
+  "semantic_25_update_wc": 2116,
+  "semantic_25_ground_truth_wc": 2116,
+  "semantic_25_overlap_ratio": 0.88,
+  "mixed_real_update_wc": 1548,
+  "mixed_real_ground_truth_wc": 1545,
+  "mixed_real_overlap_ratio": 1.205,
+  "status": "generated"
+}

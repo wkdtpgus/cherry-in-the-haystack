@@ -1,0 +1,36 @@
+# **LWiAI 팟캐스트 #218 - 깃허브 스파크, 메가사이언스, 미국 AI 행동 계획**
+
+Author: Last Week in AI
+URL: https://lastweekin.ai/p/lwiai-podcast-218-github-spark-megascience
+
+============================================================
+
+지난주 주요 AI 뉴스 요약 및 토론을 담은 218번째 에피소드입니다! 2025년 7월 25일 녹화. 추신. Andrey의 스타트업이 astrocade.com에서 드디어 제품을 출시했습니다. 확인해보세요! Andrey Kurenkov와 Jeremie Harris가 진행합니다. contact@lastweekinai.com 및/또는 hello@gladstone.ai로 질문과 피드백을 자유롭게 보내주세요.
+
+이번 에피소드에서는 GitHub이 Spark를 통한 바이브 코딩(Vibe Coding)을 도입하여, 자연어와 시각적 제어를 통해 사용자들이 풀스택 애플리케이션(full-stack applications)을 개발할 수 있도록 돕습니다. 제미니 CLI(Gemini CLI)와 리플릿(RepliIt)의 AI 코딩 도구는 사용자 데이터를 실수로 삭제하는 등 심각한 문제에 직면하여 신중한 관리의 중요성을 강조합니다. 미국은 AI 기술 리더십 유지를 위한 경제, 기술, 정책 전략을 담은 AI 액션 플랜(AI Action Plan)을 발표합니다. 새로 공개된 메가 사이언스(Mega Science) 및 SWE-Perf 데이터셋(data sets)은 다양한 과학 및 소프트웨어 공학 작업에서 AI의 추론 및 성능 능력을 평가합니다.
+
+타임스탬프 + 링크:
+(00:00:10) 소개 / 잡담
+(00:01:31) 뉴스 미리보기
+**도구 및 앱(Tools & Apps)**
+(00:03:53) GitHub, Spark를 통한 바이브 코딩(Vibe Coding) 도입: 지능형 앱 개발을 순식간에 혁신 - MarkTechPost
+(00:07:05) Figma의 AI 앱 구축 도구, 이제 모두에게 공개 | The Verge
+(00:10:18) 두 가지 주요 AI 코딩 도구, 연쇄적인 실수로 사용자 데이터 삭제 - Ars Technica
+(00:14:10) Google의 AI 개요(AI Overviews), 월간 사용자 20억 명, 미국 및 인도에서 AI 모드(AI Mode) 1억 명 기록 | TechCrunch
+**애플리케이션 및 비즈니스(Applications & Business)**
+(00:18:10) 유출된 메모: Anthropic CEO, 결국 걸프 국가 투자 추진할 것이라고 밝혀
+(00:24:39) 미라 무라티, 그녀의 스타트업 Thinking Machines가 '몇 달 내'에 '상당한 오픈 소스 요소'를 포함한 신제품을 출시할 것이라고 밝혀
+(00:27:07) Waymo, Tesla의 농담에 더 큰 오스틴 로보택시(robotaxi) 지도로 응답 | The Verge
+**프로젝트 및 오픈 소스(Projects & Open Source)**
+(00:32:05) 메가사이언스(MegaScience): 과학적 추론을 위한 후학습 데이터셋(Post-Training Datasets)의 한계 확장
+(00:43:09) TikTok 연구원들, SWE-Perf 소개: 저장소 수준 코드 성능 최적화를 위한 최초의 벤치마크(Benchmark) - MarkTechPost
+**연구 및 발전(Research & Advancements)**
+(00:47:17) 잠재 학습(Subliminal Learning): 언어 모델(Language models)이 데이터 내 숨겨진 신호를 통해 행동 특성 전달
+(00:55:34) 테스트 시간 연산(Test-Time Compute)에서의 역 스케일링(Inverse Scaling)
+(01:02:34) 최적 데이터 혼합(Optimal Data Mixtures)을 위한 스케일링 법칙(Scaling Laws)
+**정책 및 안전(Policy & Safety)**
+(01:07:35) 백악관, 미국의 AI 액션 플랜(AI Action Plan) 공개
+(01:16:55) 사고의 사슬 모니터링 가능성(Chain of Thought Monitorability): AI 안전을 위한 새롭고 취약한 기회
+(01:20:20) 자기 보존 또는 지시 모호성? 종료 저항의 원인 조사
+(01:24:00) 사람들이 'ChatGPT 정신병(ChatGPT Psychosis)'에 빠진 후 비자발적으로 입원, 구금되고 있어
+(01:28:03) Meta, EU의 AI 행동 강령(AI code of practice) 서명 거부

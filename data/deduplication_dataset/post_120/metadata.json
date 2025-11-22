@@ -1,0 +1,21 @@
+{
+  "post_id": "120",
+  "title": "**나는 AI 산업이 끊임없이 잘못 묘사되고 있어서 기쁘다**",
+  "base_word_count": 1538,
+  "exact_30_update_wc": 713,
+  "exact_30_ground_truth_wc": 1635,
+  "exact_30_overlap_ratio": 0.864,
+  "paraphrase_25_update_wc": 1541,
+  "paraphrase_25_ground_truth_wc": 1541,
+  "paraphrase_25_overlap_ratio": 0.998,
+  "fragment_20_update_wc": 1076,
+  "fragment_20_ground_truth_wc": 1663,
+  "fragment_20_overlap_ratio": 0.884,
+  "semantic_25_update_wc": 982,
+  "semantic_25_ground_truth_wc": 1311,
+  "semantic_25_overlap_ratio": 1.231,
+  "mixed_real_update_wc": 1309,
+  "mixed_real_ground_truth_wc": 1309,
+  "mixed_real_overlap_ratio": 1.175,
+  "status": "generated"
+}

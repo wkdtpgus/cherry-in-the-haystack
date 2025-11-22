@@ -1,0 +1,412 @@
+이번 최신 블로그 게시물에서는 최근 언어 모델(LLM) 분야의 중요한 발전, 특히 추론 능력(reasoning capability) 강화에 초점을 맞춰 심층적으로 다루고자 합니다.
+
+최근 몇 달간 GPT-4.5나 Llama 4와 같은 최신 주력 모델(leading models)들이 공개되었지만, 시장의 반응은 예상보다 차분했습니다. 이러한 현상의 근본적인 원인은 무엇일까요? 아마도 이 모델들이 여전히 전통적인 학습 방식(traditional training paradigms)에 머물러 있기 때문일 수 있습니다. 이는 즉, 추론 능력(reasoning abilities) 강화를 위한 별도의 명시적 강화 학습(explicit reinforcement learning) 과정 없이 개발되었다는 점을 의미합니다. 반면, xAI나 Anthropic과 같은 선두 주자들은 모델에 더욱 정교한 추론 기능(advanced reasoning functionalities)을 통합하는 데 주력하고 있습니다. 예를 들어, xAI의 Grok과 Anthropic의 Claude 인터페이스는 이제 특정 모델의 추론 활성화를 위한 "사고(thinking)" 또는 "확장된 사고(extended thinking)" 스위치를 제공합니다. 이처럼 GPT-4.5 및 Llama 4 모델에 대한 소극적인 반응은 단순히 모델의 규모와 데이터 양을 늘리는 것만으로는 성능 향상에 한계가 있음을 시사합니다. 하지만 OpenAI가 최근 선보인 o3 추론 모델(reasoning model)은 전략적으로 컴퓨팅 자원(compute)을 활용하고, 특히 추론 작업에 특화된 강화 학습(reinforcement learning) 방식을 적용할 경우 상당한 개선의 여지가 있음을 명확히 보여주었습니다. (최근 라이브스트림(livestream)에서 OpenAI 직원에 따르면, o3는 o1 대비 훈련 컴퓨팅 자원(training compute)을 10배 더 많이 사용했습니다.) 출처: OpenAI 라이브스트림(https://openai.com/live/) (2025년 4월 16일)
+
+추론 자체가 모든 문제의 만능 해결책(universal solution)은 아니지만, 복잡한 과제에서 모델의 정확도와 문제 해결 능력을 꾸준히 향상시키는 데 기여합니다. 저는 미래 LLM 파이프라인(pipeline)에서 추론 중심의 후처리 훈련(post-training)이 표준적인 접근 방식(standard practice)이 될 것이라고 예상합니다. 그러므로 이 글에서는 강화 학습(reinforcement learning)을 통한 추론 능력(reasoning) 개발의 최신 동향을 탐구할 것입니다. 이 문서는 추론 모델(reasoning model)을 개발하고 개선하는 데 활용되는 강화 학습(reinforcement learning) 훈련 방식에 초점을 맞춥니다. 내용이 다소 길어질 수 있으므로, 아래에 목차(Table of Contents)를 제공합니다. 목차를 통해 원하는 섹션으로 이동하려면 웹 보기(web view)의 왼쪽 슬라이더(slider)를 활용하십시오.
+
+*   추론 모델(reasoning model)의 본질 파악하기
+*   RLHF의 기본 개념: 모든 진화의 시작점
+*   PPO 심층 분석: 강화 학습의 핵심 기법
+*   RL 알고리즘의 스펙트럼: PPO에서 GRPO까지
+*   RL 보상 모델링(reward modeling)의 진화: RLHF에서 RLVR로
+*   DeepSeek-R1 추론 모델(reasoning model)의 훈련 과정 해부
+*   최신 RL 연구 논문에서 얻은 추론 모델(reasoning model) 훈련의 교훈
+*   추론 모델(reasoning model) 훈련 관련 주목할 만한 연구 논문
+
+팁: 추론의 기초, RL, PPO, GRPO에 이미 익숙하시다면, 최신 추론 연구 논문에서 얻은 핵심 통찰력을 요약한 "최신 RL 연구 논문에서 얻은 추론 모델(reasoning model) 훈련의 교훈" 섹션으로 바로 넘어가셔도 좋습니다.
+
+### 추론 모델(reasoning model)의 본질 파악하기
+
+가장 핵심적인 질문은 물론 추론(reasoning)이란 무엇인가 하는 정의입니다. 간단히 설명하자면, 추론은 대규모 언어 모델(LLM)이 복잡한 작업을 보다 효율적으로 처리하도록 돕는 추론(inference) 및 훈련 기술의 집합을 일컫습니다. 이러한 능력이 현재까지 어떻게 구현되는지 좀 더 자세히 설명하기 위해, 저는 추론을 다음과 같이 정의하고자 합니다:
+
+LLM의 맥락에서 추론(reasoning)은 최종 결과물을 제시하기 전에 모델이 중간 단계(intermediate step)들을 생성해내는 역량을 의미합니다. 이는 흔히 사고의 연쇄(chain-of-thought, CoT) 추론(reasoning)으로 설명되는 과정입니다. CoT 추론(reasoning) 방식을 통해 LLM은 결론에 도달하기까지의 과정을 명시적으로 보여주는 구조화된 일련의 진술이나 계산 단계를 생성합니다.
+
+그리고 아래에는 정의와 함께 그림이 있습니다.
+
+LLM이 다단계 추론 작업(multi-step reasoning task)을 어떻게 처리할 수 있는지에 대한 간략한 그림입니다. 단순히 사실을 기억하는 대신, 모델은 올바른 결론에 도달하기 위해 여러 중간 추론 단계(intermediate reasoning step)를 결합해야 합니다. 중간 추론 단계(intermediate reasoning step)는 구현에 따라 사용자에게 표시될 수도 있고 표시되지 않을 수도 있습니다.
+
+만약 추론 모델(reasoning model)이 생소하고 더 포괄적인 안내를 원하신다면, 제 이전 글들을 참고하시길 권합니다:
+
+First Look at Reasoning From Scratch: Chapter 1
+Sebastian Raschka, PhD · Mar 29
+전체 스토리 읽기
+
+Understanding Reasoning LLMs
+Sebastian Raschka, PhD · Feb 5
+전체 스토리 읽기
+
+이제 이 섹션의 서두에서 암시했듯이, LLM의 추론 능력(reasoning capability)은 OpenAI 블로그 게시물의 그림에서 잘 설명된 두 가지 방식으로 증진될 수 있습니다:
+
+정확도 개선은 훈련 증가 또는 테스트 시점 컴퓨팅(test-time compute)을 통해 달성될 수 있으며, 여기서 테스트 시점 컴퓨팅(test-time compute)은 추론 시점 컴퓨팅(inference-time compute) 및 추론 시점 스케일링(inference-time scaling)과 동의어입니다.
+
+출처: OpenAI 블로그 게시물(https://openai.com/index/learning-to-reason-with-llms/)의 주석이 달린 그림
+
+제 이전 글:
+
+The State of LLM Reasoning Model Inference
+Sebastian Raschka, PhD · Mar 8
+전체 스토리 읽기
+
+에서는 테스트 시점 컴퓨팅(test-time compute) 방식에만 집중했습니다. 이 글에서는 마침내 훈련 방법(training method)을 더 상세히 살펴보고자 합니다.
+
+### RLHF의 기본 개념: 모든 진화의 시작점
+
+추론 모델(reasoning model)을 구축하고 개선하는 데 활용되는 강화 학습(reinforcement learning, RL) 훈련 방법은 기존 LLM을 개발하고 정렬(align)하는 데 사용되는 인간 피드백 기반 강화 학습(reinforcement learning with human feedback, RLHF) 방법론과 깊은 연관이 있습니다. 따라서 RL 기반 훈련에 기반한 추론(reasoning)에 특화된 수정 사항을 논의하기 전에, RLHF가 어떻게 작동하는지에 대한 간략한 개요부터 시작하고자 합니다.
+
+기존 LLM은 일반적으로 3단계 훈련 절차를 거칩니다:
+*   사전 학습(Pre-training)
+*   지도 미세 조정(Supervised fine-tuning)
+*   정렬(Alignment) (일반적으로 RLHF를 통해)
+
+LLM 정렬(alignment)의 "원조" 방법인 RLHF는 최초의 ChatGPT 모델 개발 과정을 설명한 InstructGPT 논문 이후 LLM 개발의 표준 레퍼토리(repertoire)에 포함되었습니다. RLHF의 본래 목표는 LLM을 인간의 선호도에 맞춰 정렬(align)하는 것입니다. 예를 들어, 특정 프롬프트(prompt)에 대해 LLM이 여러 답변을 생성할 경우, RLHF는 LLM이 사용자가 선호하는 답변 스타일을 더 많이 생성하도록 유도합니다. (종종 RLHF는 LLM의 안전성 조정(safety-tune)에도 활용됩니다: 민감한 정보 공유 방지, 욕설 사용 방지 등.)
+
+RLHF가 처음이시라면, 몇 년 전 제가 했던 강연에서 RLHF를 5분 이내로 설명하는 발췌본이 있습니다:
+
+Alternatively, the paragraphs below describe RLHF in text form.
+
+RLHF 파이프라인(pipeline)은 사전 학습(pre-trained)된 모델을 가져와 지도 방식(supervised fashion)으로 미세 조정(fine-tune)합니다. 이 미세 조정(fine-tuning)은 아직 RL 부분이 아니지만 주로 전제 조건입니다. 그런 다음 RLHF는 근접 정책 최적화(Proximal Policy Optimization, PPO)라는 알고리즘을 사용하여 LLM을 추가로 정렬(align)합니다. (PPO 대신 사용할 수 있는 다른 알고리즘도 있지만, PPO가 RLHF에서 원래 사용되었고 오늘날에도 가장 인기 있는 알고리즘이기 때문에 특별히 PPO를 언급했습니다.)
+
+간단히 말해, 우리는 RLHF 파이프라인(pipeline)을 세 가지 개별 단계로 살펴봅니다:
+*   RLHF 1단계 (전제 조건): 사전 학습(pre-trained)된 모델의 지도 미세 조정(Supervised fine-tuning, SFT)
+*   RLHF 2단계: 보상 모델(reward model) 생성
+*   RLHF 3단계: 근접 정책 최적화(Proximal Policy Optimization, PPO)를 통한 미세 조정(fine-tuning)
+
+아래에 표시된 RLHF 1단계는 추가 RLHF 미세 조정(fine-tuning)을 위한 기본 모델(base model)을 생성하는 지도 미세 조정(supervised fine-tuning) 단계입니다.
+
+InstructGPT 논문의 주석이 달린 그림, https://arxiv.org/abs/2203.02155
+
+RLHF 1단계에서는 프롬프트(prompt)를 생성하거나 샘플링(sampling)하고(예: 데이터베이스(database)에서), 사람들에게 양질의 응답을 작성하도록 요청합니다. 그런 다음 이 데이터셋(dataset)을 사용하여 사전 학습(pre-trained)된 기본 모델(base model)을 지도 방식(supervised fashion)으로 미세 조정(fine-tune)합니다. 앞서 언급했듯이, 이는 기술적으로 RL 훈련의 일부가 아니라 단순한 전제 조건입니다.
+
+RLHF 2단계에서는 아래에 표시된 대로 지도 미세 조정(SFT)에서 얻은 이 모델을 사용하여 보상 모델(reward model)을 생성합니다.
+
+InstructGPT 논문의 주석이 달린 그림, https://arxiv.org/abs/2203.02155
+
+위 그림에 묘사된 바와 같이, 각 프롬프트(prompt)에 대해 이전 단계에서 생성된 미세 조정(fine-tuned)된 LLM으로부터 네 가지 응답을 생성합니다. 그런 다음 인간 주석자(annotator)가 자신의 선호도에 따라 이 응답들의 순위를 매깁니다. 이 순위 매기기 과정은 시간이 많이 걸리지만, 지도 미세 조정(supervised fine-tuning)을 위한 데이터셋(dataset)을 생성하는 것보다 노동 집약적(labor-intensive)이지 않을 수 있습니다. 이는 응답 순위를 매기는 것이 작성하는 것보다 더 간단할 가능성이 높기 때문입니다. 이러한 순위가 포함된 데이터셋(dataset)을 컴파일(compile)한 후, RLHF 3단계의 후속 최적화(optimization) 단계에 대한 보상 점수(reward score)를 출력하는 보상 모델(reward model)을 설계할 수 있습니다. 여기서 아이디어는 보상 모델(reward model)이 노동 집약적인 인간 순위 매기기를 대체하고 자동화하여 대규모 데이터셋(dataset)에서 훈련을 가능하게 한다는 것입니다. 이 보상 모델(reward model, RM)은 일반적으로 이전 지도 미세 조정(SFT) 단계에서 생성된 LLM에서 파생됩니다. RLHF 1단계의 모델을 보상 모델(reward model)로 전환하기 위해, 해당 출력 계층(output layer) (다음 토큰 분류 계층(next-token classification layer))은 단일 출력 노드(output node)를 특징으로 하는 회귀 계층(regression layer)으로 대체됩니다.
+
+RLHF 파이프라인(pipeline)의 세 번째 단계는 보상 모델(RM)을 사용하여 지도 미세 조정(SFT)에서 얻은 이전 모델을 미세 조정(fine-tune)하는 것입니다. 이는 아래 그림에 나와 있습니다.
+
+InstructGPT 논문의 주석이 달린 그림, https://arxiv.org/abs/2203.02155
+
+RLHF 3단계인 최종 단계에서는 RLHF 2단계에서 생성한 보상 모델(reward model)의 보상 점수(reward score)를 기반으로 근접 정책 최적화(Proximal Policy Optimization, PPO)를 사용하여 SFT 모델을 업데이트(update)하고 있습니다.
+
+Ahead of AI는 독자 지원 출판물입니다. 새로운 게시물을 받고 제 작업을 지원하려면 무료 또는 유료 구독자가 되는 것을 고려해 보세요.
+구독
+
+### PPO 심층 분석: 강화 학습의 핵심 기법
+
+앞서 언급했듯이, 본래의 RLHF 방식은 근접 정책 최적화(Proximal Policy Optimization, PPO)라는 강화 학습(reinforcement learning) 알고리즘을 사용합니다. PPO는 정책(policy) 훈련의 안정성과 효율성을 높이기 위해 개발되었습니다. (강화 학습(reinforcement learning)에서 "정책(policy)"은 우리가 훈련하려는 모델을 의미하며, 이 경우 정책(policy)은 LLM입니다.)
+
+PPO의 핵심 개념 중 하나는 각 업데이트(update) 주기에서 정책(policy)이 변경될 수 있는 폭을 제한한다는 것입니다. 이는 클리핑된 손실 함수(clipped loss function)를 사용하여 구현되며, 모델이 훈련을 불안정하게 만들 수 있는 과도하게 큰 업데이트(update)를 수행하는 것을 방지하는 데 기여합니다. 이와 더불어 PPO는 손실(loss)에 KL 발산(KL divergence) 페널티(penalty)를 추가합니다. 이 항은 현재 정책(policy) (훈련 중인 모델)을 기존 SFT 모델과 비교합니다. 이는 업데이트(update)가 합리적으로 초기 모델에 가깝게 유지되도록 장려합니다. 궁극적으로 모델을 완전히 재훈련(re-train)하는 것이 아니라 선호도에 맞게 조정(preference-tune)하는 것이 목표입니다. 이것이 바로 근접 정책 최적화(proximal policy optimization)라는 명칭의 "근접(proximal)"이 유래한 지점입니다. 이 알고리즘은 성능 향상을 허용하면서도 업데이트(update)가 기존 모델에 근접하게 유지되도록 노력합니다. 또한, 약간의 탐색(exploration)을 유도하기 위해 PPO는 엔트로피(entropy) 보너스(bonus)를 추가하는데, 이는 훈련 과정에서 모델이 다양한 출력을 생성하도록 장려합니다.
+
+다음 단락에서는 PPO를 비교적 높은 수준에서 설명하기 위해 몇 가지 용어를 더 소개하고자 합니다. 여전히 많은 전문 용어가 포함되어 있으므로 계속하기 전에 아래 그림에 핵심 용어를 요약하려고 노력했습니다.
+
+RLHF의 핵심 용어 그림. 예를 들어, PPO에는 여러 모델이 관련되어 있으며, PPO는 RLHF에서 사용되는 알고리즘입니다 (그리고 RLHF는 가장 인기 있는 LLM 정렬(alignment) 방법 중 하나입니다).
+
+아래에서는 의사 코드(pseudo-code)를 통해 PPO의 핵심 단계를 설명하고자 합니다. 또한, 더 직관적으로 만들기 위해 비유도 사용하겠습니다:
+
+당신이 작은 음식 배달 서비스를 운영하는 요리사라고 상상해 보세요. 그리고 고객 만족도를 높이기 위해 끊임없이 새로운 레시피(recipe) 변형을 시도하고 있습니다. 당신의 전반적인 목표는 고객 피드백(reward)을 기반으로 레시피(정책(policy))를 조정하는 것입니다.
+
+1.  새로운 정책(policy)과 이전 정책(policy)의 다음 토큰 확률(next-token probability) 비율을 계산합니다:
+    `ratio = new_policy_prob / old_policy_prob`
+    간단히 말해, 이것은 우리의 새로운 레시피(recipe)가 이전 레시피(recipe)와 얼마나 다른지 확인합니다.
+    참고: "new_policy_prob"에 관해서는 아직 최종 업데이트(update)된 정책(policy)을 사용하고 있지 않습니다. 우리는 정책(policy)의 현재 버전(즉, 훈련 중인 모델)을 사용하고 있습니다. 그러나 이를 "새로운(new)"이라고 부르는 것이 관례입니다. 따라서 아직 실험 중이더라도 관례에 따라 현재 초안을 "새로운 정책(new policy)"이라고 부릅니다.
+
+2.  해당 비율에 행동이 얼마나 좋았는지(이점(advantage)이라고 함)를 곱합니다:
+    `raw_score = ratio * advantage`
+    여기서는 간단하게, 이점(advantage)이 보상 신호(reward signal)를 기반으로 계산된다고 가정할 수 있습니다:
+    `advantage = actual_reward - expected_reward`
+    요리사 비유에서, 우리는 이점(advantage)을 새로운 요리가 얼마나 잘 수행되었는지로 생각할 수 있습니다:
+    `advantage = customer_rating - expected_rating`
+    예를 들어, 고객이 새로운 요리를 9/10로 평가하고, 고객들이 일반적으로 7/10을 준다면, 이는 +2의 이점(advantage)입니다.
+    이는 단순화된 것입니다. 실제로는 일반화된 이점 추정(generalized advantage estimation, GAE)이 포함되는데, 이 글을 더 부풀리지 않기 위해 여기서는 생략합니다. 그러나 언급할 중요한 세부 사항은 예상 보상(expected reward)은 소위 "비평가(critic)" (때로는 "가치 모델(value model)"이라고도 함)에 의해 계산되고, 보상 모델(reward model)이 실제 보상(actual reward)을 계산한다는 것입니다. 즉, 이점 계산(advantage computation)에는 일반적으로 우리가 미세 조정(fine-tuning)하는 원래 모델과 동일한 크기의 다른 두 모델이 포함됩니다.
+    비유에서, 우리는 이 비평가(critic) 또는 가치 모델(value model)을 고객에게 제공하기 전에 우리의 새로운 요리를 맛보도록 요청하는 친구로 생각할 수 있습니다. 우리는 또한 친구에게 고객이 그것을 어떻게 평가할지 추정해달라고 요청합니다 (이것이 예상 보상(expected reward)입니다). 보상 모델(reward model)은 피드백(feedback)을 제공하는 실제 고객(즉, 실제 보상(actual reward))입니다.
+
+3.  클리핑된 점수(clipped score)를 계산합니다:
+    새로운 정책(policy)이 너무 많이 변경되면(예: ratio > 1.2 또는 < 0.8), 다음과 같이 비율을 클리핑(clip)합니다:
+    `clipped_ratio = clamp(ratio, 0.8, 1.2)`
+    `clipped_score = clipped_ratio * advantage`
+    비유에서, 새로운 레시피(recipe)가 예외적으로 훌륭하거나(또는 나쁜) 평가를 받았다고 상상해 보세요. 우리는 이제 전체 메뉴를 개편하고 싶은 유혹을 느낄 수 있습니다. 하지만 그것은 위험합니다. 그래서 대신, 우리는 레시피(recipe)가 현재 얼마나 변경될 수 있는지 클리핑(clip)합니다. (예를 들어, 우리가 요리를 훨씬 더 맵게 만들었고, 그 한 고객이 매운 음식을 좋아했지만, 그렇다고 모든 사람이 그럴 것이라는 의미는 아닙니다.)
+
+4.  그런 다음 원시 점수(raw score)와 클리핑된 점수(clipped score) 중 더 작은 것을 사용합니다:
+    ```
+    if advantage >= 0:
+        final_score = min(raw_score, clipped_score)
+    else:
+        final_score = max(raw_score, clipped_score)
+    ```
+    다시 말하지만, 이것은 약간 조심하는 것과 관련이 있습니다. 예를 들어, 이점(advantage)이 양수이면(새로운 행동이 더 좋으면), 우리는 보상(reward)을 제한합니다. 이는 우연이나 운일 수 있는 좋은 결과를 과도하게 신뢰하고 싶지 않기 때문입니다. 이점(advantage)이 음수이면(새로운 행동이 더 나쁘면), 우리는 페널티(penalty)를 제한합니다. 여기서 아이디어는 비슷합니다. 즉, 우리가 정말 확신하지 않는 한 하나의 나쁜 결과에 과잉 반응하고 싶지 않습니다. 요컨대, 이점(advantage)이 양수이면(과도한 보상(over-rewarding)을 피하기 위해) 두 점수 중 더 작은 것을 사용하고, 이점(advantage)이 음수이면(과도한 페널티(over-penalizing)를 피하기 위해) 더 큰 것을 사용합니다.
+    비유에서, 이것은 레시피(recipe)가 예상보다 잘 수행되고 있다면, 우리가 확신하지 않는 한 과도하게 보상(over-reward)하지 않도록 보장합니다. 그리고 실적이 저조하다면, 지속적으로 나쁘지 않는 한 과도하게 페널티(over-penalize)를 주지 않습니다.
+
+5.  손실(loss) 계산:
+    이 최종 점수는 훈련 중에 우리가 최대화하는 것입니다 (점수의 부호를 뒤집어 최소화한 후 경사 하강법(gradient descent)을 사용). 또한, 페널티(penalty) 강도를 위한 하이퍼파라미터(hyperparameter)인 β가 있는 KL 페널티 항(KL penalty term)도 추가합니다:
+    `loss = -final_score + β * KL(new_policy || reference_policy)`
+    비유에서, 우리는 새로운 레시피(recipe)가 원래 스타일과 너무 다르지 않도록 페널티(penalty)를 추가합니다. 이것은 매주 "주방을 재창조"하는 것을 방지합니다. 예를 들어, 우리는 이탈리아 레스토랑을 갑자기 바비큐(BBQ) 장소로 바꾸고 싶지 않습니다.
+
+많은 정보였으므로, 아래 그림을 통해 LLM 맥락에서 구체적인 수치 예시로 요약했습니다. 하지만 너무 복잡하다면 건너뛰셔도 좋습니다. 나머지 글을 이해하는 데는 문제가 없을 것입니다. PPO 설명이 과했을 수도 있다는 점을 인정합니다. 하지만 일단 작성하고 나니 삭제하기 어려웠습니다. 몇몇 분들에게는 유용하기를 바랍니다!
+
+그렇긴 하지만, 다음 섹션에서 관련이 있을 주요 내용은 PPO에 여러 모델이 관련되어 있다는 것입니다:
+1.  SFT로 훈련되었고 우리가 추가로 정렬(align)하고자 하는 LLM인 정책(policy).
+2.  보상(reward)을 예측하도록 훈련된 모델인 보상 모델(reward model) (RLHF 2단계 참조).
+3.  보상(reward)을 추정하는 훈련 가능한 모델인 비평가(critic).
+4.  정책(policy)이 너무 많이 벗어나지 않도록 하는 데 사용하는 참조 모델(reference model) (원래 정책(original policy)).
+
+그런데 보상 모델(reward model)과 비평가(critic model)가 둘 다 필요한 이유가 궁금할 수도 있습니다. 보상 모델(reward model)은 일반적으로 PPO로 정책(policy)을 훈련하기 전에 훈련됩니다. 이는 인간 심사위원의 선호도 라벨링(labeling)을 자동화하고, 정책(policy) LLM이 생성한 완전한 응답에 대한 점수를 제공합니다. 반면 비평가(critic)는 부분적인 응답을 판단합니다. 우리는 이를 사용하여 최종 응답을 생성합니다. 보상 모델(reward model)은 일반적으로 고정된 상태로 유지되지만, 비평가 모델(critic model)은 훈련 중에 업데이트(update)되어 보상 모델(reward model)이 생성한 보상(reward)을 더 잘 추정합니다.
+
+PPO에 대한 더 자세한 내용은 이 글의 범위를 벗어나지만, 관심 있는 독자는 InstructGPT 논문보다 앞선 다음 네 논문에서 수학적 세부 사항을 찾을 수 있습니다:
+(1) Asynchronous Methods for Deep Reinforcement Learning (2016) by Mnih, Badia, Mirza, Graves, Lillicrap, Harley, Silver, and Kavukcuoglu는 심층 학습 기반 RL에서 Q-학습(Q-learning)의 대안으로 정책 경사(policy gradient) 방법을 소개합니다.
+(2) Proximal Policy Optimization Algorithms (2017) by Schulman, Wolski, Dhariwal, Radford, and Klimov는 위 바닐라 정책 최적화(policy optimization) 알고리즘보다 데이터 효율적(data-efficient)이고 확장 가능한(scalable) 수정된 근접 정책 기반 강화 학습(reinforcement learning) 절차를 제시합니다.
+(3) Fine-Tuning Language Models from Human Preferences (2020) by Ziegler, Stiennon, Wu, Brown, Radford, Amodei, Christiano, Irving은 정책(policy)이 자연어에서 너무 멀리 벗어나는 것을 방지하기 위한 KL 정규화(regularization)를 포함하여 사전 학습(pre-trained)된 언어 모델에 PPO 및 보상 학습(reward learning) 개념을 설명합니다.
+(4) Learning to Summarize from Human Feedback (2022) by Stiennon, Ouyang, Wu, Ziegler, Lowe, Voss, Radford, Amodei, Christiano는 나중에 InstructGPT 논문에서도 사용된 인기 있는 RLHF 3단계 절차를 소개합니다.
+
+### RL 알고리즘의 스펙트럼: PPO에서 GRPO까지
+
+앞서 언급했듯이, PPO는 RLHF에서 사용된 원래 알고리즘이었습니다. 기술적인 관점에서 볼 때, 추론 모델(reasoning model)을 개발하는 데 사용되는 RL 파이프라인(pipeline)에서 완벽하게 작동합니다. 그러나 DeepSeek-R1이 RL 파이프라인(pipeline)에 사용한 것은 그룹 상대 정책 최적화(Group Relative Policy Optimization, GRPO)라는 알고리즘으로, 이는 그들의 초기 논문 중 하나에서 소개되었습니다:
+
+DeepSeekMath: Open Language Models에서 수학적 추론의 한계 확장 (2024)
+
+DeepSeek 팀은 GRPO를 근접 정책 최적화(Proximal Policy Optimization, PPO)의 변형(variant)으로 소개했으며, 이는 수학적 추론 능력(reasoning capability)을 향상시키면서 PPO의 메모리 사용량(memory usage)을 동시에 최적화합니다. 따라서 여기서 핵심 동기는 계산 효율성(computational efficiency)을 개선하는 것입니다.
+
+효율성 개선은 "비평가(critic)" (가치 모델(value model)), 즉 가치 함수(value function) (즉, 예상 미래 보상(expected future reward))를 계산하는 LLM을 제거함으로써 달성됩니다. 이점(advantage)을 계산하기 위해 예상 보상(estimated reward)을 계산하는 이 추가 모델에 의존하는 대신, GRPO는 더 간단한 접근 방식을 취합니다: 정책 모델(policy model) 자체에서 여러 답변을 샘플링(sampling)하고 그들의 상대적 품질을 사용하여 이점(advantage)을 계산합니다.
+
+PPO와 GRPO의 차이점을 설명하기 위해 DeepSeekMath 논문에서 좋은 그림을 빌려왔습니다:
+
+DeepSeekMath: Open Language Models에서 수학적 추론의 한계 확장(https://arxiv.org/abs/2402.03300)의 주석이 달린 그림으로 PPO와 GRPO의 차이점을 설명합니다.
+
+Ahead of AI는 독자 지원 출판물입니다. 새로운 게시물을 받고 제 작업을 지원하려면 무료 또는 유료 구독자가 되는 것을 고려해 보세요.
+구독
+
+### RL 보상 모델링(reward modeling)의 진화: RLHF에서 RLVR로
+
+지금까지 우리는 RLHF를 절차로 살펴보았고, 이를 위해 일반적으로 사용되는 두 가지 강화 학습(reinforcement learning) 알고리즘인 PPO와 GRPO를 소개했습니다. 하지만 RLHF가 이미 LLM 정렬(alignment) 툴킷(toolkit)의 핵심 부분이라면, 이 모든 것이 추론(reasoning)과 무슨 관련이 있을까요?
+
+RLHF와 추론(reasoning)의 연결은 DeepSeek 팀이 R1 및 R1-Zero 모델의 추론 능력(reasoning capability)을 훈련하기 위해 유사한 RL 기반 접근 방식(GRPO와 함께)을 어떻게 적용했는지에서 비롯됩니다. 차이점은 인간의 선호도에 의존하고 보상 모델(reward model)을 훈련하는 대신, DeepSeek-R1 팀은 **검증 가능한 보상(verifiable rewards)**을 사용했다는 것입니다. 이 접근 방식을 **검증 가능한 보상 기반 강화 학습(reinforcement learning with verifiable rewards, RLVR)**이라고 합니다.
+
+다시 한번 강조할 가치가 있습니다: 표준 RLHF와 달리 RLVR은 보상 모델(reward model)의 필요성을 우회합니다. 따라서 인간이 라벨링(labeling)한 예시로부터 "좋은" 답변이 무엇인지 배우는 대신, 모델은 기호 검증기(symbolic verifier)나 규칙 기반 도구(rule-based tool)와 같은 결정론적 도구로부터 직접적인 이진 피드백(binary feedback) (정답 또는 오답)을 받습니다. 수학 문제의 계산기나 코드 생성의 컴파일러(compiler)를 생각해 보세요.
+
+검증 가능한 보상 기반 강화 학습(RLVR)의 예시. 모델은 수학 문제를 풀도록 프롬프트(prompt)되고 답변을 생성합니다. 학습된 보상 모델(reward model)을 사용하는 대신, 기호 검증기(symbolic verifier) (예: 계산기)가 출력을 확인하고 정확성(correctness)을 기반으로 이진 피드백(binary feedback)을 제공합니다.
+
+여기서 한 가지 동기는 RL 동안 자동 정확성 검사(correctness check)를 감독 신호(supervision signal)로 사용하여 시끄럽거나 비용이 많이 드는 인간 또는 학습된 보상(reward)을 피하는 것입니다. 다른 동기는 계산기와 같은 "저렴한" 도구를 사용하여 비용이 많이 드는 보상 모델(reward model) 훈련과 보상 모델(reward model) 자체를 대체할 수 있다는 것입니다. 보상 모델(reward model)은 일반적으로 전체 사전 학습(pre-trained)된 모델(회귀 헤드(regression head)가 있지만)이므로 RLVR은 훨씬 더 효율적입니다.
+
+요컨대, DeepSeek-R1은 GRPO와 함께 RLVR을 사용했으며, 이는 아래 그림에 나와 있듯이 훈련 절차에서 두 가지 비용이 많이 드는 모델, 즉 보상 모델(reward model)과 가치 모델(value model) (비평가(critic))을 제거합니다.
+
+LLM 훈련에서 강화 학습(reinforcement learning) 설정 비교. PPO를 사용한 전통적인 RLHF는 학습을 안내하기 위해 보상 모델(reward model) (인간의 선호도에 따라 훈련됨)과 비평가(critic) (가치 모델(value model))를 모두 사용합니다. GRPO는 비평가 모델(critic model)을 제거합니다. GRPO를 사용한 RLVR은 보상 모델(reward model)도 제거하여 계산기나 컴파일러(compiler)와 같은 기호 도구(symbolic tool)의 검증 가능한 보상(verifiable rewards)에 의존함으로써 한 단계 더 나아갑니다.
+
+다음 섹션에서는 DeepSeek-R1 파이프라인(pipeline)을 간략하게 살펴보고 DeepSeek 팀이 사용한 다양한 검증 가능한 보상(verifiable rewards)에 대해 논의하고자 합니다.
+
+### DeepSeek-R1 추론 모델(reasoning model)의 훈련 과정 해부
+
+이제 RLHF와 RLVR, 그리고 PPO와 GRPO가 무엇인지 명확히 했으니, RL과 추론(reasoning)의 맥락에서 DeepSeek-R1 논문의 주요 통찰력을 간략하게 요약해 봅시다. 먼저, 세 가지 유형의 모델이 있었습니다:
+
+*   순수 강화 학습(pure RL)으로 훈련된 DeepSeek-R1-Zero
+*   명령어 미세 조정(instruction fine-tuning, SFT) 및 RL로 훈련된 DeepSeek-R1
+*   명령어 미세 조정(instruction fine-tuning) SFT를 통해 생성된 DeepSeek-Distill 변형(variant) (RL 없음)
+
+아래에 표시된 대로, 이 모델들이 서로 어떻게 관련되어 있는지 설명하기 위해 DeepSeek-R1 파이프라인(pipeline) 다이어그램을 만들었습니다.
+
+DeepSeek-R1 제품군의 훈련 파이프라인(pipeline)
+
+DeepSeek-R1-Zero는 GRPO와 함께 검증 가능한 보상(verifiable rewards, RLVR)을 사용하여 훈련되었으며, 이는 모델이 중간 단계(intermediate-step) 생성을 통해 추론 능력(reasoning ability)을 나타내는 데 충분한 것으로 밝혀졌습니다. 이는 SFT 단계를 건너뛸 수 있음을 보여주었습니다. 이 모델은 예시로부터 배우는 대신 탐색(exploration)을 통해 추론 능력(reasoning ability)을 향상시킵니다.
+
+DeepSeek-R1은 최고의 성능을 가진 플래그십 모델(flagship model)입니다. DeepSeek-R1-Zero와의 차이점은 명령어 미세 조정(instruction fine-tuning), RLVR, RLHF를 번갈아 수행했다는 것입니다.
+
+DeepSeek-Distill 변형(variant)은 작고 더 쉽게 배포할 수 있는 모델을 의미합니다; 이들은 DeepSeek-R1 모델의 명령어 데이터(instruction data)를 사용하여 Llama 3 및 Qwen 2.5 모델을 명령어 미세 조정(instruction fine-tuning)하여 생성되었습니다. 이 접근 방식은 추론(reasoning) 부분에 RL을 사용하지 않았습니다 (그러나 Llama 3 및 Qwen 2.5 기본 모델(base model)을 생성하는 데 RLHF가 사용되었습니다).
+
+DeepSeek-R1 파이프라인(pipeline)에 대한 더 자세한 설명은 제 이전 글 "Understanding Reasoning LLMs"를 참조하십시오:
+
+Understanding Reasoning LLMs
+Sebastian Raschka, PhD · Feb 5
+전체 스토리 읽기
+
+여기서 주요 요점은 DeepSeek 팀이 DeepSeek-R1-Zero를 훈련하기 위해 LLM 기반 보상 모델(reward model)을 사용하지 않았다는 것입니다. 대신, 그들은 DeepSeek-R1-Zero 및 DeepSeek-R1의 추론 훈련을 위해 규칙 기반 보상(rule-based reward)을 사용했습니다:
+
+우리는 DeepSeek-R1-Zero 개발에 결과 또는 프로세스 신경 보상 모델(neural reward model)을 적용하지 않습니다. 왜냐하면 신경 보상 모델(neural reward model)이 대규모 강화 학습(reinforcement learning) 과정에서 보상 해킹(reward hacking)으로 고통받을 수 있다는 것을 발견했기 때문입니다 [...] DeepSeek-R1-Zero를 훈련하기 위해 우리는 주로 두 가지 유형의 보상(reward)으로 구성된 규칙 기반 보상 시스템(rule-based reward system)을 채택합니다:
+(1) **정확성 보상(Accuracy rewards)**: 정확성 보상 모델(accuracy reward model)은 응답이 올바른지 평가합니다. 예를 들어, 결정론적 결과가 있는 수학 문제의 경우, 모델은 지정된 형식(예: 상자 안)으로 최종 답변을 제공해야 하며, 이는 정확성(correctness)에 대한 신뢰할 수 있는 규칙 기반 검증을 가능하게 합니다. 마찬가지로 LeetCode 문제의 경우, 컴파일러(compiler)를 사용하여 미리 정의된 테스트 케이스(test case)를 기반으로 피드백(feedback)을 생성할 수 있습니다.
+(2) **형식 보상(Format rewards)**: 정확성 보상 모델(accuracy reward model) 외에도, 우리는 모델이 사고 과정(thinking process)을 '<think>'와 '</think>' 태그(tag) 사이에 넣도록 강제하는 형식 보상 모델(format reward model)을 사용합니다.
+
+### 최신 RL 연구 논문에서 얻은 추론 모델(reasoning model) 훈련의 교훈
+
+서론(즉, 이 시점까지의 모든 내용)이 예상보다 훨씬 길어졌다는 것을 깨달았습니다. 그럼에도 불구하고, 이 긴 서론이 다음 교훈들을 맥락에 맞게 이해하는 데 필요하다고 생각합니다. 지난달에 수많은 추론 모델(reasoning model) 관련 논문을 검토한 후, 이 섹션에서 가장 흥미로운 아이디어와 통찰력을 요약했습니다. ( "[1]"과 같은 참조는 글 끝에 나열된 해당 논문을 가리킵니다.)
+
+#### 1. 강화 학습(reinforcement learning)은 증류 모델(distilled model)을 더욱 개선합니다
+
+원래 DeepSeek-R1 논문은 지도 미세 조정(SFT) 다음에 강화 학습(RL)을 수행하는 것이 RL 단독보다 더 나은 결과를 낸다는 것을 명확히 보여주었습니다. 이 관찰을 고려할 때, 추가 RL이 증류 모델(distilled model)을 더욱 개선해야 한다는 것은 직관적입니다 (증류 모델(distilled model)은 본질적으로 더 큰 모델이 생성한 추론 예시를 사용하여 SFT를 통해 훈련된 모델을 나타내기 때문입니다). 실제로 DeepSeek 팀은 이 현상을 명시적으로 관찰했습니다:
+
+또한, 이러한 증류 모델(distilled model)에 RL을 적용하면 상당한 추가 이득을 얻을 수 있음을 발견했습니다. 우리는 이것이 추가 탐색(exploration)을 보증한다고 믿으며, 따라서 여기서는 간단한 SFT 증류 모델(SFT-distilled model)의 결과만을 제시합니다.
+
+여러 팀이 이러한 관찰을 독립적으로 검증했습니다:
+*   [8] 1.5B DeepSeek-R1-Distill-Qwen 모델을 사용하여, 연구원들은 단 7,000개의 예시와 42달러의 적당한 컴퓨팅 자원(compute budget)으로 RL 미세 조정(fine-tuning)을 통해 상당한 성능 향상을 시연했습니다. 놀랍게도, 이 작은 모델은 AIME24 수학 벤치마크(benchmark)에서 OpenAI의 o1-preview를 능가했습니다.
+*   [15] 그러나 다른 팀은 이러한 이득이 항상 통계적으로 유의미한(statistically significant) 것은 아닐 수 있다고 경고했습니다. 이는 RL이 더 작은 증류 모델(distilled model)을 개선할 수 있지만, 벤치마크(benchmark) 결과가 때로는 개선 사항을 과장할 수 있음을 시사합니다.
+
+언어 모델 추론 발전의 냉철한 시각: 함정과 재현성(Reproducibility) 경로(https://arxiv.org/abs/2504.07086)의 주석이 달린 그림
+
+#### 2. 지나치게 긴 오답(long incorrect answer) 문제
+
+저는 이전에 검증 가능한 보상 기반 강화 학습(RLVR)이 GRPO 알고리즘을 엄격하게 요구하지 않는다고 언급했습니다; DeepSeek의 GRPO는 단순히 효율적이고 잘 작동하는 것으로 밝혀졌을 뿐입니다. 그러나 [12]는 바닐라 PPO(vanilla PPO)가 기본적인 이진 정확성 보상(binary correctness reward)과 결합될 때 추론 능력(reasoning capability)과 응답 길이(response length)에서 모델을 확장하는 데 충분하다는 것을 보여주었습니다.
+
+더 흥미롭게도, PPO와 GRPO 모두 길이 편향(length bias)을 가지고 있습니다. 그리고 여러 논문에서 지나치게 긴 오답(excessively long incorrect answer)을 해결하기 위한 방법을 탐색했습니다:
+*   [14] PPO가 손실 계산(loss calculation)의 수학적 편향(mathematical bias)으로 인해 의도치 않게 더 긴 응답을 선호하는 방식을 보여주는 분석을 제공했습니다; GRPO도 동일한 문제로 고통받을 수 있습니다.
+
+강화 학습을 통한 간결한 추론(https://arxiv.org/abs/2504.05185)의 주석이 달린 그림
+
+위 진술에 대한 후속 조치로, [7] [10]은 GRPO에서 길이 및 난이도 편향(difficulty-level bias)을 구체적으로 식별했습니다. 수정된 변형(variant)인 "Dr. GRPO"는 길이 및 표준 편차 정규화(standard deviation normalization)를 제거하여 이점 계산(advantage calculation)을 단순화하고 더 명확한 훈련 신호(training signal)를 제공합니다.
+*   [1] GRPO에서 길고 잘못된 답변에 명시적으로 페널티(penalty)를 부과하는 동시에 간결하고 올바른 답변에 보상(reward)을 주었습니다.
+*   [3] [6] GRPO에서 응답 길이를 직접 제어하지는 않았지만, 토큰 수준 보상(token-level reward)이 유익하다는 것을 발견하여 모델이 중요한 추론 단계에 더 잘 집중할 수 있도록 했습니다.
+*   [5] GRPO에서 특정 길이를 초과하는 응답에 대해 명시적인 페널티(penalty)를 도입하여 추론 중 정확한 길이 제어(length control)를 가능하게 했습니다。
+
+#### 3. RL에서 발현 능력(Emergent abilities)
+
+DeepSeek-R1 논문에서 언급된 "아하 모멘트(AHA moment)"를 넘어, RL은 모델에서 귀중한 자체 검증(self-verification) 및 반성적 추론(reflective reasoning) 능력 [2] [9]을 유도하는 것으로 나타났습니다. 흥미롭게도, 아하 모멘트(AHA moment)와 유사하게, 이러한 능력은 명시적인 지시(explicit instruction) 없이 훈련 중에 자연스럽게 발현되었습니다.
+*   [1] 컨텍스트 길이(context length)를 확장하는 것(최대 128k 토큰)이 모델의 자기 성찰(self-reflection) 및 자기 수정(self-correction) 능력(capability)을 더욱 향상시킨다는 것을 보여주었습니다.
+
+#### 4. 특정 도메인(domain)을 넘어선 일반화(Generalization)
+
+지금까지 대부분의 연구 노력은 수학 또는 코딩 맥락의 추론 작업에 집중되었습니다. 그러나 [4]는 논리 퍼즐(logic puzzle)에 모델을 훈련함으로써 성공적인 일반화(generalization)를 시연했습니다. 그리고 논리 퍼즐(logic puzzle)에 훈련된 모델은 수학적 추론 작업에서도 강력한 성능을 달성했습니다. 이는 RL이 특정 도메인 지식(domain knowledge)과 독립적으로 일반적인 추론 행동을 유도하는 능력에 대한 증거입니다.
+
+#### 5. 더 넓은 도메인(domain)으로의 확장
+
+위 섹션에 대한 후속 조치로, 또 다른 흥미로운 통찰력 [11]은 추론 능력(reasoning capability)이 수학, 코드, 논리와 같은 구조화된 도메인(structured domain)을 넘어 자연스럽게 확장될 수 있다는 것입니다. 모델은 생성적 소프트 스코어링(generative soft-scoring) 방법을 활용하여 자유 형식 답변(free-form answer)을 효과적으로 처리함으로써 의학, 화학, 심리학, 경제학, 교육을 포함한 분야에 추론(reasoning)을 성공적으로 적용했습니다.
+
+추론 모델(reasoning model)의 주목할 만한 다음 단계는 다음과 같습니다:
+*   기존 추론 모델(reasoning model) (예: o1, DeepSeek-R1)을 외부 도구 사용(external tool use) 및 검색 증강 생성(retrieval-augmented generation, RAG)과 같은 기능과 통합하는 것; OpenAI에서 방금 출시된 o3 모델이 여기서 길을 닦고 있습니다.
+*   도구 사용(tool-use) 및 검색(search)에 대해 말하자면, [9]는 추론 모델(reasoning model)에 검색(search) 능력을 부여하는 것이 최소한의 훈련 데이터셋(training dataset)에도 불구하고 벤치마크(benchmark) 전반에 걸쳐 자기 수정(self-correction) 및 견고한 일반화(robust generalization)와 같은 행동을 유도한다는 것을 보여주었습니다. DeepSeek-R1 팀이 지식 기반 작업(knowledge-based task)에서 성능을 유지하기 위해 겪었던 어려움을 바탕으로, 저는 추론 모델(reasoning model)에 검색(search) 능력을 추가하는 것이 거의 당연한 일이라고 생각합니다.
+
+#### 6. 추론은 전적으로 RL 때문인가?
+
+DeepSeek-R1 (및 R1-Zero)의 근본적인 주장은 RLVR이 추론 능력(reasoning capability)을 명시적으로 유도한다는 것입니다. 그러나 최근 연구 결과 [10]는 "아하 모멘트(Aha moment)"를 포함한 추론 행동이 광범위한 사고의 연쇄(chain-of-thought) 데이터로 사전 학습(pre-training)했기 때문에 기본 모델(base model)에 이미 존재할 수 있음을 시사합니다. DeepSeek V3 기본 모델(base model)과 R1 간의 최근 비교는 업데이트(update)된 기본 모델(base model)도 추론과 유사한 행동을 보여주므로 이 관찰을 강화합니다.
+
+예를 들어, 원래 V3와 R1 모델 간의 비교는 비추론 모델(non-reasoning model)과 추론 모델(reasoning model) 간의 차이를 명확하게 보여줍니다:
+
+그러나 업데이트(update)된 V3 기본 모델(base model)을 R1과 비교할 때는 더 이상 그렇지 않습니다:
+
+또한, [13]은 자기 성찰(self-reflection) 및 자기 수정(self-correction) 행동이 다양한 도메인(domain)과 모델 크기(model size)에 걸쳐 사전 학습(pre-training) 전반에 걸쳐 점진적으로 나타난다는 것을 확인했습니다. 이는 추론 능력(reasoning capability)을 전적으로 RL 방법에만 귀속시키는 것을 더욱 복잡하게 만듭니다.
+
+아마도 결론은 RL이 확실히 간단한 기본 모델(base model)을 추론 모델(reasoning model)로 바꾼다는 것입니다. 그러나 추론 능력(reasoning ability)을 유도하거나 개선하는 유일한 방법은 아닙니다. DeepSeek-R1 팀이 보여주었듯이, 증류(distillation)도 추론(reasoning)을 개선합니다. 그리고 이 논문에서 증류(distillation)는 사고의 연쇄(chain-of-thought) 데이터에 대한 명령어 미세 조정(instruction fine-tuning)을 의미했으므로, 사고의 연쇄(chain-of-thought) 데이터를 포함하는 데이터로 사전 학습(pre-training)하는 것도 이러한 능력을 유도할 가능성이 높습니다. (제 책에서 실습 코드(hands-on code)를 통해 설명했듯이, 사전 학습(pre-training)과 명령어 미세 조정(instruction fine-tuning)은 결국 동일한 다음 토큰 예측 작업(next-token prediction task)과 손실 함수(loss function)를 기반으로 합니다.)
+
+### 추론 모델(reasoning model) 훈련 관련 주목할 만한 연구 논문
+
+지난달에 수많은 추론(reasoning) 논문을 읽은 후, 이전 섹션에서 가장 흥미로운 요점들을 요약하려고 노력했습니다. 그러나 출처에 대해 좀 더 자세히 알고 싶은 분들을 위해 아래 섹션에 15개의 관련 논문을 선택적 읽기 자료로 나열했습니다. (간단히 하기 위해 다음 요약은 날짜별로 정렬되어 있습니다.) 이 글이 이미 너무 길기 때문에 이 목록도 포괄적이지 않다는 점(15개로 제한했습니다)을 참고하십시오!
+
+#### [1] 강화 학습(Reinforcement Learning) 확장 (및 컨텍스트 길이(Context Length)) 📄 1월 22일, Kimi k1.5: LLM을 통한 강화 학습(Reinforcement Learning) 확장, https://arxiv.org/abs/2501.12599
+
+이 논문이 DeepSeek-R1 논문과 같은 날 나왔다는 것이 흥미롭습니다! 여기서 저자들은 RL로 훈련된 멀티모달 LLM(multi-modal LLM)을 선보입니다. DeepSeek-R1과 유사하게, 그들은 프로세스 보상 모델(process reward models, PRM)을 사용하지 않고 검증 가능한 보상(verifiable rewards)을 사용했습니다. PRM은 RL (특히 LLM 훈련)에서 사용되는 보상 모델(reward model) 유형으로, 최종 답변뿐만 아니라 그 답변으로 이어진 추론 단계도 평가합니다. 여기서 또 다른 핵심 아이디어는 컨텍스트 길이(context length)를 확장하는 것(최대 128k 토큰)이 모델이 추론(reasoning) 중에 계획하고, 반성하고, 자기 수정(self-correct)하는 데 도움이 된다는 것입니다. 따라서 DeepSeek-R1과 유사한 정확성 보상(correctness reward) 외에도 길이 보상(length reward)도 있습니다. 구체적으로, 그들은 더 짧고 정확한 응답을 장려하고, 잘못된 긴 답변에는 더 많은 페널티(penalty)를 부과합니다. 그리고 long2short라는 방법을 제안하여 이러한 긴 사고의 연쇄(long-chain-of-thought) 기술을 더 효율적인 짧은 CoT 모델로 증류(distill)합니다. (이는 모델 병합(model merging), 최단 거부 샘플링(shortest rejection sampling), DPO, 그리고 더 강력한 길이 페널티(length penalty)를 가진 2차 RL와 같은 방법을 사용하여 긴 CoT 모델에서 더 짧고 정확한 응답을 증류(distill)함으로써 이루어집니다.)
+
+Kimi k1.5: LLM을 통한 강화 학습(Reinforcement Learning) 확장(https://arxiv.org/abs//2501.12599)의 주석이 달린 그림
+
+#### [2] 대규모 추론 모델(Reasoning Model)을 이용한 경쟁 프로그래밍 📄 2월 3일, 대규모 추론 모델(Reasoning Model)을 이용한 경쟁 프로그래밍, https://arxiv.org/abs/2502.06807
+
+OpenAI의 이 논문은 경쟁 프로그래밍 작업에서 그들의 o-모델(o1, o1-ioi, o3와 같은)을 평가합니다. RL이 어떻게 적용되었는지에 대한 기술적인 세부 사항은 다루지 않지만, 여전히 몇 가지 흥미로운 요점을 제공합니다. 첫째, 모델은 프로세스 기반 보상 모델(process-based reward model)이 아닌 결과 기반 강화 학습(outcome-based RL)을 사용하여 훈련되었습니다. 이는 DeepSeek-R1 및 Kimi와 같은 접근 방식과 유사합니다. 흥미로운 발견 중 하나는 o3가 자체 테스트 시점(test-time) (즉, 추론 시점 스케일링(inference-time scaling)) 전략을 학습할 수 있다는 것입니다. 예를 들어, 문제의 간단한 무차별 대입(brute-force) 버전(효율성을 정확성과 교환하는 것)을 작성한 다음, 이를 사용하여 더 최적화된 솔루션의 출력을 검증하는 경우가 많습니다. 이러한 종류의 전략은 수작업으로 코딩된 것이 아니라 모델이 스스로 알아낸 것입니다. 따라서 전반적으로 이 논문은 범용 RL을 확장하면 모델이 인간 휴리스틱(heuristic)이나 도메인별 추론 파이프라인(inference pipeline) 없이도 자체 추론(reasoning) 및 검증 방법을 개발할 수 있다고 주장합니다. 대조적으로, o1-ioi와 같은 다른 (이전) 모델은 수천 개의 샘플을 클러스터링(clustering)하고 재순위화(reranking)하는 것과 같은 수작업으로 만든 테스트 시점(test-time) 전략에 의존했으며, 이는 많은 수동 설계와 튜닝(tuning)을 필요로 했습니다。
+
+대규모 추론 모델(Reasoning Model)을 이용한 경쟁 프로그래밍(https://arxiv.org/abs/2502.06807)의 주석이 달린 그림
+
+#### [3] 결과 보상(Outcome Reward)의 한계 탐색 📄 2월 10일, 수학적 추론 학습을 위한 결과 보상(Outcome Reward)의 한계 탐색, https://arxiv.org/abs/2502.06781
+
+이 논문은 DeepSeek-R1과 같이 이진 "정답" 또는 "오답" 피드백(binary feedback)만 있는 RL이 수학 문제 해결에 얼마나 멀리 갈 수 있는지 탐색합니다. 이를 위해, 그들은 Best-of-N 샘플링(sampling)을 사용하여 긍정적인 예시를 수집하고 그에 행동 복제(behavior cloning)를 적용하는 것으로 시작하며, 이는 정책(policy)을 최적화하는 데 이론적으로 충분하다는 것을 보여줍니다. 희소 보상(sparse rewards)의 문제(특히 긴 사고의 연쇄(chain-of-thought)에 부분적으로 올바른 단계가 포함될 때)를 해결하기 위해, 그들은 추론(reasoning)의 다른 부분에 중요도 가중치(importance weight)를 할당하는 방법을 학습하는 토큰 수준 보상 모델(token-level reward model)을 추가합니다. 이는 모델이 학습할 때 가장 중요한 단계에 집중하고 전반적인 성능을 향상시키는 데 도움이 됩니다.
+
+수학적 추론 학습을 위한 결과 보상(Outcome Reward)의 한계 탐색(https://arxiv.org/abs/2502.06781)의 주석이 달린 그림
+
+#### [4] 규칙 기반 강화(Rule-Based Reinforcement)를 통한 LLM 추론(Logic 데이터 기반) 📄 2월 20일, Logic-RL: 규칙 기반 강화 학습(Rule-Based Reinforcement Learning)을 통한 LLM 추론(Reasoning) 발휘, https://arxiv.org/abs/2502.14768
+
+DeepSeek-R1은 수학 및 코드 작업에 중점을 두었습니다. 이 논문은 논리 퍼즐(logic puzzle)을 주요 훈련 데이터(training data)로 사용하여 7B 모델을 훈련합니다. 연구원들은 DeepSeek-R1과 유사한 규칙 기반 RL 설정(rule-based RL setup)을 채택하지만 몇 가지 조정을 합니다:
+1.  그들은 지름길을 페널티(penalty)하고 모델이 <think> 및 <answer> 태그(tag)를 사용하여 추론(reasoning)과 최종 답변을 분리하도록 보장하는 엄격한 형식 보상(format reward)을 도입합니다.
+2.  그들은 또한 모델에게 최종 답변을 제공하기 전에 문제를 단계별로 먼저 생각하도록 명시적으로 지시하는 시스템 프롬프트(system prompt)를 사용합니다.
+단 5천 개의 합성 논리 문제(synthetic logic problem)만으로도 모델은 AIME 및 AMC와 같은 더 어려운 수학 벤치마크(benchmark)에 잘 일반화(generalize)되는 좋은 추론 기술을 개발합니다. 이는 논리 기반 RL 훈련이 모델에게 원래 도메인(domain)을 넘어 확장되는 방식으로 추론(reasoning)하는 방법을 가르칠 수 있다는 것을 보여주기 때문에 특히 흥미롭습니다.
+
+Logic-RL: 규칙 기반 강화 학습(Rule-Based Reinforcement Learning)을 통한 LLM 추론(Reasoning) 발휘(https://arxiv.org/abs/2502.14768)의 주석이 달린 그림
+
+#### [5] 추론 모델(Reasoning Model)이 생각하는 시간 제어 📄 3월 6일, L1: 강화 학습(Reinforcement Learning)으로 추론 모델(Reasoning Model)이 생각하는 시간 제어, https://arxiv.org/abs/2503.04697
+
+추론 모델(reasoning model)의 한 가지 특징은 사고의 연쇄(chain-of-thought) 추론(reasoning) 때문에 더 긴 출력을 생성하는 경향이 있다는 것입니다. 그러나 기본적으로 응답 길이를 제어하는 명시적인 방법은 없습니다. 이 논문은 정확성을 최적화하면서도 모델이 사용자 지정 길이 제약(user-specified length constraint)을 준수하도록 돕는 간단한 강화 학습(reinforcement learning) 방법인 길이 제어 정책 최적화(Length Controlled Policy Optimization, LCPO)를 소개합니다. 요컨대, LCPO는 GRPO와 유사합니다. 즉, "GRPO + 길이 제어(Length Control)를 위한 맞춤형 보상(Custom Reward)"으로 구현되며,
+`reward = reward_correctness - α * |target_length - actual_length|`
+여기서 목표 길이(target length)는 사용자 프롬프트(user prompt)의 일부로 제공됩니다. 이 위의 LCPO 방법은 모델이 제공된 목표 길이(target length)를 정확히 준수하도록 장려합니다. 또한, 그들은 LCPO-Max 변형(variant)을 도입하는데, 이는 모델이 목표 길이(target length)와 정확히 일치하도록 장려하는 대신, 모델이 최대 토큰 길이(maximum token length) 미만으로 유지되도록 장려합니다:
+`reward = reward_correctness * clip(α * (target_length - actual_length) + δ, 0, 1)`
+저자들은 LCPO를 사용하여 L1이라는 1.5B 모델을 훈련하며, 이 모델은 프롬프트(prompt)에 따라 출력 길이(output length)를 조정할 수 있습니다. 이를 통해 사용자는 작업에 따라 정확성(accuracy)과 컴퓨팅 자원(compute) 간의 상충 관계(trade-off)를 조절할 수 있습니다. 흥미롭게도, 이 논문은 이러한 긴 연쇄 모델(long-chain model)이 짧은 추론(short reasoning)에서도 놀랍도록 능숙해져서, 동일한 토큰 길이(token length)에서 GPT-4o와 같은 훨씬 더 큰 모델을 능가한다는 것을 발견했습니다.
+
+L1: 강화 학습(Reinforcement Learning)으로 추론 모델(Reasoning Model)이 생각하는 시간 제어(https://arxiv.org/abs/2503.04697)의 주석이 달린 그림
+
+#### [6] LLM의 검색 능력(Search Capability) 장려 📄 3월 10일, R1-Searcher: 강화 학습(Reinforcement Learning)을 통해 LLM의 검색 능력(Search Capability) 장려, https://arxiv.org/abs/2503.05592
+
+RL로 훈련된 DeepSeek-R1과 같은 추론 모델(reasoning model)은 내부 지식(internal knowledge)에 의존합니다. 여기 저자들은 외부 검색 시스템(external search system)에 대한 접근을 추가하여 시간에 민감하거나 최신 정보가 필요한 지식 기반 작업(knowledge-based task)에서 이러한 모델을 개선하는 데 중점을 둡니다. 따라서 이 논문은 추론 과정에서 외부 검색 시스템(external search system)을 사용하는 방법을 가르침으로써 이러한 모델을 개선합니다. 테스트 시점 전략(test-time strategy)이나 지도 훈련(supervised training)에 의존하는 대신, 저자들은 모델이 스스로 검색(search)하는 방법과 시기를 학습하는 데 도움이 되는 2단계 강화 학습(reinforcement learning) 방법을 사용합니다. 모델은 먼저 검색 형식(search format)을 학습한 다음, 검색 결과(search result)를 사용하여 올바른 답변을 찾는 방법을 학습합니다.
+
+R1-Searcher: 강화 학습(Reinforcement Learning)을 통해 LLM의 검색 능력(Search Capability) 장려(https://arxiv.org/abs/2503.05592)의 주석이 달린 그림
+
+#### [7] 대규모 오픈소스 LLM 강화 학습(Reinforcement Learning) 📄 3월 18일, DAPO: 대규모 오픈소스 LLM 강화 학습(Reinforcement Learning) 시스템, https://arxiv.org/abs/2503.14476
+
+이 논문은 주로 DeepSeek-R1과 유사한 훈련 파이프라인(training pipeline)을 개발하고 오픈소스화하는 것에 관한 것이지만, DeepSeek-R1 훈련에 사용된 GRPO 알고리즘에 대한 흥미로운 개선 사항도 제안합니다.
+1.  **Clip-higher**: PPO 클리핑 범위(clipping range)의 상한을 높여 탐색(exploration)을 장려하고 훈련 중 엔트로피 붕괴(entropy collapse)를 방지합니다.
+2.  **동적 샘플링(Dynamic sampling)**: 샘플링(sampling)된 모든 응답이 항상 올바르거나 항상 잘못된 프롬프트(prompt)를 필터링(filter out)하여 훈련 효율성을 향상시킵니다.
+3.  **토큰 수준 정책 경사 손실(Token-level policy gradient loss)**: 샘플 수준(sample-level)에서 토큰 수준(token-level) 손실 계산(loss calculation)으로 전환하여 더 긴 응답이 경사 업데이트(gradient update)에 더 많은 영향을 미치도록 합니다.\*
+4.  **과도한 길이 보상 형성(Overlong reward shaping)**: 너무 길어서 잘린 응답에 대해 소프트 페널티(soft penalty)를 추가하여 보상 노이즈(reward noise)를 줄이고 훈련을 안정화하는 데 도움이 됩니다.
+
+\* 표준 GRPO는 샘플 수준(sample-level) 손실 계산(loss calculation)을 사용합니다. 여기에는 각 샘플에 대한 토큰(token)별 손실(loss)을 먼저 평균화한 다음, 샘플별 손실(loss)을 평균화하는 것이 포함됩니다. 샘플은 동일한 가중치를 가지므로, 더 긴 응답을 가진 샘플의 토큰(token)은 전체 손실(loss)에 불균형적으로 적게 기여할 수 있습니다. 동시에, 연구원들은 더 긴 응답이 최종 답변 전에 종종 의미 없는 말(gibberish)을 포함하며, 이 의미 없는 말(gibberish)은 원래 GRPO 샘플 수준(sample-level) 손실 계산(loss calculation)에서 충분히 페널티(penalty)를 받지 못할 것이라고 관찰했습니다.
+
+DAPO: 대규모 오픈소스 LLM 강화 학습(Reinforcement Learning) 시스템(https://arxiv.org/abs/2503.14476)의 주석이 달린 그림
+
+#### [8] 소규모 LLM 추론을 위한 강화 학습(Reinforcement Learning): 무엇이 효과 있고 무엇이 효과 없는가 📄 3월 20일, 소규모 LLM 추론을 위한 강화 학습(Reinforcement Learning): 무엇이 효과 있고 무엇이 효과 없는가, https://arxiv.org/abs/2503.16219
+
+원래 DeepSeek-R1 논문은 더 작은 추론 모델(reasoning model)을 개발할 때 증류(distillation)가 순수 RL보다 더 나은 결과를 제공한다는 것을 보여주었습니다. 이 논문에서 연구원들은 이를 이어서 소규모 증류 추론 모델(distilled reasoning model)을 RL로 더욱 개선하는 방법을 조사합니다. 따라서 1.5B DeepSeek-R1-Distill-Qwen 모델을 사용하여, 그들은 단 7000개의 훈련 예시와 42달러의 컴퓨팅 자원(compute budget)으로 RL 미세 조정(fine-tuning)이 강력한 개선을 가져올 수 있음을 발견했습니다. 이 경우, 이러한 개선은 예를 들어 AIME24 수학 벤치마크(benchmark)에서 OpenAI의 o1-preview를 능가하기에 충분합니다.
+
+또한, 이 논문에는 3가지 흥미로운 학습 내용이 있었습니다:
+1.  소규모 LLM은 작고 고품질의 데이터셋(dataset)을 사용하여 처음 50~100 훈련 단계(training step) 내에 빠른 추론 개선을 달성할 수 있습니다. 그러나 훈련이 너무 오래 계속되면 주로 길이 제한과 출력 불안정성(output instability)으로 인해 성능이 빠르게 저하됩니다.
+2.  더 쉬운 문제와 더 어려운 문제를 혼합하면 모델이 훈련 초기에 더 짧고 안정적인 응답을 생성하는 데 도움이 됩니다. 그러나 성능은 시간이 지남에 따라 여전히 저하됩니다.
+3.  코사인 형태 보상 함수(cosine-shaped reward function)를 사용하면 출력 길이(output length)를 더 효과적으로 제어하고 훈련 일관성을 향상시킬 수 있습니다. 그러나 이는 표준 정확성 기반 보상(accuracy-based reward)에 비해 최고 성능(peak performance)을 약간 감소시킵니다.
+
+소규모 LLM 추론을 위한 강화 학습(Reinforcement Learning): 무엇이 효과 있고 무엇이 효과 없는가(https://arxiv.org/abs/2503.16219)의 주석이 달린 그림
+
+#### [9] 검색(Search)을 통한 추론(Reasoning) 학습 📄 3월 25일, ReSearch: 강화 학습(Reinforcement Learning)을 통한 LLM의 검색(Search)을 통한 추론(Reasoning) 학습, https://arxiv.org/abs/2503.19470
+
+이 논문에서 제안된 ReSearch 프레임워크(framework)는 DeepSeek-R1 논문의 RL 방법을 확장하여 검색 결과(search result)를 추론 과정의 일부로 포함합니다. 모델은 진행 중인 추론 연쇄(reasoning chain)를 기반으로 언제 어떻게 검색(search)할지 학습하고, 검색된 정보(retrieved information)를 다음 추론 단계에 사용합니다. 이 모든 것은 추론 단계에 대한 지도 데이터(supervised data) 없이 수행됩니다. 연구원들은 또한 이 접근 방식이 자기 수정(self-correction) 및 반성(reflection)과 같은 유용한 행동으로 이어질 수 있으며, 단 하나의 데이터셋(dataset)으로 훈련되었음에도 불구하고 여러 벤치마크(benchmark)에 걸쳐 잘 일반화(generalize)된다는 것을 보여줍니다.
+
+ReSearch: 강화 학습(Reinforcement Learning)을 통한 LLM의 검색(Search)을 통한 추론(Reasoning) 학습(https://arxiv.org/abs/2503.19470)의 주석이 달린 그림
+
+PS: 이 방법은 이전에 논의된 R1-Searcher와 어떻게 다릅니까? R1-Searcher는 2단계 결과 기반 강화 학습(outcome-based reinforcement learning) 접근 방식을 사용합니다. 첫 번째 단계에서는 모델에게 외부 검색(retrieval)을 호출하는 방법을 가르치고, 두 번째 단계에서는 검색된 정보(retrieved information)를 사용하여 질문에 답하는 방법을 학습합니다. 대조적으로 ReSearch는 검색(search)을 추론 과정에 직접 통합합니다. 추론 단계에 대한 감독(supervision) 없이 강화 학습(reinforcement learning)을 사용하여 모델을 엔드투엔드(end-to-end)로 훈련합니다. 잘못된 쿼리(query)에 대한 반성(reflection) 및 수정과 같은 행동은 훈련 중에 자연스럽게 발현됩니다.
+
+#### [10] R1-Zero 유사 훈련 이해: 비판적 관점 📄 3월 26일, R1-Zero 유사 훈련 이해: 비판적 관점, https://arxiv.org/abs/2503.20783
+
+이 논문은 DeepSeek-R1-Zero의 순수 RL 접근 방식이 추론(reasoning)을 개선하는 데 왜 효과적인지 조사합니다. 저자들은 Qwen2.5와 같은 일부 기본 모델(base model)이 RL 없이도 강력한 추론(reasoning)과 심지어 "아하 모멘트(Aha moment)"를 이미 보여준다는 것을 발견합니다. 따라서 "아하 모멘트(Aha moment)"는 RL에 의해 유도된 것이 아니라 사전 학습(pre-training)에서 계승된 것일 수 있습니다. 이는 RL만이 깊은 추론 행동을 생성한다는 생각에 도전합니다. 이 논문은 또한 GRPO에서 두 가지 편향(bias)을 식별합니다:
+1.  **응답 길이 편향(Response-length bias)**: GRPO는 이점(advantage)을 응답 길이(response length)로 나눕니다. 이로 인해 길고 잘못된 답변은 더 작은 페널티(penalty)를 받게 되어 모델이 더 길고 나쁜 답변을 생성하도록 학습합니다.
+2.  **난이도 편향(Difficulty-level bias)**: GRPO는 또한 각 질문에 대한 보상 분산(reward variance)의 표준 편차(standard deviation)로 정규화(normalize)합니다. 쉽거나 어려운 질문(낮은 보상 분산(reward variance)을 가진)은 과도하게 가중치(overweighted)가 부여됩니다.
+이를 해결하기 위해 저자들은 표준 GRPO를 수정한 Dr. GRPO를 소개합니다. 여기서 그들은 이점 계산(advantage computation)에서 응답 길이 정규화(response length normalization)를 제거합니다. 또한 질문 수준 표준 편차(question-level standard deviation)도 제거합니다. 이는 더 효율적인 훈련(efficient training)과 불필요하게 긴 답변(unnecessary long answer) 감소로 이어질 것입니다. 특히 모델이 틀렸을 경우, 긴 답변을 생성하는 것이 더 이상 장려되지 않습니다.
+
+#### [11] 다양한 도메인(Domain)에 걸쳐 검증 가능한 보상(Verifiable Rewards)으로 RL 확장 📄 3월 31일, 보상 브릿지 건너기: 다양한 도메인(Domain)에 걸쳐 검증 가능한 보상(Verifiable Rewards)으로 RL 확장, https://arxiv.org/abs/2503.23829
+
+DeepSeek-R1과 그 뒤를 이은 대부분의 다른 추론 모델(reasoning model)은 코드 및 수학과 같이 쉽게 검증 가능한 도메인(domain)의 보상 신호(reward signal)에 중점을 두었습니다. 이 논문은 답변이 일반적으로 자유 형식(free-form)이며 (간단한 정답/오답을 넘어) 검증하기 더 어려운 의학, 화학, 심리학, 경제학, 교육과 같은 더 복잡한 영역으로 이러한 방법을 확장하는 방법을 탐색합니다. 저자들은 전문가가 작성한 참조 답변(expert-written reference answer)을 사용하면 이러한 더 넓은 도메인(domain)에서도 예상보다 평가가 더 실현 가능하다는 것을 발견합니다. 보상 신호(reward signal)를 제공하기 위해, 그들은 많은 도메인별 주석(domain-specific annotation) 없이 생성적 소프트 스코어링(generative soft-scoring) 방법을 도입합니다。
+
+보상 브릿지 건너기: 다양한 도메인(Domain)에 걸쳐 검증 가능한 보상(Verifiable Rewards)으로 RL 확장(https://arxiv.org/abs/2503.23829)의 주석이 달린 그림
+
+#### [12] 강화 학습(Reinforcement Learning) 확장 (간단한 설정으로) 📄 3월 31일, Open-Reasoner-Zero: 기본 모델(Base Model)에서 강화 학습(Reinforcement Learning)을 확장하는 오픈소스 접근 방식, https://arxiv.org/abs/2503.24290
+
+이 논문에서 저자들은 추론 작업에서 LLM을 훈련하기 위한 최소주의 강화 학습(reinforcement learning) 설정(minimalist reinforcement learning setup)을 탐색합니다. 그들은 GRPO (DeepSeek-R1-Zero에서 사용됨) 대신 바닐라 PPO(vanilla PPO)를 사용하고, RLHF 파이프라인(pipeline)에 일반적으로 포함되는 일반적인 KL 정규화(KL regularization)를 건너뜁니다. 흥미롭게도, 그들은 이 간단한 설정(바닐라 PPO와 답변 정확성(answer correctness)에 기반한 기본적인 이진 보상 함수(binary reward function))이 추론 성능(reasoning performance)과 응답 길이(response length) 모두에서 확장되는 모델을 훈련하는 데 충분하다는 것을 발견합니다. DeepSeek-R1-Zero와 동일한 Qwen-32B 기본 모델(base model)을 사용하여, 그들의 모델은 훈련 단계(training step)의 1/10만 필요로 하면서 여러 추론 벤치마크(benchmark)에서 DeepSeek-R1-Zero를 능가합니다.
+
+Open-Reasoner-Zero: 기본 모델(Base Model)에서 강화 학습(Reinforcement Learning)을 확장하는 오픈소스 접근 방식(https://arxiv.org/abs/2503.24290)의 주석이 달린 그림
+
+#### [13] 사전 학습(Pre-Training)에서의 반성 재고 📄 4월 5일, 사전 학습(Pre-Training)에서의 반성 재고, https://arxiv.org/abs/2504.04022
+
+DeepSeek-R1 논문의 흥미로운 통찰력, 즉 순수 RL을 기본 모델(base model)에 적용하는 것을 바탕으로, 우리는 LLM의 추론 능력(reasoning ability)이 RL에서 발현된다고 생각합니다. 이 논문은 자기 수정(self-correction)이 사전 학습(pre-training) 중에 더 일찍 나타난다고 말하며 약간의 반전(plot twist)을 제공합니다. 구체적으로, 저자들은 의도적으로 결함이 있는 사고의 연쇄(deliberately flawed chain-of-thought)를 작업에 도입함으로써 모델이 이러한 오류를 식별하고 수정할 수 있는지 측정합니다. 그들은 명시적 및 암묵적 형태의 반성(explicit and implicit forms of reflection)이 사전 학습(pre-training) 전반에 걸쳐 꾸준히 나타난다는 것을 발견합니다. 이는 많은 도메인(domain)과 모델 크기(model size)에 걸쳐 발생합니다. 비교적 초기 체크포인트(checkpoint)조차 자기 수정(self-correction)의 징후를 보이며, 사전 학습 컴퓨팅 자원(pre-training compute)이 증가함에 따라 그 능력이 강해집니다.
+
+사전 학습(Pre-Training)에서의 반성 재고(https://arxiv.org/abs/2504.04022)의 주석이 달린 그림
+
+#### [14] 강화 학습(Reinforcement Learning)을 통한 간결한 추론(Reasoning) 📄 4월 7일, 강화 학습(Reinforcement Learning)을 통한 간결한 추론(Reasoning), https://arxiv.org/abs/2504.05185
+
+이제 우리 모두가 알다시피, 추론 모델(reasoning model)은 종종 더 긴 응답을 생성하며, 이는 컴퓨팅 비용(compute cost)을 증가시킵니다. 이제 이 새로운 논문은 이러한 행동이 더 나은 정확성을 위한 실제 긴 답변의 필요성 때문이 아니라 RL 훈련 과정(RL training process)에서 비롯된다는 것을 보여줍니다. RL 손실(loss)은 모델이 음수 보상(negative reward)을 받을 때 더 긴 응답을 선호하는 경향이 있는데, 이는 순수 RL 훈련에서 발생하는 "아하 모멘트(aha moment)"와 더 긴 사고의 연쇄(chain-of-thought)를 설명한다고 생각합니다. 즉, 모델이 음수 보상(negative reward)을 받으면(즉, 답변이 틀리면), PPO 뒤의 수학은 응답이 길어질수록 토큰당 평균 손실(average per-token loss)이 작아지게 합니다. 따라서 모델은 간접적으로 응답을 더 길게 만들도록 장려됩니다. 이는 추가 토큰(token)이 실제로 문제를 해결하는 데 도움이 되지 않더라도 마찬가지입니다. 응답 길이가 손실(loss)과 무슨 관련이 있을까요? 보상(reward)이 음수일 때, 더 긴 응답은 개별 토큰(token)당 페널티(penalty)를 희석시켜 더 낮은(즉, 더 나은) 손실 값(loss value)을 초래할 수 있습니다 (모델이 여전히 틀린 답변을 하고 있음에도 불구하고). 따라서 모델은 더 긴 응답이 정확성(correctness)에 도움이 되지 않더라도 처벌을 줄인다는 것을 "학습"합니다.
+
+그러나 이 분석은 PPO에 대해 수행되었다는 점을 강조하는 것이 중요합니다:
+주목할 점은, 우리의 현재 분석은 GRPO에는 적용되지 않으며, 이러한 방법에 대한 정확한 분석은 향후 연구로 남겨둡니다.
+또한, 연구원들은 두 번째 RL 라운드(때때로 해결 가능한 몇 가지 문제만 사용)가 정확성(accuracy)을 유지하거나 심지어 향상시키면서 응답을 단축할 수 있음을 보여줍니다. 이는 배포 효율성(deployment efficiency)에 큰 영향을 미칩니다.
+
+강화 학습(Reinforcement Learning)을 통한 간결한 추론(Reasoning)(https://arxiv.org/abs/2504.05185)의 주석이 달린 그림
+
+#### [15] 언어 모델 추론 발전의 냉철한 시각 📄 4월 9일, 언어 모델 추론 발전의 냉철한 시각: 함정과 재현성(Reproducibility) 경로, https://arxiv.org/abs/2504.07086
+
+이 논문은 DeepSeek-R1을 기반으로 한 모델과 같이 RL이 증류 언어 모델(distilled language model)을 개선할 수 있다는 최근 주장을 더 자세히 살펴봅니다. 예를 들어, 저는 이전에 "3월 20일, 소규모 LLM 추론을 위한 강화 학습(Reinforcement Learning): 무엇이 효과 있고 무엇이 효과 없는가" 논문에서 RL이 증류 모델(distilled model)에 효과적이라는 것을 발견했다고 논의했습니다. 그리고 DeepSeek-R1 논문에서도 다음과 같이 언급했습니다:
+
+또한, 이러한 증류 모델(distilled model)에 RL을 적용하면 상당한 추가 이득을 얻을 수 있음을 발견했습니다. 우리는 이것이 추가 탐색(exploration)을 보증한다고 믿으며, 따라서 여기서는 간단한 SFT 증류 모델(SFT-distilled model)의 결과만을 제시합니다.
+
+따라서 초기 논문들은 RL로부터 큰 성능 향상을 보고했지만, 이 연구는 그러한 개선 사항 중 상당수가 단순한 노이즈(noise)일 수 있음을 발견합니다. 저자들은 AIME24와 같은 작은 벤치마크(benchmark)의 결과가 매우 불안정하다는 것을 보여줍니다: 랜덤 시드(random seed)를 변경하는 것만으로도 점수가 몇 퍼센트 포인트(percentage point) 이동할 수 있습니다. RL 모델이 더 통제되고 표준화된 설정에서 평가될 때, 이득은 원래 보고된 것보다 훨씬 작고, 종종 통계적으로 유의미하지(statistically significant) 않습니다. 그러나 RL로 훈련된 일부 모델은 적당한 개선을 보이지만, 이는 일반적으로 지도 미세 조정(supervised fine-tuning)이 달성하는 것보다 약하며, 새로운 벤치마크(benchmark)에 잘 일반화(generalize)되지 않는 경우가 많습니다. 따라서 RL이 일부 경우에 더 작은 증류 모델(distilled model)을 개선하는 데 도움이 될 수 있지만, 이 논문은 그 이점이 과장되었으며 실제로 무엇이 작동하는지 이해하기 위해 더 나은 평가 기준(evaluation standard)이 필요하다고 주장합니다.
+
+언어 모델 추론 발전의 냉철한 시각: 함정과 재현성(Reproducibility) 경로(https://arxiv.org/abs/2504.07086)의 주석이 달린 그림
+
+이 잡지는 개인적인 열정 프로젝트입니다. 독립 연구자로서 저를 지원하려면 제 책 "대규모 언어 모델 구축(처음부터)(Build a Large Language Model (From Scratch))"을 구매하거나 유료 구독을 신청하는 것을 고려해 주십시오.
+
+대규모 언어 모델 구축(처음부터)(Build a Large Language Model (From Scratch)) 지금 Amazon에서 구매 가능합니다
+
+책을 읽으셨고 몇 분의 시간이 있으시다면, 짧은 리뷰를 남겨주시면 정말 감사하겠습니다. 이는 저희 저자들에게 큰 도움이 됩니다! 여러분의 지원은 큰 의미가 있습니다! 감사합니다!

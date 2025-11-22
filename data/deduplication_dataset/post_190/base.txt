@@ -1,0 +1,8 @@
+# **금주의 AI 에이전트: 알아두어야 할 논문**
+
+Author: Pascal Biese
+URL: https://www.llmwatch.com/p/ai-agents-of-the-week-papers-you-d94
+
+============================================================
+
+**이번 주 연구는 더 유능하고 신뢰할 수 있는 자율 AI 에이전트(autonomous AI agents)를 향한 중요한 진전을 가져왔습니다.** 연구자들은 다음과 같은 내용을 소개했습니다: 에이전트(agent)의 추론을 자기 일관적인 합의(self-consistent consensus)와 일치시키는 방법, 다중 에이전트 시스템(multi-agent systems)을 모니터링(monitoring)하고 보안을 강화하기 위한 새로운 아키텍처(architectures), 에이전트(agent)가 복잡한 도메인(domain)별 작업을 종단 간(end-to-end)으로 수행할 수 있게 하는 프레임워크(frameworks), 프로덕션(production) 환경에서 에이전트 워크플로우(agent workflows)를 평가하고 디버깅(debugging)하기 위한 도구, 각 작업에 적응하는 동적 에이전트 계획(dynamic agent planning)을 위한 새로운 방법. 이러한 발전들은 종합적으로 자율 에이전트(autonomous agents)가 추론에서 더 자기 일관적이고, 운영에서 더 신뢰할 수 있으며, 전문성에서 더 특화되고, 배포에서 더 견고하며, 계획에서 더 효율적이도록 만듭니다. 아래에서는 메모리(memory)와 계획(planning)부터 오케스트레이션(orchestration), 견고성(robustness) 등에 이르기까지 각각 중요한 측면을 다루는 이번 주의 주요 논문들을 분석하고, 이들이 자율 AI(autonomous AI)의 미래에 왜 중요한지 논의합니다.

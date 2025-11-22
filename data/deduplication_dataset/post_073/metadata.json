@@ -1,0 +1,21 @@
+{
+  "post_id": "073",
+  "title": "🥇이번 주의 최고의 인공지능(AI) 논문",
+  "base_word_count": 2046,
+  "exact_30_update_wc": 1225,
+  "exact_30_ground_truth_wc": 1225,
+  "exact_30_overlap_ratio": 1.67,
+  "paraphrase_25_update_wc": 2501,
+  "paraphrase_25_ground_truth_wc": 2501,
+  "paraphrase_25_overlap_ratio": 0.818,
+  "fragment_20_update_wc": 1376,
+  "fragment_20_ground_truth_wc": 2954,
+  "fragment_20_overlap_ratio": 0.34,
+  "semantic_25_update_wc": 2525,
+  "semantic_25_ground_truth_wc": 2519,
+  "semantic_25_overlap_ratio": 0.813,
+  "mixed_real_update_wc": 2374,
+  "mixed_real_ground_truth_wc": 2369,
+  "mixed_real_overlap_ratio": 0.864,
+  "status": "generated"
+}

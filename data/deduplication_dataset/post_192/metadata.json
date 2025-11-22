@@ -1,0 +1,21 @@
+{
+  "post_id": "192",
+  "title": "**데이터 과학자를 위한 효율적인 파이썬 강좌 [10/14]: .groupby()를 활용한 효과적인 데이터 변환**",
+  "base_word_count": 1518,
+  "exact_30_update_wc": 1487,
+  "exact_30_ground_truth_wc": 1583,
+  "exact_30_overlap_ratio": 0.956,
+  "paraphrase_25_update_wc": 1426,
+  "paraphrase_25_ground_truth_wc": 1426,
+  "paraphrase_25_overlap_ratio": 1.065,
+  "fragment_20_update_wc": 1051,
+  "fragment_20_ground_truth_wc": 1900,
+  "fragment_20_overlap_ratio": 0.637,
+  "semantic_25_update_wc": 1075,
+  "semantic_25_ground_truth_wc": 1050,
+  "semantic_25_overlap_ratio": 1.435,
+  "mixed_real_update_wc": 1179,
+  "mixed_real_ground_truth_wc": 1179,
+  "mixed_real_overlap_ratio": 1.288,
+  "status": "generated"
+}

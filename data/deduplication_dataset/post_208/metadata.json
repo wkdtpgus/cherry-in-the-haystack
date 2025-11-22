@@ -1,0 +1,21 @@
+{
+  "post_id": "208",
+  "title": "**평균 챗GPT(ChatGPT) 요청은 약 0.34Wh를 사용한다.**",
+  "base_word_count": 422,
+  "exact_30_update_wc": 394,
+  "exact_30_ground_truth_wc": 544,
+  "exact_30_overlap_ratio": 0.69,
+  "paraphrase_25_update_wc": 497,
+  "paraphrase_25_ground_truth_wc": 511,
+  "paraphrase_25_overlap_ratio": 0.821,
+  "fragment_20_update_wc": 434,
+  "fragment_20_ground_truth_wc": 633,
+  "fragment_20_overlap_ratio": 0.514,
+  "semantic_25_update_wc": 493,
+  "semantic_25_ground_truth_wc": 493,
+  "semantic_25_overlap_ratio": 0.856,
+  "mixed_real_update_wc": 391,
+  "mixed_real_ground_truth_wc": 401,
+  "mixed_real_overlap_ratio": 1.054,
+  "status": "generated"
+}

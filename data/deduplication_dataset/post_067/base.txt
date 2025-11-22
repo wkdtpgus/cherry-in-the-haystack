@@ -1,0 +1,19 @@
+# **🤖 AI 에이전트(AI Agents) 위클리: Claude Haiku 4.5, Deep Agents, SWE-grep, nanochat, Agent Skills, Veo 3.1 Fast, n8n AI Workflow Builder**
+
+Author: Elvis Saravia
+URL: https://nlp.elvissaravia.com/p/ai-agents-weekly-claude-haiku-45
+
+============================================================
+
+**오늘 호에서는:** Anthropic이 Claude Haiku 4.5를 소개합니다 | 딥 에이전트(Deep Agents): AI 에이전트의 미래 | 에이전트 추론(Agentic Reasoning)에서 RL(강화 학습)의 신비 해소 | Cognition이 더 빠른 컨텍스트 검색(context retrieval)을 위해 SWE-grep을 소개합니다 | Andrej Karpathy가 nanochat을 출시합니다 | Anthropic이 에이전트 스킬(Agent Skills)을 소개했습니다 | n8n이 AI 워크플로우 빌더(AI Workflow Builder)를 소개했습니다 | OpenAI가 gpt-5-search-api를 출시했습니다 | Google DeepMind와 Yale이 Cell2Sentence-Scale 27B를 출시했습니다 | Google이 Veo 3.1과 Veo 3.1 Fast를 소개했습니다 | 주요 AI 개발 뉴스, 도구 및 논문.
+
+**주요 소식**
+**Claude Haiku 4.5**
+Anthropic의 새로운 소형 모델인 Claude Haiku 4.5는 비용과 지연 시간(latency)을 대폭 절감하면서 최첨단에 가까운 성능을 제공합니다. 이는 실제 코딩 및 컴퓨터 사용 벤치마크에서 Claude Sonnet 4와 동등하거나 능가하는 성능을 보여주며, 라이브 채팅, 코딩 에이전트(coding agents), 고객 서비스 자동화와 같은 반응형 AI 작업에 이상적입니다.
+
+*   **속도 및 효율성** – Haiku 4.5는 Sonnet 4보다 2배 빠르고 비용은 3분의 1에 불과하며, SWE-bench Verified 점수에서 필적하는 성능을 달성하고 컴퓨터 사용 작업에서는 Sonnet 4를 능가하기도 합니다.
+*   **다중 에이전트(multi-agent) 워크플로우에 이상적** – Anthropic은 Sonnet 4.5(계획용)와 Haiku 4.5 팀(실행용)을 결합하여 하위 작업을 효율적으로 병렬화하는 방법을 강조합니다.
+*   **안전 우선 설계** – 정렬 테스트(alignment testing)에서 Haiku 4.5는 모든 Claude 모델 중 가장 낮은 오정렬 행동(misaligned behaviors) 비율을 보였으며, Sonnet 4.5의 ASL-3보다 덜 제한적인 AI 안전 수준 2(ASL-2) 등급을 획득했습니다.
+*   **광범위한 배포** – Claude API, Claude Code, Amazon Bedrock, Google Vertex AI를 통해 사용할 수 있으며, 비용 효율적인 실시간 추론(real-time reasoning)을 추구하는 개발자를 위한 Haiku 3.5 또는 Sonnet 4의 즉시 대체 가능한(drop-in replacement) 모델로 자리매김하고 있습니다.
+*   **벤치마크(Benchmarks)** – SWE-bench Verified, Terminal-Bench, τ²-Bench, AIME, OSWorld, MMMLU에서 Haiku 4.5는 도구 사용(tool use)이 활성화된 128K 사고 예산(thinking budgets)을 사용하여 강력한 정확도를 유지합니다.
+블로그

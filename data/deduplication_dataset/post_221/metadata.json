@@ -1,0 +1,21 @@
+{
+  "post_id": "221",
+  "title": "**지난 한 달간 아무도 언급하지 않는 가장 중요한 AI 에이전트 뉴스 (+ 맞춤형 뉴스 프롬프트)**",
+  "base_word_count": 278,
+  "exact_30_update_wc": 549,
+  "exact_30_ground_truth_wc": 549,
+  "exact_30_overlap_ratio": 0.506,
+  "paraphrase_25_update_wc": 202,
+  "paraphrase_25_ground_truth_wc": 202,
+  "paraphrase_25_overlap_ratio": 1.376,
+  "fragment_20_update_wc": 164,
+  "fragment_20_ground_truth_wc": 248,
+  "fragment_20_overlap_ratio": 1.183,
+  "semantic_25_update_wc": 472,
+  "semantic_25_ground_truth_wc": 472,
+  "semantic_25_overlap_ratio": 0.589,
+  "mixed_real_update_wc": 231,
+  "mixed_real_ground_truth_wc": 238,
+  "mixed_real_overlap_ratio": 1.173,
+  "status": "generated"
+}

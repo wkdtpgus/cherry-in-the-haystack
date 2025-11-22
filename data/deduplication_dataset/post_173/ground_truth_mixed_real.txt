@@ -1,0 +1,7 @@
+저는 Maarten Grootendorst와 함께 O'Reilly Media에서 출판될 "Hands-On Large Language Models"를 공동 집필하게 되어 매우 기쁩니다! 이 책에서는 대규모 언어 모델(LLM)을 활용한 텍스트 이해 및 생성의 핵심 원리를 풍부한 시각 자료와 함께 제시하고자 합니다.
+
+집필 진행 상황은 소셜 미디어 채널과 본 뉴스레터를 통해 꾸준히 공유될 예정입니다. 다루었으면 하는 내용에 대한 여러분의 의견과 제안을 언제든 환영합니다.
+
+저희 개요는 개발자들이 필요로 하는 실제 적용 사례인 분류(classification), 의미 검색(semantic search), 토픽 모델링(topic modeling), 텍스트 생성(text generation), 프롬프트 엔지니어링(prompt engineering) 등을 다룹니다. 최근 주목받는 RAG(Retrieval Augmented Generation)와 멀티모달(multimodal) LLM 같은 최신 기술 동향도 심층적으로 탐구할 것입니다. 이 책은 이론적 지식뿐만 아니라 실용적인 코드 예제를 통해 독자들이 직접 LLM 애플리케이션을 개발하고 확장할 수 있도록 돕는 데 초점을 맞춥니다. 이어서 기반 모델과 훈련 방법 자체를 설명하는 여러 장이 이어질 것입니다.
+
+Language Models and Machine Learning을 읽어주셔서 감사합니다! 새 게시물을 받아보고 제 작업을 지원하시려면 무료로 구독해주세요. 구독하기

@@ -1,0 +1,21 @@
+{
+  "post_id": "122",
+  "title": "**지난주 AI 소식 #325 - OpenAI는 영리 기업, ChatGPT 아틀라스, 코파일럿 미코**",
+  "base_word_count": 2421,
+  "exact_30_update_wc": 1763,
+  "exact_30_ground_truth_wc": 3311,
+  "exact_30_overlap_ratio": 0.495,
+  "paraphrase_25_update_wc": 2616,
+  "paraphrase_25_ground_truth_wc": 2851,
+  "paraphrase_25_overlap_ratio": 0.836,
+  "fragment_20_update_wc": 1516,
+  "fragment_20_ground_truth_wc": 2562,
+  "fragment_20_overlap_ratio": 0.907,
+  "semantic_25_update_wc": 1803,
+  "semantic_25_ground_truth_wc": 2758,
+  "semantic_25_overlap_ratio": 0.813,
+  "mixed_real_update_wc": 2648,
+  "mixed_real_ground_truth_wc": 2648,
+  "mixed_real_overlap_ratio": 0.914,
+  "status": "generated"
+}

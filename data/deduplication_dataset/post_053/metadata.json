@@ -1,0 +1,21 @@
+{
+  "post_id": "053",
+  "title": "**전문가 혼합 (Mixture-of-Experts, MoE) 대규모 언어 모델 (LLMs)**",
+  "base_word_count": 8047,
+  "exact_30_update_wc": 3762,
+  "exact_30_ground_truth_wc": 7873,
+  "exact_30_overlap_ratio": 1.046,
+  "paraphrase_25_update_wc": 7953,
+  "paraphrase_25_ground_truth_wc": 7972,
+  "paraphrase_25_overlap_ratio": 1.009,
+  "fragment_20_update_wc": 7588,
+  "fragment_20_ground_truth_wc": 1554,
+  "fragment_20_overlap_ratio": 1.856,
+  "semantic_25_update_wc": 7351,
+  "semantic_25_ground_truth_wc": 7351,
+  "semantic_25_overlap_ratio": 1.095,
+  "mixed_real_update_wc": 6635,
+  "mixed_real_ground_truth_wc": 6917,
+  "mixed_real_overlap_ratio": 1.17,
+  "status": "generated"
+}

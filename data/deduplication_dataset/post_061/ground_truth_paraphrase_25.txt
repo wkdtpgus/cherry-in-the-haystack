@@ -1,0 +1,21 @@
+오늘의 이슈: 컨텍스트 엔지니어링(Context Engineering) 2.0, 인간-기계 커뮤니케이션(human-machine communication)을 재정의하다
+Kimi K2 Thinking이 GPT-5 및 Claude Sonnet 4.5를 능가하다
+코드 실행(code execution)으로 MCP 토큰(token) 사용량 98.7% 절감
+Denario AI 에이전트(agent)가 엔드투엔드(end-to-end) 과학 연구를 수행하다
+Windsurf, AI 생성 코드맵(Codemaps) 출시
+Cursor, 에이전트 트레이스(agent traces)로 학습된 시맨틱 검색(semantic search) 제공
+MiniMax-M2 인터리브드 씽킹 가이드(interleaved thinking guide)가 에이전트 성능(agentic performance)을 향상시키다
+OpenAI, 문화 인식 IndQA 벤치마크(benchmark) 공개
+주요 AI 개발 뉴스, 도구 업데이트 등
+
+**주요 기사: 컨텍스트 엔지니어링(Context Engineering) 2.0 심층 분석**
+
+SJTU, SII, GAIR 소속 연구진은 20여 년간의 컨텍스트 엔지니어링(context engineering) 발전 과정을 깊이 있게 탐구하며, 이를 초기 컴퓨팅 단계(primitive computing) (1.0)부터 현재의 지능형 에이전트(intelligent agents) (2.0) 시대에 이르는 인간-기계 소통(human-machine communication)의 핵심 과제로 새롭게 해석했습니다. 본 논문은 컨텍스트를 인지하는(context-aware) AI 시스템(AI systems) 구축을 위한 체계적인 정의, 역사적 분석 및 설계 구조(design framework)를 제시합니다.
+
+이 연구는 기계 지능(machine intelligence) 발전에 따른 컨텍스트 진화의 네 단계를 제시합니다. 초기 컨텍스트 1.0은 구조화된 입력(structured inputs)을, 현재 2.0은 자연어(natural language)를 다루는 지능형 에이전트(intelligent agents)에 중점을 둡니다. 향후 3.0(인간 수준 지능(human-level intelligence))과 4.0(초인적 지능(superhuman intelligence))은 인간-AI 상호작용 비용(human-AI interaction cost)을 지속적으로 줄이는 것을 목표로 합니다.
+
+컨텍스트 엔지니어링을 엔트로피 감소(entropy reduction)로 보는 관점은 인간이 복잡한(high-entropy) 정보를 기계가 이해하기 쉬운(low-entropy) 형태로 변환하는 노력을 AI 자체의 지능 향상으로 최소화하려는 시도입니다. 즉, AI의 지능이 높아질수록 인간의 정보 '정리' 부담이 줄어드는 것입니다.
+
+논문은 컨텍스트 수집(context collection) (다중 모드 센서(multimodal sensors), 계층형 저장소(layered storage)), 관리(management) (텍스트/다중 모드 처리(text/multimodal processing), 계층적 메모리(hierarchical memory), 자체 생성 추상화(self-baking abstractions)), 그리고 사용(usage) (시스템 내 공유(intra-system sharing), 시스템 간 프로토콜(cross-system protocols), 사전 예방적 추론(proactive inference))에 이르는 포괄적인 설계 원칙을 제시합니다. 실제 구현 사례로는 GEMINI.md 파일을 활용하는 Gemini CLI, 주기적 요약 기능을 갖춘 Tongyi DeepResearch와 같은 심층 연구 에이전트(deep research agents), KV 캐싱 최적화(KV caching optimization) 및 도구 설계 전략(tool design strategies) 등이 있습니다.
+
+하지만 해결 과제도 명확합니다. 제한적인 컨텍스트 수집 방식은 AI의 정보 활용 범위를 좁히고, 대규모 데이터 저장 및 처리 시 발생하는 성능 병목 현상은 효율성 저하로 이어집니다. 또한, 평생 학습(lifelong memory) 환경에서의 시스템 안정성 확보와 인간 인지 모델(human cognitive model)을 모방한 시맨틱 운영 체제(semantic operating system)의 개발은 미래 컨텍스트 엔지니어링의 핵심 연구 방향이 될 것입니다. 결론적으로, 컨텍스트 엔지니어링 2.0은 AI의 진화를 이끄는 핵심 동력이며, 인간과 AI의 상호작용 방식을 근본적으로 변화시킬 잠재력을 가지고 있습니다. 앞으로의 연구와 기술 개발이 더욱 기대됩니다.

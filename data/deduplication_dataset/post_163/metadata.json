@@ -1,0 +1,21 @@
+{
+  "post_id": "163",
+  "title": "**새로운 논문: 의미 있는 AI 에이전트(AI agents)**",
+  "base_word_count": 1478,
+  "exact_30_update_wc": 1623,
+  "exact_30_ground_truth_wc": 1851,
+  "exact_30_overlap_ratio": 0.77,
+  "paraphrase_25_update_wc": 1645,
+  "paraphrase_25_ground_truth_wc": 1645,
+  "paraphrase_25_overlap_ratio": 0.898,
+  "fragment_20_update_wc": 1182,
+  "fragment_20_ground_truth_wc": 1376,
+  "fragment_20_overlap_ratio": 1.086,
+  "semantic_25_update_wc": 1430,
+  "semantic_25_ground_truth_wc": 1430,
+  "semantic_25_overlap_ratio": 1.034,
+  "mixed_real_update_wc": 1348,
+  "mixed_real_ground_truth_wc": 1348,
+  "mixed_real_overlap_ratio": 1.096,
+  "status": "generated"
+}

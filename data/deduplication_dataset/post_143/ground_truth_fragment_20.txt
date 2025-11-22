@@ -1,0 +1,67 @@
+에피소드 138: AI와 인간 중심 혁신: 미래를 위한 대화
+
+저는 메러디스 모리스(Meredith Morris)와 AI 기술의 미래 방향과 그 잠재적 영향에 대해 깊이 있는 대화를 나누었습니다. 주요 논의 주제는 다음과 같습니다.
+
+*   AI와 HCI(Human-Computer Interaction)의 교차점, 사용자 경험 혁신 및 인접 분야 간 교차 협력(cross-pollination)의 필요성
+*   장애 연구(Disability studies)와 AI: AI 시스템 설계의 중요한 고려 사항 및 포괄적 기술 개발의 필요성
+*   생성형 유령(Generative ghosts)과 기술 결정론(technological determinism)의 한계, 생성형 모델의 윤리적 사용 및 인간 중심적 접근 방식
+*   유용한 AGI(Artificial General Intelligence) 정의 개발을 통한 미래 AI의 청사진
+
+제가 아파서 이번 에피소드의 서론을 녹음하지 못했습니다. 이번 대화는 AI가 우리 사회에 미치는 광범위한 영향을 다루며, 기술 발전의 속도만큼이나 윤리적이고 사회적인 질문에 대한 숙고가 중요함을 깨닫게 했습니다. 즐겁게 들어주세요!
+
+메러디스 모리스는 구글 딥마인드의 인간-AI 상호작용 연구(Human-AI Interaction Research) 디렉터로서 최신 AI 연구를 이끌고 있으며, 워싱턴 대학교(University of Washington)의 폴 G. 앨런 컴퓨터 과학 및 공학 대학(The Paul G. Allen School of Computer Science & Engineering)과 정보 대학(The Information School)의 겸임 교수(Affiliate Professor)로 활동하고 있습니다. 그곳에서 그녀는 차세대 AI 연구 컨소시엄(research consortium)에 참여하고 있습니다. 그녀의 연구는 인간-컴퓨터 상호작용(human-computer interaction, HCI)의 새로운 지평을 열고 있으며, 특히 인간 중심 AI(human-centered AI), 인간-AI 상호작용(human-AI interaction), 협업 시스템(collaborative systems), 소셜 컴퓨팅(social computing) 및 접근성(accessibility) 분야에서 혁신적인 솔루션을 모색합니다. 그녀는 HCI에 대한 선구적인 공헌으로 ACM 펠로우(ACM Fellow) 및 ACM SIGCHI 아카데미 회원(ACM SIGCHI Academy member)으로 인정받았습니다.
+
+새로운 에피소드 업데이트를 위해 트위터(Twitter)에서 저를 찾아주시고, 피드백, 아이디어, 게스트 제안 및 협업 제안을 위해 editor@thegradient.pub으로 연락 주세요.
+
+The Gradient 팟캐스트 및 블로그 구독: 애플 팟캐스트(Apple Podcasts) | 애플 뉴스(Apple News) | 스포티파이(Spotify) | 포켓 캐스트(Pocket Casts) | 구글 뉴스(Google News) | RSS
+트위터에서 The Gradient 팔로우 구독
+
+**목차:**
+(00:00) 메러디스의 영향과 초기 작업, AI 윤리 및 개념 형성
+(03:00) AI와 HCI의 진화하는 관계
+(05:56) 분야의 성숙도와 학제 간 연구(cross-disciplinary work)의 중요성
+(09:03) 기술의 목적과 사회적 책임
+(10:37) 메러디스 연구 방향의 독특한 접근법
+(12:55) 학제 간 연구(interdisciplinary work)에서의 지식 생산 형태의 다양성
+(14:08) 장애, 편향(Bias), 그리고 AI의 포용성
+(18:32) LaMPost와 글쓰기를 위한 LM(Language Models) 활용의 미래
+(20:12) 난독증(dyslexia)을 위한 접근성(Accessibility) 기술 발전
+(22:15) AI에 대한 대중의 인식과 자율성(autonomy)에 대한 인지적 변화
+(24:43) 인격(personhood)의 소프트웨어 모델(software model) 구축의 도전
+(28:07) 지능의 개념, 규범적 비전(normative visions) 및 장애 연구(disability studies)의 통찰
+(32:41) 장애 범주와 학습 시스템(learning systems)의 적응성
+(37:24) 컴퓨터 과학(CS) 연구에 더 많은 관점 도입 및 CS 연구로 간주되는 것 재정의의 필요성
+(39:36) 학제 간 연구자(interdisciplinary researchers) 양성, 학계와 산업계의 경계 허물기 전략
+(43:25) 생성형 에이전트(Generative Agents)와 대중의 상상력 자극
+(45:13) ML(Machine Learning) 컨퍼런스의 현황, 더 많은 교차 협력(cross-pollination)의 필요성 강조
+(46:42) 컨퍼런스의 명성, 더 많은 학제 간 연구(cross-disciplinary work)로의 전환 가속화
+(48:52) 준 박(Joon Park)의 기여와 협력의 중요성
+(49:51) 학제 간 연구자(interdisciplinary researchers) 양성의 새로운 접근법
+(53:20) 생성형 유령(Generative Ghosts)과 기술 결정론(technological determinism)의 한계
+(57:06) 생성형 유령(generative ghosts) 및 클론(clones)의 실제 예시, 에이전트 시스템(agentic systems)과의 관계 재정립
+(1:00:39) 생성형 유령(generative ghosts)을 원하는 사회적 배경
+(1:02:25) 생성형 클론(generative clones) 및 유령(ghosts)에 대한 동의 문제와 윤리적 프레임워크
+(1:05:01) 생성형 유령(generative ghosts) 유지에 필요한 노동, 심리적 대가 분석
+(1:06:25) 생성형 시스템(generative systems)의 잠재적 종교적 및 영적 의미 탐구
+(1:10:19) 의인화(Anthropomorphization)의 심리학적 기제
+(1:12:14) 사용자 경험(User experience)과 인지 편향(cognitive biases)의 상호작용
+(1:15:24) AGI(Artificial General Intelligence)의 수준별 분류
+(1:16:13) AGI(Artificial General Intelligence) 정의의 발전
+(1:23:20) 세계 모델(World models)과 AGI(Artificial General Intelligence)의 통합
+(1:26:16) AGI(Artificial General Intelligence)의 메타인지 능력(Metacognitive abilities) 구현
+(1:30:06) 양방향 인간-AI 정렬(Bidirectional Human-AI Alignment)을 향한 여정
+(1:30:55) 다원적 가치 정렬(Pluralistic value alignment)의 복잡성
+(1:32:43) AI 시스템(AI systems) 배포에 대한 메러디스의 실용적 관점
+(1:36:09) 젊은 학제 간 연구자(interdisciplinary researchers)를 위한 메러디스의 조언과 격려
+
+**링크:**
+메러디스의 홈페이지, 트위터(Twitter), 구글 스칼라(Google Scholar)
+
+**논문:**
+테이블탑 인터페이스 디자인(Tabletop Interface Design)을 통한 그룹 역학 중재의 새로운 접근법
+SearchTogether: 협업 웹 검색(Collaborative Web Search)을 위한 인터페이스의 진화
+AI와 접근성(Accessibility): 윤리적 고려 사항(Ethical Considerations)에 대한 심층 논의
+장애, 편향(Bias), 그리고 AI: 포괄적 설계를 위한 제언
+LaMPost: 난독증(Dyslexia) 성인을 위한 AI 지원 이메일 작성 프로토타입(Prototype) 설계 및 평가의 개선
+생성형 유령(Generative Ghosts)의 사회적 영향
+AGI(Artificial General Intelligence)의 수준별 프레임워크

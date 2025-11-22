@@ -1,0 +1,47 @@
+AIE 티켓이 오늘 매진되었습니다. 작년과 마찬가지로 컨퍼런스(conference) D-1입니다. 예상치 못하게 이전보다 더 가파른 지니 계수(Gini coefficient)를 보이며 미친 듯이 급증했습니다. 하지만 이제 많은 분들이 FOMO(Fear Of Missing Out)를 느끼거나 직접 참석할 수 없게 되었습니다. 걱정 마세요: AI 엔지니어 세계 박람회 온라인(AI Engineer World’s Fair Online)이 있습니다! AIE 서밋(Summit)의 온라인 트랙(online track)이 큰 호응을 얻어 다시 진행하게 되었습니다. 제출된 약 1000개의 강연 중 약 40개를 유튜브(YouTube)용으로 선정했으며, 현재 세계 최고의 오픈 모델(open model) 중 하나인 알리바바(Alibaba) Qwen의 린쥔양(Junyang Lin)의 멋진 기조연설이 중심을 이룹니다. 온라인 트랙(online track) 재생 목록의 강연들(현재 작동하지 않는 것을 알고 있으며, 수정할 예정입니다)은 앞으로 며칠에 걸쳐 순차적으로 공개될 예정입니다. 하지만 귀한 시간을 내어 전 세계와 지식을 무료로 공유해주신 연사분들께 따뜻한 박수를 보내주세요!
+
+지난 한 해 동안 AI 분야는 전례 없는 속도로 발전하며 우리 삶의 다양한 영역에 깊은 영향을 미쳤습니다. AIEWF는 이러한 혁신의 최전선에서 AI 엔지니어들이 서로 배우고, 협력하며, 미래를 만들어가는 중요한 장이 되어왔습니다. 올해는 특히 책임 있는 AI 개발, 멀티모달 에이전트(multimodal agents)의 발전, 그리고 실제 산업 적용 사례에 대한 심도 깊은 논의가 이루어질 예정입니다. 급변하는 환경 속에서 AIE 커뮤니티(community)의 역할은 그 어느 때보다 중요합니다.
+
+### AIEWF 라이브 스트림(Livestreams)
+컨퍼런스(conference) 규모가 두 배로 커진 만큼, 라이브 스트림(livestream) 수도 두 배로 늘렸습니다. AIE 유튜브(YouTube) 채널에 방문하여 라이브 스트림 알림을 켜주세요! 사라 궈(Sarah Guo), 사이먼 윌리슨(Simon Willison), 그렉 브록만(Greg Brockman)과 같은 거물들이 수요일에 라이브(live)로 강연하는 중요한 행사가 될 것입니다. 전 세계에서 라이브(live)로 시청하시는 분들은 자유롭게 지역별 시청 파티(watch party)를 조직하고 여기 LS 캘린더(calendar)에 제출하여 다른 사람들이 여러분을 찾을 수 있도록 해주세요. 유튜브(YouTube) 스트림(stream) 채팅에 참여하는 것 외에도, 새로운 X AI 엔지니어링(Engineering) 커뮤니티(community)에 가입하여 실시간으로 댓글과 질문을 트윗(tweet)할 수 있습니다.
+
+온라인 트랙(online track)의 강연들은 이제 안정적으로 제공되며, 각 세션(session)은 Q&A 세션(Q&A session)을 포함하여 심층적인 학습 경험을 제공합니다. 또한, 라이브 스트림(livestream) 중에는 실시간 투표(polling) 및 설문조사(survey) 기능이 추가되어 시청자들이 강연에 더욱 적극적으로 참여할 수 있습니다. 컨퍼런스(conference)가 끝난 후에도 모든 강연 영상은 AIE 유튜브(YouTube) 채널에 아카이빙(archiving)되어 언제든지 다시 시청 가능합니다.
+
+### AIE 미리보기 채팅(Preview Chats)
+Latent Space에서는 AIE 연사들과 여러 미리보기 팟캐스트(podcasts)를 진행했습니다.
+*   추론(Reasoning) + RL 트랙(track): 윌 브라운(Will Brown)과의 클로드 4(Claude 4) + RL 채팅
+*   SWE 에이전트(Agents): 팩토리 AI(Factory AI) 에피소드(episode)
+*   로봇 공학(Robotics): 클라우드셰프(CloudChef) 팟캐스트(pod)
+*   제미니(Gemini) + 음성(Voice): 오늘 공개된 구글 I/O(Google I/O) 팟캐스트(pod)
+*   신뢰할 수 있는 에이전트(Reliable Agents): 내일 공개될 솔로몬 하이크스(Solomon Hykes)와의 채팅
+이를 미리 시청하여 AIE의 뜨거운 주제들을 미리 파악할 수 있습니다.
+
+### AIE 심층 기술 세션(Deep Dive Tech Sessions) 및 워크샵(Workshops)
+올해 AIEWF에서는 기존 미리보기 채팅(preview chats)에서 다루었던 주제들을 더욱 깊이 있게 탐구할 수 있는 심층 기술 세션(deep dive tech sessions)과 실습 위주의 워크샵(workshops)이 새롭게 추가되었습니다.
+*   **생성형 AI(Generative AI) 아키텍처(Architecture) 해부**: 최신 LLM 및 확산 모델(diffusion model)의 내부 작동 방식 및 최적화 기법.
+*   **에이전트(Agent) 기반 시스템(System) 구축 실습**: 실제 문제 해결을 위한 자율 에이전트(autonomous agents) 설계 및 구현 방법론.
+*   **엣지 AI(Edge AI) 최적화 전략**: 제한된 리소스(resource) 환경에서 AI 모델(model)을 효율적으로 배포하고 운영하는 노하우(know-how).
+*   **AI 윤리 및 공정성(Fairness) 가이드라인(Guidelines)**: AI 시스템(system) 개발 시 발생할 수 있는 윤리적 문제점과 해결을 위한 실질적인 접근법.
+이러한 세션들은 이론적 지식뿐만 아니라 실제 적용 가능한 기술과 노하우(know-how)를 제공하여 참석자들의 역량을 한층 더 강화할 것입니다.
+
+### AIEWF 2025 현장 참석자 전문가 팁(Pro Tips): 경험 극대화 전략
+이번 AIEWF를 통해 여러분의 경험을 최대한으로 끌어올릴 수 있는 몇 가지 추가적인 팁(tip)을 공유합니다:
+
+*   **세션(session) 및 강연(talk) 사전 계획**: 공식 앱(app) 또는 웹사이트(website)에서 전체 일정을 미리 확인하고, 관심 있는 강연과 패널 토론(panel discussion)을 스케줄(schedule)에 추가하세요. 인기 있는 세션(session)은 일찍 만석이 될 수 있습니다.
+*   **네트워킹(networking) 기회 적극 활용**: 단순히 명함을 교환하는 것을 넘어, 다른 참석자들과 의미 있는 대화를 나누는 데 집중하세요. 공통의 관심사를 가진 사람들과 소규모 그룹(group)을 형성하거나, 연사들에게 질문을 하는 등 적극적으로 소통하여 잠재적인 협력 기회를 모색할 수 있습니다.
+*   **오픈 소스(open source) 프로젝트(project) 및 데모(demo) 부스(booth) 방문**: 컨퍼런스(conference) 현장에는 최신 AI 기술을 직접 시연하고 있는 다양한 오픈 소스(open source) 프로젝트(project) 팀(team)과 스타트업(startup) 부스(booth)가 마련되어 있습니다. 직접 체험하고 질문하며 새로운 아이디어(idea)를 얻을 수 있는 좋은 기회입니다.
+*   **참석자 배지(badge)를 일찍 수령하세요.** 아무리 강조해도 지나치지 않습니다. 지금 등록 부스(registration booth)에는 줄이 없지만, 수요일 아침에는 1000명 이상의 사람들이 몰릴 것입니다. 그들 중 한 명이 되지 마세요. 등록은 화요일 종일 가능하며, 그때 많은 AI 엔지니어(AI Engineer)들과 만나 대화할 수 있습니다.
+*   다음 중 하나에 참여하세요: AIE 슬랙(Slack) 또는 공식 컨퍼런스(conference) 앱(CrowdComms, 이메일을 받으셨을 것입니다. 받지 못했다면 등록 데스크에 알려주세요) 또는 @aiDotEngineer를 팔로우(follow)하세요. 저희는 긴급 업데이트(update)가 이 채널들 중 하나를 통해 여러분에게 전달되도록 노력할 것입니다.
+*   스스로 준비하고, 다음 사항에 대해 사고의 사슬(chain of thought)을 해보세요: (특정 기술, 직업, 자금 등)
+    *   무엇을 찾고 있는지
+    *   무엇을 도울 수 있는지
+*   **참석자 강연을 제출하세요!** 공식 Crowdcomms 컨퍼런스(Conference) 앱(app)에는 이전에 발표되지 않은 참석자 강연인 **비밀 복도 트랙(Secret Hallway Track)**을 제출할 수 있는 섹션이 있습니다! 매일 밤 가장 많은 표를 받은 강연은 다음 날로 예정됩니다.
+*   Calendly 또는 SavvyCal을 만들어 후속 미팅(meeting)을 쉽게 진행할 수 있도록 하세요 (현장 또는 줌(Zoom)으로). 보너스: QR 코드(QR code)와 업데이트(update)된 링크드인(LinkedIn)/소개 페이지를 준비하세요.
+*   **옷을 잘 차려입으세요**: 이 행사는 전문적이면서도 즐거운 행사입니다. 작년에는 외과의사와 판사도 있었고, 오리 복장을 한 사람들도 있었습니다. 새로운 최우수 연사 트로피(trophy)와 AIE 해커톤(Hackathon) 트로피(trophy) 외에도, 올해는 **최고의 드레서 참석자에게 트로피를 수여합니다.** 이 말을 어떻게 해석하시든 자유입니다.
+*   밈(meme)을 만들고 @aidotengineer를 태그(tag)하여 트윗(tweet)하거나 AIE 슬랙(Slack)에 게시하세요 (AI 관련이면 됩니다, 컨퍼런스(conference) 관련이 아니어도 괜찮습니다). 최고의 밈(meme)에도 트로피(trophy)가 있습니다!
+*   **사진과 비디오(video)를 많이 찍으세요.** 참석자들은 공유 구글 포토(Google Photos) 앨범에 접속하여 소셜 미디어(social media)에 소개될 사진과 비디오를 보낼 수 있습니다.
+*   **자신만의 AIE 앱(app)을 해킹(hack)하세요!** 저희 llms-full.txt와 JSON 데이터(data)는 쉽게 이용 가능하며, 원하는 대로 사용할 수 있습니다. 오픈 소스(open source)로 만들고 @swyx를 태그(tag)하여 공유되도록 하세요!
+*   AIE 사이드 이벤트(Side Events)에 참여하세요: https://www.ai.engineer/#events
+*   LS Luma에 가입하여 이 모든 것을 캘린더(calendar)에 직접 추가할 수 있습니다.
+
+자, 이제 AIEWF 2025를 맞이할 준비가 되셨기를 바랍니다! 현장에 계신 분들은 메리어트 마르퀴스(Marriott Marquis)에서 직접 만나 뵙고, 온라인으로 참여하시는 모든 분들께도 최고의 경험을 제공할 수 있도록 최선을 다하겠습니다. AI 엔지니어링(engineering)의 미래를 함께 만들어가는 여정에 동참해 주셔서 감사합니다. 유튜브(YouTube)에서 라이브 스트림(livestream) 알림을 설정하고, 이 놀라운 여정을 놓치지 마세요!

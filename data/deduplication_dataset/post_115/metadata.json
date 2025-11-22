@@ -1,0 +1,21 @@
+{
+  "post_id": "115",
+  "title": "**분명히 챗봇들이다**",
+  "base_word_count": 1726,
+  "exact_30_update_wc": 1073,
+  "exact_30_ground_truth_wc": 1954,
+  "exact_30_overlap_ratio": 0.788,
+  "paraphrase_25_update_wc": 1641,
+  "paraphrase_25_ground_truth_wc": 1640,
+  "paraphrase_25_overlap_ratio": 1.052,
+  "fragment_20_update_wc": 1588,
+  "fragment_20_ground_truth_wc": 1624,
+  "fragment_20_overlap_ratio": 1.064,
+  "semantic_25_update_wc": 1552,
+  "semantic_25_ground_truth_wc": 1552,
+  "semantic_25_overlap_ratio": 1.112,
+  "mixed_real_update_wc": 1416,
+  "mixed_real_ground_truth_wc": 1415,
+  "mixed_real_overlap_ratio": 1.22,
+  "status": "generated"
+}

@@ -1,0 +1,35 @@
+**최신 AI 동향 및 LLM 에이전트의 발전**
+
+최근 AI 분야는 OpenAI의 GPT-5 및 ChatGPT Pulse 공개, 멀티모달(multimodal) 기능 강화, Google의 차세대 Gemini 모델 및 Gemini Robotics-ER 1.5 출시 등 숨 가쁜 발전을 거듭하고 있습니다. 특히, 사용자 주변 환경을 조용히 모니터링(monitor)하고 필요할 때만 개입하는 LLM 에이전트의 엿듣기(overhearing) 기술이 더욱 주목받고 있습니다. 이와 함께 Figma의 AI 통합 디자인 도구 및 MCP 서버(server) 도입, Meta의 코드 월드 모델(Code World Model) 확장, Qwen3-Max, Qwen3-Omni, Claude 3.5와 같은 새로운 LLM 출시 및 Coral Protocol의 Coral v1, Gamma의 프레젠테이션(presentation) 생성 API 등 AI 기반 서비스 API 업데이트가 활발합니다. 본 업데이트에서는 주요 AI 뉴스, 논문 및 제품 동향을 심층적으로 다룹니다.
+
+**주요 내용**
+**LLM 에이전트의 엿듣기(Overhearing) 심층 분석**
+
+주변의 인간 활동을 조용히 모니터링(monitor)하며, 유용할 때만 지원하는 엿듣기 에이전트(overhearing agent)에 대한 연구는 기존 채팅(chat) 기반 대화형 에이전트(conversational agent)와는 다른 패러다임을 제시합니다. 이 논문은 연구 및 시스템(system) 구축을 안내하기 위한 분류 체계(taxonomy), 설계 원칙(design principle) 및 미해결 문제(open problem)를 정의합니다.
+
+**패러다임(paradigm) 및 범위.**
+엿듣기 에이전트는 다자간 활동(오디오, 텍스트, 비디오)을 청취하고 직접적인 대화 없이 행동합니다. 이들은 목표를 추론하고, 개입 시점을 정하며, 도구(tool)를 통해 행동을 라우팅(route)하는 동시에, 언어 출력은 사용자 대면 채팅(chat)보다는 주로 내부 추론(internal reasoning)을 위해 사용합니다.
+
+**상호작용(interaction) 분류 체계(taxonomy).**
+에이전트의 상호작용은 세 가지 사용자 대면 축으로 구분됩니다:
+*   주도성(Initiative): 항상 활성(always-active), 사용자 시작(user-initiated), 사후 분석(post-hoc analysis) 및 규칙 기반 활성화(rule-based activation).
+*   입력 양식(Input modality): 오디오, 텍스트, 비디오 (종종 결합됨).
+*   인터페이스(Interface): 웹/데스크톱(web/desktop), 웨어러블(wearable) 및 스마트 홈(smart-home) 표면(surface)으로, 신중하고 시기적절한 정보 제공을 위함.
+
+**시스템(system) 설계 차원(dimension).**
+시스템 설계는 다음 차원들을 고려합니다:
+*   상태(State): 읽기 전용 검색(read-only retrieval) 대 환경을 변경하는 읽기-쓰기 작업(read-write action).
+*   적시성(Timeliness): 실시간 지원(real-time support) 대 나중에 검토하기 위해 대기열에 추가된 비동기 작업(asynchronous task).
+*   상호작용성(Interactivity): 전경 제안(foreground suggestion) 대 내부 세계 모델(internal world model)을 조용히 업데이트(update)하기 위한 백그라운드 도구(tool) 사용.
+
+**설계 원칙(design principle) 및 도구(tooling).**
+개인 정보 보호(privacy) 및 동의(consent)는 핵심 원칙입니다. 온디바이스(on-device) 옵션(option), PII 수정(redaction), 암호화된 저장소(encrypted storage)가 중요합니다. UX 가이드라인(guideline)은 한눈에 볼 수 있고 검증 가능한 제안, 쉬운 해제, 되돌릴 수 있고 편집 가능한 작업, 시간 민감 항목(time-sensitive item)을 우선시하는 스마트 대기열(smart queue)을 포함합니다. 개발자는 일반 파이썬(Python)으로 구성 가능한 모듈식(modular), LLM에 구애받지 않는(LLM-agnostic), 비동기 우선(asynchronous-first) 도구 인터페이스(tool interface)를 활용할 수 있습니다. 오디오/비디오 I/O 및 모바일 어포던스(affordance) 지원은 필수적이며, 최근에는 에이전트 프레임워크(agent framework)를 통한 개발 효율성 향상도 강조됩니다.
+
+**미해결 연구 과제(open research challenge).**
+엿듣기 에이전트의 잠재력을 최대한 발휘하기 위한 미해결 연구 과제(open research challenge)들이 있습니다. 다섯 가지 주요 방향:
+*   연속 스트림(continuous stream)에서 최적의 개입 지점(intervention point) 감지;
+*   실제 유용성(utility) 측정 및 제안 피로(suggestion fatigue) 감소;
+*   정보 인식 토큰화(information-aware tokenization)를 통해 다중 모드 처리량(multimodal throughput) 증대;
+*   오디오/비디오, 비동기(async) 및 모바일(mobile)을 기본적으로 지원하는 라이브러리(library) 구축;
+*   선택적 처리(selective processing)를 통해 다자간 환경(multi-party setting)에서 동의(consent) 협상.
+더 나아가, 멀티 에이전트(multi-agent) 협업 환경에서의 윤리적 문제 해결과 온디바이스(on-device) LLM의 경량화 및 효율성 향상 또한 새로운 도전 과제로 부상하고 있습니다. (참고 논문)

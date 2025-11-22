@@ -1,0 +1,21 @@
+{
+  "post_id": "210",
+  "title": "**설득형 인공지능: 누가 프롬프트(prompt)를 쥐고 있는가?**",
+  "base_word_count": 1002,
+  "exact_30_update_wc": 984,
+  "exact_30_ground_truth_wc": 1339,
+  "exact_30_overlap_ratio": 0.658,
+  "paraphrase_25_update_wc": 1201,
+  "paraphrase_25_ground_truth_wc": 1204,
+  "paraphrase_25_overlap_ratio": 0.832,
+  "fragment_20_update_wc": 874,
+  "fragment_20_ground_truth_wc": 1107,
+  "fragment_20_overlap_ratio": 0.88,
+  "semantic_25_update_wc": 1112,
+  "semantic_25_ground_truth_wc": 1112,
+  "semantic_25_overlap_ratio": 0.901,
+  "mixed_real_update_wc": 867,
+  "mixed_real_ground_truth_wc": 869,
+  "mixed_real_overlap_ratio": 1.153,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "005",
+  "title": "**거대 언어 모델(LLM) 아키텍처 종합 비교**",
+  "base_word_count": 10498,
+  "exact_30_update_wc": 9372,
+  "exact_30_ground_truth_wc": 9372,
+  "exact_30_overlap_ratio": 1.12,
+  "paraphrase_25_update_wc": 8958,
+  "paraphrase_25_ground_truth_wc": 2588,
+  "paraphrase_25_overlap_ratio": 1.883,
+  "fragment_20_update_wc": 2768,
+  "fragment_20_ground_truth_wc": 452,
+  "fragment_20_overlap_ratio": 4.629,
+  "semantic_25_update_wc": 8493,
+  "semantic_25_ground_truth_wc": 8493,
+  "semantic_25_overlap_ratio": 1.236,
+  "mixed_real_update_wc": 7802,
+  "mixed_real_ground_truth_wc": 7802,
+  "mixed_real_overlap_ratio": 1.346,
+  "status": "generated"
+}

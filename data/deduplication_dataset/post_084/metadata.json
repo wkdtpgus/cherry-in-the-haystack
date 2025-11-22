@@ -1,0 +1,21 @@
+{
+  "post_id": "084",
+  "title": "**GPT5 + Codex가 에이전틱 코딩(Agentic Coding)을 어떻게 장악했는가 — Greg Brockman, OpenAI와 함께**",
+  "base_word_count": 17837,
+  "exact_30_update_wc": 2179,
+  "exact_30_ground_truth_wc": 13345,
+  "exact_30_overlap_ratio": 3.061,
+  "paraphrase_25_update_wc": 15400,
+  "paraphrase_25_ground_truth_wc": 15403,
+  "paraphrase_25_overlap_ratio": 1.158,
+  "fragment_20_update_wc": 12019,
+  "fragment_20_ground_truth_wc": 12767,
+  "fragment_20_overlap_ratio": 1.422,
+  "semantic_25_update_wc": 2667,
+  "semantic_25_ground_truth_wc": 2667,
+  "semantic_25_overlap_ratio": 6.688,
+  "mixed_real_update_wc": 2980,
+  "mixed_real_ground_truth_wc": 3229,
+  "mixed_real_overlap_ratio": 5.902,
+  "status": "generated"
+}

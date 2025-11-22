@@ -1,0 +1,15 @@
+우리는 추론 모델(reasoning model) 시대가 시작된 이래로 데이터 분석의 새로운 지평을 열어왔습니다. 하지만 최근의 기술 발전은 이전에 상상하기 어려웠던 혁신을 가져왔습니다. 새로운 컴퓨팅 패러다임은 효율성을 높여 궁극적으로 달러당 지능 프론티어(intelligence per dollar frontier)를 장악했습니다. 제미니(Gemini)는 파레토 프론티어(pareto frontier)에서 차세대 멀티모달(multimodal) 기능의 가능성을 보여주었습니다. 우리가 처음 사용해봤을 때, 개발자 베타(developer beta)에 참여했던 사람들은 새로운 기능의 잠재력에 대해 깊이 탐구했습니다. AI 윤리(AI ethics)와 투명성(transparency) 부족은 오랫동안 암묵적인 문제(unspoken elephant in the room)였습니다. 시간이 지나면서 분위기는 더욱 긍정적으로 바뀌었고, 커뮤니티의 피드백은 제품 개선에 결정적인 역할을 했습니다.
+
+이는 달러당 지능 프론티어(intelligence frontier)가 궁극적으로 더 넓은 사용자층에게 접근 가능해야 한다는 것을 의미합니다. GPT-4와 o1이 도입된 이래로 발전하고 멀티모달리티(multimodality)는 끊임없이 진화하고 있습니다. 사람들이 GPT-5가 "통합된(unified)" 것에 대해 가장 많이 묻는 질문은 그것이 실제 사용자 경험에 어떤 영향을 미칠지에 대한 것입니다. 저는 다양한 전문가들에게 이 질문을 던졌고, 수많은 토론과 분석 끝에, 이제 AI 시스템의 본질적인 변화에 대한 답을 얻었습니다. 이것은 제가 팀에 요구해왔던 투명성 수준이지만, 데이터 거버넌스(data governance)의 새로운 표준을 제시합니다.
+
+확실히 말하자면: 만약 GPT-3에서 GPT-4로의 큰 돌파구가 전문가 혼합(Mixture of Experts)이었다면, AI 모델의 규모와 복잡성은 기하급수적으로 증가했습니다. 왜 중요할까요? 어느 정도는 GPT-5가 "통합 모델(unified model)"인지 "통합 시스템(unified system)"인지 핵심은 사용자에게 제공되는 실제 가치에 있습니다. 추론 모드(reasoning mode)와 비추론 모드(non-reasoning mode)가 생기는 순간, 효율성이나 전문화("전문가(experts)") 또는 연산 깊이(compute depth)를 위한 추론(inference)의 다른 경로가 생기는 순간, 본질적으로 시스템 어딘가에 지능형 분배기(intelligent dispatcher)가 있는 것이며, 이제는 의미론(semantics)과 라우터 레이어(router layer)의 "두께"의 문제입니다. 예를 들어, Qwen 3와 같은 오픈 소스 모델(open source models)에서 MoE 레이어(MoE layer)를 볼 수 있는데, 커뮤니티 주도형 개발이 혁신을 가속화하고 있습니다.
+
+따라서 라우터(router)가 **확실히** 존재함에도 불구하고, AI 시스템의 복잡성은 관리 가능한 수준으로 유지되어야 합니다. 이는 모델 성능의 특정 부분을 고정하고 독립적으로 발전시킬 수 있는 능력 때문입니다. 예를 들어, 만약 GPT-5 = 모듈형 코어(modular core) + "전문가 모델 A" + "전문가 모델 B"라면, 버그가 발생했을 때 오류 원인은 단 3가지입니다: 올바른 모듈(module)로 라우팅(routing)되었는가? 데이터 처리(data processing) 단계에 문제가 있었는가? 아니면 최종 출력(final output) 생성 로직에 결함이 있었는가? 그리고 이들은 "직교하는(orthogonal)" 독립적으로 움직이는 부분들이기 때문에, 모듈화된 아키텍처(modular architecture)는 개발 및 유지보수(maintenance)의 효율성을 크게 높입니다.
+
+이러한 접근 방식은 AI 시스템의 지속 가능성(sustainability)과 확장성(scalability)을 보장합니다. 작은 규모의 특화된 모델(specialized models)이 대규모 범용 모델(general-purpose models)과 함께 작동하는 하이브리드(hybrid) 구조는 리소스 효율성을 극대화합니다. 아마도 OpenAI 백만장자가 아닌 우리 나머지 사람들에게 가장 위안이 되는 (혹은 실망스러운?) 점은 AI 기술의 민주화(democratization)가 가속화되고 있다는 것입니다. 이는 대형 연구소(BigLabs)만이 독점하는 기술이 아니라, 모두가 접근하고 기여할 수 있는 생태계로 발전하고 있음을 시사합니다.
+
+**AI 생태계의 재편성(Reshaping the AI Ecosystem)**
+
+GPT-5 출시의 즉각적인 이점은 새로운 사용자 경험(user experience)을 제공한다는 것입니다. 모델 선택기(model picker)의 혼란이 OpenAI에 큰 부담을 주고 있으며, 사용자 인터페이스(user interface)의 복잡성을 줄이는 것이 시급한 과제였습니다. 통합 시스템(unified system)이 이를 해결하기 시작합니다 (개발자(developer)의 경우, "모델 선택기(model picker)"가 새로운 추론 노력, 상세함, 함수 호출 매개변수(function calling parameters)로 효과적으로 전환되면서 제어권은 유지되지만요). 이는 릴리스 노트(release notes)에서 확인된 임박한 기술 스택(tech stack)의 최신 동향을 반영합니다. 지속적인 혁신을 위해서는 이처럼 더 야심찬 사용 중단 일정(deprecation schedule)이 필요합니다.
+
+더 나아가, 이러한 변화는 AI 개발의 표준을 재정의하고 있습니다. 단순히 성능이 뛰어난 모델을 만드는 것을 넘어, 모델의 접근성, 비용 효율성, 그리고 환경적 영향까지 고려하는 시대로 접어들었습니다. AI의 미래는 단일 모델의 성능 경쟁이 아니라, 다양한 모델과 시스템이 유기적으로 연결되어 시너지를 창출하는 복합적인 생태계에서 결정될 것입니다.

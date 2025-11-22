@@ -1,0 +1,101 @@
+**1. ARE 메탈 슈퍼인텔리전스 랩스(ARE Metal SuperIntelligence Labs)**는 현실적이고 시간 기반의 환경에서 에이전트 시스템을 구축하고 스트레스 테스트하기 위한 연구 플랫폼과 벤치마크를 제시합니다. 이 논문은 노이즈가 많고 동적인 환경에서 비동기 이벤트, 쓰기 동작(write action) 검증, 다중 에이전트(multi-agent) 조정을 강조하는 모듈형 시뮬레이터(ARE)와 모바일 스타일 벤치마크(Gaia2)를 소개합니다.
+
+**플랫폼 주요 특징:** ARE는 환경을 앱, 이벤트, 알림, 시나리오로 모델링하며, 에이전트가 생각하는 동안에도 시간이 계속 흐릅니다. DAG 스케줄러가 의존성을 관리하며, 에이전트는 도구와 비동기 알림 큐(async notification queue)를 통해 상호작용합니다. 이러한 설계는 실제 환경과 유사한 복잡성을 제공하여 에이전트의 견고성을 평가하는 데 필수적입니다.
+
+**Gaia2 벤치마크:** 스마트폰과 유사한 환경에서 이메일, 채팅, 캘린더, 쇼핑과 같은 앱에 걸쳐 101개의 도구를 사용하는 1,120개의 검증 가능한 시나리오. 시나리오는 여섯 가지 능력(capability)을 목표로 합니다: 검색(Search), 실행(Execution), 적응성(Adaptability), 시간(Time), 모호성(Ambiguity), 에이전트 간 상호작용(Agent-to-Agent). 이처럼 광범위한 시나리오는 에이전트의 다양한 능력을 종합적으로 측정할 수 있게 합니다.
+
+**검증기 설계:** 평가는 에이전트의 쓰기 동작(write action) 시퀀스를 오라클(oracle) 쓰기 동작과 비교하며, ID와 같은 인수에 대한 엄격한 검사와 내용에 대한 LLM(대규모 언어 모델)의 유연한 판단을 혼합합니다. 이는 인과 관계와 타이밍을 검증하며, 다중 턴(multi-turn) 시나리오에서는 턴별로 실행됩니다.
+
+**주요 결과 및 절충점:** 단일 모델이 모든 능력(capability)에서 지배적이지 않으며, 예산 스케일링 곡선은 정체됩니다. 1페이지의 차트는 pass@1 대 최대 예산을 보여줍니다. 타이밍 압력은 역 스케일링 효과(inverse scaling effect)를 드러내는데, 이는 심층 추론 정책(heavy-reasoning policy)이 다른 곳에서는 좋은 점수를 얻지만 시간 제약이 있는 중요한 시점을 놓치는 현상입니다. 즉시 모드(instant mode)는 이러한 격차를 줄입니다. 에이전트 간 상호작용(Agent-to-Agent) 설정은 하위 목표 위임(sub-goal delegation)을 통해 가벼운 모델을 돕지만, 가장 강력한 시스템에는 혼합된 이득을 가져옵니다.
+
+**최근 에이전트 개발에 미치는 영향:** ARE와 Gaia2는 에이전트 시스템의 현실적인 평가 기준을 제시하며, 특히 시간 제약과 다중 에이전트 협업의 중요성을 부각했습니다. 이러한 벤치마크는 복잡한 실제 환경에서 에이전트가 직면할 수 있는 다양한 도전 과제를 명확히 보여주며, 현재 활발히 연구되고 있는 자율 에이전트의 신뢰성과 효율성을 높이는 데 중요한 역할을 하고 있습니다. GUI는 이벤트 그래프 검사, 추적 재생, 제로 코드 시나리오 작성 기능을 지원합니다. [논문](Paper) | [트윗](Tweet)
+
+**2. ATOKEN**은 이미지, 비디오, 3D 에셋(asset)에 모두 작동하는 단일 트랜스포머 토크나이저(transformer tokenizer)를 소개합니다. 이는 모든 입력을 4D RoPE를 사용하여 공유된 희소 4D 잠재 공간(sparse 4D latent space)으로 인코딩하며, 적대적 손실(adversarial loss) 없이 훈련하고, 연속 토큰(continuous token)과 이산 토큰(discrete token)을 모두 지원합니다. 이 논문은 강력한 재구성 품질과 견고한 의미론적 정렬(semantic alignment)을 보고하며, 이는 다양한 양식(modality)에 걸쳐 생성과 이해를 모두 가능하게 합니다.
+
+**다중 양식 통합:** 2D, 비디오, 3D를 위한 하나의 잠재 공간(latent space)을 제공하는 ATOKEN은 입력 데이터를 희소 (t, x, y, z) 특징(feature)으로 패치화(patchify)합니다. 이미지는 2D 슬라이스로, 비디오는 시간에 대한 정보를 추가하며, 3D는 다중 뷰 렌더링(multiview render)에서 집계된 표면 복셀(surface voxel)을 사용합니다. 이러한 접근 방식은 서로 다른 형태의 데이터를 일관된 방식으로 처리할 수 있게 합니다.
+
+**트랜스포머 아키텍처:** 4D RoPE와 기본 해상도(native resolution)를 갖춘 순수 트랜스포머(Transformer)를 사용합니다. 인코더(encoder)는 SigLIP2 비전 타워(vision tower)를 시공간 블록(space–time block)으로 확장하고 4D 회전 위치(rotary position)를 추가하며, 디코더(decoder)는 트랜스포머를 미러링하여 픽셀 또는 3D 가우시안(Gaussian)을 재구성합니다. 기본 해상도(native resolution)와 KV 캐시된 시간 타일링(KV-cached temporal tiling)은 비디오 추론(video inference) 속도를 높입니다.
+
+**훈련 방식:** 텍스처 통계(texture statistics)를 목표로 하는 적대적 손실 없는(adversarial-free) 훈련 방식을 채택합니다. GAN(생성적 적대 신경망) 대신, 손실 함수는 L1, LPIPS, CLIP 지각(perceptual) 및 그램 행렬(Gram-matrix) 항을 혼합하며, 이는 공분산(covariance)이 오류를 지배함을 보여주는 rFID 분해에 의해 동기 부여되었습니다. 다양한 양식(modality)에 걸친 점진적 커리큘럼(progressive curriculum)으로 능력이 확장됩니다: 이미지 재구성, 비디오 추가, 3D 추가, 그리고 선택적인 FSQ 양자화(quantization).
+
+**전반적인 결과:** 연속 잠재 변수(continuous latent)를 사용하여 ATOKEN은 이미지에 대해 0.21 rFID 및 82.2% ImageNet 제로샷 정확도(zero-shot accuracy), 비디오에 대해 36.07 PSNR 및 3.01 rFVD, Toys4k에서 90.9%의 3D 분류 정확도를 가진 28.28 PSNR을 달성했습니다. 이산 FSQ 토큰(discrete FSQ token)은 경쟁력을 유지하면서 AR 생성 및 이미지-3D 변환을 가능하게 합니다. ATOKEN과 같은 통합 토크나이저는 향후 멀티모달 AI 시스템의 효율성과 범용성을 크게 향상시킬 잠재력을 가지고 있으며, 다양한 데이터 유형을 아우르는 단일 표현 체계를 제공하여 AI의 다음 발전을 이끌 수 있습니다. [논문](Paper) | [트윗](Tweet)
+
+**3. 코드 월드 모델(Code World Model)** Meta FAIR은 코드 실행을 모델링하고 컨테이너(container) 내에서 작동하도록 훈련된 320억 개(32B)의 오픈 가중치(open-weights) 코더(coder)인 CWM을 출시합니다. 이는 파이썬 인터프리터(Python interpreter) 추적(trace) 및 에이전트형 도커(Docker) 궤적(trajectory)으로 중간 훈련(mid-train)한 다음, SWE(소프트웨어 엔지니어링), 코딩, 수학 전반에 걸쳐 다중 턴(multi-turn) RL(강화 학습)로 성능을 향상시킵니다. CWM은 강력한 코더이자 소프트웨어 환경에서 월드 모델(world-model) 스타일 추론을 위한 테스트베드(testbed)입니다.
+
+**실행 인식 훈련 레시피:** 8조(8T) 토큰으로 사전 훈련(pretrain)한 다음, 컨테이너화된 저장소(repo)에서 수집된 파이썬 실행 추적(Python execution trace) 및 ForagerAgent 궤적(trajectory)으로 5조(5T) 토큰 중간 훈련(mid-train)을 수행합니다. 이어서 SFT(지도 미세 조정, 100B)와 GRPO 스타일 알고리즘 및 비동기 롤아웃(asynchronous rollout)을 사용한 공동 다중 작업 RL(강화 학습)을 진행합니다. 결과에는 1억 2천만 개(120M)의 추적된 함수, 약 7만 개(70k)의 저장소 수준 추적, 3백만 개(3M)의 에이전트형 궤적(trajectory)이 포함됩니다.
+
+**모델 + 컨텍스트 스케일링:** 교대하는 지역/전역 슬라이딩 윈도우 어텐션(local/global sliding-window attention)과 131k 최대 컨텍스트(max context)를 가진 밀집 320억 개(32B) 디코더(decoder)를 사용합니다. 스케일된 RoPE, GQA, FP8 훈련, 그리고 긴 컨텍스트 버킷화(long-context bucketization)가 처리량(throughput)을 유지하기 위해 사용됩니다. 추론(inference)은 양자화(quantization)를 통해 단일 80GB H100에 적합할 수 있습니다.
+
+**SWE를 위한 에이전트형 RL 설계:** 에이전트는 최소한의 도구 세트(bash, edit, create, submit)를 가진 저장소 샌드박스(repo sandbox) 내에서 작동하며, 테스트를 실행하고, `git diff`로 패치(patch)를 구축하며, 숨겨진 테스트와 패치 유사성 형성(patch-similarity shaping)으로 보상을 받습니다. 자체 부트스트랩된 추적(self-bootstrapped trace)은 RL(강화 학습) 전에 형식 준수(format adherence)를 향상시킵니다.
+
+**성능 하이라이트:** SWE-bench Verified에서 53.9%의 기본 pass@1과 테스트 시간 스케일링(test-time scaling, best@k)을 적용했을 때 65.8%를 달성했습니다. 3페이지의 차트는 CWM이 훨씬 더 크거나 폐쇄형 모델과 경쟁력이 있음을 보여줍니다. 또한 LCB-v5 68.6, Math-500 96.6, AIME-24 76.0, CruxEval-Output 94.3을 기록했습니다.
+
+**AI 개발자에게 중요한 이유:** CWM은 프롬프트(prompt)에서 파이썬 실행을 시뮬레이션하기 위해 추적 예측 토큰(trace-prediction token)을 노출하여, 근거 있는 추론, 신경 디버거(neural-debugger) 워크플로우, 추적 기반 코드 합성(trace-guided code synthesis)을 가능하게 합니다. 이러한 코드 월드 모델은 개발자가 복잡한 소프트웨어 문제를 해결하고, 에이전트 기반 개발 환경을 구축하는 데 필수적인 기반 기술로 자리 잡고 있습니다. 절제 연구(ablation study)는 실행 추적(execution trace)이 CruxEval을 향상시키고, ForagerAgent가 에이전트형 NLL(음의 로그 우도) 및 SWE pass@1을 향상시킴을 보여줍니다. [논문](Paper) | [트윗](Tweet)
+
+**4. LLM에게 계획하는 법 가르치기**: LLM(대규모 언어 모델)에게 PDDL(Planning Domain Definition Language)로 계획하는 법을 가르치는 훈련 레시피는 명시적인 상태-행동-상태(state–action–state) 체인을 작성하게 하고 외부 검증기(VAL)로 각 단계를 확인하게 함으로써 이루어집니다. 결과: PlanBench 도메인에서 계획 유효성(plan validity)이 크게 향상되었으며, 특히 피드백이 단순히 실패했다고 말하는 대신 행동이 실패한 이유를 설명할 때 더욱 그렇습니다.
+
+**방법 요약:** 두 단계로 구성됩니다: (1) 전제 조건(precondition) 및 효과(effect)에 대한 설명과 함께 올바르고 의도적으로 깨진 계획에 대한 지시 튜닝(instruction tuning), (2) 모델이 VAL이 단계별로 검증하는 ⟨s₀,a₁,s₁⟩… 체인을 출력하는 CoT(사고의 사슬) 지시 튜닝. 훈련은 추론 체인(reasoning chain) 최적화와 최종 계획 성공 최적화 사이를 번갈아 진행합니다.
+
+**작동 원리:** 검증기는 각 단계에서 논리적 일관성(logical coherence)을 강제합니다. 따라서 모델은 패턴 매칭(pattern-match) 대신 전제 조건을 확인하고, 효과를 적용하며, 불변량(invariant)을 보존하는 방법을 배웁니다. 모든 전환이 외부에서 검증되기 때문에 신뢰할 수 없거나 모호한 CoT(사고의 사슬)가 줄어듭니다.
+
+**주요 결과:** Llama-3를 사용하여 상세한 피드백과 15회 반복으로 Blocksworld에서 94%, Logistics에서 79%, Mystery Blocksworld에서 64%의 계획 유효성(plan validity)을 달성했습니다. GPT-4도 유사한 경향을 보이며 각각 91%, 78%, 59%로 최고치를 기록했습니다. 이는 기준선(baseline) 대비 절대적인 개선 폭이 크며, 예를 들어 일부 설정에서는 +66%에 달합니다.
+
+**피드백의 중요성:** 상세한 피드백(어떤 전제 조건이 실패했는지 또는 어떤 효과가 잘못 적용되었는지)은 이진 유효/무효(binary valid/invalid) 피드백보다 지속적으로 우수하며, 추가 반복(η가 10에서 15로 증가)을 통해 더 많은 이점을 얻습니다.
+
+**범위 및 한계:** 세 가지 PlanBench 도메인에서 훈련 및 테스트되었습니다. 난독화된 술어(obfuscated-predicate) 변형(Mystery Blocksworld)에서는 성능이 저하되어 일반화(generalization)의 어려움을 보여줍니다. 이 방법은 최적성(optimality)이 아닌 만족스러운 계획(satisficing plan)을 목표로 하며, 현재는 지속 시간(durative) 또는 조건문(conditional)이 없는 PDDL 하위 집합을 가정합니다. 이 연구는 LLM이 복잡한 계획 문제를 해결하는 데 있어 중요한 진전을 보여주며, 특히 실제 환경에서 에이전트의 자율성을 높이는 데 기여할 것으로 기대됩니다. [논문](Paper) | [트윗](Tweet)
+
+**5. LLM-JEPA**: JEPA 스타일 훈련 목표(training objective)는 동일한 기본 콘텐츠(예: 텍스트와 코드)의 쌍을 이루는 뷰(paired view)를 임베딩 공간(embedding space)에서의 예측 목표(prediction target)로 처리함으로써 LLM(대규모 언어 모델)에 적용되며, 이는 일반적인 다음 토큰 손실(next-token loss) 위에 추가됩니다. 그 결과는 미세 조정(fine-tuning)을 지속적으로 개선하고 유망한 사전 훈련(pretraining) 이득을 보여주며, 과적합(overfitting)에 더 강합니다.
+
+**핵심 아이디어:** 표준 다음 토큰 목표(next-token objective)를 유지하고, 특수 예측 토큰 k를 가진 연결된 LLM 가중치(tied LLM weight)를 사용하여 한 뷰(view)의 임베딩(embedding)을 다른 뷰로부터 예측하며, 코사인 측정(cosine metric)과 가중치 λ로 최적화되는 JEPA 항을 추가합니다. 이는 추상화(abstraction)를 개선하면서 생성(generation)을 보존합니다.
+
+**도움이 되는 이유:** 다음 토큰 손실(next-token loss)만 최소화하는 것은 JEPA 예측 오류를 줄이지 못합니다. JEPA 항을 추가하는 것이 이 격차를 해소하고 정확도 향상을 설명합니다.
+
+**주요 결과:** Llama, Gemma, OpenELM, OLMo 전반에 걸쳐 LLM-JEPA는 NL-RX (SYNTH 및 TURK), GSM8K, Spider에서 정확 일치 정확도(exact-match accuracy)를 향상시킵니다.
+
+**표현 효과:** LLM-JEPA를 사용할 때 t-SNE 플롯(plot)은 더 명확한 구조를 보여주며, 낮은 회귀 오류(regression error)와 압축된 특이값(singular value)에 의해 Enc(Text)에서 Enc(Code)로의 거의 선형적인 매핑(mapping)이 지원됩니다.
+
+**사전 훈련 신호 및 비용:** 사전 훈련(pretraining) 중에 JEPA를 추가하면 표준 미세 조정(fine-tuning) 후 다운스트림 감성 분류(downstream sentiment classification)가 향상되며, 생성 품질(generative quality)은 유지됩니다. 현재 한계는 각 뷰(view)에 대한 별도의 순방향 전달(forward pass)로 인한 추가 계산량과, k와 λ에 대한 비자명한 하이퍼파라미터 탐색(hyperparameter sweep)입니다. 멀티모달 학습에서 JEPA와 같은 자기 지도 학습(self-supervised learning) 방법은 모델이 더 풍부하고 일반화 가능한 표현을 학습하도록 돕는 중요한 방향을 제시하며, 향후 더 효율적인 학습 방식과 결합되어 강력한 범용 AI 모델 구축에 기여할 것입니다. [논문](Paper) | [트윗](Tweet)
+
+**6. ARK-V1**은 단순히 암기된 텍스트에 의존하는 대신 지식 그래프(knowledge graph)를 적극적으로 탐색함으로써 언어 모델이 질문에 답하는 것을 돕는 경량 에이전트(lightweight agent)입니다. 이는 특히 모델의 사전 훈련(pretraining) 지식이 부족한 롱테일 개체(long-tail entity, 덜 일반적인 것들)에 유용합니다.
+
+**작동 방식:** 에이전트는 간단한 주기를 반복합니다: 시작 개체(entity)를 선택하고, 관계(relation)를 선택하고, 일치하는 그래프 트리플(graph triple)을 가져오고, 짧은 추론 단계(reasoning step)를 작성한 다음, 답변할 준비가 될 때까지 반복합니다. 경로를 따라 이동하는 과정을 설명하는 미니 검색 에이전트(search agent)라고 생각하면 됩니다.
+
+**테스트 환경:** CoLoTa 데이터셋을 사용했는데, 이는 의도적으로 흔치 않은 개체(entity)에 대한 질문을 합니다. 여기서는 KG(지식 그래프) 사실과 상식(예: 잘 알려지지 않은 도시의 인구 비교)이 모두 필요합니다. 측정 지표에는 에이전트가 얼마나 자주 답변하는지, 답변할 때 얼마나 정확한지, 그리고 여러 실행에서 얼마나 일관적인지가 포함됩니다.
+
+**성능 요약:** ARK-V1은 일반적인 CoT(사고의 사슬) 프롬프팅(prompting)을 능가합니다. Qwen3-30B와 같은 중간 규모 모델을 사용하여 약 77%의 쿼리에 답변했으며, 그 중 약 91%의 정확도를 보였습니다. 이는 전체적으로 약 70%의 성능을 나타냅니다. 더 큰 백본(backbone) 모델(Qwen3-235B, Gemini 2.5 Flash, GPT-5 Mini)은 94% 이상의 조건부 정확도(conditional accuracy)로 전체적으로 약 70~74%를 달성했습니다.
+
+**약점:** (1) 질문이 모호하거나, (2) KG(지식 그래프)에 상충되는 트리플(triple)이 포함되어 있거나, (3) KG에 필요한 상식이 부족하여 에이전트가 그래프를 너무 신뢰할 때 어려움을 겪습니다.
+
+**향후 방향:** 현재 프롬프팅(prompting)은 단순하며 탐색(traversal)은 비효율적일 수 있습니다. 다음 단계에는 더 스마트한 프롬프트(prompt), 효율성 개선, 로봇 공학 장면 그래프(robotics scene graph) 또는 기업 데이터와 같은 전문화된 그래프에 에이전트를 적용하는 것이 포함됩니다. ARK-V1과 같은 접근 방식은 RAG(Retrieval Augmented Generation) 시스템의 발전에 중요한 통찰력을 제공하며, LLM이 최신 정보를 기반으로 더 정확하고 신뢰할 수 있는 답변을 생성하는 데 기여합니다. [논문](Paper) | [트윗](Tweet)
+
+**7. 생각하고 더 잘 채팅하는 언어 모델**: 모델 보상 사고(Model-rewarded Thinking)를 사용한 RL(강화 학습)이라는 간단한 레시피는 작은 오픈 모델이 일반적인 채팅 프롬프트(prompt)에서 "먼저 계획하고 나중에 답변"하게 만들고, 선호도 보상(preference reward)에 대해 온라인 RL로 훈련합니다. Llama-3.1-8B 및 Qwen-2.5-7B에서 이는 채팅, 창의적 글쓰기, 일반 지식 분야에서 표준 RLHF(인간 피드백 기반 강화 학습)를 지속적으로 능가하며, 최고의 8B 모델은 WildBench 및 AlpacaEval2에서 일부 최첨단 시스템을 능가합니다.
+
+**새로운 점:** 규칙으로 검증 가능한 보상(수학, 코드) 대신, RLMT는 다양한 실제 프롬프트(prompt)에 대한 긴 CoT(사고의 사슬)를 사용하며, 온라인 RL(GRPO, PPO, DPO)로 훈련된 보상 모델(Skywork)을 추가하여 출력을 평가합니다.
+
+**설정:** 교사가 생성한 생각→응답 추적(think→respond trace)에 대한 작은 SFT(지도 미세 조정)로 웜 스타트(warm-start)한 다음, 약 7,500개의 WildChat-IF 프롬프트(prompt)에 대해 GRPO로 최적화합니다. "제로(Zero)" 변형은 SFT(지도 미세 조정)를 건너뛰고도 기본 모델이 답변 전에 생각 태그(think tag)를 출력하도록 프롬프트(prompt)를 제공함으로써 작동합니다.
+
+**결과 요약:** RLMT는 일치하는 RLHF 기준선(baseline) 대비 채팅 점수를 약 3~8점 향상시킵니다. 표 1은 Llama-3.1-8B-Instruct-RLMT가 WildBench에서 50.4, AlpacaEval2에서 58.7, ArenaHardV2에서 22.9, CreativeWritingV3에서 84.3을 기록했다고 보고하며, 이는 훨씬 더 큰 오픈 모델을 능가하고 WildBench에서 GPT-4o를 이깁니다.
+
+**SFT 없는 기본 모델:** GRPO를 사용하면 RLMT-Zero는 약한 기준선(baseline)에서 채팅 능력을 현저히 향상시킵니다. Qwen-2.5-7B-RLMT-Zero는 평균 채팅 지표에서 공급업체의 Instruct 모델을 능가합니다.
+
+**작동 원리(및 중요한 점):** 절제 연구(ablation study)는 프롬프트 혼합 품질과 보상 모델(reward model) 강도가 핵심적임을 보여줍니다 (WildChat-IF 및 Skywork-V2가 승리). RL(강화 학습) 후, 모델은 다르게 계획합니다: 선형 체크리스트는 줄어들고, 제약 조건 열거, 테마 그룹화, 반복적 개선이 늘어납니다. 훈련을 거치면서 CoT(사고의 사슬)와 응답이 길어집니다. 이러한 접근 방식은 작은 모델의 추론 능력을 극대화하여, 오픈 소스 LLM이 더욱 강력하고 다재다능한 대화형 AI 시스템으로 발전하는 데 기여하고 있습니다. [논문](Paper) | [트윗](Tweet)
+
+**8. 체화된 AI: LLM에서 월드 모델까지**: 이 논문은 LLM(대규모 언어 모델)과 월드 모델(World Model, WM)의 관점에서 체화된 AI(Embodied AI)를 조사합니다. 이는 LLM이 의미론적 추론(semantic reasoning)과 작업 분해(task decomposition)를 어떻게 가능하게 하는지 강조하며, WM은 예측적이고 물리 기반의 상호작용을 제공합니다. 그리고 실제 체화된 인지(embodied cognition) 및 응용 분야를 발전시키기 위한 공동 MLLM-WM 아키텍처(architecture)를 주장합니다.
+
+**체화된 AI의 진화:** 최근 몇 년간 체화된 AI 분야는 로봇 공학, 가상 현실, 증강 현실 등 다양한 영역에서 큰 발전을 이루었습니다. 특히 LLM과 월드 모델의 결합은 에이전트가 복잡한 환경을 이해하고, 추론하며, 행동하는 방식에 혁신을 가져왔습니다. LLM은 고수준의 계획과 언어적 상호작용을 담당하고, WM은 물리적 세계의 역학을 예측하고 시뮬레이션함으로써 에이전트가 더 지능적이고 유연하게 행동할 수 있도록 합니다.
+
+**통합 아키텍처의 중요성:** MLLM-WM 아키텍처는 에이전트가 단지 지시를 따르는 것을 넘어, 실제 세계의 복잡성을 이해하고 적응하며, 심지어 새로운 상황에 대한 창의적인 해결책을 찾는 능력을 부여합니다. 이러한 통합은 에이전트가 현실 세계에서 더욱 효과적으로 학습하고 상호작용할 수 있는 길을 열어주며, 궁극적으로는 인간과 같은 수준의 인지 능력을 가진 AI 시스템을 구축하는 데 기여할 것입니다. 그러나 실시간 처리, 다양한 환경에 대한 일반화, 그리고 복잡한 물리적 상호작용 모델링은 여전히 해결해야 할 과제로 남아 있습니다. [논문](Paper) | [트윗](Tweet)
+
+**9. GDPval**은 9개 주요 GDP 부문의 44개 직업에 걸쳐 1,320개의 실제 작업으로 구성된 새로운 벤치마크(benchmark)이며, 220개 작업으로 구성된 골드 세트(gold set)를 가진 산업 전문가에 의해 평가되었습니다. 이는 최첨단 모델이 거의 선형적으로 개선되고 있으며 전문가 수준에 근접하고 있음을 보여줍니다.
+
+**모델 성능 현황:** Claude Opus 4.1은 47.6%의 경우 선호되거나 동등했으며, GPT-5는 정확도에서 앞섰습니다. 이는 최신 대규모 언어 모델들이 전문적인 작업 수행 능력에서 상당한 발전을 이루었음을 시사합니다.
+
+**인간-모델 협업의 가능성:** 모델과 인간이 결합된 워크플로우(workflow)는 시간과 비용을 줄일 수 있으며, 추론 노력과 프롬프트 스캐폴딩(prompt scaffolding)을 추가하면 점수가 더욱 높아집니다. 이는 AI가 인간의 작업을 완전히 대체하기보다는, 보조 도구로서 생산성을 향상시키는 데 큰 잠재력을 가지고 있음을 보여줍니다.
+
+**연구 커뮤니티 지원:** 연구자들을 위해 공개 골드 세트(gold set)와 자동 채점기(automated grader)가 제공됩니다. GDPval과 같은 현실적인 벤치마크는 LLM의 실제 적용 가능성을 평가하고, 특정 산업 분야에서 AI의 가치를 측정하는 데 필수적입니다. 이러한 벤치마크는 모델 개발의 방향을 제시하고, AI의 신뢰성과 실용성을 높이는 데 중요한 역할을 합니다. [논문](Paper) | [트윗](Tweet)
+
+**10. 파운데이션 모델로 인공 생명체 탐색 자동화**: ASAL은 비전-언어 파운데이션 모델(vision-language foundation model)을 사용하여 ALife 기판(substrate) 전반을 자동으로 탐색하여 프롬프트(prompt)와 일치하거나, 개방형 참신성(open-ended novelty)을 유지하거나, 다양성을 극대화하는 시뮬레이션을 찾음으로써 수동 시행착오를 줄입니다.
+
+**주요 성과:** 이는 강력한 개방형 특성(open-endedness)을 가진 새로운 레니아(Lenia) 및 보이드(Boids) 생명체와 생명체와 유사한 CA(셀룰러 오토마타)를 발견하며, FM 임베딩(embedding)을 활용하여 기판에 구애받지 않는 방식으로 출현 행동(emergent behavior)을 정량화합니다.
+
+**과학적 발견 가속화:** ASAL은 인공 생명체 연구의 전통적인 수동적이고 시간 소모적인 과정을 자동화함으로써, 과학자들이 복잡한 시스템에서 새로운 현상과 행동을 탐색하는 방식을 혁신합니다. 비전-언어 파운데이션 모델의 활용은 시스템의 시각적 특성과 행동 패턴을 이해하고 분석하는 데 중요한 역할을 하며, 이를 통해 인간 연구자가 놓칠 수 있는 미묘한 상호작용과 출현 특성을 발견할 수 있도록 돕습니다. 이러한 자동화된 탐색 도구는 인공 생명체 분야뿐만 아니라, 복잡한 시스템 시뮬레이션, 재료 과학, 로봇 공학 등 다양한 과학 분야에서의 발견을 가속화할 잠재력을 가지고 있습니다. [논문](Paper) | [트윗](Tweet)

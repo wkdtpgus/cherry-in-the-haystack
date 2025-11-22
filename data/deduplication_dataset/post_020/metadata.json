@@ -1,0 +1,21 @@
+{
+  "post_id": "020",
+  "title": "**지시 사전 학습 대규모 언어 모델(LLMs)**",
+  "base_word_count": 7572,
+  "exact_30_update_wc": 3151,
+  "exact_30_ground_truth_wc": 6669,
+  "exact_30_overlap_ratio": 1.287,
+  "paraphrase_25_update_wc": 7022,
+  "paraphrase_25_ground_truth_wc": 7121,
+  "paraphrase_25_overlap_ratio": 1.064,
+  "fragment_20_update_wc": 6549,
+  "fragment_20_ground_truth_wc": 6580,
+  "fragment_20_overlap_ratio": 1.151,
+  "semantic_25_update_wc": 8011,
+  "semantic_25_ground_truth_wc": 7989,
+  "semantic_25_overlap_ratio": 0.948,
+  "mixed_real_update_wc": 4615,
+  "mixed_real_ground_truth_wc": 6736,
+  "mixed_real_overlap_ratio": 1.181,
+  "status": "generated"
+}

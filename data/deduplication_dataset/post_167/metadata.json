@@ -1,0 +1,21 @@
+{
+  "post_id": "167",
+  "title": "**도해 GPT-OSS**",
+  "base_word_count": 1264,
+  "exact_30_update_wc": 1647,
+  "exact_30_ground_truth_wc": 1672,
+  "exact_30_overlap_ratio": 0.752,
+  "paraphrase_25_update_wc": 1548,
+  "paraphrase_25_ground_truth_wc": 1548,
+  "paraphrase_25_overlap_ratio": 0.817,
+  "fragment_20_update_wc": 1337,
+  "fragment_20_ground_truth_wc": 1441,
+  "fragment_20_overlap_ratio": 0.868,
+  "semantic_25_update_wc": 1660,
+  "semantic_25_ground_truth_wc": 1624,
+  "semantic_25_overlap_ratio": 0.783,
+  "mixed_real_update_wc": 1070,
+  "mixed_real_ground_truth_wc": 1073,
+  "mixed_real_overlap_ratio": 1.179,
+  "status": "generated"
+}

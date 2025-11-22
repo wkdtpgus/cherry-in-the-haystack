@@ -1,0 +1,21 @@
+{
+  "post_id": "086",
+  "title": "**\"검색 증강 생성(RAG)은 죽었다, 컨텍스트 엔지니어링(Context Engineering)이 왕이다\" — Chroma의 Jeff Huber**",
+  "base_word_count": 13619,
+  "exact_30_update_wc": 9432,
+  "exact_30_ground_truth_wc": 9432,
+  "exact_30_overlap_ratio": 1.444,
+  "paraphrase_25_update_wc": 2201,
+  "paraphrase_25_ground_truth_wc": 2200,
+  "paraphrase_25_overlap_ratio": 6.188,
+  "fragment_20_update_wc": 1325,
+  "fragment_20_ground_truth_wc": 9216,
+  "fragment_20_overlap_ratio": 4.323,
+  "semantic_25_update_wc": 8627,
+  "semantic_25_ground_truth_wc": 8627,
+  "semantic_25_overlap_ratio": 1.579,
+  "mixed_real_update_wc": 6542,
+  "mixed_real_ground_truth_wc": 5478,
+  "mixed_real_overlap_ratio": 2.244,
+  "status": "generated"
+}

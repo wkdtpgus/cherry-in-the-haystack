@@ -1,0 +1,21 @@
+{
+  "post_id": "217",
+  "title": "**ChatGPT 201: 고급 프롬프팅(prompting) 쉽게 배우기 (간편 시작 키트 + 프롬프트 + 가이드)**",
+  "base_word_count": 687,
+  "exact_30_update_wc": 633,
+  "exact_30_ground_truth_wc": 1071,
+  "exact_30_overlap_ratio": 0.393,
+  "paraphrase_25_update_wc": 784,
+  "paraphrase_25_ground_truth_wc": 784,
+  "paraphrase_25_overlap_ratio": 0.876,
+  "fragment_20_update_wc": 773,
+  "fragment_20_ground_truth_wc": 811,
+  "fragment_20_overlap_ratio": 0.84,
+  "semantic_25_update_wc": 920,
+  "semantic_25_ground_truth_wc": 920,
+  "semantic_25_overlap_ratio": 0.747,
+  "mixed_real_update_wc": 802,
+  "mixed_real_ground_truth_wc": 802,
+  "mixed_real_overlap_ratio": 0.857,
+  "status": "generated"
+}

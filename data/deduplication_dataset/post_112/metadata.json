@@ -1,0 +1,21 @@
+{
+  "post_id": "112",
+  "title": "**OpenAI는 ChatGPT에 에로티카를 추가할 계획이지만, 진짜 문제는 덜 자극적이다**",
+  "base_word_count": 807,
+  "exact_30_update_wc": 650,
+  "exact_30_ground_truth_wc": 877,
+  "exact_30_overlap_ratio": 0.892,
+  "paraphrase_25_update_wc": 707,
+  "paraphrase_25_ground_truth_wc": 751,
+  "paraphrase_25_overlap_ratio": 1.079,
+  "fragment_20_update_wc": 655,
+  "fragment_20_ground_truth_wc": 670,
+  "fragment_20_overlap_ratio": 1.209,
+  "semantic_25_update_wc": 847,
+  "semantic_25_ground_truth_wc": 847,
+  "semantic_25_overlap_ratio": 0.953,
+  "mixed_real_update_wc": 697,
+  "mixed_real_ground_truth_wc": 697,
+  "mixed_real_overlap_ratio": 1.158,
+  "status": "generated"
+}

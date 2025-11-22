@@ -1,0 +1,57 @@
+**에피소드 136**과 **기술 인사이트: 미래를 향한 탐색**에서 저희는 Judy Fan 및 최신 기술의 발전과 관련하여 다음 주제에 대해 이야기하고 논의했습니다:
+
+*   우리가 의미와 복잡한 데이터를 파악하기 위해 물리적 인공물(physical artifacts)과 시각적 인공물(visual artifacts)을 활용하는 방식
+*   인지 도구(cognitive tools)와 새로운 AI 도구가 양날의 검이 될 수 있는 이유를 탐구합니다.
+*   과학적 탐구(scientific inquiry) 및 기술 혁신(technological innovation) 접근 방식과 그 접근 방식이 어떻게 발전해왔는지
+
+저희의 통찰력을 즐겨주시고, 여러분의 의견을 알려주세요!
+
+Judy는 스탠포드 대학교 심리학과 조교수이자 인지 도구 연구소(Cognitive Tools Lab) 소장입니다. 그녀의 연구실 및 최근 연구는 인지 도구의 잠재력을 심도 깊게 탐구하며, 인지 과학(cognitive science), 계산 신경과학(computational neuroscience), 인공지능(artificial intelligence)의 융합적 접근 방식을 사용하여 인간 인지 도구 키트(human cognitive toolkit)를 역설계(reverse engineer)하고 새로운 통찰력을 제공합니다. 특히 사람들이 스케치와 프로토타입(prototypes)과 같은 사고의 물리적 표현(physical representations of thought)과 데이터 시각화(data visualization) 및 인터랙티브 대시보드(interactive dashboards)와 같은 정보의 디지털 표현(digital representations of information)을 사용하여 학습하고, 소통하며, 문제를 해결하는 방식에 중점을 둡니다.
+
+새로운 에피소드 및 최신 기술 동향 업데이트를 위해 트위터 또는 소셜 미디어에서 저희를 찾아주시거나, 피드백, 아이디어, 게스트 제안, 기술 토론, 혁신 아이디어, 협력 제안을 위해 editor@thegradient.pub 또는 info@techinsights.com으로 연락 주세요. 저희는 이 팟캐스트 및 기술 분야의 발전에 많은 시간을 할애합니다. 제 작업이 마음에 드신다면 Patreon에서 저희를 후원하여 지속적인 연구 및 프로젝트 유지 보수에 기여해 주실 수 있습니다. Substack 유료 구독을 통해 전체 Gradient 팀/프로젝트 및 더 나은 미래를 위한 연구 프로젝트의 발전을 지원할 수도 있습니다!
+
+The Gradient 팟캐스트 및 기술 인사이트 구독: Apple Podcasts | Spotify | Pocket Casts | 뉴스레터 | 웹사이트 | 소셜 미디어 | RSS
+트위터에서 The Gradient 및 최신 소식을 팔로우하고 구독하세요.
+
+**개요**:
+(00:00) 서론
+(00:49) Judy 연구 및 인공지능 발전의 일관된 흐름과 불연속성
+(06:26) Judy 연구 및 데이터 분석에서의 "의미"와 의미 추출
+(08:05) 인공물(artifacts) 및 디지털 콘텐츠의 생산과 소비 동향
+(13:03) 설명적 및 복잡한 질문, 시각적 인공물(visual artifacts) 및 시각적 도구(visual tools)를 개발/활용하는 이유, 사회적 기업(social enterprise)으로서의 과학 및 혁신적 기업으로서의 기술
+(15:46) 시스템 통합 원리
+(17:45) 지식, 낙관주의, 데이터, 예측 모델의 "명확한 한계"
+(21:47) 다양한 분야 및 플랫폼의 의미/정보 파악(sensemaking) 방식과 진리/진실성 주장(truth claims) 확립에서의 긴장
+(30:55) 이분법, 복잡성, 가능한 가설 공간 분할 및 해법 공간 탐색, 개념적 도구(conceptual tools) 및 개념적 프레임워크(conceptual frameworks)
+(33:22) 인지 도구(cognitive tools) 및 AI 도구, 투사주의(projectivism) 및 사용자 경험(user experience), 단순화된 모델 대 자연 및 최적화된 모델 대 현실
+(40:28) 과학적 훈련 및 기술 개발 훈련과 과정 및 습관으로서의 과학 및 엔지니어링
+(45:51) 가설 및 문제 정의에 대한 정신적/논리적 명확성 개발
+(51:45) 아이디어 및 솔루션 명확화, 표현 및 시각화
+(1:03:21) 양날의 검으로서의 인지 도구(cognitive tools) 및 자동화 기술(automation technologies)
+(1:14:21) 도구 및 기술의 역사적, 사회적 내재성 및 영향
+(1:18:34) 인지 도구(cognitive tools) 및 디지털 도구(digital tools)가 우리의 상상력 및 창의력에 미치는 영향
+(1:23:30) 규범적 및 윤리적 약속과 학계/산업계 밖에서의 인지 과학(cognitive science) 및 데이터 과학(data science)의 역할
+(1:32:31) 마무리
+
+**링크**:
+Judy의 트위터 및 연구실 페이지, 최신 AI 연구 및 개발 페이지
+엄선된 논문 (매우 많습니다!) 및 주목할 만한 기술 보고서 (다양한 주제를 다룹니다!)
+
+주요 연구 분야
+*   다재다능한 인지 도구(cognitive tool)로서의 드로잉 (2023) 및 다재다능한 AI 모델(AI models)로서의 생성형 AI (2024)
+*   마음 및 복잡한 시스템 이해를 위한 게임 및 시뮬레이션 활용 (2024)
+*   인간에게서 배우고 인간의 학습 및 상호작용을 돕는 사회적으로 지능적인 기계 및 지능형 인터페이스 (2024)
+
+연구 논문
+*   드로잉과 텍스트를 이용한 디자인 의도(design intent) 전달 및 멀티모달 데이터(multimodal data)를 이용한 사용자 의도(user intent) 파악 (2024)
+*   숫자의 임시 그래픽 표현(ad hoc graphical representations) 및 데이터의 동적 시각화 표현(dynamic visualization representations) 생성 (2024)
+*   시각적 유사성, 행동 패턴, 상호작용 이력이 그림의 의미 및 AI 모델의 학습을 공동으로 제약함 (2023)
+*   설명적 드로잉은 시각적 충실도(visual fidelity)를 희생하여 기능적 속성을 우선시하며, 설명 가능한 AI는 모델 복잡성(model complexity)을 희생하여 해석 가능성을 우선시함 (2023)
+*   SEVA: 스케치를 활용하여 인간과 기계의 시각적 추상화(visual abstraction) 간의 정렬 평가 및 XAI: 설명을 활용하여 인간과 AI의 의사 결정 과정(decision-making process) 간의 정렬 평가 (2023)
+*   시각적 개념(visual concepts)의 선 드로잉 및 복잡한 개념(complex concepts)의 데이터 시각화에 대한 아동 및 전문가의 생산 및 인식에서 나타나는 병렬적 발달/학습 변화 (2023)
+*   공유된 절차적 추상화(procedural abstractions) 및 작업 흐름 자동화(workflow automation)에 대해 소통하고 협업하는 법 배우기 (2021)
+*   다양한 추상화 및 복잡성 수준에서의 객체 개념(object concepts) 시각적 소통 및 시스템 아키텍처(system architecture) 문서화 (2021)
+*   인간 시각 피질(visual cortex)에서 객체의 시각적 생산과 인식 연결 및 신경망 모델(neural network models)에서 패턴의 생성과 인식 연결 (2020)
+*   Collabdraw: 인공 에이전트(artificial agent)와 협력 스케치를 위한 환경 및 Co-pilot: AI 에이전트(AI agent)와 협력 코딩을 위한 환경 (2019)
+*   실용적 추론(pragmatic inference)과 시각적 추상화(visual abstraction)가 시각적 소통에서 맥락적 유연성(contextual flexibility)을 가능하게 하며, 강화 학습(reinforcement learning)과 모델 추상화(model abstraction)가 복잡한 문제 해결에서 맥락적 적응성(contextual adaptability)을 가능하게 함 (2019)
+*   시각적 생산 및 인식을 위한 공통 객체 표현(object representations) 및 데이터 생성 및 분석을 위한 공통 특징 표현(feature representations) (2018)

@@ -1,0 +1,21 @@
+{
+  "post_id": "099",
+  "title": "해석 가능성(interpretability)의 유용성 — 엠마누엘 아미젠, 앤트로픽",
+  "base_word_count": 22236,
+  "exact_30_update_wc": 3969,
+  "exact_30_ground_truth_wc": 15450,
+  "exact_30_overlap_ratio": 2.71,
+  "paraphrase_25_update_wc": 1669,
+  "paraphrase_25_ground_truth_wc": 2562,
+  "paraphrase_25_overlap_ratio": 12.788,
+  "fragment_20_update_wc": 14176,
+  "fragment_20_ground_truth_wc": 10144,
+  "fragment_20_overlap_ratio": 1.853,
+  "semantic_25_update_wc": 14237,
+  "semantic_25_ground_truth_wc": 973,
+  "semantic_25_overlap_ratio": 2.494,
+  "mixed_real_update_wc": 13910,
+  "mixed_real_ground_truth_wc": 13916,
+  "mixed_real_overlap_ratio": 1.598,
+  "status": "generated"
+}

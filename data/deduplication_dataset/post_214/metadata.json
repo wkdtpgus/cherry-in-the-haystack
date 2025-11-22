@@ -1,0 +1,21 @@
+{
+  "post_id": "214",
+  "title": "ChatGPT 해킹 노출: OpenAI가 아직 해결하지 못한 실제 제로 클릭 취약점(zero-click vulnerability) 존재",
+  "base_word_count": 464,
+  "exact_30_update_wc": 466,
+  "exact_30_ground_truth_wc": 466,
+  "exact_30_overlap_ratio": 0.996,
+  "paraphrase_25_update_wc": 552,
+  "paraphrase_25_ground_truth_wc": 552,
+  "paraphrase_25_overlap_ratio": 0.841,
+  "fragment_20_update_wc": 481,
+  "fragment_20_ground_truth_wc": 577,
+  "fragment_20_overlap_ratio": 0.765,
+  "semantic_25_update_wc": 724,
+  "semantic_25_ground_truth_wc": 724,
+  "semantic_25_overlap_ratio": 0.641,
+  "mixed_real_update_wc": 612,
+  "mixed_real_ground_truth_wc": 612,
+  "mixed_real_overlap_ratio": 0.758,
+  "status": "generated"
+}

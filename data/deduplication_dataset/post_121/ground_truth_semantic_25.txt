@@ -1,0 +1,39 @@
+저희가 준비한 224회차 방송에서는 지난 한 주간 인공지능 분야의 핵심 동향을 분석하고 깊이 있는 논의를 진행했습니다. 2025년 10월 31일의 마지막 날에 녹음되었으며, Andrey Kurenkov 씨가 주요 진행을 맡고 Gavin Purcell 씨가 공동 진행자로서 함께했습니다 (Gavin Purcell 씨의 다른 프로그램인 AI For Humans 및 AndThen!도 확인해 보시길 바랍니다). 문의사항이나 의견은 contact@lastweekinai.com 또는 hello@gladstone.ai 로 편하게 보내주십시오.
+
+이번 에피소드에서는 인공지능 생태계 전반에 걸친 여러 중요한 변화가 조명되었습니다. OpenAI는 수익 창출을 위한 조직 개편을 마무리하며 Microsoft와의 협력 관계를 새롭게 정립하고, 향후 사업 확장을 위한 자금 유치를 성공적으로 이끌어냈습니다. 이는 비영리 연구 기관에서 시작된 OpenAI가 상업적 성공과 혁신적인 연구 개발 사이의 균형을 찾아가는 중요한 전환점으로 해석됩니다. 한편, 퀄컴을 비롯한 유수의 IT 기업들은 엔비디아와 AMD에 맞설 차세대 인공지능 반도체를 선보이며, AI 연산 장비 분야의 중요한 기술적 진보를 알렸습니다. 이러한 맞춤형 칩의 등장은 AI 모델의 효율성을 극대화하고, 특정 작업에 최적화된 하드웨어 솔루션을 제공하여 AI 기술의 광범위한 확산을 가속화할 잠재력을 가지고 있습니다.
+
+클라우드 컴퓨팅 분야에서는 아마존과 구글이 앤트로픽과의 제휴를 강화하여 인공지능 연구 개발과 실제 적용을 뒷받침할 막대한 규모의 전산 자원을 지원하고 있습니다. 이는 거대 기술 기업들이 선도적인 AI 모델 개발사와의 협력을 통해 클라우드 시장에서의 경쟁 우위를 확보하려는 전략적 움직임을 보여줍니다. 이러한 대규모 투자와 파트너십은 AI 산업의 전례 없는 성장과 함께 치열한 경쟁 구도를 형성하고 있음을 시사합니다.
+
+최근에는 Cursor 2.0, CLAUDE의 코딩 지원 기능, Minimax의 공개 소스(open-source) 옵션을 포함한 다양한 AI 도구와 모델들이 연이어 출시되거나 업데이트되었습니다. 이러한 새로운 도구들은 소프트웨어 개발, 시각적 디자인 등 여러 분야에서 사용자의 생산성을 향상시키고 창의적인 작업을 지원하는 데 초점을 맞추고 있습니다. 특히, 특정 작업에 특화된 AI 모델의 등장은 일반 사용자부터 전문가에 이르기까지 AI 기술의 접근성을 높이고 활용 범위를 넓히는 데 기여하고 있습니다.
+
+인공지능 저작물과 관련한 법적 쟁점 역시 지속적으로 논의되고 있습니다. OpenAI는 저작권 보호를 받는 창작물을 활용한 텍스트 생성에 대해 작가들로부터 제기된 법적 다툼에 계속해서 직면하며, 인공지능 저작물 관련 법적 쟁점이 끊이지 않고 있습니다. 이와 함께 유니버설 뮤직 그룹은 인공지능 기반 음악 스타트업 UDO와의 저작권 분쟁을 원만히 해결하고, 인공지능이 만든 음악에 대한 사용 허가 모델로의 전환을 발표했습니다. 이러한 사례들은 인공지능 생성 콘텐츠(AI-generated content)의 윤리적 사용, 데이터 학습의 공정성, 그리고 창작물에 대한 권리 인정 범위 등 복잡한 문제들이 여전히 해결되지 않은 채 광범위한 논의와 적응을 요구하고 있음을 반영합니다. AI 기술의 발전 속도에 맞춰 사회적 합의와 법적 프레임워크를 마련하는 것이 시급합니다.
+
+타임스탬프:
+(00:00:10) 시작 및 인사말 / 자유로운 대화
+(00:02:44) 주요 소식 미리보기: AI 도구와 애플리케이션(Tools & Apps)
+(00:03:44) Cursor 2.0, Composer 모델과 다중 에이전트(parallel agents)를 통해 자체 AI로 진화
+(00:07:44) Anthropic, Claude Code 기능을 웹 환경에 도입 | TechCrunch
+(00:10:01) Microsoft의 Mico, AI 시대의 'Clippy'로 등장 | TechCrunch
+(00:14:20) Anthropic의 Claude, 향상된 기억 능력(memory features)으로 ChatGPT 및 Gemini와 경쟁 | The Verge
+(00:18:46) Canva, 고유의 디자인 모델(design model) 공개 및 플랫폼에 새로운 AI 기능 통합 | TechCrunch
+(00:21:07) Elon Musk의 Grokipedia, 위키피디아(Wikipedia)를 모방한 AI 복제 페이지로 출범 | The Verge
+응용 사례 및 비즈니스(Applications & Business)
+(00:25:10) OpenAI, 영리 전환 완료 및 Microsoft와 새로운 협력 계약 체결 | The Verge
+(00:31:25) Qualcomm, AMD 및 Nvidia에 대항할 AI 반도체(AI chips) 공개
+(00:34:02) Amazon, Anthropic의 Claude 모델(model) 지원을 위한 AI 인프라 프로젝트(AI infrastructure project) 개시 | Reuters
+(00:38:52) Google과 Anthropic, 수백억 달러 규모의 클라우드 서비스 계약(cloud deal) 발표
+(00:39:46) Google, Ambani의 Reliance와 협력하여 인도 수백만 Jio 사용자에게 무료 AI Pro 접근권(access) 제공 | TechCrunch
+프로젝트 및 공개 소스(Projects & Open Source)
+(00:41:17) MiniMax, MiniMax M2 출시: Claude Sonnet 가격의 8%로 최대 코딩 및 에이전트 워크플로우(agentic workflows)에 최적화된 소형 공개 모델(open model), 약 2배 빠른 성능 - MarkTechPost
+(00:45:22) [2510.25741] 반복적 언어 모델(Looped Language Models)을 통한 잠재적 추론(Latent Reasoning) 확장 연구
+(00:47:59) OpenAI의 gpt-oss-safeguard, 개발자들의 안전한 AI 구축 지원 | Help Net Security
+연구 및 발전(Research & Advancements)
+(00:49:51) [2510.15103] 희소 메모리 미세 조정(Sparse Memory Finetuning)을 통한 지속 학습(Continual Learning) 방법론
+(00:54:01) [2510.18091] 적응형 패치 크기(Adaptive Patch Sizes) 활용한 비전 트랜스포머(Vision Transformers) 가속화 방안
+(00:57:46) [2510.18871] 대규모 언어 모델(LLMs)은 깊이(depth)를 어떻게 활용하는가에 대한 분석
+정책 및 안전(Policy & Safety)
+(01:01:07) AMD, 미 에너지부(Department of Energy)와 10억 달러 규모의 AI 슈퍼컴퓨터(AI supercomputer) 파트너십 발표 | The Verge
+(01:03:03) 합성 미디어 및 예술(Synthetic Media & Art)의 미래
+(01:09:34) Universal, 저작권 분쟁(copyright suit) 해결 후 AI 스타트업(startup) Udio와 협력 관계 구축 | The Verge
+(01:16:04) OpenAI, 미국 작가들의 저작권 침해 소송(copyright lawsuit) 일부 기각 요청 패소 | Reuters
+(01:20:00) AI가 사회에 미치는 영향 및 미래 규제 방향에 대한 추가 논의 (새로운 내용)

@@ -1,0 +1,207 @@
+(출처: [1, 2, 4, 6, 12]) 최근 출시된 Llama 4 [1]는 완벽과는 거리가 멀었지만, 이 새로운 세대의 모델들로부터 배울 점이 많습니다. 간단히 말해, Llama 4는 Meta의 연구 방향에 있어 대대적인 전환점입니다. 증가하는 경쟁에 대응하여 Meta는 Llama 시리즈를 재창조하고 있으며, 프론티어 수준의 대규모 언어 모델(LLM)을 개발하기 위해 분명히 노력하고 있습니다. LLM 개발이 반복적인 프로세스임을 감안할 때, 이러한 중대한 변화는 많은 위험을 수반합니다. 즉, 이 모델들이 처음에는 성능이 좋지 않을 가능성이 큽니다. 현재로서는 Llama 4가 손실로 인식되지만, Llama의 장기적인 성공은 Meta가 이러한 모델들을 신속하게 반복하고 개선하는 능력에 의해 결정될 것입니다. 공개 LLM 연구의 가장 아름다운 — 또는 모델 개발자들에게는 두려운 — 측면은 이러한 학습이 공개적으로 이루어지고 있다는 사실입니다. 우리는 Meta가 이 분야의 최고 모델들과 동등한 수준에 도달하기 위해 어떤 주요 변화를 만들고 있는지 연구할 수 있습니다. 이러한 변화를 연구함으로써 우리는 현대의 프론티어 수준 LLM이 어떻게 개발되는지에 대한 더 나은 이해를 얻을 수 있습니다. 이 개요에서는 Llama 4 및 관련 모델들을 깊이 이해함으로써 정확히 이 작업을 수행할 것입니다. 그런 다음, 이 이해를 바탕으로 LLM 연구의 주요 동향, Llama의 미래, 그리고 Llama 4 이후 Meta가 성공하기 위해 만들어야 할 변화들을 분석할 것입니다.
+
+Meta는 Llama 4를 통해 대규모 언어 모델(LLM) 경쟁에서 선두 주자들과 어깨를 나란히 하려는 야심 찬 전략을 펼치고 있습니다. 이는 단순한 모델 업데이트가 아니라, 이전 Llama 3가 보여준 견고함과 범용성을 넘어서는 새로운 지평을 열고자 하는 Meta의 의지를 반영합니다. 특히, 공개적으로 연구 과정을 공유함으로써, Meta는 전체 AI 커뮤니티의 발전에 기여하며 동시에 자사 모델의 투명성과 신뢰성을 높이려는 이중 전략을 취하고 있습니다. 이러한 접근 방식은 초기 성능의 한계에도 불구하고, 장기적인 관점에서 Llama 생태계의 성장을 촉진할 것으로 기대됩니다.
+
+### Llama 4 모델 아키텍처(Model Architecture)
+
+먼저 Llama 4 모델 아키텍처(model architecture)를 개괄하고, 이전 세대 Llama 모델 대비 주요 변경 사항을 강조할 것입니다. 보시다시피, 새로운 Llama 모델은 극적으로 다른 모델 아키텍처(model architecture)를 사용하며, 이는 연구 방향과 전략의 명확한 전환을 알립니다. 이전 Llama 변형 모델들이 단순성과 유용성을 강조했던 반면, Llama 4는 더 높은 복잡성과 규모를 대가로 성능과 효율성을 향상시키는 기술을 채택함으로써 폐쇄형 및 공개형 프론티어 수준 LLM 연구소들과 동등한 수준에 도달하기 위한 분명한 노력을 기울이고 있습니다.
+
+Llama 4의 아키텍처 변화는 단순한 기능 추가를 넘어, 대규모 모델의 효율성과 성능을 동시에 극대화하려는 Meta의 전략적 결정입니다. Llama 3가 "단순하고 강력한" 모델로 평가받았다면, Llama 4는 "복잡하지만 압도적인 성능"을 지향합니다. 이러한 패러다임의 전환은 Google의 Gemini, OpenAI의 GPT-4와 같은 최첨단 모델들이 이미 채택하고 있는 기술들을 Llama 생태계에 통합하려는 시도로 해석될 수 있습니다. 특히, 모델의 규모가 커질수록 훈련 및 추론 비용이 기하급수적으로 증가하는 문제를 해결하기 위해, Llama 4는 희소성(sparsity)과 모듈화(modularity)를 핵심 원칙으로 삼았습니다.
+
+### 전문가 혼합(Mixture-of-Experts, MoE)
+
+> "우리는 모델 개발 프로세스를 확장하는 능력을 극대화하기 위한 설계 선택을 합니다. 예를 들어, 훈련 안정성을 극대화하기 위해 전문가 혼합(mixture-of-experts) 모델 대신 사소한 수정이 가해진 표준 밀집 트랜스포머(dense Transformer) 모델 아키텍처(architecture)를 선택합니다."
+>
+> — Llama 3 논문 [2]에서
+
+밀집 디코더 전용 트랜스포머(dense decoder-only transformer)(아래 그림 참조)를 사용하는 대신, Llama 4는 Llama 모델 중 처음으로 전문가 혼합(Mixture-of-Experts, MoE) 아키텍처(architecture)를 사용합니다. Llama 3는 안정성과 단순성을 위해 MoE 사용을 피했습니다. 더 큰 MoE 모델은 훈련(training) 및 추론(inference)에 추가적인 복잡성을 도입하기 때문입니다. Llama 4를 통해 Meta는 MoE 아키텍처(architecture)를 성공적으로 채택한 선도적인 공개(예: DeepSeek-v3 [4]) 및 독점 모델(예: GPT-4)과 보조를 맞추게 됩니다.
+
+MoE 아키텍처는 모델의 전체 매개변수 수를 크게 늘리면서도, 각 토큰(token) 처리 시 활성화되는 매개변수 수를 제한하여 훈련 및 추론 효율성을 유지하는 혁신적인 방식입니다. 이는 마치 여러 명의 전문가가 각자의 전문 분야를 가지고 있고, 특정 문제에 대해 가장 적합한 전문가 한두 명만 호출하여 해결하는 방식과 유사합니다. 이러한 접근 방식은 모델의 전반적인 지식 용량(capacity)을 확장하면서도, 계산 비용을 밀집 모델(dense model) 대비 훨씬 낮게 유지할 수 있다는 장점이 있습니다. 최근 MoE는 GPT-4, Mixtral, Grok-1 등 최신 프론티어 LLM의 핵심 기술로 자리매김하고 있으며, Llama 4의 채택은 Meta가 이러한 최신 트렌드를 적극적으로 수용하고 있음을 보여줍니다.
+
+**디코더 전용 트랜스포머(decoder-only transformer) 아키텍처(architecture)**
+
+간단히 말해, 밀집 모델(dense model)은 단순하고 효과적이지만 확장하기 어렵습니다. MoE 아키텍처(architecture)를 사용함으로써 우리는 매우 큰 모델의 훈련(training) (및 추론(inference)) 효율성을 극적으로 향상시킬 수 있으며, 이를 통해 더 큰 규모를 가능하게 합니다.
+
+**MoE란 무엇인가?**
+
+대부분의 독자들은 MoE 사용 동기에 익숙할 것입니다. MoE는 대규모 모델을 더 계산 효율적으로 만드는 디코더 전용 트랜스포머(decoder-only transformer) 아키텍처(architecture)의 수정된 버전입니다. MoE 뒤에 숨겨진 주요 아이디어의 대부분은 아래 세 논문에서 제안되었으며, 우리는 여기서 이 아이디어들을 개괄할 것입니다.
+
+MoE의 핵심은 트랜스포머의 각 피드포워드 레이어(feed-forward layer)를 여러 개의 '전문가(expert)' 네트워크로 대체하는 것입니다. 각 전문가는 고유한 가중치를 가지며, 입력 토큰에 따라 게이팅 네트워크(gating network) 또는 라우터(router)가 적절한 전문가를 선택하여 활성화합니다. 이 과정에서 모든 전문가가 동시에 활성화되지 않으므로, 전체 모델의 매개변수 수는 거대하지만, 실제 계산에 참여하는 매개변수는 훨씬 적습니다. 이는 모델의 '희소 활성화(sparse activation)' 특성으로, 대규모 언어 모델의 훈련 및 추론 비용을 획기적으로 줄이는 데 기여합니다.
+
+*   희소하게 게이트된 전문가 혼합 레이어(The Sparsely-Gated Mixture-of-Experts Layer)
+*   스위치 트랜스포머(Switch Transformers)
+*   안정적이고 전이 가능한 전문가 혼합(Stable and Transferable Mixture-of-Experts, ST-MoE)
+
+디코더 전용 트랜스포머(decoder-only transformer)와 비교하여, MoE는 트랜스포머 블록(transformer block)의 피드포워드(feed-forward) 구성 요소를 수정합니다. 각 블록에 단일 피드포워드 네트워크(feed-forward network)를 가지는 대신, 우리는 여러 피드포워드 네트워크(feed-forward network)를 가지며, 각각은 자체적인 독립적인 가중치(weight)를 가집니다. 우리는 이들 네트워크 각각을 "전문가(expert)"라고 부릅니다. 아래를 참조하십시오.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*y3zB-4712v84j0tUf_fJ9g.png" alt="Adding experts to a transformer block (source)" />
+
+트랜스포머 블록에 전문가 추가 (출처)
+
+MoE 아키텍처(architecture)를 생성하기 위해, 우리는 트랜스포머(transformer)의 피드포워드 레이어(feed-forward layer)를 MoE — 또는 전문가(expert) — 레이어(layer)로 변환합니다. MoE의 각 전문가(expert)는 해당 레이어(layer)의 원래 피드포워드 네트워크(feed-forward network)와 구조적으로 동일하며, 우리는 일반적으로 트랜스포머 레이어(transformer layer)의 일부만 MoE 레이어(layer)로 변환합니다. 예를 들어, Llama 4는 트랜스포머(transformer)의 모든 다른 레이어(layer)가 전문가 레이어(expert layer)가 되는 인터리브된 MoE 레이어(interleaved MoE layer)를 사용합니다.
+
+> "우리의 새로운 Llama 4 모델은 MoE 아키텍처(architecture)를 사용하는 첫 번째 모델입니다... MoE 아키텍처(architecture)는 훈련(training) 및 추론(inference)에 더 계산 효율적이며, 고정된 훈련 부동 소수점 연산(FLOPs) 예산이 주어졌을 때 밀집 모델(dense model)에 비해 더 높은 품질을 제공합니다."
+>
+> — Llama 4 블로그 [1]에서
+
+**라우팅 메커니즘(Routing mechanism).** 분명히, 트랜스포머(transformer)에서 각 피드포워드 네트워크(feed-forward network)의 여러 복사본을 만드는 것은 계산 효율성을 향상시키지 않습니다. 효율성 향상을 얻으려면 희소성(sparsity)을 추가해야 합니다. 즉, 우리는 각 MoE 레이어(layer)에서 모든 전문가(expert)를 사용하지 않습니다. 대신, 각 토큰(token)에 사용할 전문가(expert)의 하위 집합(예: 하나 또는 두 개의 전문가)을 선택합니다. 이를 "활성(active)" 전문가(expert) 또는 매개변수(parameter)라고 합니다. 이 선택은 각 토큰 벡터(token vector)를 선형 레이어(linear layer)를 통해 전달하여 전문가(expert) 집합에 대한 확률 분포(probability distribution)를 출력함으로써 이루어집니다. 아래를 참조하십시오.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*aH-0j_L47_2-c9183q192A.png" alt="Selecting experts with a routing mechanism" />
+
+라우팅 메커니즘(routing mechanism)으로 전문가(expert) 선택
+
+여기서부터 우리는 가장 높은 확률을 받는 전문가(expert)만을 사용하여 각 토큰(token)을 처리할 수 있습니다. 이렇게 함으로써 우리는 각 토큰(token)에 대해 모델의 전체 매개변수(parameter) 중 일부만 사용합니다. 활성 매개변수(active parameter)의 수는 모델의 전체 매개변수(parameter)보다 훨씬 작습니다. 이러한 이유로 우리는 총 계산 비용의 일부만으로도 많은 수의 전체 매개변수(parameter)를 가진 모델을 훈련(training)할 수 있습니다.
+
+라우팅 메커니즘은 MoE의 성능을 좌우하는 핵심 요소입니다. Llama 4는 단순한 Top-K 라우팅 방식을 넘어, 각 전문가의 부하를 고려하여 토큰을 분산시키는 고급 라우팅 전략을 채택했을 가능성이 높습니다. 예를 들어, 'Expert Choice' 라우팅이나 'DSelect-k'와 같은 기법은 토큰을 전문가에게 할당하는 방식에서 더 많은 유연성을 제공하여, 특정 전문가에게만 부하가 집중되는 현상을 완화하고 모델의 전반적인 효율성을 높일 수 있습니다. 이러한 정교한 라우팅은 모델이 다양한 입력에 대해 더 넓은 범위의 지식을 활용할 수 있도록 돕습니다.
+
+> "게이팅 네트워크(gating network)는 항상 동일한 소수의 전문가(expert)에 대해 큰 가중치(weight)를 생성하는 상태로 수렴하는 경향이 있습니다. 이 불균형은 선호되는 전문가(expert)가 더 빠르게 훈련(training)되고 따라서 게이팅 네트워크(gating network)에 의해 더 많이 선택되기 때문에 자기 강화적입니다."
+>
+> — 출처
+
+**부하 분산(Load balancing) 및 훈련 안정성(training stability).** 표준 밀집 모델(dense model)과 유사하게 MoE를 훈련(training)하면 여러 문제가 발생할 수 있습니다. 첫째, 모델은 모든 토큰(token)을 단일 전문가(expert)로 라우팅(routing)하는 것을 빠르게 학습할 것입니다. 이는 "라우팅 붕괴(routing collapse)"로 알려진 현상입니다. 또한, MoE는 훈련(training) 중에 수치적 불안정성(numerical instabilities)을 경험할 가능성이 더 높으며, 이는 훈련 손실(training loss)의 발산(divergence)으로 이어질 수 있습니다. 아래를 참조하십시오.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*d-X-1t67p8636_g9p-Y00g.png" alt="An example of a training divergence (source)" />
+
+훈련 발산(training divergence)의 예 (출처)
+
+이러한 문제를 피하고 훈련(training)이 안정적으로 이루어지도록 하기 위해 대부분의 MoE는 훈련(training) 중에 부하 분산 손실(load-balancing loss)을 사용합니다. 이는 MoE가 전문가(expert)에게 동일한 확률을 할당하고 토큰(token)을 균일하게 라우팅(routing)하는 것에 보상을 줍니다. 부하 분산 손실(load-balancing loss)은 표준 다음 토큰 예측 손실(next-token prediction loss)에 추가 손실 항을 추가하여 LLM의 기본 훈련 목표(training objective)를 수정합니다. 아래를 참조하십시오. 따라서 이러한 보조 손실(auxiliary losses)은 모델의 성능에 영향을 미칠 수 있으며, 이로 인해 일부 인기 있는 MoE 기반 LLM(예: DeepSeek-v3)은 이를 완전히 피하게 되었습니다.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*R758R64Qk5_4h4-Z28_f5w.png" alt="The auxiliary-loss-free load balancing strategy used by DeepSeek-v3 [4]" />
+
+DeepSeek-v3 [4]에서 사용된 보조 손실 없는 부하 분산 전략(auxiliary-loss-free load balancing strategy)
+
+[1]에서는 Llama 4 모델을 훈련(training)하는 데 사용된 정확한 보조 손실(auxiliary losses)에 대한 언급이 없습니다(만약 있다면). 훈련 불안정성(training instability)을 피하기 위해 우리는 DeepSeek-v3와 유사하게 보조 손실 없는 부하 분산 전략(auxiliary-loss-free load-balancing strategy)을 사용하고 다양한 추가적인 트릭(trick)을 채택할 수 있습니다. 예를 들어, 더 나은 가중치 초기화(weight initialization) 또는 선택적 정밀도(selective precision) 등이 있습니다. 이 정보에서 우리가 얻어야 할 주요 교훈은 MoE가 — 많은 이점에도 불구하고 — 표준 밀집 모델(dense model)에 비해 훈련(training)하기 훨씬 어렵다는 단순한 사실입니다. 이것은 단순성과 성능 사이의 고전적인 절충점입니다! 이러한 아키텍처(architecture)는 더 복잡합니다. 따라서 고려해야 할 요소가 더 많고 훈련(training) 중에 발생할 수 있는 문제가 훨씬 더 많습니다. MoE 아키텍처(architecture) 및 훈련(training)에 대한 자세한 내용은 아래 링크를 참조하십시오.
+
+최근 연구에서는 MoE 모델의 훈련 안정성을 높이기 위한 다양한 방법이 제시되고 있습니다. 부하 분산 손실 외에도, 전문가 용량(expert capacity)을 동적으로 조절하거나, 게이팅 네트워크의 출력을 스무딩(smoothing)하는 기법, 그리고 더 나아가 계층적 MoE(Hierarchical MoE) 구조를 도입하여 라우팅 복잡성을 관리하는 방식 등이 탐색되고 있습니다. Llama 4가 이러한 최신 연구들을 얼마나 통합했는지는 명확하지 않지만, Meta의 방대한 연구 역량을 고려할 때, 훈련 안정성 문제를 해결하기 위한 독자적인 솔루션이 적용되었을 가능성이 높습니다.
+
+*   MoE 기반 LLM 이해하기(Understanding MoE-based LLMs)
+*   nanoMoE: PyTorch에서 MoE 기반 LLM 구현하기(nanoMoE: Implementing an MoE-based LLM in PyTorch)
+
+### Llama 4 아키텍처(architecture).
+
+[1]에서는 세 가지 종류의 Llama 4 모델이 제시됩니다.
+
+*   **Scout**: 총 매개변수(total parameters) 109B, 활성 매개변수(active parameters) 17B, 레이어(layer)당 전문가(expert) 16개.
+*   **Maverick**: 총 매개변수(total parameters) 400B, 활성 매개변수(active parameters) 17B, 레이어(layer)당 전문가(expert) 128개.
+*   **Behemoth**: 총 매개변수(total parameters) 2T, 활성 매개변수(active parameters) 288B, 레이어(layer)당 전문가(expert) 128개.
+
+Llama 4 Scout 및 Maverick 모델은 [1]에서 Llama 4 커뮤니티 라이선스 계약(community license agreement)에 따라 공개적으로 출시되었으며, Behemoth 모델은 단지 미리보기(즉, 아직 출시되지 않음)로 공개되었습니다.
+
+Llama 4의 다양한 모델 스위트(suite)는 각기 다른 사용 사례와 컴퓨팅 환경에 최적화되어 있음을 시사합니다. Scout는 상대적으로 적은 총 매개변수와 활성 매개변수를 통해 엣지 디바이스(edge device)나 제한된 리소스 환경에서의 추론 효율성을 극대화합니다. 이는 Google의 Gemini Nano나 GPT-4o-mini와 같이 경량화된 모델의 시장 수요를 겨냥한 것으로 보입니다. 반면, Maverick은 더 큰 규모의 전문가 풀을 통해 복잡한 작업을 처리할 수 있는 범용 모델로서, DeepSeek-v3와 유사하게 높은 성능을 제공하면서도 효율성을 유지하는 데 중점을 둡니다.
+
+가장 인상적인 것은 Behemoth 모델로, 2조 개에 달하는 총 매개변수는 GPT-4와 같은 최상위 프론티어 모델과 직접적으로 경쟁하겠다는 Meta의 의지를 보여줍니다. 이처럼 다양한 규모의 모델을 제공하는 전략은 Llama 생태계가 광범위한 애플리케이션 요구사항을 충족시킬 수 있도록 하며, 개발자들이 특정 목적에 맞는 최적의 모델을 선택할 수 있도록 합니다.
+
+DeepSeek-v3와 유사하게, Llama 4 모델은 공유 전문가(shared expert)와 라우팅된 전문가(routed expert)를 모두 사용합니다. 예를 들어, Llama 4 Maverick은 하나의 공유 전문가(shared expert)를 가집니다. 이는 모든 토큰(token)이 100% 확률로 이 전문가(expert)에게 전달된다는 것을 의미하며, 라우팅 메커니즘(routing mechanism)을 사용하여 토큰(token)당 하나의 활성 라우팅된 전문가(active routed expert)를 선택합니다. 아래를 참조하십시오.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*W680t11Z_8X2eX5x-5_N0Q.png" alt="Depiction of shared and routed experts (from [3])" />
+
+공유 전문가(shared expert) 및 라우팅된 전문가(routed expert) 묘사 (출처: [3])
+
+다른 인기 있는 MoE와 비교할 때, Llama 4 모델은 활성 매개변수(active parameter)의 수가 매우 적습니다. 그러나 이러한 아키텍처(architecture) 설정은 최고 산업 연구소들과 비교할 때 드물지 않습니다.
+
+*   Scout는 추론 효율성(inference efficiency)에 최적화되어 있으며 Gemini Flash 또는 GPT-4o-mini와 같은 모델을 연상시킵니다.
+*   Maverick은 DeepSeek-v3와 상대적으로 유사한 아키텍처(architecture)를 가집니다(즉, 매우 많은 수의 전문가(expert)를 가진 희소 모델(sparse model)).
+*   Behemoth — 스위트(suite)에서 가장 강력한 모델 —는 GPT-4와 유사한 수조 개의 매개변수(parameter)를 가진 파운데이션 모델(foundation model)입니다.
+
+그러나 Llama 4 모델과 다른 인기 있는 LLM 사이에는 여전히 차이점이 있습니다. Llama 4에서는 레이어(layer)당 하나의 라우팅된 전문가(routed expert)만 선택되는 반면, DeepSeek은 여러 공유 전문가(shared expert)와 레이어(layer)당 8개의 활성 라우팅된 전문가(active routed expert)를 가집니다(즉, 37B 활성 매개변수(active parameter) 및 671B 전체 매개변수(total parameter)). 이 더 적은 수의 활성 매개변수(active parameter)는 Llama 4의 훈련(training) 및 추론 효율성(inference efficiency)을 모두 향상시킵니다. 실제로 Llama 4 모델은 데이터 및 모델 규모의 극적인 증가에도 불구하고 Llama 3에 비해 훈련(training) 중 더 적은 계산량을 사용한 것으로 보고되었습니다.
+
+### 세분화된 전문가(Fine-grained experts).
+
+여러 현대 MoE 기반 LLM(예: DeepSeek-v3 및 DBRX)이 채택한 인기 있는 설계 선택 중 하나는 세분화된 전문가(fine-grained experts)의 사용입니다. 세분화된 전문가(fine-grained experts)를 사용하려면 다음을 수행합니다.
+
+*   각 MoE 레이어(layer)의 전문가(expert) 수를 늘립니다.
+*   각 개별 전문가(expert)의 크기(매개변수(parameter) 수)를 줄입니다.
+
+일반적으로 우리는 세분화된 MoE 모델에서 활성 매개변수(active parameter)의 수를 (상대적으로) 고정시키기 위해 각 레이어(layer)에서 더 많은 수의 활성 전문가(active expert)를 선택합니다. Llama 4 스위트(suite)에서는 세분화된 전문가(fine-grained expert)와 거친 전문가(coarse-grained expert)가 모두 사용됩니다. Scout 모델은 총 16개의 전문가(expert)를 가지는 반면, Maverick은 총 128개의 전문가(expert)를 가집니다. Maverick이 Scout 모델보다 전문가(expert) 수가 16배 많지만 전체 매개변수(total parameter) 수는 4배에 불과하다는 점을 감안할 때, 세분화된 전문가(fine-grained expert)를 사용하고 있음이 분명합니다. 대조적으로, Scout 및 Behemoth 모델은 모두 표준(거친 전문가(coarse-grained expert)) 전문가(expert)를 사용합니다. Meta가 이러한 선택을 하는 데에는 몇 가지 다른 이유가 있습니다. 일반적으로 세분화된 전문가(fine-grained expert)를 사용하면 전문가(expert) 간의 더 많은 전문화가 가능하며 성능과 효율성을 모두 향상시킬 수 있습니다. 그러나 세분화된 전문가(fine-grained expert)는 분산 훈련(distributed training) 프로세스에 추가적인 복잡성을 도입합니다.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*23F1e-01-j_5113_5t_41w.png" alt="(source)" />
+
+(출처)
+
+전문가(expert)는 일반적으로 훈련(training) 중에 여러 GPU에 분산됩니다(즉, 전문가 병렬 처리(expert parallelism)). 위 그림을 참조하십시오. 거친 전문가(coarse-grained expert)를 사용할 때, 각 GPU가 단일 전문가(expert)를 저장하는 것이 일반적입니다. 그러나 우리는 일반적으로 여러 세분화된 전문가(fine-grained expert)를 단일 GPU의 메모리에 맞출 수 있습니다. 또한, 세분화된 전문가(fine-grained expert)를 사용할 때 일반적으로 더 많은 수의 전문가(expert)를 선택하기 때문에, 각 토큰(token)이 클러스터(cluster) 내의 여러 다른 GPU로 라우팅(routing)되어야 하는 문제가 발생할 수 있으며, 이는 GPU 간 통신 비용을 극적으로 증가시킵니다.
+
+> "우리는 각 토큰(token)이 최대 𝑀개의 노드(node)로 전송되도록 보장합니다. 이 노드(node)는 각 노드(node)에 분산된 전문가(expert)의 가장 높은 𝐾 / 𝑀 친화도 점수(affinity score)의 합계에 따라 선택됩니다. 이 제약 조건 하에서 우리의 MoE 훈련 프레임워크(training framework)는 거의 완벽한 계산-통신 오버랩(computation-communication overlap)을 달성할 수 있습니다."
+>
+> — DeepSeek-v3 논문 [4]에서
+
+결과적으로, 우리는 통신 비용을 제한하고 훈련 효율성(training efficiency)을 향상시키기 위한 전략을 채택해야 합니다. 예를 들어, DeepSeek-v3는 위에서 설명한 노드 제한 라우팅 방식(node-limited routing scheme)을 사용하며, 이는 단일 토큰(token)이 라우팅(routing)될 수 있는 장치(device)의 수를 제한합니다. 세분화된 전문가(fine-grained expert)를 사용하지 않음으로써 이러한 추가적인 복잡성을 피할 수 있습니다. 그러나 세분화된 전문가(fine-grained expert) 모델과 거친 전문가(coarse-grained expert) 모델을 모두 훈련(training)하는 것은 모델 사용자에게 더 많은 구성 가능성(configurability)과 선택권을 제공합니다.
+
+세분화된 전문가의 활용은 모델의 전문성을 높여 특정 유형의 작업에 대한 성능을 향상시킬 수 있습니다. 예를 들어, 특정 언어나 도메인에 특화된 전문가를 두어 다국어 처리나 특정 전문 분야에서의 정확도를 높일 수 있습니다. 하지만 분산 훈련 환경에서 세분화된 전문가의 통신 오버헤드는 큰 도전 과제입니다. 최근 연구에서는 원격 메모리 접근(remote memory access)을 최적화하고, 통신 패턴을 예측하여 데이터 전송을 미리 준비하는(pre-fetch) 기법을 통해 이러한 문제를 완화하려는 시도가 이루어지고 있습니다. Llama 4의 Maverick 모델이 세분화된 전문가를 채택한 것은 이러한 복잡성에도 불구하고 성능 향상이라는 이점을 추구하겠다는 Meta의 의지를 보여줍니다.
+
+### 공개 LLM에 미치는 영향.
+
+MoE는 추론(inference) 중에 모든 매개변수(parameter)를 사용하지 않지만, 우리는 여전히 모델의 매개변수(parameter)를 GPU 메모리에 맞춰야 합니다. 결과적으로 MoE 기반 LLM은 밀집 모델(dense model)에 비해 훨씬 더 높은 메모리 점유율(memory footprint)을 가지며, 따라서 더 많고 더 나은 GPU에 대한 접근이 필요합니다 2. Llama 4 Scout는 "단일 H100 GPU(Int4 양자화(quantization) 사용)에 적합" 3하지만, Maverick은 "단일 H100 호스트(host)"가 필요합니다. 즉, 우리는 단일 GPU를 사용하여 더 큰 Maverick 모델의 추론(inference)을 수행할 수 없습니다. 여러 GPU 호스트(host)에서 분산 추론(distributed inference)을 수행해야 합니다.
+
+이러한 모든 고려 사항을 염두에 두면, Llama가 MoE 아키텍처(architecture)로 전환하는 것이 양날의 검이라는 것을 깨닫기 시작할 수 있습니다.
+
+*   Llama 프로젝트는 가장 강력한 (독점) LLM과 동등한 수준으로 나아가고 더 나은 모델을 만들 잠재력을 열어줍니다.
+*   Llama 모델 사용을 위한 진입 장벽이 높아집니다.
+
+> "공개 표준이 되는 모델은 전반적으로 최고 모델일 필요는 없지만, 다양한 배포 설정에서 견고한 다양한 형태와 크기의 모델 패밀리여야 합니다... 희소 MoE(sparse MoE)와 같은 메모리 집약적인 모델은 공개 커뮤니티의 더 많은 참여자들을 배제시킵니다."
+>
+> — Nathan Lambert
+
+MoE 아키텍처의 높은 메모리 요구 사항은 오픈소스 AI 커뮤니티에 중요한 과제를 제시합니다. 최첨단 모델을 연구하고 활용하기 위해 고가의 GPU 클러스터가 필요하다는 것은 AI 연구의 민주화를 저해할 수 있습니다. 이러한 문제를 해결하기 위해 모델 증류(model distillation)와 양자화(quantization) 기술이 더욱 중요해지고 있습니다. 예를 들어, QLoRA와 같은 경량 미세 조정(fine-tuning) 기법은 적은 메모리로도 MoE 모델을 특정 작업에 맞게 조정할 수 있도록 하며, GGUF와 같은 형식은 다양한 하드웨어에서 모델을 효율적으로 실행할 수 있게 돕습니다. 또한, 추론 효율성을 높이는 투기적 디코딩(speculative decoding)과 같은 기술은 MoE 모델의 실용성을 향상시키는 데 기여합니다. Meta는 Llama 4의 공개 버전을 통해 이러한 기술들의 발전을 촉진하고, 더 많은 개발자가 최신 LLM 기술에 접근할 수 있도록 하는 데 기여할 수 있습니다.
+
+MoE 아키텍처(architecture)의 이러한 부정적인 측면을 피하기 위해, 우리는 더 큰 MoE 모델을 더 작은 밀집 모델(dense model)로 증류(distill)하여 여전히 잘 작동하는 더 사용자 친화적인 LLM 스위트(suite)를 제공할 수 있습니다. 이 접근 방식은 DeepSeek-R1 [5] 4에 의해 채택되고 대중화되었는데, 이는 671B 매개변수(parameter)의 MoE 기반 추론 모델(reasoning model)로, 1.5B에서 70B 매개변수(parameter)에 이르는 여러 밀집 LLM으로 증류(distill)되었습니다. [5]의 주요 발견 중 하나는 매우 크고 강력한 모델이 교사(teacher)로 사용될 때 증류(distillation)가 가장 효과적이라는 사실입니다. 개요의 뒷부분에서 보겠지만, Llama 4 모델로부터의 증류(distillation)는 이미 활발히 탐색되고 있습니다.
+
+### 네이티브 다중 모달리티(Native Multi-Modality) 및 초기 융합(Early Fusion)
+
+과거에도 다중 모달(multi-modal) Llama 모델이 출시된 바 있습니다. 원래 Llama 3 출판물 [2]에는 다중 모달리티(multi-modality)에 대한 예비 실험이 포함되어 있었고, 이는 나중에 Llama 3.2 Vision 출시와 함께 상용화되었습니다. 다중 모달(multi-modal) Llama 3 모델의 주요 세부 사항은 아래 링크된 개요에 설명되어 있습니다. 이전 모델 세대와 유사하게, Llama 4 모델은 이미지와 비디오 모두 시각적 입력(visual inputs)을 지원합니다. 그러나 이 섹션에서 보겠지만, Llama 4는 다중 모달리티(multi-modality)에 대해 극적으로 다른 접근 방식을 취합니다.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*YyU-X_H_L1228_H_Y_P_9_A.png" alt="Vision Large Language Models (vLLMs) Cameron R. Wolfe, Ph.D. · Mar 31 Read full story" />
+
+**다중 모달 아키텍처(Multi-modal architectures).** 다중 모달 LLM은 두 가지 주요 구성 요소를 가집니다: LLM 백본(LLM backbone)과 비전 인코더(vision encoder). LLM 백본(LLM backbone)은 표준 디코더 전용 트랜스포머(decoder-only transformer)이며, 비전 인코더(vision encoder)는 일반적으로 이미지를 해당 임베딩(embedding) 집합으로 변환하는 CLIP 또는 ViT 모델입니다. 아래를 참조하십시오.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*d6-s-k-Y_2_E_Q_2_H_2_Y_2_G_4_A.png" alt="Using a vision encoder to produce image embeddings" />
+
+이미지 임베딩(image embedding) 생성을 위한 비전 인코더(vision encoder) 사용
+
+이 두 가지 구성 요소를 고려할 때, 비전 LLM(Vision LLM, 줄여서 vLLM)은 시각 정보와 텍스트 정보를 적절하게 융합하는 방법을 학습해야 합니다. 즉, LLM은 어떻게든 i) 이미지 임베딩(image embedding)을 섭취하고 ii) 이 임베딩(embedding)을 텍스트 생성을 위한 추가 컨텍스트(context)로 사용해야 합니다. 이 목적을 위해 사용할 수 있는 두 가지 주요 모델 아키텍처(model architecture)가 있습니다(아래 그림 참조).
+
+*   **통합 임베딩(Unified embedding)**: 입력 레이어(input layer)에서 이미지 토큰(image token)과 텍스트 토큰(text token)을 모두 연결하여 LLM 5에 의해 처리되는 단일 입력 시퀀스(input sequence)를 형성합니다.
+*   **교차 모달리티 어텐션(Cross-modality attention)**: LLM에 텍스트 토큰(text token)만 입력으로 전달하고 추가 교차 어텐션 레이어(cross-attention layer)를 통해 시각 정보를 모델에 융합합니다.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*l_2_F_0_G_2_D_0_E_2_R_0_R_2_A.png" alt="Multi-modal architecture variants" />
+
+다중 모달 아키텍처(multi-modal architecture) 변형
+
+이러한 아키텍처(architecture)는 모두 장점이 있습니다. 예를 들어, 교차 모달리티 어텐션(cross-modality attention)은 이미지 임베딩(image embedding)을 전체 LLM 백본(LLM backbone)을 통해 전달하지 않기 때문에 더 효율적인 경향이 있습니다. 그러나 통합 임베딩(unified embedding) 접근 방식은 정확히 동일한 이유로 더 나은 성능을 낼 잠재력이 있습니다!
+
+**다중 모달 훈련(Multi-modal training).** vLLM이 텍스트를 출력으로 생성한다는 점을 감안할 때, 우리는 여전히 다음 토큰 예측(next token prediction)을 사용하여 훈련(training)합니다. 그러나 훈련 목표(training objective) 외에도 이러한 유형의 모델에 대한 몇 가지 다른 훈련 전략(training strategies) 선택이 있습니다.
+
+*   **네이티브 다중 모달리티(Native multi-modality)**: 처음부터 다중 모달 데이터(multi-modal data)를 사용하여 vLLM을 처음부터 훈련(training)합니다.
+*   **구성적 다중 모달리티(Compositional multi-modality)**: 별도의 LLM 백본(LLM backbone)과 비전 인코더(vision encoder)를 훈련(training)하는 것으로 시작한 다음, 추가 훈련(training)을 수행하여 이들을 융합합니다.
+
+객관적으로 말하면, 네이티브 다중 모달리티(native multi-modality)는 훈련(training) 프로세스에 추가적인 복잡성(예: 모달리티(modality) 간 불균형)을 도입합니다. 그러나 이러한 함정을 피할 수 있다고 가정하면, 네이티브 다중 모달 훈련(natively multi-modal training)은 엄청난 잠재력을 가집니다. 이는 모델이 노출될 수 있는 데이터의 범위와 양을 확장하기 때문입니다. 이러한 이유로 Google과 OpenAI를 비롯한 많은 최고 연구소들이 이 접근 방식을 채택했으며, 이는 Llama 4 설계의 동기 부여 요인이었을 가능성이 높습니다.
+
+> "Llama 4 모델은 네이티브 다중 모달리티(native multimodality)로 설계되었으며, 텍스트 및 비전 토큰(vision token)을 통합 모델 백본(unified model backbone)에 원활하게 통합하기 위해 초기 융합(early fusion)을 포함합니다. 초기 융합(early fusion)은 대량의 레이블 없는 텍스트, 이미지 및 비디오 데이터를 사용하여 모델을 공동으로 사전 훈련(pre-train)할 수 있게 해주므로 중요한 진전입니다."
+>
+> — Llama 4 블로그 [1]에서
+
+이전 Llama 변형 모델(예: Llama 3.2 Vision)은 교차 모달리티 어텐션(cross-modality attention) 아키텍처(architecture)를 사용하고 구성적 접근 방식(compositional approach)으로 훈련(training)되었습니다. 대조적으로, Llama 4 모델은 네이티브 다중 모달(natively multi-modal)이며 텍스트, 이미지 및 비디오 데이터를 사용하여 처음부터 사전 훈련(pretrained)됩니다. 네이티브 다중 모달리티(native multi-modality)로의 전환은 Llama 4 모델이 Llama 3보다 2배 이상 큰 방대한 30T 토큰(token) 사전 훈련 데이터셋(pretraining dataset)을 구성할 때 여러 모달리티(modality)의 데이터를 활용할 수 있도록 합니다.
+
+**초기 융합(Early fusion).** 위 인용문에서 언급했듯이, Llama 4는 Llama 3에서 사용된 교차 모달리티 어텐션(cross-modality attention) 아키텍처(architecture) 대신 통합 임베딩(unified embedding) 아키텍처(architecture)를 채택합니다. [1]에서는 LLM의 입력 수준(input-level)에서 이미지와 텍스트가 결합된다는 의미의 "초기 융합(early fusion)"이라는 용어가 Llama 4 모델의 아키텍처(architecture)를 설명하는 데 사용됩니다. 대안적으로, "후기 융합(late fusion)" 아키텍처(architecture)(예: 교차 모달리티 어텐션(cross-modality attention))는 LLM의 후기 레이어(layer)에서 이미지 및 텍스트 데이터를 결합합니다.
+
+초기 융합은 모델이 텍스트와 시각 정보를 훨씬 더 깊은 수준에서 통합하고 이해할 수 있도록 합니다. 이는 단순한 이미지 캡셔닝을 넘어, 복잡한 시각적 질문 답변(Visual Question Answering, VQA), 이미지 기반 추론, 심지어는 비디오 콘텐츠 이해와 같은 고급 다중 모달 작업을 수행하는 데 필수적입니다. Llama 4가 텍스트, 이미지, 비디오 데이터를 공동으로 사전 훈련하는 것은 모델이 다양한 모달리티 간의 복잡한 관계를 학습하고, 이를 통해 더욱 풍부하고 일관된 세계 모델을 구축할 수 있도록 합니다. 이러한 접근 방식은 데이터 정렬 및 스케일링의 복잡성이라는 도전 과제를 수반하지만, 궁극적으로는 인간과 유사한 다중 모달 추론 능력을 갖춘 AI 개발을 목표로 합니다.
+
+### Llama 4의 데이터 전략 및 토크나이저 혁신 (Llama 4's Data Strategy and Tokenizer Innovations)
+
+Llama 4는 Llama 3 대비 2배 이상 확장된 30조 토큰 규모의 방대한 사전 훈련 데이터셋을 활용합니다. 이 데이터셋은 단순히 텍스트 데이터의 양을 늘린 것을 넘어, 이미지와 비디오 데이터를 포함하는 진정한 다중 모달 구성으로 이루어져 있습니다. 이러한 대규모 다중 모달 데이터셋의 구축은 Llama 4의 네이티브 다중 모달리티 전략의 핵심입니다.
+
+데이터 큐레이션 과정에서 Meta는 웹 스크래핑 데이터, 책, 코드, 학술 논문, 그리고 대규모 이미지 및 비디오 컬렉션 등 다양한 소스의 데이터를 통합했습니다. 특히, 다중 모달 데이터의 경우, 텍스트-이미지 쌍 및 텍스트-비디오 쌍의 품질과 정렬이 모델 성능에 결정적인 영향을 미치므로, 엄격한 필터링 및 정규화 과정이 필수적입니다. Meta는 잠재적인 편향을 줄이고 데이터 품질을 향상시키기 위해 정교한 데이터 필터링 기술과 휴먼 피드백(human feedback) 기반의 품질 검증을 수행했을 것으로 예상됩니다.
+
+또한, 다중 모달 입력에 효율적으로 대응하기 위해 Llama 4는 새로운 토크나이저(tokenizer) 설계를 도입했습니다. 기존의 텍스트 전용 토크나이저와 달리, Llama 4의 토크나이저는 텍스트 토큰과 시각 토큰(visual token)을 하나의 통합된 시퀀스로 처리할 수 있도록 설계되었습니다. 이는 각 모달리티의 정보를 개별적으로 처리한 후 나중에 융합하는 방식보다, 모델이 초기 단계부터 모달리티 간의 상호작용을 학습하고 더욱 깊은 수준의 이해를 가능하게 합니다. 이러한 토크나이저 혁신은 Llama 4가 복잡한 다중 모달 추론 작업을 수행하는 데 필수적인 기반을 제공합니다.
+
+### Llama 4의 성능 평가 및 미래 전망 (Performance Evaluation and Future Outlook of Llama 4)
+
+Llama 4의 성능 평가는 기존 텍스트 기반 벤치마크뿐만 아니라, 새로운 다중 모달 벤치마크를 포함하여 포괄적으로 이루어졌습니다. 초기 보고서에 따르면, Llama 4는 텍스트 기반 추론, 코딩, 수학 능력에서 Llama 3를 능가하는 성능을 보였으며, 특히 이미지 및 비디오 이해 능력에서 상당한 진전을 이루었습니다. 그러나 여전히 GPT-4나 Gemini Ultra와 같은 최상위 모델들과 비교했을 때 개선의 여지가 남아있다는 평가도 있습니다. 이는 MoE 아키텍처의 복잡성 관리, 훈련 안정성 확보, 그리고 방대한 다중 모달 데이터셋의 최적화가 지속적인 연구와 개발을 요구하기 때문입니다.
+
+Meta의 Llama 프로젝트 로드맵은 이러한 초기 모델의 한계를 극복하고 장기적인 리더십을 확보하는 데 초점을 맞출 것입니다. 미래의 Llama 모델은 다음과 같은 방향으로 발전할 가능성이 높습니다.
+
+1.  **지속적인 스케일링 및 효율성 개선**: MoE 아키텍처의 장점을 극대화하기 위해 더 많은 전문가를 활용하고, 훈련 및 추론 효율성을 더욱 향상시키는 연구가 계속될 것입니다.
+2.  **새로운 모달리티 통합**: 현재 텍스트, 이미지, 비디오를 넘어 오디오, 3D 데이터, 촉각(haptic) 피드백 등 다양한 모달리티를 통합하여 진정한 범용 인공지능(AGI)에 가까워지는 노력이 이루어질 수 있습니다.
+3.  **안전 및 정렬 강화**: 대규모 다중 모달 모델은 오용될 경우 사회에 미칠 수 있는 영향이 크므로, 윤리적 편향(ethical bias) 감소, 유해 콘텐츠 생성 방지, 그리고 인간의 가치와 일치하는 행동을 학습하도록 모델을 정렬(alignment)하는 연구가 최우선 순위로 다루어질 것입니다.
+4.  **커뮤니티 협력 확대**: Meta는 Llama 모델을 오픈소스화함으로써 연구 커뮤니티의 참여를 유도하고 있습니다. 이는 모델의 빠른 개선과 함께 다양한 애플리케이션 개발을 촉진하여 Llama 생태계의 활성화를 이끌 것입니다.
+
+결론적으로 Llama 4는 Meta의 LLM 전략에 있어 중대한 전환점을 의미합니다. MoE 아키텍처와 네이티브 다중 모달리티의 채택은 단순한 기술적 진보를 넘어, 미래 AI의 방향성을 제시하는 중요한 발걸음입니다. 비록 초기에는 완벽하지 않을지라도, Meta의 지속적인 노력과 오픈소스 커뮤니티의 기여를 통해 Llama 4는 프론티어 LLM 경쟁에서 강력한 경쟁자로 자리매김할 것으로 기대됩니다.

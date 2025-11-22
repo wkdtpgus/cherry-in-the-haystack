@@ -1,0 +1,21 @@
+{
+  "post_id": "094",
+  "title": "**테스트 시간 연산(Test Time Compute)을 다중 에이전트 문명(Multi-Agent Civilizations)으로 확장: 노암 브라운**",
+  "base_word_count": 22679,
+  "exact_30_update_wc": 2987,
+  "exact_30_ground_truth_wc": 4219,
+  "exact_30_overlap_ratio": 7.18,
+  "paraphrase_25_update_wc": 2866,
+  "paraphrase_25_ground_truth_wc": 2866,
+  "paraphrase_25_overlap_ratio": 7.913,
+  "fragment_20_update_wc": 3073,
+  "fragment_20_ground_truth_wc": 20566,
+  "fragment_20_overlap_ratio": 1.688,
+  "semantic_25_update_wc": 12948,
+  "semantic_25_ground_truth_wc": 14060,
+  "semantic_25_overlap_ratio": 1.666,
+  "mixed_real_update_wc": 2608,
+  "mixed_real_ground_truth_wc": 15948,
+  "mixed_real_overlap_ratio": 3.581,
+  "status": "generated"
+}

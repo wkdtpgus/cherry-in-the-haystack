@@ -1,0 +1,48 @@
+안녕하세요, LLM 소식과 함께 Jay가 다시 찾아왔습니다! 지난번 업데이트 이후로도 저는 여러 편의 비디오를 제작했으며, Deeplearning AI와 협력하여 LLM 기반의 의미 검색(semantic search) 과정(course)을 성공적으로 마쳤습니다. 다음은 그 내용들과 곧 출간될 저희 책에 대한 최신 업데이트입니다. "Language Models and Machine Learning"을 읽어주셔서 진심으로 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 지금 구독하세요. 구독하기
+
+**비디오: ChatGPT는 (대부분의 인터넷을 읽었음에도 불구하고) 단 한 단어도 본 적이 없습니다. LLM 토크나이저(tokenizer)를 만나보세요**
+인터넷 규모의 방대한 텍스트 데이터를 처리함에도 불구하고, 대규모 언어 모델(large language models)은 우리가 인식하는 방식대로 단어를 직접적으로 이해하지 않습니다. 모델은 분명 텍스트를 소비하지만, '토크나이저(tokenizer)'라는 특별한 소프트웨어가 입력 텍스트를 언어 모델이 실제로 처리할 수 있는 다른 형식으로 변환하는 역할을 합니다. 이 비디오에서 Jay는 언어 모델 토크나이저(tokenizer)의 작동 원리를 심도 있게 검토하여 그 복잡성을 명확하게 설명해 드립니다.
+
+**비디오: LLM 토크나이저(tokenizer)는 서로 어떻게 다를까요? GPT4 vs. FlanT5 vs. Starcoder vs. BERT 외 다수**
+토크나이저(tokenizer)의 역할을 가장 잘 이해하는 방법 중 하나는 다양한 토크나이저들의 작동 방식을 비교하는 것입니다. 이 비디오에서 Jay는 신중하게 구성된 텍스트(영어, 코드, 들여쓰기, 숫자, 이모지 및 기타 언어를 포함)를 여러 훈련된 토크나이저(tokenizer)에 적용합니다. 이를 통해 각 토크나이저가 인코딩(encoding)에 성공하는 부분과 실패하는 부분을 명확히 보여주며, 각 토크나이저의 설계 선택이 해당 모델에 어떤 영향을 미치는지 상세히 분석합니다. 최근 토크나이저 기술의 발전과 새로운 모델들의 등장으로 그 차이점은 더욱 중요해지고 있습니다.
+
+**과정(Course): Cohere와 함께하는 새로운 과정: 의미 검색(Semantic Search)을 활용한 대규모 언어 모델(Large Language Models)**
+이 짧은 과정(course)에서 저의 영웅들인 Luis Serrano, Meor Amer, Andrew Ng와 협력하게 되어 정말 놀라웠습니다. 여기에서 등록하세요: https://bit.ly/3OLOEzo
+
+이 과정을 통해 다음과 같은 내용을 기대할 수 있습니다:
+*   **LLM 기초 이해 심화**: 대규모 언어 모델(large language models)의 핵심 작동 원리에 대한 이해를 깊이 있게 다져, 더욱 숙련된 AI 개발자로 성장할 수 있도록 돕습니다.
+*   **키워드 검색(Keyword Search) 성능 향상**: 기존 프레임워크를 전면 개편하지 않고도 키워드 또는 벡터 검색(vector search) 시스템의 품질을 향상시키는 ReRank 도구를 통합하는 방법을 배웁니다.
+*   **밀집 검색(Dense Retrieval) 활용 기법**: 임베딩(embeddings)과 대규모 언어 모델(large language models)을 효과적으로 활용하여 검색 애플리케이션의 질의응답(Q&A) 기능을 개선하는 방법을 알아봅니다.
+*   **평가 및 실용적 구현**: 검색 모델의 성능을 평가하고, 프로젝트에 이러한 최신 기술들을 효율적으로 구현하는 방법에 대한 실제적인 통찰력을 얻습니다.
+*   **실제 적용 사례 학습**: 위키피디아 데이터셋(dataset)을 활용하여 검색(retrieval) 및 최근접 이웃(nearest neighbors)과 같은 프로세스를 최적화하는 방법을 이해하고, 대규모 데이터셋(dataset)으로 실질적인 경험을 제공합니다.
+*   **최신 검색 트렌드 분석**: 하이브리드 검색(hybrid search) 및 멀티모달 검색(multimodal search)과 같은 최신 검색 기술 동향을 간략하게 소개하여, 미래 검색 시스템에 대한 시야를 넓힙니다.
+
+이 과정(course)을 마치면, 대규모 언어 모델(LLMs)이 어떻게 작동하는지에 대한 기본 원리를 더 깊이 이해하게 되어, AI 개발자로서의 기술을 한 단계 더 향상시킬 수 있을 것입니다.
+
+**책 업데이트**
+저희는 "Hands-On Large Language Models" 집필에 꾸준히 매진하고 있으며, 최종 출간이 임박했습니다. 현재 O'Reilly 플랫폼에서 얼리 릴리즈(Early Release) 버전으로 7개 챕터(약 200페이지)를 이용할 수 있습니다. 기존 챕터 외에 최신 트렌드를 반영한 챕터가 추가되었습니다:
+1.  텍스트 분류(Categorizing Text)
+2.  의미 검색(Semantic Search)
+3.  텍스트 클러스터링(Text Clustering) 및 토픽 모델링(Topic Modeling)
+4.  멀티모달 대규모 언어 모델(Multimodal Large Language Models)
+5.  토큰(Tokens) 및 토큰 임베딩(Token Embeddings)
+6.  고급 프롬프트 엔지니어링(Advanced Prompt Engineering)
+7.  RAG(Retrieval-Augmented Generation) 시스템 구축
+
+30일 무료 체험으로 책의 얼리 릴리즈(Early Release) 버전에 접속하세요: https://learning.oreilly.com/get-learning/?code=HOLLM23
+
+**다음 책 내용: 다시 보는 일러스트레이티드 트랜스포머(The Illustrated Transformer Revisited)**
+Maarten(저의 공동 저자)과 저는 현재 얼리 릴리즈(Early Release)에는 포함되지 않았지만, 곧 공개될 여러 챕터를 최종 검토 중입니다. 제가 방금 마친 챕터의 제목은 "트랜스포머 LLM(Transformer LLMs) 내부 들여다보기"입니다. 이는 기본적으로 지난 5년간 트랜스포머 아키텍처(Transformer Architecture)의 주요 업데이트를 반영하여 "일러스트레이티드 트랜스포머(The Illustrated Transformer)"를 다시 살펴보는 것입니다. 특히 텍스트 생성 LLM(한 번에 하나의 토큰을 생성하는 자기회귀 모델(autoregressive models))에 초점을 맞추고 있습니다. 해당 챕터에는 39개의 새로운 그림이 포함되어 있으며, 제가 아는 한 가장 명확한 방식으로 자기 어텐션(self-attention)을 설명한다고 생각합니다.
+
+다음은 몇 가지 티저 시각 자료입니다:
+*   자기 어텐션(self-attention)의 두 가지 주요 단계
+*   멀티 헤드 자기 어텐션(multi-head self-attention)의 쿼리(queries), 키(keys), 값(values)
+*   더 효율적인 멀티 쿼리 어텐션(multi-query attention) — 헤드(heads)는 개별 쿼리(queries)를 가지지만 키(keys)와 값(values)을 공유합니다. (논문: Fast Transformer Decoding: One Write-Head is All You Need)
+*   그룹화된 쿼리 어텐션(Grouped-Query Attention, GQA) — 멀티 쿼리 어텐션의 일반화된 형태로, 여러 쿼리 헤드가 소수의 키-값 헤드를 공유하여 효율성을 더욱 높입니다.
+*   트랜스포머 어댑터(Transformer adapters)는 효율적인 미세 조정(fine-tuning)을 위한 한 가지 접근 방식입니다.
+*   저랭크 적응(Low-Rank adaptation), 즉 LoRA는 대규모 가중치 행렬(weight matrices)을 더 작고 낮은 랭크(rank)의 행렬로 줄이는 효율적인 미세 조정(fine-tuning)의 또 다른 방법으로, 종종 유사한 성능을 유지하면서 크기와 필요한 저장 공간/메모리/연산량을 압축할 수 있습니다. 이는 언어 모델이 "매우 낮은 내재적 차원(intrinsic dimension)을 가지고 있기" 때문에 작동합니다. 따라서 175B 모델의 효율적인 버전은 예를 들어 랭크(rank) = 8로 많은 작업을 수행할 수 있습니다. 이는 행렬의 크기와 해당 매개변수(parameters)를 미세 조정(fine-tune)하는 데 필요한 시간을 크게 줄여줍니다. QLoRA와 같은 발전된 기법들도 간략히 다룹니다.
+
+**비디오: KeyLLM 소개 - Mistral 7B 및 KeyBERT를 활용한 키워드 추출(Keyword Extraction)**
+저의 공동 저자인 Maarten은 훌륭한 LLM 소프트웨어와 이를 설명하는 비디오를 꾸준히 제작해왔습니다. 이 비디오에서 저는 대규모 언어 모델(Large Language Models)을 사용하여 키워드(keywords)를 추출하기 위한 KeyBERT의 확장 기능인 KeyLLM을 소개하게 되어 자랑스럽습니다! 저희는 뛰어난 Mistral 7B LLM을 활용하고 다양한 실제 사용 사례(use cases)를 심층적으로 살펴볼 것입니다. KeyLLM은 단순히 키워드를 추출하는 것을 넘어, LLM의 이해 능력을 활용하여 문맥에 맞는 더 풍부한 인사이트를 제공합니다.
+
+… 이번 업데이트는 여기까지입니다. 아직 말씀드릴 수 없는 더 많은 흥미로운 소식들이 있으니 계속 지켜봐 주세요! "Language Models and Machine Learning"을 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요. 구독하기

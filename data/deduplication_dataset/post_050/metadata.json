@@ -1,0 +1,21 @@
+{
+  "post_id": "050",
+  "title": "**시각 대규모 언어 모델 (vLLMs)**",
+  "base_word_count": 7717,
+  "exact_30_update_wc": 7234,
+  "exact_30_ground_truth_wc": 7119,
+  "exact_30_overlap_ratio": 1.083,
+  "paraphrase_25_update_wc": 6432,
+  "paraphrase_25_ground_truth_wc": 6431,
+  "paraphrase_25_overlap_ratio": 1.2,
+  "fragment_20_update_wc": 2820,
+  "fragment_20_ground_truth_wc": 7573,
+  "fragment_20_overlap_ratio": 1.051,
+  "semantic_25_update_wc": 6129,
+  "semantic_25_ground_truth_wc": 6128,
+  "semantic_25_overlap_ratio": 1.259,
+  "mixed_real_update_wc": 5931,
+  "mixed_real_ground_truth_wc": 5930,
+  "mixed_real_overlap_ratio": 1.301,
+  "status": "generated"
+}

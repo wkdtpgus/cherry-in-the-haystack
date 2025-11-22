@@ -1,0 +1,141 @@
+1년 동안 50% 할인
+
+이 글에서는 판다스(Pandas) 라이브러리의 핵심 기능인 `.groupby()` 연산을 활용하여 데이터프레임(DataFrame)의 데이터를 특정 기준에 따라 효과적으로 분류하고 분석하는 방법을 심층적으로 다룰 것입니다. 이 기능은 테이블 형태의 데이터를 특정 속성(attribute) 값에 기반하여 여러 개의 개별적인 묶음으로 나누는 역할을 수행합니다. 이렇게 생성된 그룹화된 객체(grouped object)에는 단순한 통계량 계산부터 복잡한 데이터 변형에 이르기까지 다양한 연산이 적용될 수 있습니다. 정형 데이터를 다루는 모든 데이터 과학자(data scientist)와 분석가에게 이 도구는 필수적이며, 데이터 탐색(EDA) 및 전처리 과정을 간소화하고 효율성을 높이는 데 크게 기여합니다.
+
+**목차:**
+*   `.groupby()`와 함께 활용되는 주요 함수
+*   `.groupby()` 및 `.transform()`을 이용한 결측치 처리 기법
+*   `.groupby()` 및 `.filter()`를 통한 조건부 데이터 선별
+
+내 모든 책을 버튼 하나로 40% 할인된 가격에 만나보세요
+**Youssef Hosni · 6월 17일**
+
+제 책과 로드맵(roadmap)을 묶은 번들(bundle)을 만들었습니다. 이제 버튼 하나로 모든 것을 원가보다 40% 저렴하게 구매할 수 있습니다. 이 번들(bundle)에는 다음을 포함한 8권의 전자책(eBook)이 있습니다:
+
+전체 이야기 읽기
+
+### 1. `.groupby()`와 함께 활용되는 주요 함수
+
+그룹별 집계(aggregation)에 적용할 수 있는 가장 기본적인 연산 중 하나는 `.count()`입니다. 이는 각 그룹 내의 유효한(non-null) 항목 수를 세는 데 사용됩니다. 아래 예시에서는 레스토랑 데이터셋(dataset)을 활용하여, 고객의 흡연 여부에 따라 데이터를 분할한 후 각 그룹의 항목 수를 집계해 보겠습니다.
+
+```python
+restaurant = pd.read_csv('restaurant_data.csv')
+restaurant_grouped = restaurant.groupby('smoker')
+print(restaurant_grouped.count())
+```
+
+`.count()` 유틸리티는 각 컬럼(column)에서 모든 서브그룹(subgroup)별로 유효한 엔트리(entry)들을 열거합니다. 따라서, 데이터셋(dataset)에 결측값(missing value)이 전혀 존재하지 않을 경우, 모든 특성(feature)에 걸쳐 동일한 결과가 관찰되는 것은 지극히 자연스러운 현상입니다. 이러한 일관성은 데이터의 완전성을 시사합니다.
+
+특정 기준에 따라 데이터프레임(DataFrame)의 행들을 그룹화(grouping)한 후, 우리는 다양한 형태의 데이터 변환(transformation)을 적용할 수 있습니다. 여기서는 데이터 표준화 기법의 일종인 z-점수(z-score) 변환을 적용할 것입니다. Z-점수, 즉 표준 점수는 개별 데이터 포인트가 평균으로부터 얼마나 떨어져 있는지를 표준 편차(standard deviation) 단위로 측정하는 방식입니다. 이는 통계 분석에서 핵심적인 표준화 기법으로, 특히 표준화된 평가나 가설 검정 시 널리 활용됩니다.
+
+이러한 변환 과정을 그룹화된 객체(object)에 적용하려면, 우리가 정의한 람다(lambda) 함수를 포함하는 `.transform()` 메서드(method)를 호출하기만 하면 됩니다. 이번에는 식사 시간(점심 또는 저녁)을 기준으로 데이터를 묶어 z-점수 변환을 적용할 것입니다. `.transform()`은 원본 데이터프레임(DataFrame)과 동일한 인덱스(index)와 크기를 가진 결과를 반환하며, 각 요소에 대해 해당 요소가 속한 그룹의 평균을 빼고 표준 편차로 나누는 방식으로 계산이 이루어집니다. 이 과정에서 숫자형 특성(numerical feature)에만 변환이 적용됩니다.
+
+```python
+zscore = lambda x: (x - x.mean()) / x.std()
+restaurant_grouped = restaurant.groupby('time')
+restaurant_transformed = restaurant_grouped.transform(zscore)
+restaurant_transformed.head()
+```
+
+`transform()` 메서드(method)가 코드(code)를 간결하게 만들지만, 순수 파이썬(Python) 반복문(loop)을 사용하는 것보다 실제로 더 효율적일까요? 이전과 마찬가지로, 이번에는 성별(sex)에 따라 데이터를 먼저 그룹화(group)합니다. 그런 다음 이전에 적용했던 z-점수 변환(z-score transformation)을 적용하고 그 효율성을 측정합니다. 각 작업의 시간을 측정하는 코드(code)는 이미 익숙하실 것이므로 여기서는 생략합니다. `transform()` 함수(function)를 사용하면 엄청난 속도 향상을 이룰 수 있음을 알 수 있습니다. 게다가, 우리는 관심사에 대해 단 한 줄의 코드(code)만 사용합니다.
+
+```python
+restaurant.groupby('sex').transform(zscore)
+
+mean_female = restaurant.groupby('sex').mean()['total_bill']['Female']
+mean_male = restaurant.groupby('sex').mean()['total_bill']['Male']
+
+std_female = restaurant.groupby('sex').std()['total_bill']['Female']
+std_male = restaurant.groupby('sex').std()['total_bill']['Male']
+
+for i in range(len(restaurant)):
+    if restaurant.iloc[i][2] == 'Female':
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_female)/std_female
+    else:
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_male)/std_male
+```
+
+### 2. `.groupby()` 및 `.transform()`을 이용한 결측치 처리 기법
+
+이제 그룹화된 판다스(pandas) 객체(object)에 `transform()` 함수(function)를 사용하는 이유와 방법을 살펴보았으니, 이제 결측값(missing value)을 대체하는 매우 구체적인 작업에 대해 다룰 것입니다. `transform()` 함수(function)를 결측값 대체(missing value imputation)에 어떻게 사용할 수 있는지 실제로 알아보기 전에, 각 그룹(group)에서 우리가 관심 있는 변수(variable)에 결측값(missing value)이 얼마나 있는지 살펴보겠습니다. 아래에서 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 볼 수 있으며, 이는 176+68 = 244입니다.
+
+```python
+prior_counts = restaurant.groupby('time')
+prior_counts['total_bill'].count()
+```
+
+다음으로, 아래 코드(code)를 사용하여 무작위 관측치(random observation)의 10%에 해당하는 총 청구액(total bill)을 `NaN`으로 설정한 `restaurant_nan` 데이터셋(dataset)을 생성할 것입니다.
+
+```python
+import pandas as pd
+import numpy as np
+
+p = 0.1 #percentage missing data required
+mask = np.random.choice([np.nan,1], size=len(restaurant), p=[p,1-p])
+
+restaurant_nan = restaurant.copy()
+restaurant_nan['total_bill'] = restaurant_nan['total_bill'] * mask
+```
+
+이제 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 출력해 보면, 현재 155 + 62 = 217임을 알 수 있습니다. 우리가 가진 총 데이터 포인트(data point)는 244이므로, 결측 데이터 포인트(missing data point)는 24개이며, 이는 10%에 해당합니다.
+
+```python
+prior_counts = restaurant.groupby('time')
+prior_counts['total_bill'].count()
+```
+
+데이터에서 결측값(missing value)의 수를 센 후, 그룹(group)별 함수(function)를 사용하여 이 결측값(missing value)을 채우는 방법을 보여드리겠습니다. 가장 일반적인 선택은 평균(mean)과 중앙값(median)이며, 선택은 데이터의 왜도(skewness)와 관련이 있습니다. 이전과 마찬가지로, `fillna()` 함수(function)를 사용하여 모든 결측값(missing value)을 해당 그룹(group)의 평균(average)으로 대체하는 람다 변환(lambda transformation)을 정의합니다. 이전과 마찬가지로, 식사 시간에 따라 데이터를 그룹화(group)한 다음 미리 정의된 변환(transformation)을 적용하여 결측값(missing value)을 대체합니다.
+
+```python
+# Missing value imputation
+missing_trans = lambda x: x.fillna(x.mean())
+restaurant_nan_grouped = restaurant_nan.groupby('time')['total_bill']
+restaurant_nan_grouped.transform(missing_trans)
+```
+
+보시다시피, 인덱스(index) 0과 인덱스(index) 4의 관측치(observation)는 동일하며, 이는 해당 결측값(missing value)이 해당 그룹(group)의 평균(mean)으로 대체되었음을 의미합니다. 또한 이 메서드(method)를 사용한 계산 시간은 0.007초임을 알 수 있습니다. 이를 기존 메서드(method)와 비교해 봅시다:
+
+```python
+start_time = time.time()
+mean_din = restaurant_nan.loc[restaurant_nan.time == 'Dinner']['total_bill'].mean()
+mean_lun = restaurant_nan.loc[restaurant_nan.time == 'Lunch']['total_bill'].mean()
+
+for row in range(len(restaurant_nan)):
+    if restaurant_nan.iloc[row]['time'] == 'Dinner':
+        restaurant_nan.loc[row, 'total_time'] = mean_din
+    else:
+        restaurant_nan.loc[row, 'total_time'] = mean_lun
+
+print("Results from the above operation calculated in %s seconds" % (time.time() - start_time))
+```
+
+그룹화된 객체(object)에 적용된 `.transform()` 함수(function)를 사용하는 것이 이 작업에 대해 순수 파이썬(Python) 코드(code)보다 더 빠르게 수행됨을 알 수 있습니다.
+
+### 3. `.groupby()` 및 `.filter()`를 통한 조건부 데이터 선별
+
+이 글에서는 판다스 그룹 객체에 `.filter()` 기능을 적용하는 방안을 탐구합니다. 이 기능은 정해진 기준에 부합하는 부분 집합만을 선별하여 유지하는 데 사용됩니다. 데이터를 특정 속성별로 묶은 뒤, 특정한 요건을 충족하는 그룹들만 추려내고자 할 때 매우 유용합니다. 예를 들어, 특정 그룹의 크기가 충분한지, 특정 변수의 분산이 기준치를 넘는지 등 다양한 조건에 따라 필터링(filtering)할 수 있습니다.
+
+우리는 웨이터(waiter)에게 지불된 평균 금액이 20달러를 초과하는 날에 주어진 팁(tip)의 평균 금액을 찾는 데 관심이 있습니다. `.filter()` 함수(function)는 각 그룹(group)의 데이터프레임(DataFrame)에서 작동하는 람다 함수(lambda function)를 허용합니다. 이 예시에서 람다 함수(lambda function)는 "total_bill"을 선택하고 `mean()`이 20보다 큰지 확인합니다. 만약 해당 람다 함수(lambda function)가 `True`를 반환하면, 팁(tip)의 `mean()`이 계산됩니다. 팁(tip)의 총 평균(mean)을 비교하면 두 값 사이에 차이가 있음을 알 수 있으며, 이는 필터링(filtering)이 올바르게 수행되었음을 의미합니다.
+
+```python
+restaurant_grouped = restaurant.groupby('day')
+filter_trans = lambda x : x['total_bill'].mean() > 20
+restaurant_filtered = restaurant_grouped.filter(filter_trans)
+print(restaurant_filtered['tip'].mean())
+print(restaurant['tip'].mean())
+```
+
+`groupby()`를 사용하지 않고 이 작업을 수행하려고 하면, 비효율적인 코드(code)가 됩니다. 먼저, 리스트 컴프리헨션(list comprehension)을 사용하여 평균 식사 비용이 20달러보다 큰 날을 나타내는 데이터프레임(DataFrame)의 항목을 추출한 다음, `for` 루프(loop)를 사용하여 이를 리스트(list)에 추가하고 평균(mean)을 계산합니다. 매우 직관적으로 보일 수 있지만, 보시다시피 매우 비효율적입니다.
+
+```python
+t=[restaurant.loc[restaurant['day'] == i]['tip'] for i in restaurant['day'].unique() if restaurant.loc[restaurant['day'] == i]['total_bill'].mean()>20]
+restaurant_filtered = t[0]
+for j in t[1:]:
+    restaurant_filtered=restaurant_filtered.append(j,ignore_index=True)
+```
+
+이 뉴스레터(newsletter)는 개인적인 열정 프로젝트(project)이며, 여러분의 지원은 이를 유지하는 데 도움이 됩니다. 기여하고 싶다면, 몇 가지 좋은 방법이 있습니다: 구독(Subscribe)하세요. 유료 구독(paid subscription)은 제 글쓰기를 지속 가능하게 하고 추가 콘텐츠(content)에 대한 접근 권한을 제공합니다.*
+
+제 책 번들(bundle)을 구매하세요. 제 7권의 실용서와 로드맵(roadmap)을 40% 할인된 가격으로 만나보세요.
+
+읽어주셔서 감사하며, 독립적인 글쓰기와 연구를 지원해 주셔서 감사합니다!

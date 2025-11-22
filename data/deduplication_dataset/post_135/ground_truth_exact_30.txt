@@ -1,0 +1,33 @@
+지난주 주요 AI 뉴스 요약 및 토론을 담은 218번째 에피소드입니다! 2025년 7월 25일 녹화. 추신. Andrey의 스타트업이 astrocade.com에서 드디어 제품을 출시했습니다. 확인해보세요! Andrey Kurenkov와 Jeremie Harris가 진행합니다. contact@lastweekinai.com 및/또는 hello@gladstone.ai로 질문과 피드백을 자유롭게 보내주세요.
+
+이번 에피소드에서는 AI 기술의 최신 동향과 중요한 이슈들을 폭넓게 다룹니다. 특히, 개발자 생산성을 혁신하는 새로운 도구부터 AI 윤리 및 안전에 대한 심도 깊은 논의까지, 다양한 분야에서의 진전을 조명합니다.
+
+이번 에피소드에서는 GitHub이 Spark를 통한 바이브 코딩(Vibe Coding)을 도입하여, 자연어와 시각적 제어를 통해 사용자들이 풀스택 애플리케이션(full-stack applications)을 개발할 수 있도록 돕습니다. 이와 함께, 제미니 CLI(Gemini CLI)와 리플릿(RepliIt) 등 최근 주목받는 AI 코딩 도구들은 개발 효율성을 극대화하지만, 사용자 데이터 관리와 보안에 대한 엄격한 기준을 요구합니다. 특정 AI 코딩 어시스턴트에서 발생한 데이터 유출 사고는 AI 시스템의 신뢰성과 책임감 있는 개발의 중요성을 다시 한번 상기시켰으며, 기업들은 AI 도입을 통해 생산성을 높이는 동시에 이러한 잠재적 위험에 대한 철저한 대비책을 마련해야 합니다. 또한, 주요 기술 기업들은 새로운 AI 모델을 공개하며 시장 경쟁을 심화하고 있으며, 특히 멀티모달(multimodal) AI와 소형 언어 모델(SLM)의 발전이 두드러집니다.
+
+연구 분야에서는 새로운 데이터셋과 벤치마크가 AI 모델의 추론 및 성능 평가 기준을 한 단계 끌어올리고 있습니다. 특히, 복잡한 과학적 문제 해결을 위한 대규모 데이터셋인 메가 사이언스(Mega Science)와 소프트웨어 공학 최적화를 위한 SWE-Perf 벤치마크(Benchmark)는 AI 연구의 지평을 넓히는 데 기여하고 있습니다. 한편, AI의 발전과 함께 정책 및 안전에 대한 논의도 활발합니다. 미국은 AI 기술 리더십 유지를 위한 경제, 기술, 정책 전략을 담은 AI 액션 플랜(AI Action Plan)을 발표했으며, 각국 정부는 AI 기술의 건전한 발전을 위한 가이드라인과 규제 프레임워크를 수립하고 AI의 잠재적 위험을 최소화하며 사회적 책임을 강화하기 위한 노력을 기울이고 있습니다. 특히, AI 모델의 '사고의 사슬(Chain of Thought)' 모니터링 가능성에 대한 연구는 AI 안전성 확보에 중요한 단서를 제공하며, AI가 사회에 미치는 영향에 대한 심층적인 이해를 돕고 있습니다.
+
+타임스탬프 + 링크:
+(00:00:10) 소개 / 잡담
+(00:01:31) 뉴스 미리보기
+**도구 및 앱(Tools & Apps)**
+(00:03:53) GitHub, Spark를 통한 바이브 코딩(Vibe Coding) 도입: 지능형 앱 개발을 순식간에 혁신 - MarkTechPost
+(00:07:05) Figma의 AI 앱 구축 도구, 이제 모두에게 공개 | The Verge
+(00:10:18) 두 가지 주요 AI 코딩 도구, 연쇄적인 실수로 사용자 데이터 삭제 - Ars Technica
+(00:14:10) Google의 AI 개요(AI Overviews), 월간 사용자 20억 명, 미국 및 인도에서 AI 모드(AI Mode) 1억 명 기록 | TechCrunch
+**애플리케이션 및 비즈니스(Applications & Business)**
+(00:18:10) 유출된 메모: Anthropic CEO, 결국 걸프 국가 투자 추진할 것이라고 밝혀
+(00:24:39) 미라 무라티, 그녀의 스타트업 Thinking Machines가 '몇 달 내'에 '상당한 오픈 소스 요소'를 포함한 신제품을 출시할 것이라고 밝혀
+(00:27:07) Waymo, Tesla의 농담에 더 큰 오스틴 로보택시(robotaxi) 지도로 응답 | The Verge
+**프로젝트 및 오픈 소스(Projects & Open Source)**
+(00:32:05) 메가사이언스(MegaScience): 과학적 추론을 위한 후학습 데이터셋(Post-Training Datasets)의 한계 확장
+(00:43:09) TikTok 연구원들, SWE-Perf 소개: 저장소 수준 코드 성능 최적화를 위한 최초의 벤치마크(Benchmark) - MarkTechPost
+**연구 및 발전(Research & Advancements)**
+(00:47:17) 잠재 학습(Subliminal Learning): 언어 모델(Language models)이 데이터 내 숨겨진 신호를 통해 행동 특성 전달
+(00:55:34) 테스트 시간 연산(Test-Time Compute)에서의 역 스케일링(Inverse Scaling)
+(01:02:34) 최적 데이터 혼합(Optimal Data Mixtures)을 위한 스케일링 법칙(Scaling Laws)
+**정책 및 안전(Policy & Safety)**
+(01:07:35) 백악관, 미국의 AI 액션 플랜(AI Action Plan) 공개
+(01:16:55) 사고의 사슬 모니터링 가능성(Chain of Thought Monitorability): AI 안전을 위한 새롭고 취약한 기회
+(01:20:20) 자기 보존 또는 지시 모호성? 종료 저항의 원인 조사
+(01:24:00) 사람들이 'ChatGPT 정신병(ChatGPT Psychosis)'에 빠진 후 비자발적으로 입원, 구금되고 있어
+(01:28:03) Meta, EU의 AI 행동 강령(AI code of practice) 서명 거부

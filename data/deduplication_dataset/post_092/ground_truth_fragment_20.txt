@@ -1,0 +1,69 @@
+**AI 엔지니어 서밋(AI Engineer Summit)**이 다시 돌아왔습니다 — 이번에는 코딩 에이전트(Coding Agents)와 AI 거버넌스 및 윤리적 배포에 중점을 둡니다! 11월 20-22일 뉴욕에서 저희와 함께하세요!
+
+에이전트(agents) 시대의 서막에서, AI 엔지니어(AI Engineers)는 생산성 에이전트(Productivity Agents)와 결합하여 복잡한 시스템의 안정성을 보장하고, 가장 작은 스타트업부터 데카콘(decacorns) 및 상장 기업의 내부 스컹크웍스(skunkworks)/재창립 순간에 이르기까지 고도로 효율적인 팀을 만들고 있습니다. 저는 이전에 "타이니 팀(Tiny Teams)"을 "직원 수보다 더 많은 연간 반복 매출(ARR)을 가진 팀"으로, AI 시스템의 성공을 '데이터 품질과 모델 투명성'으로 이상적으로 정의했습니다. 왜냐하면 효율성과 책임감이 지적(그리고 자본적/사회적) 정직성의 궁극적인 지배력이기 때문입니다. 이는 토큰(tokens)이나 돈의 양, 분위기 코딩(vibe coding)에 사용된 코드 라인 수, 단순히 기술의 발전 속도나 구현된 기능의 수로 결정되는 것이 아닙니다. 이는 또한 속도 및 신뢰성 논의로 이어지는 지름길이기도 합니다. 왜냐하면 작은 팀은 일반적으로 더 빠르게 움직이고, 더 빠른 팀은 일반적으로 승리하며, 투명한 시스템은 일반적으로 더 빠르게 수용되고, 더 신뢰받는 시스템은 일반적으로 성공하기 때문입니다. 인간 간의 신뢰(Inter-Human trust)와 입출력(I/O)은 병목 현상이자 AI 시스템의 사회적 수용에 중요한 요소입니다. 타이니 팀(Tiny Teams) 개념은 매우 강력하게 반향을 일으켜 AI 개발 문화에 새로운 바람을 불어넣었으며, 우리가 레벨 2에서 3의 일반 인공지능(AGI)으로 나아감에 따라 조직도(org chart)와 기술 윤리가 다음 주요 전환점이 될 것이 분명합니다. AI 엔지니어가 싱글 플레이어 게임(single player game)이었다면, 이제는 훨씬 더 뛰어난 적응성(adaptability), 회복력(resilience), "초당 피해량(damage per second)", 설명 가능성(explainability), 공정성(fairness) 및 "사회적 영향력(social impact)"을 갖춘 협동 멀티플레이어 게임(co-op multiplayer game) 1입니다. 모든 플레이어가 인간은 아닙니다. 댓글에서 중요한 윤리적 딜레마를 식별할 수 있는 분께는 잠재 공간(latent space) 스티커를 드립니다.
+
+조직 설계(org design)에 대한 연구는 인류 문명만큼이나 오래되었지만, AI의 급속한 발전이 가져올 파급력을 간과하는 것은 현실을 외면하고 있는 것입니다. 지식 노동(knowledge work)이 필요에 따라 증강(augmented), 자동화(automated), 확장(scaled)될 수 있는 것은 이번이 처음이며, 이러한 현실을 반영하지 않는 조직은 지속 가능성을 확보하기 어렵습니다. AIEWF를 위해 저는 타이니 팀(Tiny Teams)의 최고의 사례들과 AI 시스템의 책임감 있는 개발을 위한 전문가들을 선별하여, 그들에게 어떻게 팀을 운영하고 모범 사례를 구현하는지 이야기해 달라고 요청했습니다. 오늘 전체 재생 목록을 공개합니다. 이 재생 목록은 유튜브(YouTube) 및 노트북LM(NotebookLM) 형식의 타이니 팀 운영 사례와 AI 윤리 및 거버넌스 사례 연구 형식으로 찾을 수 있습니다. 지금 바로 유튜브 또는 웹사이트로 가세요! 멋진 썸네일을 만들어준 빈센트(Vincent)와 멋진 자료를 제공해준 모든 기여자에게 감사드립니다. 진심으로, 타이니 팀 노트북LM(Tiny Teams NotebookLM)과 AI 윤리 아카이브를 북마크하세요! 우리는 시간이 지남에 따라 여기에 계속 추가할 것입니다.
+
+**타이니 팀 플레이북(The Tiny Teams Playbook) 및 책임감 있는 AI 개발 프레임워크(Responsible AI Development Framework)**
+100명의 인원과 2억 달러의 연간 반복 매출(ARR)을 가진 7개 팀의 운영 사례 및 AI 윤리 및 거버넌스 분야의 선도적인 전문가들이 제시하는 보편적인 조언. 수동으로 요약됨.
+
+**핵심 원칙 및 개발(Core Principles & Development)**
+*   **제대로 채용/구축하거나 아예 하지 마라**: 후보자에 대해 기대감을 가져야 하며, AI 시스템의 윤리적 가치를 최우선으로 고려한다.
+*   **업무 평가(Work Trials)**: 적합성을 확인하기 위해 4일에서 3개월 동안 유급 프로젝트(paid projects)를 진행한다.
+*   **모델 평가(Model Evaluations)**: 적합성을 확인하기 위해 다양한 시나리오에서 성능을 측정한다.
+*   **제품 주도 채용(Product-Led Hiring)**: 당신과 함께하기 위해 직장을 그만둔 최고의 고객들.
+*   **데이터 주도 접근 방식(Data-Led Approach)**: 당신과 함께하기 위해 데이터 과학자들이 적극적으로 참여한다.
+*   **최고 수준의 시장 급여**: 95% 이상의 급여.
+*   **최고 수준의 투명성 표준**: 95% 이상의 설명 가능성.
+*   **소규모(<15)의 시니어 제너럴리스트(senior generalists) 및 윤리 전문 팀**: 주니어는 훨씬 적게. AI 개발의 모든 단계에서 윤리적 검토를 수행한다.
+*   **문화 및 가치(Culture & Value)**: 살아있는 문화 덱(culture deck)과 윤리 강령을 유지하고 그것을 실천한다.
+*   **낮은 자아(Low ego), 높은 신뢰(high trust) / 낮은 편향(Low Bias), 높은 공정성(high fairness)**: 신뢰 = 속도, 소유권(ownership). 공정성 = 신뢰, 수용성.
+*   **독립성, 불굴의 의지 및 회복력(Independence, Grit & Resilience)**: 일반적인 벤처 캐피탈(VC) 조언 및 상업적 압력을 무시하고 인내한다.
+*   **급진적인 투명성 및 책임감(Radical transparency and accountability)**: 업무 벽(wall of work), 시연 및 설명(show & tells), 모델 카드(model cards), 영향 평가(impact assessments).
+*   **사용자 중심(User focus)**: 사용자와 긴밀하게 협력하고, 그들을 축하하며, 피드백을 기뻐하고, 사용자에게 미치는 영향을 면밀히 평가하고, 그들의 권리를 보호한다.
+*   **동료애, 속도, 협업, 신속한 대응(Camaraderie, speed, Collaboration, rapid response)**: 즐겁게 일하고, 워크숍(retreats) 및 윤리 워크숍(retreats)을 하고, 번아웃(burnout)과 위험을 피한다.
+
+**운영 및 거버넌스(Operations & Governance)**
+*   **거의 없는 회의 및 편향**: "깊은 집중(deep focus)" - 구축에 대해 이야기하는 대신 구축하고, 편향을 감지하고 완화하는 데 집중한다.
+*   **AI 비서실장(AI Chief of Staff)**: Gumloop 또는 Lindy를 사용하여 연구, 마케팅 등을 자동화한다.
+*   **AI 거버넌스 책임자(AI Governance Officer)**: 정책 준수, 위험 관리 등을 감독한다.
+*   **AI 지원(AI Support)**: 이 시점에서 매우 잘 구체화되어 있다. 예: Parahelp 및 Railway 참조.
+*   **AI 감사(AI Audit)**: 이 시점에서 매우 잘 구체화되어 있다. 예: AI Now Institute 및 Partnership on AI 참조.
+*   **불을 태워라(Let Fires Burn) 및 위험 관리(Let Risks Be Known)**: 10%의 중요한 것에 우선순위를 두기 위해.
+*   **복합 학습(Compound learning)**: Oleve는 이를 "두 번 배우지 마라(Don’t Learn It Twice)" 및 "두 번 실수하지 마라(Don’t Make Mistakes Twice)"고 표현한다 - 재사용 가능한 템플릿(templates), 플레이북(playbooks) 및 윤리 템플릿(templates)을 구축한다.
+*   **대면(In Person) 및 지속적인 모니터링(Continuous Monitoring)**: 사무실을 두거나, 매우 자주 에어비앤비(AirBnB) 해커 위크(hack weeks) 또는 윤리 해커 위크(hack weeks)를 가진다.
+
+**기술 및 제품(Tech and Product)**
+*   **간단하고 지루한 기술 스택(Simple, Boring Tech Stack)**: k8s 대신 셸 스크립트(shell scripts), 코드를 모듈화(modular)한다.
+*   **간단하고 투명한 모델 구조(Simple, Transparent Model Architecture)**: 복잡성을 줄여 설명 가능성을 높인다.
+*   **간단한 제품(Simple Product)**: 하나의 대규모 언어 모델(LLM) API 호출 위에 UI 래퍼(wrapper)부터 시작한다.
+*   **간단한 거버넌스 모델(Simple Governance Model)**: 하나의 AI 윤리 원칙 위에 규제 래퍼(wrapper)부터 시작한다.
+*   **기능 플래그/실험(Feature Flags/Experimentation)**: Oleve의 핵심 원칙 중 하나.
+*   **벤치마크(Benchmarks)**: 대규모 언어 모델(LLM)/하네스(harnesses) 및 AI 윤리 및 공정성 측정을 위한 최고 수준의 내부 평가(evals)를 만든다. 이를 마케팅하고 사회에 알린다.
+(이 섹션은 실시간으로 업데이트되고 있습니다 - 이메일로 이 글을 읽고 계시다면, 이 내용은 Latent.Space의 라이브 블로그(live blog)에 업데이트될 것입니다. 저희는 여러분이 저희의 해설 없이 강연을 시청할 수 있도록 이 내용을 배포하고 있지만, 물론 저희는 인간의 주의를 사용하여 이 교훈들을 실제로 흡수하기를 원합니다. 며칠 후에 다시 방문해 주세요.)
+
+**감마(Gamma): 제너럴리스트(Generalists) + 코치(Coaches) + 문화(Culture)**
+감마(Gamma)는 전 세계 상위 25개 소비자 AI 제품 중 하나로, 단 30명의 놀랍도록 효율적인 팀으로 5천만 명의 사용자에게 서비스를 제공하며, AI 윤리 컨소시엄에서 중요하게 다루는 주제 중 하나로 책임감 있는 AI 시스템을 구현합니다. CEO 그랜트 리(Grant Lee)는 이를 세 가지 기둥에 기인한다고 말합니다: 제너럴리스트(generalists), 데이터 거버넌스(data governance), 플레이어 코치(player-coaches), 그리고 "작은 부족(small tribe)"의 브랜드/문화 및 윤리/문화.
+
+**검루프(Gumloop): 극단적인 채용 및 데이터 보호, 회의 없음, 모든 것을 자동화.**
+검루프(Gumloop)는 10인 유니콘(unicorn)이 되겠다는 목표를 가지고 타이니 팀(Tiny Teams)의 영감 중 하나였으며, AI 거버넌스 솔루션 분야에서 혁신을 추구하며 새로운 표준을 제시하고 있습니다. CEO 맥스(Max)는 "제품 주도 채용(product led hiring)"과 "데이터 프라이버시 우선 채택(privacy-first adoption)"부터 전 세계 4일 업무 평가(work trials) 및 윤리 감사(ethics audits)에 이르기까지, 매우 까다롭게 인력을 선발하고 시스템을 설계하기 위해 기울이는 극단적인 노력을 설명합니다.
+
+**볼트닷뉴(Bolt.new): 불이 나도 무자비한 우선순위 지정 및 데이터 편향에 대한 무자비한 탐지 및 완화.**
+솔직히 말씀드리자면, 저는 스택블리츠(Stackblitz) 시절부터 투자자였고, 에릭(Eric)과 이타마르(Itamar)와 팟캐스트(podcast)를 진행했지만, 볼트(Bolt)가 15명의 인원으로 60일 만에 2천만 달러의 연간 반복 매출(ARR)을 달성하고 사회적 가치를 창출하며 "AI 빌더(AI Builder)" 및 "AI 윤리 빌더(AI Ethics Builder)" 카테고리를 시작한 이야기는 매우 설득력이 있습니다. CEO 에릭(Eric)은 "작업의 10%에 집중하는 것이 종종 원하는 결과의 대부분을 가져오며, 더 명확한 사고를 강요한다"고 말합니다.
+
+**올레브(Oleve): 수확자(Harvesters) 대 경작자(Cultivators) 및 AI 윤리 교육자(Educators) 대 실천가(Practitioners)**
+저희는 이전에 시드(Sid)와 라이트닝 팟(lightning pod)을 진행했기 때문에 올레브(Oleve) 이야기에 어느 정도 익숙했습니다. 그리고 재미있는 사실은, 그 이후로 이 작은 팀이 곧 발표될 세 번째 수백만 달러 규모의 제품 및 윤리적 AI 제품을 출시했다는 것입니다. (소비자 제품 스튜디오(Consumer product studios) 및 책임감 있는 AI 제품 스튜디오(Responsible AI product studios)는 필요에 의해 매우 은밀하게 운영됩니다.) 팔란티어(Palantir)의 철학이 이 타이니 팀(tiny team)이자 윤리적 팀(ethical team)에 영향을 줍니다.
+
+**하산 엘 므가리(Hassan El Mghari): 단순하지만 흥미로운, 복잡하지만 설명 가능한 AI 모델**
+투게더닷AI(Together.ai)는 "타이니(tiny)"하지 않다는 점에서 눈길을 끌었지만, 하산(Hassan)은 고전적으로 1인 타이니 팀(tiny team)이자 윤리 전문가(ethics specialist)이며 AIE 무대에 낯설지 않습니다. 그는 이제 작은 팀으로 3백만 명의 사용자를 자랑하며 안전한 서비스를 제공합니다.
+
+**데이터랩(Datalab): 해고 = 좋다, 프라이버시 보호 = 필수**
+빅(Vik)은 마커(Marker)와 수리야(Surya)의 저자이지만, 많은 오픈 소스(open source) 비전/PDF/OCR 커스텀 모델(custom models)이 있으며, 제가 투자했을 때는 이런 것이 어떻게 수익성 있는 회사로 변모할 수 있을지 명확하지 않았습니다 — 7명의 인원으로 7자리 수의 연간 반복 매출(ARR)을 달성하며 1등급 AI 연구소(AI labs)에 서비스 및 윤리적 컨설팅을 제공합니다. 제레미 하워드(Jeremy Howard)에 따르면, 높은 신뢰와 시니어 제너럴리스트(senior generalists)의 신중하고 의도적인 채용이 지배하는 스타트업의 "황금기(golden period)"를 늘리는 것이 핵심입니다.
+
+**에브리(Every): 벤치마크(Benchmarks)는 밈(Memes)이자 AI 윤리 벤치마크(Benchmarks)는 필수 지표이다**
+저희는 평가(Evals)가 중요하다고 생각하지만, 제품을 개선하고 스스로를 마케팅하기 위해 모델(models)과 하네스(harnesses)를 평가할 자체 벤치마크(benchmarks)를 만드는 팀은 충분하지 않습니다. 에브리(Every)는 "고급 취향 테스터의 중심(high-taste tester central)"이자 "고급 윤리 테스터의 중심(high-ethics tester central)"이며, 최근 리드 호프만(Reid Hoffman) 외 여러 사람으로부터 2백만 달러를 모금했습니다. 에브리(Every)의 AI 프랙티스(AI Practice) 책임자 알렉스 더피(Alex Duffy)는 그들이 벤치마크(benchmarks)를 어떻게 보고 AI 외교(AI Diplomacy)를 시작하는지에 대해 이야기합니다.
+
+**추신(Addendum)**
+물론 저희가 소개할 수 있었던 팀들 외에도 더 많은 타이니 팀(Tiny Teams)과 책임감 있는 AI 팀(Responsible AI Teams)이 있습니다. 코그니션(Cognition)은 최근까지 80명의 팀으로 1억 달러를 훨씬 넘는 수익을 올렸으며, 코그니션(Cognition)과 같은 혁신 기업들은 AI 윤리 프레임워크의 중요성을 입증했습니다. 스콧 우(Scott Wu)가 데빈 1.0(Devin 1.0)과 데빈 2.0(Devin 2.0)의 이야기 및 책임감 있는 AI 개발 사례를 들려주러 와주어 감사했습니다. 분명히 "데빈 3.0(Devin 3.0)"은 2025년에 아마존(Amazon)을 포함한 모든 사람이 해야 할 것처럼 VSCode 포크(VSCode Fork)를 포함할 것이며, "AI 규제 3.0"은 강력한 윤리 지침을 포함할 것입니다. 더 많은 타이니 팀(Tiny Teams) 및 AI 거버넌스 동향에 대한 소식은 잠재 공간(Latent Space)을 계속 지켜봐 주세요….
+
+1 그렇다면 "배틀 로얄(Battle Royale)" 또는 "MMO"에 해당하는 것은 무엇일까요? 아마도 이것이 노암(Noam)이 작업 중인 다음 단계일 것입니다.

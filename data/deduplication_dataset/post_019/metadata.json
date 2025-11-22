@@ -1,0 +1,21 @@
+{
+  "post_id": "019",
+  "title": "새로운 거대 언어 모델(LLM) 사전 학습(pre-training) 및 사후 학습(post-training) 패러다임(paradigm)",
+  "base_word_count": 4922,
+  "exact_30_update_wc": 4829,
+  "exact_30_ground_truth_wc": 4829,
+  "exact_30_overlap_ratio": 1.019,
+  "paraphrase_25_update_wc": 8151,
+  "paraphrase_25_ground_truth_wc": 8124,
+  "paraphrase_25_overlap_ratio": 0.607,
+  "fragment_20_update_wc": 1823,
+  "fragment_20_ground_truth_wc": 5313,
+  "fragment_20_overlap_ratio": 0.786,
+  "semantic_25_update_wc": 4322,
+  "semantic_25_ground_truth_wc": 4322,
+  "semantic_25_overlap_ratio": 1.139,
+  "mixed_real_update_wc": 3855,
+  "mixed_real_ground_truth_wc": 3855,
+  "mixed_real_overlap_ratio": 1.277,
+  "status": "generated"
+}

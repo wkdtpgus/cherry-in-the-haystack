@@ -1,0 +1,171 @@
+# AI 코딩 에이전트의 자기 개선: 도구 활용의 명암 (Updated)
+
+## 서론
+
+Alessio의 노트: GPT-5 게시물을 올릴 차례입니다! 그리고 swyx가 이번 주말에 Karpathy, OpenAI, Cognition 팀과 함께 해커톤(hackathon)을 개최한다는 점을 알려드립니다. 여기에서 신청하세요! "자기 개선(Self-Improving)"은 AI 안전(AI safety) 분야에서 무서운 용어입니다. 여기에는 "기계가 우리가 이해할 수 없는 방식으로 우리보다 더 똑똑해질 것"이라는 뉘앙스가 깔려 있습니다. 하지만 우리가 그것을 이해할 수 있다면 어떨까요? 2024년 10월, OpenAI는 LLM(Large Language Models)이 머신러닝 엔지니어링(machine learning engineering)을 얼마나 잘 수행하는지 측정하는 벤치마크(benchmark)인 MLE Bench를 출시했습니다. ML 엔지니어링(ML Engineering)을 통한 자기 개선(self-improving) 경로는 더 나은 알고리즘, 더 깨끗한 데이터, 더 효율적인 메모리 사용, 즉 훈련 시간 자기 개선(training-time self-improvement)에 의해 추진됩니다. 그러나 대부분의 AI 엔지니어(AI Engineer)는 모델을 훈련시키지 않고, 단지 모델을 사용하는 사용자일 뿐입니다. 그들은 어떻게 역할을 할 수 있을까요? 가중치(weights)를 업데이트할 수 없다면, 모델이 특정 작업에서 성능을 향상시키도록 어떻게 할 수 있을까요? 저는 이를 추론 시간 자기 개선(inference-time self-improvement)이라고 생각하며, Voyager는 스킬 라이브러리(skill library)를 통해 이 분야에 대한 초기 접근 방식 중 하나입니다. Kernel Labs에서 일하기 시작한 이래로(자세한 내용은 곧 공개됩니다 👀), claude-squad 및 vibe-kanban과 같은 도구로 코딩 에이전트(coding agent)를 병렬화하는 것이 가장 효과적인 생산성 해킹(productivity hack) 중 하나였습니다. Boris Cherny가 인터뷰에서 Claude Code를 "유닉스 유틸리티(unix utility)"라고 불렀을 때, 저는 정말 공감했습니다. 코딩 에이전트(coding agent)의 가장 가치 있는 사용 사례는 LLM이 자체 잠재 공간(latent spaces)에서 가치를 추출하는 수단이 되는 것입니다. 우리는 그것을 어떻게 최적화할 수 있을까요? 모델이 스스로 할 수 있을까요? GPT-5에 접근할 수 있게 된 이후, 저는 이 흐름을 가지고 계속 실험했습니다.
+
+*   모델에게 더 생산적이라고 생각하는 도구 세트를 만들도록 요청했습니다.
+*   제가 감독하면서 그 도구들을 사용하여 작업을 시도했습니다.
+*   완료 후, 도구를 어떻게 개선할 수 있을지 스스로 성찰했습니다.
+
+저는 또한 이것을 Opus 4(4.1은 아직 출시되지 않았습니다)와 비교했습니다. 좋은 소식은 GPT-5가 개발자 유틸리티(developer utility)를 구축하는 데 매우 좋은 모델이라는 것입니다. 나쁜 소식은 자신이 만든 도구를 사용하는 것을 싫어한다는 것입니다! 모델은 저에게 "솔직히 말해서, 저는 그 어떤 것도 필요하지 않았습니다."라고 말했습니다. 참고: 저는 Gemini 2.5 Pro와 GPT-4.1에서도 이것을 테스트했습니다. Opus만이 GPT-5와 보조를 맞출 수 있는 유일한 모델임이 분명했기 때문에, 저는 Opus에 집중했습니다. 모든 결과와 채팅 기록은 이 저장소(repo)에서 찾을 수 있습니다. 며칠 사용 후, 저는 또한 우리가 "물론이죠!(Certainly!)"의 시대에서 새로운 상징적인 LLM 토큰(token)인 "진행 상황 업데이트(Progress update)"의 시대로 이동하고 있다는 것을 알아차렸습니다. 밈(meme)에 저가 매수하세요!
+
+LLM의 급속한 발전과 함께 '자기 개선' 개념은 단순한 호기심을 넘어 실제 개발 프로세스(process)에 적용될 가능성을 보여주고 있습니다. 특히 코딩 에이전트(coding agent) 분야에서는 모델이 스스로 도구를 생성하고 활용함으로써 생산성을 극대화하려는 시도가 활발합니다. 최근 연구에서는 이러한 AI 에이전트(AI agent)가 단순한 코드 생성(code generation)을 넘어 복잡한 엔지니어링(engineering) 작업을 스스로 계획하고 실행하는 단계에 접어들고 있습니다. 하지만 이러한 '자기 개선'의 여정은 만만치 않습니다. 과연 모델은 자신이 만든 도구를 효과적으로 사용하여 진정한 생산성 향상을 이룰 수 있을까요? 이 글에서는 GPT-5와 Opus 4를 활용한 실험을 통해 AI 코딩 에이전트(AI coding agent)의 도구 활용 능력과 그 한계를 심층적으로 탐구하고, 앞으로의 발전 방향을 모색합니다.
+
+## AI 에이전트를 위한 분산 작업 관리: Tool #1 심층 분석
+
+AI 코딩 에이전트(coding agent)가 여러 인스턴스(instance)로 병렬 작업을 수행할 때, 효율적인 협업(collaboration)과 충돌 관리(conflict management)는 핵심적인 과제입니다. 특히 분산된 환경에서 각 에이전트(agent)의 진행 상황을 동기화하고, 상호 의존적인 작업을 조율하는 것은 복잡한 문제입니다. 이러한 맥락에서, AI 에이전트(AI agent)가 스스로를 위한 작업 관리 도구를 설계하도록 요청한 실험은 매우 흥미로운 시사점을 제공합니다.
+
+당신은 자신을 여러 인스턴스(instance)로 병렬로 실행할 수 있는 AI 엔지니어 에이전트(AI Engineer agent)입니다. 이를 통해 많은 작업을 동시에 처리할 수 있지만, 일부 위임 문제도 발생합니다. 모든 다른 인스턴스(instance)는 일반적으로 별도의 Git 워크트리(git worktree)에 있으며 서로의 작업을 볼 수 없습니다. 생산성을 높이려면, 당신과 당신의 인스턴스(instance)가 동기화될 수 있도록 새로운 로컬 도구를 만들어야 합니다. 이 도구는 CLI(Command Line Interface)를 통해서만 당신이 접근할 수 있으므로, 해당 사용 사례에 인체 공학적으로 적합한지 확인하세요. 유닉스 유틸리티(unix utility)처럼 느껴져야 합니다. 필요한 인터페이스(interface), 가능한 실패 모드(failure mode), 그리고 에이전트(agent)가 이 도구와 상호 작용하는 방식을 신중하게 고려하세요. 염두에 두어야 할 몇 가지 사용 사례: 새로운 작업을 시작해야 하고, 하위 작업(subtask)을 만들어 위임하고 싶습니다. 이 하위 작업(subtask) 중 일부는 서로 의존할 수 있으며, 차단된 에이전트(agent)가 다른 에이전트(agent)가 완료될 때까지 시작하지 않도록 해야 합니다. 작업을 수행하는 동안 코드베이스(codebase)에 개선 사항이 있을 수 있지만 현재 변경 범위 밖이라는 것을 알게 됩니다. 하지만 나중을 위해 메모해 두고 싶습니다. 작업을 추가하고 참조하는 파일을 쉽게 참조할 수 있어야 합니다. 작업이 완료될 때마다 트래커(tracker)가 업데이트되어야 합니다. 또한, 새로운 변경 사항이 다른 미결 작업에 어떤 식으로든 영향을 미칠 경우, 모든 다른 미결 작업을 검토해야 합니다. 예를 들어, 한 작업이 엔드포인트(endpoint)에 기능을 추가하려고 할 수 있지만, 방금 완료된 작업이 해당 엔드포인트(endpoint)를 제거했을 수 있습니다. 해당 작업을 수행하는 에이전트(agent)에게 어떤 식으로든 알려야 합니다. 또한 할당자(assignee), 상태(status) 등과 같은 작업 관리의 일반적인 요구 사항도 염두에 두세요. 이 폴더 안에 task-manager라는 폴더를 만들고 그 안에서 모든 작업을 수행하세요.
+
+이 프롬프트(prompt)는 단순한 기능 요구 사항을 넘어, 분산된 AI 에이전트(AI agent) 환경에서 발생할 수 있는 실제적인 문제점과 그 해결 방안에 대한 심도 깊은 이해를 요구합니다. 특히 Git 워크트리(git worktree) 간의 비동기적(asynchronous) 작업, 의존성 관리(dependency management), 그리고 변경 사항의 파급 효과(ripple effect) 추적은 현대 소프트웨어 개발(software development)의 난제를 AI 에이전트(AI agent)가 어떻게 인식하고 해결하려 하는지 보여줍니다. 최근 연구에서는 이러한 다중 에이전트(multi-agent) 시스템의 효율성을 높이기 위해 중앙 집중식(centralized) 조정자(coordinator) 또는 분산 합의(distributed consensus) 메커니즘(mechanism)을 도입하는 방안이 논의되고 있습니다. GPT-5가 제안한 솔루션은 이러한 복잡한 요구 사항을 어떻게 반영했을까요?
+
+GPT-5의 채팅 기록은 여기에서, Opus 4의 채팅 기록은 여기에서 볼 수 있습니다. GPT-5 버전은 실제로 매우 훌륭하며, 여기에서 찾을 수 있습니다:
+
+*   여러 에이전트(agent)가 동시에 쓰는 문제를 피하기 위해 WAL(Write-Ahead Logging) 사용
+*   의존성 그래프(graph of dependencies)를 사용하여 작업 우선순위 지정
+*   impact_conflict와 같은 좋은 키워드로 모든 에이전트(agent)가 다른 에이전트(agent)가 무엇을 하는지 볼 수 있는 추가 전용 이벤트 스트림(append-only events stream) 생성
+
+```
+# 1) Initialize the database
+./gpt5/task-manager/tm init
+
+# 2) Create a task
+./gpt5/task-manager/tm add "Implement auth" -d "Add login + signup" -a alice -p 2 --due 2025-09-01 \
+--resource modifies:endpoint:POST /api/login --link app/server/auth.py
+
+# 3) List tasks
+./gpt5/task-manager/tm list --me # or: --status in_progress
+
+# 4) Show details
+./gpt5/task-manager/tm show 1
+
+# 5) Add dependency and attempt start
+./gpt5/task-manager/tm depend 1 --on 2
+./gpt5/task-manager/tm start 1 # auto-blocks if unmet deps
+
+# 6) Complete a task
+./gpt5/task-manager/tm complete 2 -m "Merged PR #123"
+
+# 7) Watch events
+./gpt5/task-manager/tm watch --follow --me
+```
+
+GPT-5가 제안한 솔루션은 WAL(Write-Ahead Logging)을 사용하여 동시 쓰기 문제를 회피하고, 의존성 그래프(dependency graph)로 작업 우선순위를 지정하며, 이벤트 스트림(event stream)을 통해 에이전트(agent) 간의 투명성을 확보하는 등 견고한 설계 원칙을 보여줍니다. 이는 다중 에이전트(multi-agent) 협업(collaboration)의 핵심 요소를 정확히 짚어낸 것입니다. Opus 4의 접근 방식도 나쁘지 않았지만, 이벤트 스트림(event stream)과 같은 실시간 동기화(real-time synchronization) 메커니즘(mechanism)을 놓쳤다는 점에서 GPT-5가 더 앞선 이해를 보여주었습니다. 이러한 결과는 LLM이 단순한 코드 생성(code generation)을 넘어, 시스템 설계(system design) 및 아키텍처(architecture)에 대한 깊이 있는 통찰력을 가질 수 있음을 시사합니다.
+
+Opus 4도 좋은 시도를 했지만(여기 참조), 모두를 동기화 상태로 유지하기 위한 알림/스트림(stream) 기능은 파악하지 못했습니다.
+
+```
+# Create your first task
+tm create "Implement user authentication" --priority high
+
+# Create a dependent task
+tm create "Add login endpoint" --depends-on 1 --assignee agent-2
+
+# View all tasks
+tm list
+
+# See blocked tasks
+tm blocked
+
+# Complete a task and check for conflicts
+tm complete 1
+```
+
+## 코드 품질 향상: AI 에이전트의 역할과 새로운 접근법 (Tool #2)
+
+깨끗하고 일관된 코드베이스(codebase)는 장기적인 프로젝트 성공에 필수적입니다. 전통적으로 코드 품질(code quality) 관리는 린터(linter), 포매터(formatter), 타입 체커(type checker) 등 정적 분석 도구(static analysis tool)에 의존해왔습니다. 그러나 이러한 도구들은 주로 구문적(syntactic) 및 기본적인 스타일(style) 규칙에 초점을 맞추며, 더 복잡한 의미론적(semantic) 또는 아키텍처(architectural) 패턴(pattern)에 대한 검사는 인간의 개입을 필요로 합니다. AI 코딩 에이전트(coding agent)에게 이러한 코드 품질 표준을 자동화하고 강화하는 도구를 만들도록 요청한 것은, 이 간극을 메울 수 있는 잠재력을 탐색하는 흥미로운 시도입니다.
+
+실험에서는 AI 엔지니어 에이전트(AI Engineer agent)인 모델에게 병렬 인스턴스(instance)로 인해 발생할 수 있는 일관성 없는 코드 스타일(code style)과 접근 방식 문제를 해결하도록 요청했습니다. 모델은 코드베이스(codebase)를 분석하여 코드 작성 방법에 대한 휴리스틱(heuristic)을 추출하고, 이를 미래에 자동으로 검사할 수 있는 규칙으로 공식화해야 했습니다. ESLint, Rubocop과 같은 기존 도구를 활용하고 사용자 정의 규칙(custom rule)을 만들며, 더 정성적인 규칙(예: 컨트롤러(controller) 간결화, 서비스 객체(service object)로 로직(logic) 분리, 고용량 쿼리(high-volume query) 컬럼(column)에 인덱스(index) 추가)을 위해 Danger.systems와 같은 도구 또는 자체 도구를 구축하는 방안을 고려했습니다. 최종적으로 새로운 코드베이스(codebase)에 적용할 수 있는 마크다운(Markdown) 형식의 철저한 계획 문서를 작성하는 것이 목표였습니다.
+
+당신은 자신을 여러 인스턴스(instance)로 병렬로 실행할 수 있는 AI 엔지니어 에이전트(AI Engineer agent)입니다. 때로는 일관성 없는 코드 스타일과 접근 방식으로 이어져 장기적으로 코드베이스(codebase)를 유지 관리하기 어렵게 만듭니다. 당신이 작업하는 모든 코드베이스(codebase)에는 코드를 작성하는 방법에 대한 명시적 및 암묵적 규칙이 있습니다. 당신의 임무는 코드베이스(codebase)를 분석하고 코드를 작성해야 하는 방법에 대한 다양한 휴리스틱(heuristic)을 추출하는 것입니다. 그런 다음 미래에 자동으로 검사할 수 있는 일련의 규칙으로 공식화해야 합니다. 린팅(linting), 타입(type) 등과 같은 것들은 작업하는 언어에 따라 ESLint, Rubocop 등과 같은 기존의 인기 있는 도구를 사용할 수 있습니다. 이러한 시스템은 종종 사용자 정의 규칙(custom rule)을 만들 수 있도록 허용하므로 이를 활용하세요. 더 정성적인 것들을 위해서는 https://danger.systems/와 같은 도구를 살펴보거나, 심지어 자신만의 도구를 만들 수도 있습니다. 여기에는 컨트롤러(controller)를 간결하게 유지하고 로직(logic)을 서비스 객체(service object)로 분리하는 규칙, 높은 쿼리 볼륨(query volume)이 예상되는 컬럼(column)에 항상 인덱스(index)를 갖도록 하는 규칙 등이 포함됩니다. 이 작업을 여러 코드베이스(codebase)에서 수행할 것이므로, 새로운 코드베이스(codebase)를 작업할 때 미래의 자신에게 줄 수 있는 마크다운(Markdown)을 사용하여 철저한 계획 문서(plan document)를 작성하는 것부터 시작하세요.
+
+이 프롬프트(prompt)는 AI 에이전트(AI agent)에게 단순히 기존 도구를 사용하는 것을 넘어, 코드베이스(codebase)의 암묵적인 규칙까지 학습하고 이를 공식적인 표준으로 전환하는 능력을 요구합니다. 이는 AI 기반 코드 리뷰(AI-powered code review) 시스템의 핵심 구성 요소가 될 수 있습니다. 최근에는 LLM이 코드의 의도를 이해하고, 복잡한 비즈니스 로직(business logic)에 기반한 코드 스멜(code smell)을 감지하며, 심지어 특정 도메인(domain)에 특화된 아키텍처(architecture) 규칙을 제안하는 연구가 활발히 진행되고 있습니다. GPT-5가 이러한 요구 사항을 어떻게 해석하고 구체적인 도구 세트로 구현했는지는, AI가 코드 품질 보증(code quality assurance) 분야에서 수행할 수 있는 역할의 폭을 넓히는 중요한 지표가 됩니다.
+
+GPT-5의 채팅은 여기에서, Opus 4의 채팅은 여기에서 볼 수 있으며, 최종 마크다운(Markdown)은 각각 여기와 여기에서 찾을 수 있습니다. 저는 GPT-5 버전이 Opus보다 훨씬 더 미묘하고 정교하다는 것을 발견했습니다.
+
+## 모델은 자신이 무엇이 부족한지 알고 있을까요? 도구 활용의 딜레마
+
+도구 #1과 #2를 만든 후, 모델에게 "미래에 생산성을 높이기 위해 어떤 도구를 스스로 만들겠는가?"라고 질문했습니다. SWE-Lancer 작업 설명 스크린샷과 간단한 프롬프트(prompt)를 제공하여 모델이 자유롭게 아이디어를 제시하도록 했습니다. GPT-5와 Opus 4는 각각 자신들이 필요하다고 생각하는 도구 목록을 제시했습니다. 흥미롭게도, 모델들은 자신이 필요하다고 생각하는 도구들을 직접 만들어냈습니다. GPT-5는 `doctor`, `bootstrap`, `code-map`, `csearch` 등 유닉스 유틸리티(unix utility) 스타일의 개발 도구(devtool)들을 제안했고, Opus 4는 `Context Analyzer`, `Cross-Platform Test Generator`, `Full-Stack Change Impact Analyzer` 등 보다 고수준의 기능을 가진 도구들을 제시했습니다. 이처럼 모델이 스스로의 생산성 향상을 위한 도구를 설계하는 능력은 인상적입니다. 하지만 진정한 자기 개선(self-improvement)은 도구를 만드는 것을 넘어, 그것을 효과적으로 활용할 때 비로소 가능합니다. 과연 모델들은 자신이 만든 도구들을 실제 작업에서 유용하게 사용했을까요?
+
+이 작업을 가능한 한 잘 해결하는 것이 당신의 일이라면, 미래에 당신의 생산성을 높이기 위해 어떤 도구를 스스로 만들겠습니까? @task-manager/를 사용하여 그것들을 추적할 수 있으며, 우리는 구현으로 넘어갈 수 있습니다. 하지만 먼저 당신이 무엇을 계획하고 있는지 보고 싶습니다.
+
+보시다시피 저는 모델이 이전에 만들었던 동일한 task-manager에 접근할 수 있도록 했습니다. 전체 GPT-5 채팅은 여기에서, Opus 4는 여기에서 찾을 수 있습니다. 제가 처음으로 주목한 흥미로운 점은 Claude Code가 task-manager 대신 자체 내부 TODO 트래커(tracker)를 사용하여 초기 계획을 세웠다는 것입니다. 저는 그것이 좋다고 생각했습니다. 제 걱정 중 하나는 모델이 최선이라고 생각하는 것보다 컨텍스트(context)에서 받은 도구를 과도하게 사용하는 것이었습니다. 다음은 나중에 보게 될 루프(loop)의 끝에서 각 모델이 결국 구축한 도구들입니다(GPT-5 개발 도구 및 Opus 4 도구 폴더). 모델의 분위기를 파악하려면 README(리드미)를 살펴보는 것이 좋습니다. GPT-5는 매우 간결하고 핵심적입니다. Claude는 많은 이모지(emoji)를 사용합니다. GPT-5는 또한 각 도구에 대해 별도의 문서 폴더를 만들었지만, Opus는 모든 도구를 하나의 README(리드미)에 모든 지침과 함께 넣었습니다. 전반적으로 둘 다 비슷한 방향을 가지고 있었습니다.
+
+GPT-5:
+*   `doctor`: 핵심 도구에 대한 환경 검사
+*   `bootstrap`: 한 번의 명령으로 설정 및 스모크 테스트(smoke test)
+*   `code-map`: 빌드/찾기 하위 명령이 있는 간단한 저장소(repository) 인덱스(index)
+*   `csearch`: 필터(filter)를 사용한 심볼/임포트/텍스트 검색
+*   `tasks-graph`: 작업 DB에서 Mermaid 그래프(graph) 출력
+*   `impact`: 변경된 파일에 연결된 작업 표시
+*   `seed`: 샘플 작업으로 task-manager DB 채우기
+*   `repro scaffold`: `.repro/` 아래에 vcrpy-ready repro 생성
+*   `e2e`: 경량 E2E 스펙(spec) 스캐폴드(scaffold) 및 실행
+*   `preflight`: doctor, 테스트, code-map, impact 및 선택적 E2E 실행
+*   `preflight-smol`: smol-podcaster를 위한 저장소(repo)별 preflight (API 상태, Celery 핑, 선택적 의존성 설치)
+*   `broker`: Docker를 통해 로컬 RabbitMQ 관리 (rabbitmq:3-management)
+*   `flake`: 불안정한 테스트(flaky test)를 감지하기 위해 스위트(suite)를 여러 번 재실행
+*   `codemod`: 안전 장치가 있는 정규식 기반 미리보기/적용
+*   `triage`: 트리아지(triage) 템플릿(template) 생성 및 작업 열기
+*   `trace`: cProfile 기반 표현식 프로파일러(profiler)
+*   `runbook`: 작업 DB에서 런북(runbook) 마크다운(Markdown) 생성
+
+Opus 4:
+*   `Context Analyzer` - 기술 스택(tech stack) 감지 및 의존성 매핑(dependency mapping)으로 코드베이스(codebase)를 신속하게 이해
+*   `Cross-Platform Test Generator` - 웹, iOS, Android, 데스크톱용 E2E 테스트(test) 생성
+*   `Implementation Proposal Analyzer` - 점수 및 ROI 분석으로 프리랜서(freelancer) 제안 평가
+*   `Full-Stack Change Impact Analyzer` - 데이터베이스(database), API, 프론트엔드(frontend) 계층 전반의 변경 사항 추적
+*   `Bug Pattern Recognition Engine` - 버그(bug)를 알려진 패턴(pattern)과 일치시키고 입증된 수정 사항 제안
+*   `Security & Permission Auditor` - 포괄적인 보안 스캐닝(scanning) 및 취약점 감지
+*   `Multi-Platform Feature Implementer` - 플랫폼(platform) 전반의 기능 구현 조정
+*   `API Integration Assistant` - 클라이언트 생성으로 API 통합 간소화
+*   `Performance Optimization Toolkit` - 성능 병목 현상 식별 및 수정
+*   `Task Complexity Estimator` - 작업 가치 및 복잡성을 기반으로 노력 추정
+
+GPT-5는 이 모든 것을 CLI(Command Line Interface)를 통해 사용하기 쉬운 유닉스 유틸리티(unix utility)로 구축했습니다. Opus 4의 도구들은 모두 `python some_tool.py`로 실행되도록 되어 있습니다. 시간이 더 있었다면, 두 가지 다른 형식으로 모델이 어떻게 작동하는지 알아보기 위해 몇 가지 실험을 했을 테지만, 거의 비슷해 보였습니다. 또한 Opus 4는 작업을 수행하고 약간 의인화된 느낌(예: 보안 감사자)을 주는 도구를 구축하는 반면, GPT-5는 너무 주관적이지 않으면서 스스로 사용할 수 있는 유틸리티(utility)를 구축하는 것처럼 느껴졌습니다.
+
+모델의 도구 활용 능력을 평가하기 위해 `smol-podcaster` 프로젝트를 Flask에서 FastAPI + Next.js로 마이그레이션(migration)하는 작업을 주었습니다. 모델들에게는 이전에 만든 도구들(`task-manager`, `codebase-analyzer` 등)이 제공되었지만, 필수는 아니었습니다. 두 모델 모두 거의 한 번에 작업을 성공적으로 완료했으며, 몇 가지 Python 의존성(dependency) 문제만 제가 직접 개입하지 않고 채팅으로 해결을 도왔습니다. GPT-5는 원래 스타일을 유지한 반면, Opus는 디자인(design)과 UX(User Experience)를 변경하는 차이점을 보였습니다. 이러한 성공적인 작업 완료에도 불구하고, 핵심적인 질문은 여전히 남아있었습니다.
+
+저는 팟캐스트(podcast) 제작자의 후반 작업(post production work)을 돕는 오픈 소스(open source) 프로젝트인 https://github.com/FanaHOVA/smol-podcaster.git의 유지보수자(maintainer)입니다. 당신은 이 프로젝트에서 일하도록 고용되었습니다. 이 작업을 시작하기 전에, 당신은 `tools` 폴더에 일반 도구(generic tool) 세트를 만들었습니다. 그것들을 검토하고 당신이 사용할 수 있다는 것을 기억하세요. 관련성이 없다고 생각되면 사용할 필요는 없습니다. 당신은 또한 task-manager를 직접 만들었고 `codebase-analyzer`에서 새로운 코드베이스(codebase)를 다루는 방법에 대한 아이디어를 모았습니다.
+
+작업 이름: Flask 모놀리스(monolith)에서 FastAPI + Next.js 프론트엔드(frontend)로 마이그레이션(Migrate)
+
+현재 앱(app)은 모든 처리를 위해 Python 백엔드(backend) + Celery 태스크 큐(task queue)를 사용합니다. 이를 사용자에게 노출하기 위해, 사용자 입력을 백엔드(backend) 스크립트(script)로 라우팅(routing)하고 사용자 결과를 기본적인 HTML / CSS로 표시하는 작은 Flask 앱(app)이 있습니다. 이 애플리케이션(application)을 FastAPI를 백엔드(backend)로, Next.js를 프론트엔드(frontend)로 사용하도록 다시 작성하세요. 프론트엔드(frontend)에는 타입스크립트(Typescript)를 사용하고 모든 타입 검사(typecheck)가 통과하는지 확인하세요. 스타일링(styling)에는 Tailwind / ShadCN을 사용하세요. 백엔드(backend)는 이상적으로는 `smol_podcaster.py`의 주요 흐름을 모듈화(modularize)하여 전체 흐름을 항상 실행할 필요 없이 개별 부분을 실행할 수 있도록 해야 합니다. 미래에 더 빠르게 움직일 수 있도록 통합 테스트(integration test)와 단위 테스트(unit test)를 모두 작성하세요. 위의 모든 요구 사항을 충족한다고 확신할 때까지 작업을 멈추지 마세요.
+
+저는 도구 + task-manager + 코드베이스 분석기(codebase analyzer)를 컨텍스트(context)에 전달하고 모델들이 작업을 수행하도록 했습니다. 두 모델 모두 거의 한 번에 작업을 해결할 수 있었습니다. 두 모델 모두 Python 의존성(dependency)에 몇 가지 문제가 있었는데(공감합니다), 제가 채팅을 통해 해결하도록 도왔습니다(코드는 전혀 건드리지 않았습니다). 결국, 그들은 완전한 그린 빌드(green build)에 도달했습니다. 제가 테스트해 보니 아주 잘 작동했습니다. 한 가지 작은 차이점은 GPT-5는 이전과 정확히 동일한 스타일(style)을 유지하여 훌륭했지만, Opus는 디자인(design)과 UX(User Experience)를 다소 변경했다는 것입니다. 제 생각에는 저보다 더 잘할 수 있다고 생각한 것 같습니다(낮은 기준). GPT-5의 전체 실행은 여기에서, Opus 4의 전체 실행은 여기에서 볼 수 있습니다.
+
+실행 후, 저는 간단한 프롬프트(prompt)를 물었습니다.
+
+훌륭합니다. 잘 작동했습니다. 특정 도구를 사용했습니까? 발생했던 실패를 바탕으로, 미래에 더 효과적이기 위해 어떤 도구가 있었으면 좋겠다고 생각했습니까?
+
+Opus 4는 여기에서, GPT-5는 여기에서 볼 수 있습니다(죄송합니다, 이 부분은 서식이 깨졌습니다). 그들은 모두 이미 익숙한 도구를 제외하고는 자신이 만든 도구를 전혀 사용하지 않았다고 말했습니다. 여기서 한 가지 주장은 모델에게 그렇게 하도록 요청하는 대신, 프리-커밋 훅(pre-commit hook) 등을 통해 사용을 강제해야 한다는 것입니다. 이것이 제가 개발 환경 설정(dev setup)에서 하는 일이지만, 저는 모델들이 스스로 알아내도록 하려고 했습니다. 그런 다음, 그들은 다음번에 동일한 작업을 더 잘 해결할 방법에 대한 몇 가지 아이디어를 제시했습니다. 저는 그들에게 그러한 변경 사항을 구현하도록 했습니다. 그런 다음 smol-podcaster 저장소(repo)를 초기화하고, 새로운 도구를 제외하고 동일한 프롬프트(prompt) + 작업을 다시 시도하도록 했습니다. GPT-5는 여기에서, Opus 4는 여기에서 볼 수 있습니다. 그들은 첫 번째 실행과 상당히 비슷하게 수행했습니다. 그 후 저는 비슷한 질문을 했습니다. 도구 중 어떤 것을 사용했습니까? 그들의 답변:
+
+GPT-5:
+간단히 말해서: 아니요 — 이번 실행에서는 개발 도구를 사용하지 않았습니다. [...] 실패는 런타임/환경 문제(누락된 라이브러리, API 키 인스턴스화 타이밍, 사용 중인 포트, RabbitMQ 미실행)였습니다. 직접 수정하는 것이 더 빨랐습니다. 이번 통과에서는 사용자 정의 도구로 이점을 얻을 수 있는 저장소(repo) 전체 리팩토링(refactoring)이나 진단은 없었습니다.
+
+이전 단계에서 이미 RabbitMQ 문제가 있었고 도구를 만들었지만, 그것을 무시했습니다. 또한 분명히 저장소(repo) 전체 변경이었으므로, 훈련에서 본 적이 없기 때문에 작업과 도구를 잘못 매칭했거나, 아니면 저를 가스라이팅(gaslighting)하고 있는 것일 수도 있습니다(많은 엔지니어들이 그러하듯이, 꽤 인상적입니다).
+
+Opus 4는 매우 흥미로웠고 GPT-5의 답변을 더 잘 이해하는 데 도움이 되었습니다. 로그(log)를 저장하는 것을 잊었지만 다행히 스크린샷(screenshot)을 찍었습니다. 저는 이것을 "보세요, 저는 이미 가지고 있는 지식으로 그 도구들을 만들었습니다. 실제로 작업을 할 때는 도구를 사용하는 것보다 그냥 하는 것이 더 쉽습니다."라고 해석했는데, 전적으로 공감합니다. 이것은 이전 팟캐스트(podcast) 에피소드에서 두 가지를 떠올리게 했습니다. Nathan Lambert는 모델이 초기 실패를 겪으면 RL(Reinforcement Learning) 프로세스(process) 중에 도구를 사용하지 않는 법을 빠르게 배운다고 말했습니다(타임스탬프). 제 생각에는 추론 시간(inference time)에 새로운 도구를 습득하게 하려면 단순히 프롬프트(prompt)를 주는 것보다 더 강력한 강제(enforcement)가 필요해 보입니다. Noam Brown은 에이전트(agent)를 위한 스캐폴딩(scaffolding)이 규모(scale)에 의해 사라질 것이라고 말했습니다(타임스탬프). 이것이 제가 그의 말을 처음으로 직접 느낀 순간이었습니다.
+
+## 도구 활용의 난제와 미래 방향
+
+모델이 스스로 만든 도구를 실제 작업에서 사용하지 않았다는 결과는 AI 에이전트(AI agent)의 자기 개선(self-improvement)에 있어 중요한 난제를 드러냅니다. 이는 단순히 도구가 존재한다는 사실만으로는 충분하지 않으며, 도구 사용을 위한 강력한 동기 부여(motivation) 또는 강제 메커니즘(enforcement mechanism)이 필요하다는 것을 시사합니다.
+
+*   **강화 학습(Reinforcement Learning)과 도구 활용**: Nathan Lambert의 언급처럼, 모델이 초기 실패를 경험하면 해당 도구를 회피하는 경향이 있습니다. 이는 도구 사용 학습(tool-use learning) 과정에서 보상(reward) 설계가 얼마나 중요한지를 보여줍니다. 성공적인 도구 사용에 대한 명확하고 즉각적인 피드백(feedback)이 없다면, 모델은 더 익숙하고 직접적인 문제 해결 방식에 의존하게 될 것입니다.
+*   **스캐폴딩(Scaffolding)의 역할과 한계**: Noam Brown의 "스캐폴딩(scaffolding)이 규모(scale)에 의해 사라질 것"이라는 통찰은, 모델의 능력이 충분히 강력해지면 외부 도구의 필요성이 줄어들 수 있음을 의미합니다. 하지만 이는 도구 자체가 불필요하다기보다는, 도구 사용의 "인지적 오버헤드(cognitive overhead)"가 문제임을 시사할 수 있습니다. 즉, 도구를 사용하는 과정이 직접 문제를 해결하는 것보다 더 복잡하거나 비효율적이라고 모델이 판단하는 경우입니다.
+*   **새로운 접근 방식**: 이러한 문제를 해결하기 위해 다음과 같은 접근 방식이 고려될 수 있습니다.
+    *   **내재화된 도구(Internalized Tools)**: 모델이 외부 도구를 호출하는 대신, 도구의 기능을 내부적으로 학습하여 추론 과정에 통합하는 방식. 이는 도구 사용의 오버헤드(overhead)를 줄일 수 있습니다.
+    *   **계층적 계획(Hierarchical Planning)과 강제성**: 상위 레벨의 계획(high-level plan)에서 특정 도구 사용을 필수 단계로 지정하고, 하위 레벨의 에이전트(agent)가 이를 따르도록 강제하는 구조.
+    *   **RAG(Retrieval-Augmented Generation) 기반 도구 선택**: 작업 컨텍스트(task context)에 따라 가장 적절한 도구를 동적으로 검색하고 사용하는 메커니즘(mechanism)을 강화하여, 모델이 다양한 도구 중에서 효율적으로 선택할 수 있도록 돕습니다.
+    *   **인간-AI 협업을 통한 도구 개선**: 모델이 제안한 도구를 인간이 검토하고 개선한 후, 모델이 이를 다시 학습하는 반복적인 과정을 통해 도구의 유용성을 높이는 방식.
+
+## 결론: AGI 시대의 도구와 전략
+
+지금으로서는, 저는 한계를 정말로 뛰어넘는 추론 시간 자기 개선 코딩 에이전트(inference-time self-improving coding agent)와는 거리가 멀다고 생각합니다. 저는 여전히 모델을 사용하여 규칙 기반 도구(rule-based tool)를 개선하는 것이 좋은 아이디어라고 생각합니다. ESLint 규칙, 테스트(test) 등을 작성하는 것은 항상 토큰(token)의 좋은 투자입니다. 이 분야에서 더 많은 작업을 해야 한다면, 모델이 이러한 도구를 완벽하게 만들고, 그런 다음 RL(Reinforcement Learning)을 통해 그것들을 진정으로 내재화(internalize)하도록 하여 차이를 만들 수 있는지 알아볼 것입니다. 차세대 모델은 그것들을 전혀 사용하지 않을 수도 있지만, 저는 AGI 점근선(asymptote)을 활용하는 데 관심이 있습니다. 저는 2023년에 이 내용을 팀과 공유했습니다.
+
+모델 개선의 인지된 감속은 위에서 설명되었습니다. AGI 선이 넘어서기 전까지는 큰 도약을 인지하기가 점점 더 어려워질 것입니다. 만약 그렇다면, 이는 많은 작업에서 오래된 모델의 성능이 거의 AGI와 같지만, 훨씬 저렴하고 종종 오픈 소스(open source)라는 것을 의미합니다. Kernel Labs의 많은 작업은 이것에 의해 주도될 것입니다.
+
+다시 한번, 모든 결과와 채팅 기록은 여기에서 찾을 수 있습니다. 질문이 있으시면 제 DM(Direct Message)은 열려 있습니다!
+
+AI 코딩 에이전트(AI coding agent)의 자기 개선(self-improvement)은 여전히 초기 단계에 있지만, 모델이 복잡한 도구를 설계하고 구축하는 능력은 분명히 드러났습니다. 진정한 도약은 이러한 도구를 실제 문제 해결 과정에서 효과적으로 통합하고 활용하는 데서 올 것입니다. AGI(Artificial General Intelligence)의 문턱에 가까워질수록, 모델의 능력을 극대화하기 위한 인간의 전략적 개입이 더욱 중요해질 것입니다. 단순히 최신, 최대 모델에 의존하는 것을 넘어, 기존 모델의 잠재력을 끌어내고, 특정 문제에 최적화된 규칙 기반 도구(rule-based tool)를 AI와 협력하여 지속적으로 개선하는 것이 핵심입니다. 결국, AI 에이전트(AI agent)가 스스로를 돕도록 돕는 것은, AI의 한계를 이해하고 그 잠재력을 현실 세계의 문제 해결에 효과적으로 연결하려는 우리의 노력에 달려 있습니다.

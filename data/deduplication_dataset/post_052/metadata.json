@@ -1,0 +1,21 @@
+{
+  "post_id": "052",
+  "title": "**추론 모델 파헤치기**",
+  "base_word_count": 9037,
+  "exact_30_update_wc": 8482,
+  "exact_30_ground_truth_wc": 8484,
+  "exact_30_overlap_ratio": 1.065,
+  "paraphrase_25_update_wc": 7790,
+  "paraphrase_25_ground_truth_wc": 7784,
+  "paraphrase_25_overlap_ratio": 1.161,
+  "fragment_20_update_wc": 7911,
+  "fragment_20_ground_truth_wc": 7907,
+  "fragment_20_overlap_ratio": 1.143,
+  "semantic_25_update_wc": 7384,
+  "semantic_25_ground_truth_wc": 7383,
+  "semantic_25_overlap_ratio": 1.224,
+  "mixed_real_update_wc": 7552,
+  "mixed_real_ground_truth_wc": 7539,
+  "mixed_real_overlap_ratio": 1.198,
+  "status": "generated"
+}

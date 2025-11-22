@@ -1,0 +1,21 @@
+{
+  "post_id": "046",
+  "title": "**보상 모델(Reward Models)**",
+  "base_word_count": 7052,
+  "exact_30_update_wc": 6434,
+  "exact_30_ground_truth_wc": 5908,
+  "exact_30_overlap_ratio": 1.178,
+  "paraphrase_25_update_wc": 6800,
+  "paraphrase_25_ground_truth_wc": 6800,
+  "paraphrase_25_overlap_ratio": 1.037,
+  "fragment_20_update_wc": 6316,
+  "fragment_20_ground_truth_wc": 6409,
+  "fragment_20_overlap_ratio": 1.102,
+  "semantic_25_update_wc": 942,
+  "semantic_25_ground_truth_wc": 5938,
+  "semantic_25_overlap_ratio": 2.183,
+  "mixed_real_update_wc": 5967,
+  "mixed_real_ground_truth_wc": 5966,
+  "mixed_real_overlap_ratio": 1.182,
+  "status": "generated"
+}

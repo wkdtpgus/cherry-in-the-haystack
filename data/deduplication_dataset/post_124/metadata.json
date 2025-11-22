@@ -1,0 +1,21 @@
+{
+  "post_id": "124",
+  "title": "**지난주 AI 소식 #324: OpenAI 딜(deals) 및 데브데이(DevDay), 하이쿠(Haiku) 4.5, 베오(Veo) 3.1**",
+  "base_word_count": 2417,
+  "exact_30_update_wc": 3230,
+  "exact_30_ground_truth_wc": 3428,
+  "exact_30_overlap_ratio": 0.687,
+  "paraphrase_25_update_wc": 3068,
+  "paraphrase_25_ground_truth_wc": 3068,
+  "paraphrase_25_overlap_ratio": 0.788,
+  "fragment_20_update_wc": 1340,
+  "fragment_20_ground_truth_wc": 2885,
+  "fragment_20_overlap_ratio": 0.651,
+  "semantic_25_update_wc": 2665,
+  "semantic_25_ground_truth_wc": 2674,
+  "semantic_25_overlap_ratio": 0.904,
+  "mixed_real_update_wc": 2307,
+  "mixed_real_ground_truth_wc": 2371,
+  "mixed_real_overlap_ratio": 1.02,
+  "status": "generated"
+}

@@ -1,0 +1,143 @@
+대규모 언어 모델(LLM)의 발전은 인공지능 분야에 혁명적인 변화를 가져왔습니다. 하지만 이러한 모델이 단순한 텍스트 생성기를 넘어 인간의 의도에 부합하는 유용하고 안전하며 편향되지 않은 응답을 생성하도록 하는 것은 여전히 중요한 과제입니다. 이를 "정렬(alignment)"이라고 부르며, 모델이 인간의 선호도를 이해하고 반영하도록 학습시키는 과정입니다. 정렬 기술은 LLM이 실제 세계에서 책임감 있게 활용될 수 있도록 하는 핵심 요소로, 그 중요성이 날이 갈수록 커지고 있습니다.
+
+(출처: [2, 5, 7, 9, 10]) 정렬(alignment) 과정은 대규모 언어 모델(LLM)이 높은 인간 선호 점수를 받는 완성(completion)을 생성하는 방법을 가르칩니다. 정렬을 위한 전통적인 전략에는 지도 미세 조정(supervised finetuning)과 근접 정책 최적화(PPO) 기반 인간 피드백 강화 학습(RLHF)이 포함됩니다. 이 접근 방식은 잘 작동하지만, PPO 기반 RLHF는 여러 가지 이유로 구현하기 복잡한 온라인 강화 학습(RL) 훈련 알고리즘입니다. PPO는 훈련 중에 현재 LLM으로 샘플(이를 "온-정책(on-policy) 샘플"이라고 함)을 생성하기 위해 추론(inference)을 적극적으로 실행합니다. 온-정책 데이터(on-policy data)의 실시간 생성이 PPO를 온라인 알고리즘으로 만드는 요인입니다. 온라인 RL 훈련은 효율적으로 조율하기 어렵고(특히 동기식 훈련 설정에서), 종종 안정성 문제에 시달립니다. PPO는 훈련 중에 LLM의 여러 복사본을 저장해야 하므로 상당한 메모리 오버헤드(memory overhead)와 높은 하드웨어 요구 사항을 초래합니다. PPO는 성공적인 훈련을 위해 관리해야 하는 광범위한 훈련 설정과 설계 결정을 포함합니다 [21].
+
+PPO의 복잡성과 리소스 요구 사항은 연구자와 개발자들에게 더 효율적이면서도 강력한 정렬 방법론을 탐색하도록 동기를 부여했습니다. 이러한 노력은 크게 두 가지 방향으로 진행되었습니다: 첫째, PPO와 같은 온라인 RL 알고리즘의 효율성을 개선하거나, 둘째, 고정된 데이터셋을 활용하는 오프라인 알고리즘을 개발하는 것입니다. 그러나 온라인 RL이 제공하는 성능 이점은 여전히 강력하며, 더 간단한 오프라인 접근 방식은 종종 성능 저하를 수반합니다. 이 글에서는 LLM 정렬을 위한 다양한 온라인 및 오프라인 접근 방식을 심층적으로 분석하고, 특히 "온-정책 샘플링"이 LLM 성능에 미치는 영향에 초점을 맞춰 논의를 확장하고자 합니다.
+
+### LLM을 위한 정렬 알고리즘의 진화
+
+LLM의 정렬 알고리즘은 모델의 초기 지식 기반 구축부터 인간의 복잡한 선호도를 반영하는 섬세한 조정에 이르기까지 여러 단계에 걸쳐 진화해왔습니다. 각 단계는 특정 목적을 가지며, 모델이 점진적으로 더 유능하고 안전하게 되도록 돕습니다.
+
+*   **사전 훈련(Pretraining)**: LLM의 방대한 지식 기반을 형성하는 초기 단계입니다. 인터넷 규모의 텍스트 데이터에 대해 다음 토큰 예측(next token prediction) 훈련 목표를 사용하여 모델의 기본적인 언어 이해 및 생성 능력을 구축합니다.
+*   **지도 미세 조정(Supervised finetuning, SFT)**: 사전 훈련된 모델을 고품질의 지시-응답 쌍 데이터셋으로 추가 훈련하여 모델이 특정 지시를 따르거나 원하는 형식으로 응답하도록 유도합니다. SFT는 모델의 스타일과 기본적인 행동을 정렬하는 데 매우 효과적이며, 비용 효율적이고 구현이 간단하다는 장점이 있습니다. 최근에는 LLM 자체를 활용하여 SFT 데이터셋을 선별하거나 확장하는 방법론도 활발히 연구되고 있습니다.
+*   **인간 피드백 기반 강화 학습(Reinforcement learning from human feedback, RLHF)**: SFT만으로는 모델이 인간의 미묘한 선호도를 완전히 학습하기 어렵기 때문에, RLHF는 인간의 피드백을 보상 신호로 사용하여 모델을 최적화합니다. 이는 모델이 단순히 지시를 따르는 것을 넘어, 인간이 "좋다"고 느끼는 응답을 생성하도록 학습시킵니다.
+*   **검증 가능한 보상 기반 강화 학습(Reinforcement learning from verifiable rewards, RLVR)**: 특정 규칙이나 휴리스틱을 통해 보상을 확정적으로 도출할 수 있는 작업(예: 수학 문제 풀이, 코드 생성)에 대해 RL을 적용하는 방식입니다. 이는 객관적인 성능 향상을 목표로 합니다.
+
+이러한 훈련 전략들은 LLM의 핵심 역량을 구축하는 사전 훈련과 별개로, 모델을 인간의 기대에 맞게 조정하는 "정렬" 과정에 집중됩니다. 특히 RLHF는 모델이 복잡한 인간 선호도를 학습하도록 하는 강력한 방법으로 자리 잡았지만, 그 구현의 어려움 때문에 다양한 대안들이 모색되고 있습니다.
+
+#### 지도 미세 조정(SFT)의 확장과 한계
+
+SFT는 LLM 정렬의 가장 기본적인 형태이자 강력한 출발점입니다. 사전 훈련과 동일한 "다음 토큰 예측" 목표를 사용하지만, 훨씬 더 작고 큐레이션된 고품질 데이터셋에 적용됩니다. 이 데이터셋은 모델이 모방해야 할 바람직한 행동과 스타일을 명확하게 보여줍니다.
+
+```python
+import torch
+import torch.nn.functional as F
+
+# token_indices: (batch_size, seq_length)
+logits = LLM(token_indices) # (batch_size, seq_length, vocab_size)
+
+# shift to predict next token at each position
+logits = logits[:, :-1, :] # (batch_size, seq_length - 1, vocab_size)
+targets = token_indices[:, 1:] # (batch_size, seq_length - 1)
+
+# resize tensors for cross-entropy loss
+logits = logits.reshape(-1, logits.size(-1))
+targets = targets.reshape(-1)
+
+# compute cross-entropy loss
+loss = F.cross_entropy(logits, targets)
+```
+
+대부분의 경우, SFT에서 완성 전용 손실(completion-only loss)을 사용하면 더 나은 성능을 달성할 수 있습니다. 이는 교차 엔트로피 손실(cross-entropy loss)이 모든 프롬프트 토큰에 대해 마스킹(masked)되고 응답 또는 완성 내의 토큰에만 적용된다는 의미입니다.1 SFT는 그 단순함과 효율성 덕분에 LLM 정렬의 중요한 구성 요소로 남아 있습니다. 그러나 SFT는 본질적으로 '모방 학습'이기 때문에, 데이터셋에 없는 새로운 상황이나 미묘한 인간 선호도에 대해서는 한계를 보입니다. 모델은 훈련 데이터에 명시적으로 나타나지 않는 복잡한 추론이나 창의적인 문제 해결 능력을 스스로 탐색하고 발전시키기 어렵습니다. 이러한 한계를 극복하기 위해 거부 샘플링(Rejection Sampling)과 같은 준-온라인(semi-online) SFT 변형이 등장했습니다. 이는 모델이 생성한 응답 중 최상의 것을 선택하여 다시 훈련 데이터로 활용함으로써 SFT의 정적인 특성을 보완합니다.
+
+#### 강화 학습(RL) 훈련의 현대적 접근
+
+RLHF는 LLM 정렬의 정점으로 여겨져 왔습니다. PPO 기반 RLHF는 뛰어난 성능을 보여주었지만, 그 복잡성과 높은 계산 비용은 항상 도전 과제였습니다. 이러한 문제점을 해결하기 위해 연구자들은 PPO의 효율성을 개선하거나, 완전히 새로운 RL 접근 방식을 모색하고 있습니다.
+
+최근에는 **ReST (Reinforced Self-Training)** [14]나 **RSO (Reinforced Self-Optimization)**와 같이 PPO의 복잡성을 줄이면서도 RL의 이점을 유지하려는 시도가 활발합니다. 이들은 모델이 자체적으로 생성한 응답을 평가하고, 이를 기반으로 정책을 업데이트하는 방식을 사용합니다. 예를 들어, ReST는 LLM이 생성한 여러 응답 중 보상 모델이 부여한 점수가 높은 샘플을 선별하여 SFT와 유사한 방식으로 훈련합니다. 이는 PPO가 실시간으로 정책을 업데이트하는 것과는 다르지만, 반복적인 데이터 생성 및 선별 과정을 통해 "준-온라인"적인 특성을 가지며, PPO에 비해 안정성과 효율성 측면에서 이점을 제공합니다. 이러한 접근 방식은 온라인 RL의 탐색적 이점을 어느 정도 유지하면서도 구현의 복잡성을 낮추는 균형점을 찾으려는 노력의 일환입니다.
+
+#### 직접 정렬 기술: DPO와 그 너머
+
+(출처: [18]) 온라인 RL 훈련이 매우 비싸기 때문에 연구자들은 직접 선호 최적화(direct preference optimization, DPO) [18]와 같은 오프라인 정렬 기술도 제안했습니다. PPO 기반 RLHF와 비교하여 DPO는 명시적인 보상 모델(explicit reward model) 훈련을 피하고 대신 LLM 자체에서 암묵적으로 보상 신호(reward signal)를 도출합니다. 이 암묵적 보상을 사용하여 LLM은 아래에 표시된 대조 학습 목표(contrastive learning objective)로 훈련되며, 이는 표준 경사 하강법(gradient descent)으로 최적화될 수 있습니다(즉, RL 훈련 없이).
+
+<center>
+<img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6263e804-9457-4185-8737-142277d1217e_1000x500.png" alt="DPO training loss">
+</center>
+<center>(출처: [18]) DPO 훈련 손실</center>
+
+DPO는 RLHF의 복잡성을 회피하면서도 유사한 성능을 달성할 수 있다는 점에서 빠르게 인기를 얻었습니다. DPO의 성공은 보상 모델을 명시적으로 학습하는 대신, 선호 데이터셋(선택된 응답과 거부된 응답 쌍)을 사용하여 모델이 직접적으로 선호도를 학습하도록 하는 아이디어에 기반합니다. 이는 RL의 복잡한 샘플링 및 정책 업데이트 과정 없이도 모델이 바람직한 응답의 확률을 높이고 바람직하지 않은 응답의 확률을 낮추도록 유도합니다.
+
+DPO의 성공 이후, **IPO (Identity Preference Optimization)** [8], **KTO (Kahneman-Tversky Optimization)** [19], **CPO (Contrastive Preference Optimization)** [20] 등 다양한 변형들이 제안되었습니다. 이들은 DPO의 기본 아이디어를 확장하거나 특정 한계를 보완합니다. 예를 들어, KTO는 전통적인 선호 쌍 데이터 대신, 단일 응답에 대한 이진(좋음/나쁨) 레이블만으로도 학습이 가능하도록 하여 데이터 수집의 유연성을 높였습니다. 이러한 직접 정렬 기술들은 RL 기반 방법론에 비해 계산 비용이 적고 튜닝이 용이하다는 큰 장점을 가지며, 오프라인 정렬의 효율성을 극대화하는 방향으로 발전하고 있습니다.
+
+### 온라인-오프라인 성능 격차의 심층 분석
+
+PPO 기반 RLHF와 DPO 같은 오프라인 정렬 알고리즘 사이의 성능 격차는 LLM 연구의 중요한 논쟁점 중 하나입니다. 여러 연구들은 이 격차가 어디에서 오는지, 그리고 어떻게 하면 이를 좁힐 수 있는지 탐구해왔습니다. 핵심은 "온-정책 샘플링"의 역할과 데이터의 질, 그리고 알고리즘의 복잡성 간의 상호작용에 있습니다.
+
+#### 온-정책 샘플링의 중요성: 왜 온라인이 더 강력한가?
+
+온라인 알고리즘, 특히 PPO는 훈련 과정에서 현재 정책(모델)이 생성한 "온-정책 샘플"을 사용합니다. 이는 모델이 학습하면서 스스로 생성한 데이터를 통해 학습한다는 의미입니다. 반면, 오프라인 알고리즘은 고정된, 미리 생성된 데이터셋을 사용합니다. 연구 [2, 5, 7]들은 이 온-정책 샘플링이 온라인 알고리즘의 우월성에 결정적인 역할을 한다고 지적합니다.
+
+1.  **탐색(Exploration) 능력**: 온라인 알고리즘은 훈련 중 모델의 현재 능력을 반영하는 새로운 데이터를 지속적으로 탐색하고 생성합니다. 이는 모델이 기존 데이터셋에 없는, 더 나은 또는 더 복잡한 응답을 발견하고 학습할 수 있도록 합니다. 예를 들어, [2]에서는 PPO로 훈련된 모델이 사고의 사슬(chain-of-thought) 추론과 같은 새로운 행동을 스스로 학습할 가능성이 훨씬 높다는 것을 발견했습니다. 이는 오프라인 모델이 고정된 데이터셋 내에서만 학습하기 때문에 달성하기 어려운 부분입니다.
+2.  **분포 변화(Distribution Shift) 대응**: LLM의 정책은 훈련 과정에서 계속 변화합니다. 온라인 샘플링은 변화하는 정책에 맞춰 훈련 데이터를 실시간으로 업데이트하므로, 모델이 항상 자신의 현재 상태와 가장 관련성이 높은 데이터를 학습하게 됩니다. 이는 오프라인 알고리즘이 겪을 수 있는 "분포 변화" 문제를 완화합니다. 즉, 훈련 초기에 생성된 데이터가 훈련 후반의 모델에게는 비효율적이거나 심지어 해로울 수 있는 문제를 방지하는 것입니다.
+3.  **음의 경사(Negative Gradient)의 효과**: [7]은 온-정책 샘플링과 함께 "음의 경사"의 중요성을 강조합니다. 이는 모델이 좋은 응답의 확률을 높이는 것뿐만 아니라, 나쁜 응답의 확률을 명시적으로 감소시키는 것을 의미합니다. DPO와 같은 대조 학습 방법은 본질적으로 음의 경사를 포함하지만, 온라인 RL은 보상 모델을 통해 나쁜 응답에 대한 페널티를 직접적으로 학습할 수 있습니다. 이는 특히 참조 정책에서 낮은 확률을 가졌던 높은 보상 응답으로 확률 질량을 이동시켜야 하는 어려운 정렬 시나리오에서 중요합니다.
+
+#### 데이터 품질과 알고리즘의 상호작용
+
+온라인-오프라인 격차에 대한 논의는 종종 "데이터 품질이 중요한가, 아니면 알고리즘이 중요한가?"라는 질문으로 이어집니다. [2]의 연구는 "선호 데이터의 선택이 LLM 품질에 가장 큰 영향을 미친다"고 강조하며, 아무리 정교한 알고리즘이라도 저품질 데이터로는 한계가 있음을 시사합니다. 특히, 합성 선호 데이터셋(예: UltraFeedback)이 인간 주석 데이터와 비교해도 우수한 결과를 낼 수 있음을 보여주며, 이는 데이터 수집 및 큐레이션의 중요성을 부각합니다.
+
+그러나 [5]의 연구는 단순히 데이터 커버리지(더 많은 데이터)나 데이터 품질(최적의 정책으로 생성된 데이터)만으로는 오프라인 정렬의 한계를 완전히 극복하기 어렵다는 것을 보여줍니다. 데이터의 "순서"와 "생성 과정"이 중요하다는 것입니다. 즉, 모델이 자신의 변화하는 정책에 따라 데이터를 생성하고 학습하는 동적인 과정 자체가 성능 향상에 필수적입니다. 이는 아무리 좋은 데이터를 모아도 정적인 오프라인 학습으로는 온라인 학습의 이점을 완전히 따라잡기 어렵다는 결론으로 이어집니다.
+
+#### 준-온라인(Semi-Online) 접근 방식의 부상
+
+온라인 RL의 강력함과 오프라인 RL의 효율성 사이의 균형점을 찾기 위해 "준-온라인" 또는 "반복적(iterative)" 접근 방식이 주목받고 있습니다. 이는 모델이 주기적으로 새로운 온-정책 샘플을 생성하여 훈련 데이터셋을 업데이트하는 방식입니다. [9]의 연구는 DPO에 다양한 수준의 온-정책 샘플링을 도입하는 실험을 통해, 완전히 온라인 방식이 아니더라도 간헐적인 데이터 업데이트만으로도 오프라인 DPO에 비해 상당한 성능 향상을 얻을 수 있음을 보여줍니다.
+
+이러한 준-온라인 접근 방식은 다음과 같은 이점을 제공합니다:
+*   **효율성**: 매 스텝마다 온-정책 샘플을 생성하는 완전 온라인 방식보다 계산 비용이 적습니다.
+*   **유연성**: 데이터 업데이트 주기를 조절하여 성능과 비용 사이의 최적점을 찾을 수 있습니다.
+*   **성능 향상**: 고정된 데이터셋의 한계를 극복하고 모델의 탐색 능력을 부분적으로 활용할 수 있습니다.
+
+예를 들어, 실제 서비스에서는 LLM을 일주일 단위로 업데이트하며, 매주 새로운 사용자 상호작용 데이터를 수집하고, 기존 모델로 새로운 응답을 생성하여 보상 모델로 평가한 후, 이를 DPO나 ReST 같은 오프라인/준-온라인 방식으로 훈련하는 전략을 채택할 수 있습니다. 이는 온라인 RL의 복잡한 인프라 없이도 지속적인 모델 개선을 가능하게 합니다.
+
+#### 다목적 정렬(Multi-objective Alignment)으로의 확장
+
+초기 LLM 정렬은 주로 인간의 선호도(예: 유용성, 무해성)에 초점을 맞추었지만, 최근에는 모델의 사실성(factuality), 안전성(safety), 특정 도메인 전문성 또는 복잡한 추론 능력 등 다양한 목표를 동시에 정렬하는 **다목적 정렬**의 중요성이 부각되고 있습니다. 온라인/오프라인 알고리즘의 선택은 이러한 다목적 정렬의 성공에도 영향을 미칩니다. 예를 들어, 수학적 추론과 같이 객관적인 정답이 있는 작업의 경우, RLVR과 같은 검증 가능한 보상 기반 온라인 접근 방식이 모델이 새로운 문제 해결 전략을 탐색하고 발견하는 데 더 효과적일 수 있습니다. 반면, 주관적인 안전성 판단과 같은 작업에서는 고품질의 인간 주석 데이터와 DPO 같은 오프라인 방식의 결합이 더 효율적일 수 있습니다. [9]의 연구에서 검증 가능한 보상과 검증 불가능한 보상을 결합하여 훈련하는 커리큘럼 학습의 효과를 탐색한 것은 이러한 다목적 정렬의 가능성을 보여줍니다.
+
+<center>
+<img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6263e804-9457-4185-8737-142277d1217e_1000x500.png" alt="Key takeaways from alignment experiments">
+</center>
+<center>(출처: [7])</center>
+
+[7]의 정렬 실험에서 얻은 핵심 요점은 위 그림에 묘사되어 있으며 다음과 같이 요약할 수 있습니다.
+
+*   온-정책 샘플링은 고품질 정렬에 매우 중요하며, 특히 최적 보상을 가진 응답이 참조 정책에서 가능성이 낮을 경우 더욱 그렇습니다.
+*   적당한 양의 샘플 재사용은 정렬 품질의 눈에 띄는 저하 없이 오프-정책 업데이트를 도입할 수 있습니다.
+*   음의 경사 사용은 더 빠른 수렴으로 이어지며 온-정책 샘플링에 보완적인 이점을 제공합니다.
+*   보상 피크가 참조 정책에서 이미 가능성이 있는 간단한 정렬 사례의 경우, 온-정책 샘플링이나 음의 경사를 사용하지 않는 완전히 오프라인 또는 지도 방법도 여전히 잘 수행될 수 있습니다.
+
+이러한 발견들은 LLM 정렬 전략을 선택할 때 성능, 효율성, 그리고 특정 정렬 목표를 모두 고려해야 함을 시사합니다. 온라인 방식이 궁극적인 성능을 제공하지만, 준-온라인 방식은 현실적인 제약 속에서 최적의 해답을 제시할 수 있습니다.
+
+### 결론
+
+LLM 정렬은 단순한 기술적 문제를 넘어, 인공지능이 인간 사회와 상호작용하는 방식의 미래를 결정하는 중요한 연구 분야입니다. PPO와 같은 온라인 강화 학습 알고리즘은 탁월한 성능을 제공하지만, 그 복잡성과 높은 계산 비용은 광범위한 채택에 걸림돌이 되어 왔습니다. DPO와 같은 오프라인 직접 정렬 기술은 효율성과 구현 용이성 측면에서 큰 발전을 가져왔지만, 고정된 데이터셋의 한계로 인해 온라인 방법론이 제공하는 탐색 및 적응 능력을 완전히 따라잡기는 어렵습니다.
+
+이러한 온라인-오프라인 격차를 이해하고 극복하려는 노력은 LLM 정렬 연구의 핵심 동력입니다. 우리는 온-정책 샘플링이 모델의 탐색 능력과 변화하는 정책에 대한 적응력을 높여 성능 향상에 결정적인 역할을 한다는 것을 확인했습니다. 또한, 음의 경사와 같은 요소들이 정렬 과정의 효율성을 높이는 데 기여합니다.
+
+가장 흥미로운 발전은 온라인과 오프라인의 장점을 결합한 준-온라인(semi-online) 접근 방식의 부상입니다. 주기적으로 현재 모델에서 새로운 데이터를 샘플링하여 훈련 데이터셋을 업데이트하는 이 방법은 완전한 온라인 훈련의 높은 비용 없이도 상당한 성능 이점을 제공합니다. 이는 실제 환경에서 LLM을 지속적으로 개선하고 배포하는 데 매우 실용적인 해결책이 될 수 있습니다.
+
+궁극적으로, "최적의" LLM 정렬 전략은 특정 애플리케이션의 요구사항, 사용 가능한 컴퓨팅 자원, 그리고 데이터의 특성에 따라 달라질 것입니다. 연구는 계속해서 새로운 알고리즘과 방법론을 탐색하며, 성능, 효율성, 안전성 및 다목적 정렬이라는 복잡한 요구 사항 사이의 최적의 균형점을 찾아 나갈 것입니다. LLM 정렬의 미래는 이러한 다양한 접근 방식의 시너지 효과를 통해 더욱 강력하고 책임감 있는 인공지능 시스템을 구축하는 데 달려 있습니다.
+
+### 참고문헌(Bibliography)
+
+[1] Rafailov, Rafael, et al. "Direct preference optimization: Your language model is secretly a reward model." Advances in neural information processing systems 36 (2023): 53728-53741.
+[2] Ivison, Hamish, et al. "Unpacking dpo and ppo: Disentangling best practices for learning from preference feedback." Advances in neural information processing systems 37 (2024): 36602-36633.
+[3] Ivison, Hamish, et al. "Camels in a changing climate: Enhancing lm adaptation with tulu 2." arXiv preprint arXiv:2311.10702 (2023).
+[4] Tunstall, Lewis, et al. "Zephyr: Direct distillation of lm alignment." arXiv preprint arXiv:2310.16944 (2023).
+[5] Tang, Yunhao, et al. "Understanding the performance gap between online and offline alignment algorithms." arXiv preprint arXiv:2405.08448 (2024).
+[6] Xu, Shusheng, et al. "Is dpo superior to ppo for llm alignment? a comprehensive study." arXiv preprint arXiv:2404.10719 (2024).
+[7] Tajwar, Fahim, et al. "Preference fine-tuning of llms should leverage suboptimal, on-policy data." arXiv preprint arXiv:2404.14367 (2024).
+[8] Azar, Mohammad Gheshlaghi, et al. "A general theoretical paradigm to understand learning from human preferences." International Conference on Artificial Intelligence and Statistics. PMLR, 2024.
+[9] Lanchantin, Jack, et al. "Bridging Offline and Online Reinforcement Learning for LLMs." arXiv preprint arXiv:2506.21495 (2025).
+[10] Yuan, Weizhe, et al. "Self-rewarding language models." arXiv preprint arXiv:2401.10020 3 (2024).
+[11] Pang, Richard Yuanzhe, et al. "Iterative reasoning preference optimization." Advances in Neural Information Processing Systems 37 (2024): 116617-116637.
+[12] Shao, Zhihong, et al. "Deepseekmath: Pushing the limits of mathematical reasoning in open language models." arXiv preprint arXiv:2402.03300 (2024).
+[13] Mukobi, Gabriel, et al. "Superhf: Supervised iterative learning from human feedback." arXiv preprint arXiv:2310.16763 (2023).
+[14] Gulcehre, Caglar, et al. "Reinforced self-training (rest) for language modeling." arXiv preprint arXiv:2308.08998 (2023).
+[15] Hu, Jian, et al. "Aligning language models with offline learning from human feedback." arXiv preprint arXiv:2308.12050 (2023).
+[16] Lambert, Nathan, et al. "Tulu 3: Pushing frontiers in open language model post-training." arXiv preprint arXiv:2411.15124 (2024).
+[17] Ouyang, Long, et al. "Training language models to follow instructions with human feedback." Advances in neural information processing systems 35 (2022): 27730-27744.
+[18] Rafailov, Rafael, et al. "Direct preference optimization: Your language model is secretly a reward model." Advances in neural information processing systems 36 (2023): 53728-53741.
+[19] Ethayarajh, Kawin, et al. "Kto: Model alignment as prospect theoretic optimization." arXiv preprint arXiv:2402.01306 (2024).
+[20] Xu, Haoran, et al. "Contrastive preference optimization: Pushing the boundaries of llm performance in machine translation." arXiv preprint arXiv:2401.08417 (2024).
+[21] Huang, Shengyi, et al. "The n+ implementation details of rlhf with ppo: A case study on tl; dr summarization." arXiv preprint arXiv:2403.17031 (2024).
+
+1 이는 완성 전용 손실 콜레이터(completion-only loss collator)를 사용하여 달성할 수 있습니다.

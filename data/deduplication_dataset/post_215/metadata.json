@@ -1,0 +1,21 @@
+{
+  "post_id": "215",
+  "title": "Nate의 AI 스택(AI Stack): 내가 매일 사용하는 9가지 도구 + 나만의 것으로 만드는 6가지 프롬프트(prompt) + 자주 묻는 질문(FAQ)",
+  "base_word_count": 605,
+  "exact_30_update_wc": 634,
+  "exact_30_ground_truth_wc": 952,
+  "exact_30_overlap_ratio": 0.453,
+  "paraphrase_25_update_wc": 559,
+  "paraphrase_25_ground_truth_wc": 598,
+  "paraphrase_25_overlap_ratio": 1.013,
+  "fragment_20_update_wc": 502,
+  "fragment_20_ground_truth_wc": 545,
+  "fragment_20_overlap_ratio": 1.12,
+  "semantic_25_update_wc": 575,
+  "semantic_25_ground_truth_wc": 575,
+  "semantic_25_overlap_ratio": 1.052,
+  "mixed_real_update_wc": 545,
+  "mixed_real_ground_truth_wc": 545,
+  "mixed_real_overlap_ratio": 1.11,
+  "status": "generated"
+}

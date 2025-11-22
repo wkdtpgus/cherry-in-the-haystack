@@ -1,0 +1,21 @@
+{
+  "post_id": "055",
+  "title": "**평가를 위한 LLM 심사 모델 파인튜닝(finetuning)**",
+  "base_word_count": 11521,
+  "exact_30_update_wc": 4585,
+  "exact_30_ground_truth_wc": 10023,
+  "exact_30_overlap_ratio": 1.327,
+  "paraphrase_25_update_wc": 8935,
+  "paraphrase_25_ground_truth_wc": 4244,
+  "paraphrase_25_overlap_ratio": 1.814,
+  "fragment_20_update_wc": 7480,
+  "fragment_20_ground_truth_wc": 2753,
+  "fragment_20_overlap_ratio": 2.172,
+  "semantic_25_update_wc": 8873,
+  "semantic_25_ground_truth_wc": 8873,
+  "semantic_25_overlap_ratio": 1.298,
+  "mixed_real_update_wc": 9091,
+  "mixed_real_ground_truth_wc": 9091,
+  "mixed_real_overlap_ratio": 1.267,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "109",
+  "title": "**OpenAI Atlas: 훌륭했을 출시를 망칠 수 있는 하나의 치명적인 결함**",
+  "base_word_count": 235,
+  "exact_30_update_wc": 282,
+  "exact_30_ground_truth_wc": 389,
+  "exact_30_overlap_ratio": 0.454,
+  "paraphrase_25_update_wc": 316,
+  "paraphrase_25_ground_truth_wc": 346,
+  "paraphrase_25_overlap_ratio": 0.649,
+  "fragment_20_update_wc": 216,
+  "fragment_20_ground_truth_wc": 324,
+  "fragment_20_overlap_ratio": 0.588,
+  "semantic_25_update_wc": 621,
+  "semantic_25_ground_truth_wc": 621,
+  "semantic_25_overlap_ratio": 0.378,
+  "mixed_real_update_wc": 205,
+  "mixed_real_ground_truth_wc": 243,
+  "mixed_real_overlap_ratio": 0.961,
+  "status": "generated"
+}

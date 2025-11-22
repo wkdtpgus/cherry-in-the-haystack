@@ -1,0 +1,21 @@
+{
+  "post_id": "121",
+  "title": "**LWiAI 팟캐스트 #224 - OpenAI는 영리 기업이다! Cursor 2, Minimax M2, Udio 저작권**",
+  "base_word_count": 562,
+  "exact_30_update_wc": 731,
+  "exact_30_ground_truth_wc": 1039,
+  "exact_30_overlap_ratio": 0.347,
+  "paraphrase_25_update_wc": 760,
+  "paraphrase_25_ground_truth_wc": 760,
+  "paraphrase_25_overlap_ratio": 0.739,
+  "fragment_20_update_wc": 593,
+  "fragment_20_ground_truth_wc": 980,
+  "fragment_20_overlap_ratio": 0.295,
+  "semantic_25_update_wc": 692,
+  "semantic_25_ground_truth_wc": 692,
+  "semantic_25_overlap_ratio": 0.812,
+  "mixed_real_update_wc": 446,
+  "mixed_real_ground_truth_wc": 463,
+  "mixed_real_overlap_ratio": 1.222,
+  "status": "generated"
+}

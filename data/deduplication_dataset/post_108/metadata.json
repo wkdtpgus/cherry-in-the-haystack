@@ -1,0 +1,21 @@
+{
+  "post_id": "108",
+  "title": "**인공지능(AI) 기반 생산성의 순진성**",
+  "base_word_count": 251,
+  "exact_30_update_wc": 163,
+  "exact_30_ground_truth_wc": 318,
+  "exact_30_overlap_ratio": 0.589,
+  "paraphrase_25_update_wc": 408,
+  "paraphrase_25_ground_truth_wc": 408,
+  "paraphrase_25_overlap_ratio": 0.615,
+  "fragment_20_update_wc": 220,
+  "fragment_20_ground_truth_wc": 356,
+  "fragment_20_overlap_ratio": 0.523,
+  "semantic_25_update_wc": 438,
+  "semantic_25_ground_truth_wc": 438,
+  "semantic_25_overlap_ratio": 0.573,
+  "mixed_real_update_wc": 134,
+  "mixed_real_ground_truth_wc": 223,
+  "mixed_real_overlap_ratio": 1.209,
+  "status": "generated"
+}

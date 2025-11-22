@@ -1,0 +1,21 @@
+{
+  "post_id": "009",
+  "title": "LLM 추론(LLM reasoning)을 위한 강화 학습(reinforcement learning)의 현황",
+  "base_word_count": 8451,
+  "exact_30_update_wc": 4178,
+  "exact_30_ground_truth_wc": 7611,
+  "exact_30_overlap_ratio": 1.201,
+  "paraphrase_25_update_wc": 6865,
+  "paraphrase_25_ground_truth_wc": 6935,
+  "paraphrase_25_overlap_ratio": 1.221,
+  "fragment_20_update_wc": 6968,
+  "fragment_20_ground_truth_wc": 12984,
+  "fragment_20_overlap_ratio": 0.349,
+  "semantic_25_update_wc": 1054,
+  "semantic_25_ground_truth_wc": 7032,
+  "semantic_25_overlap_ratio": 2.346,
+  "mixed_real_update_wc": 6981,
+  "mixed_real_ground_truth_wc": 6981,
+  "mixed_real_overlap_ratio": 1.211,
+  "status": "generated"
+}

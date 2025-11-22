@@ -1,0 +1,21 @@
+{
+  "post_id": "139",
+  "title": "**The Gradient에 찾아온 몇 가지 변화**",
+  "base_word_count": 583,
+  "exact_30_update_wc": 413,
+  "exact_30_ground_truth_wc": 586,
+  "exact_30_overlap_ratio": 0.993,
+  "paraphrase_25_update_wc": 897,
+  "paraphrase_25_ground_truth_wc": 897,
+  "paraphrase_25_overlap_ratio": 0.65,
+  "fragment_20_update_wc": 567,
+  "fragment_20_ground_truth_wc": 752,
+  "fragment_20_overlap_ratio": 0.702,
+  "semantic_25_update_wc": 670,
+  "semantic_25_ground_truth_wc": 670,
+  "semantic_25_overlap_ratio": 0.87,
+  "mixed_real_update_wc": 535,
+  "mixed_real_ground_truth_wc": 539,
+  "mixed_real_overlap_ratio": 1.082,
+  "status": "generated"
+}

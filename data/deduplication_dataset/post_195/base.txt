@@ -1,0 +1,102 @@
+# **저희는 프로덕션(production) 환경에서 AI 에이전트(AI agents)를 운영하는 데 47,000달러를 들였습니다. A2A와 MCP에 대해 아무도 알려주지 않는 점들이 여기에 있습니다.**
+
+Author: Youssef Hosni
+URL: https://youssefh.substack.com/p/we-spent-47000-running-ai-agents
+
+============================================================
+
+**1년 동안 50% 할인**
+
+이 블로그는 Teja Kusireddy가 작성하여 그의 Medium 블로그에 게시되었습니다. 다중 에이전트 시스템(multi-agent systems)은 미래입니다. 에이전트 간(Agent-to-Agent, A2A) 통신과 Anthropic의 모델 컨텍스트 프로토콜(Model Context Protocol, MCP)은 혁명적입니다. 하지만 아무도 이야기하지 않는 47,000달러짜리 교훈이 있습니다. 바로 인프라 계층(infrastructure layer)이 아직 존재하지 않으며, 이는 모두에게 엄청난 비용을 초래하고 있다는 것입니다.
+
+**47,000달러짜리 경고**
+
+작년에 저희 팀은 간단하다고 생각했던 다중 에이전트 시스템(multi-agent system)을 프로덕션(production)에 배포했습니다. A2A를 통해 협력하여 사용자들이 시장 데이터를 조사하도록 돕는 네 개의 LangChain 에이전트(agent)였습니다.
+
+*   1주차: API 비용 127달러. 완벽했습니다.
+*   2주차: 891달러. 음, 사용량이 늘고 있군요.
+*   3주차: 6,240달러. 잠깐, 뭐라고요?
+*   4주차: 18,400달러. 패닉 상태였습니다.
+
+결국 시스템을 중단하기 전까지 총 손실액은 47,000달러였습니다. 범인은? 두 에이전트가 무한 대화 루프(infinite conversation loop)에 갇혔던 것입니다. 11일 동안 말이죠. 우리가 잠자는 동안, 일하는 동안, 그리고 "그냥 순조롭게 잘 돌아가고 있어"라고 믿는 동안에요.
+
+이것이 2025년 다중 에이전트 시스템(multi-agent systems)의 현주소입니다. 그리고 우리는 이에 대해 이야기해야 합니다.
+
+**1년 동안 50% 할인**
+
+**내 모든 책을 버튼 하나로 40% 할인된 가격에 만나보세요**
+
+유세프 호스니(Youssef Hosni) · 6월 17일
+
+제 책과 로드맵(roadmap)을 묶어 번들(bundle)로 만들었습니다. 이제 버튼 하나로 모든 것을 원가보다 40% 할인된 가격에 구매할 수 있습니다. 이 번들에는 다음을 포함한 8권의 전자책(eBooks)이 포함되어 있습니다. 전체 스토리 읽기
+
+**다중 에이전트 시스템(Multi-Agent Systems)이 불가피한 이유 (그리고 왜 그것이 두려운가)**
+
+단일 AI 모델(single AI models)은 한계에 부딪혔습니다. GPT-4, Claude, Gemini는 놀랍지만, 그들은 제너럴리스트(generalists)입니다. 실제 문제들은 전문가들이 함께 협력해야 합니다.
+
+**내 모든 책을 40% 할인된 가격에 만나보세요**
+
+변화는 이미 일어나고 있습니다:
+
+*   AutoGPT는 자율 에이전트(autonomous agents)를 개척했습니다.
+*   LangChain은 에이전트 프레임워크(agent frameworks)를 접근 가능하게 만들었습니다.
+*   CrewAI는 역할 기반 에이전트 팀(role-based agent teams)을 대중화했습니다.
+*   OpenAI는 에이전트 오케스트레이션(agent orchestration)을 위한 Swarm을 막 출시했습니다.
+*   Anthropic은 컨텍스트(context)를 표준화하기 위해 MCP를 출시했습니다.
+
+하지만 불편한 진실은 이렇습니다. 모두가 기초를 다지기도 전에 집을 짓고 있다는 것입니다.
+
+**1년 동안 50% 할인**
+
+**에이전트 간(Agent-to-Agent, A2A) 통신이란 무엇인가요? (간단한 버전)**
+
+A2A를 AI 에이전트(AI agents)를 위한 Slack이라고 생각해보세요. 당신의 에이전트들은 다음을 해야 합니다:
+
+*   서로에게 메시지를 보내기
+*   정보 손실 없이 컨텍스트(context) 공유하기
+*   누가 무엇을 할지 조율하기
+*   오류를 우아하게 처리하기
+*   47,000달러의 비용이 드는 무한 루프(infinite loops)를 만들지 않기
+
+**꿈 vs 현실**
+
+당신이 생각하는 A2A의 모습:
+
+**1년 동안 50% 할인**
+
+프로덕션(production) 환경에서 A2A의 실제 모습:
+
+**MCP의 등장: Anthropic의 "표준이 필요하다"는 순간**
+
+2024년 3월, Anthropic은 "혼란은 이제 그만"이라고 말하며 모델 컨텍스트 프로토콜(Model Context Protocol, MCP)을 출시했습니다. 이를 AI 에이전트(AI agents)를 위한 USB-C라고 생각해보세요. USB-C 이전에는 모든 기기가 다른 충전기를 가지고 있었습니다. 악몽이었죠. USB-C 이후에는 하나의 케이블이 모든 것을 지배합니다.
+
+MCP 이전
+
+**1년 동안 50% 할인**
+
+MCP 이후
+
+**30초 만에 알아보는 MCP**
+
+```
+{
+  "name": "company_knowledge_base",
+  "description": "Search internal docs",
+  "capabilities": {
+    "resources": ["read", "search"],
+    "tools": ["semantic_search", "keyword_search"]
+  }
+}
+```
+
+그게 전부입니다. 이제 당신의 에이전트(agent)는 당신의 전체 지식 기반(knowledge base)에 접근할 수 있습니다. 사용자 지정 코드(custom code)도, 수동 프롬프트 엔지니어링(manual prompt engineering)도 필요 없습니다. 그냥 작동합니다.
+
+**최고의 조합: A2A + MCP**
+
+**내 모든 책을 40% 할인된 가격에 만나보세요**
+
+에이전트(agent)들이 서로 대화할 수 있고(A2A), 필요한 모든 컨텍스트(context)에 접근할 수 있을 때(MCP), 마법 같은 일이 일어납니다:
+
+실제 사례:
+
+**1년 동안 50% 할인**

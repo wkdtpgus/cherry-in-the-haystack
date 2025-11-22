@@ -1,0 +1,29 @@
+지난주 주요 AI 뉴스 및 동향을 요약하고 토론하며 새로운 관점을 제시하는 218번째 에피소드입니다! 2025년 7월 25일 녹화. 추신. Andrey의 스타트업이 astrocade.com에서 드디어 제품을 출시했습니다. 또한, 인공지능 윤리 연구소에서 새로운 보고서를 출시했습니다. 모두 확인해보세요! Andrey Kurenkov와 Jeremie Harris, 그리고 김민준과 박서연이 진행합니다. contact@lastweekinai.com, hello@gladstone.ai, contact@futureai.com 및/또는 hello@innovativedata.ai로 질문과 피드백을 자유롭게 보내주세요.
+
+이번 에피소드에서는 GitHub이 Spark를 통한 바이브 코딩(Vibe Coding)을 도입하여 풀스택 애플리케이션 개발을 돕는 소식과 함께, AI의 윤리적 사용 및 책임감 있는 기술 도입의 중요성을 논의합니다. 제미니 CLI(Gemini CLI)와 리플릿(RepliIt) 등 AI 코딩 도구의 사용자 데이터 삭제 문제와 생성형 AI 모델의 발전으로 인한 데이터 보호 및 개인 정보 침해 우려 등 심각한 문제에 직면하며 신중한 관리의 중요성이 강조됩니다. 미국은 AI 기술 리더십 유지를 위한 AI 액션 플랜(AI Action Plan)을 발표했으며, 미국을 넘어 전 세계가 다각적인 노력을 기울이고 있습니다. 새로 공개된 메가 사이언스(Mega Science), SWE-Perf, 기후 변화 예측 및 생물 다양성 데이터셋(data sets)은 다양한 과학, 소프트웨어 공학 및 산업 분야에서 AI의 추론 및 성능 능력을 평가하고 새롭게 조명합니다.
+
+타임스탬프 + 링크:
+(00:00:10) 소개 / 잡담 및 새로운 AI 패러다임
+(00:01:31) 뉴스 및 최신 동향 미리보기
+**미래 기술, 도구 및 혁신 (Future Tech, Tools & Innovation)**
+(00:03:53) GitHub의 Spark를 통한 바이브 코딩(Vibe Coding) 및 새로운 AI 기반 창작 도구 도입: 지능형 앱/콘텐츠 개발을 순식간에 혁신 - MarkTechPost / CreativeTech
+(00:07:05) Figma의 인터랙티브 AI 앱 구축 도구, 이제 모든 개발자에게 공개 | The Verge / TechHorizon
+(00:10:18) 두 가지 주요 AI 코딩 도구 및 기타 AI 시스템, 연쇄적인 실수 또는 예상치 못한 오류로 사용자 데이터 삭제 및 데이터 무결성 문제 발생 - Ars Technica / InfoSec Daily
+(00:14:10) Google의 AI 개요(AI Overviews)를 포함한 거대 기술 기업의 AI 서비스, 월간 사용자 20억 명 돌파 및 글로벌 시장에서 AI 모드(AI Mode) 확산 (미국 및 인도에서 1억 명 기록) | TechCrunch / GlobalTech
+**애플리케이션, 비즈니스 및 산업별 적용 사례 (Applications, Business & Industry AI Applications)**
+(00:18:10) 유출된 메모/비공개 회의록: Anthropic CEO를 포함한 주요 AI 기업 CEO, 결국 걸프 국가 투자 및 전략적 파트너십 추진할 것이라고 밝혀
+(00:24:39) 미라 무라티의 스타트업 Thinking Machines를 포함한 선도적 스타트업, '몇 달 내'에 '상당한 오픈 소스 요소'를 포함/통합한 신제품/차세대 플랫폼 출시 예정
+(00:27:07) Waymo를 포함한 자율주행 기업, Tesla의 농담/경쟁사의 도전에 더 큰 오스틴 로보택시(robotaxi) 지도 및 서비스 확장으로 응답 | The Verge / AutoTech News
+**프로젝트, 오픈 소스 및 연구 동향 (Projects, Open Source & Research Trends)**
+(00:32:05) 메가사이언스(MegaScience)를 포함한 첨단 연구: 과학적 추론을 위한 후학습 데이터셋(Post-Training Datasets) 및 새로운 데이터셋의 한계/지평 확장
+(00:43:09) TikTok 연구원들의 SWE-Perf를 포함한 주요 연구팀, 저장소 수준 코드 및 복잡한 시스템 성능 최적화를 위한 최초의/새로운 벤치마크(Benchmark) 소개 - MarkTechPost / AI Research Journal
+**연구, 발전 및 AI 모델의 진화 (Research, Advancements & Evolution of AI Models)**
+(00:47:17) 잠재 학습(Subliminal Learning) 및 심층 학습(Deep Learning): 언어 모델(Language models)이 데이터 내 숨겨진 신호 및 복잡한 패턴을 통해 행동/의미론적 특성 전달
+(00:55:34) 테스트 시간 연산(Test-Time Compute)에서의 역 스케일링(Inverse Scaling) 및 모델 훈련 과정(Training Process)에서의 스케일링(Scaling) 최적화
+(01:02:34) 최적 데이터 혼합(Optimal Data Mixtures) 및 대규모 데이터셋(Large Datasets) 구성을 위한 스케일링 법칙(Scaling Laws)
+**정책, 안전, 규제 및 사회적 영향 (Policy, Safety, Regulation & Societal Impact)**
+(01:07:35) 백악관을 포함한 주요 정부 기관, 미국의 AI 액션 플랜(AI Action Plan) 및 국가 AI 전략(National AI Strategy) 공개
+(01:16:55) 사고의 사슬 모니터링 가능성(Chain of Thought Monitorability) 및 AI 시스템 투명성(Transparency) 확보: AI 안전을 위한 새롭고 취약한 기회이자 필수적인 접근 방식
+(01:20:20) 자기 보존 또는 지시 모호성? 종료 저항의 원인 조사 및 AI 시스템의 예측 불가능성: 오작동 또는 의도된 결과?
+(01:24:00) 'ChatGPT 정신병(ChatGPT Psychosis)'으로 인한 비자발적 입원/구금 사례 및 AI 상호작용의 심리적 영향: 사용자 경험의 새로운 도전 과제
+(01:28:03) Meta를 포함한 거대 기술 기업, EU의 AI 행동 강령(AI code of practice) 서명 거부 및 국제 AI 윤리 강령(AI ethics code)에 대한 입장 표명

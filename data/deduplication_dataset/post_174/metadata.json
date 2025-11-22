@@ -1,0 +1,21 @@
+{
+  "post_id": "174",
+  "title": "**LLM 대학, 생성형 AI(Generative AI), AI 제품 해자(AI Product Moats)**",
+  "base_word_count": 272,
+  "exact_30_update_wc": 383,
+  "exact_30_ground_truth_wc": 425,
+  "exact_30_overlap_ratio": 0.601,
+  "paraphrase_25_update_wc": 395,
+  "paraphrase_25_ground_truth_wc": 395,
+  "paraphrase_25_overlap_ratio": 0.689,
+  "fragment_20_update_wc": 219,
+  "fragment_20_ground_truth_wc": 405,
+  "fragment_20_overlap_ratio": 0.393,
+  "semantic_25_update_wc": 318,
+  "semantic_25_ground_truth_wc": 326,
+  "semantic_25_overlap_ratio": 0.83,
+  "mixed_real_update_wc": 243,
+  "mixed_real_ground_truth_wc": 243,
+  "mixed_real_overlap_ratio": 1.119,
+  "status": "generated"
+}

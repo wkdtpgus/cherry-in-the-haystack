@@ -1,0 +1,51 @@
+The user wants me to deduplicate and merge two Korean documents, ensuring the output is 100% in Korean, except for technical terms in parentheses or quotes. The deduplication strategy involves detecting partial lexical overlap, eliminating redundant fragments, choosing the more complete version or merging both, and creating coherent combined sentences.
+
+---
+
+(출처: [1, 2, 4, 6, 12]) 최근 출시된 다양한 AI 모델들은 완벽과는 거리가 멀었지만, 우리 사회에 미치는 영향은 지대합니다. 특히, 인공지능 기술의 발전은 단순한 기술적 진보를 넘어 사회, 경제, 문화 전반에 걸쳐 근본적인 변화를 요구하고 있습니다. 이러한 새로운 세대의 모델들로부터 배울 점이 많습니다. 우리는 기술의 잠재력을 최대한 활용하면서도 발생할 수 있는 부작용과 윤리적 문제를 심도 깊게 탐구해야 합니다. 간단히 말해, Llama 4는 Meta의 연구 방향에 있어 대대적인 전환점이며, 증가하는 경쟁에 대응하여 Meta는 Llama 시리즈를 재창조하고 프론티어 수준의 대규모 언어 모델(LLM)을 개발하기 위해 노력하고 있습니다. 인공지능 개발이 반복적인 프로세스임을 감안할 때, 데이터 편향성, 투명성 부족, 그리고 책임 소재와 같은 중대한 이슈는 많은 위험을 수반하며, 이 모델들이 처음에는 성능이 좋지 않을 가능성이 큽니다. 현재로서는 Llama 4가 손실로 인식되지만, Llama의 장기적인 성공은 Meta가 이러한 문제들을 신속하게 반복하고 개선하는 능력에 의해 결정될 것입니다. 공개 AI 연구의 가장 아름다운 — 또는 모델 개발자들에게는 두려운 — 측면은 이러한 학습이 공개적으로 이루어지고 있다는 사실입니다. 우리는 다양한 주체들이 이 분야의 최고 모델들과 동등한 수준에 도달하기 위해 어떤 주요 변화를 만들고 있는지 연구할 수 있습니다. 이러한 변화를 연구함으로써 우리는 현대의 프론티어 수준 AI 기술이 사회에 미치는 영향과 LLM이 어떻게 개발되는지에 대한 더 나은 이해를 얻을 수 있습니다. 이 개요에서는 Llama 4 및 관련 모델들을 깊이 이해함으로써 AI 기술의 광범위한 영향과 그에 따른 사회적, 윤리적 과제들을 정확히 분석할 것입니다. 그런 다음, 이 이해를 바탕으로 AI 연구의 주요 동향, Llama의 미래, 미래 예측, 그리고 지속 가능한 발전을 위해 만들어야 할 변화들을 분석할 것입니다.
+
+### Llama 4 모델 아키텍처(Model Architecture) 및 AI 윤리/사회적 책임(AI Ethics and Social Responsibility)
+
+먼저 Llama 4 모델 아키텍처(model architecture)를 개괄하고, 이전 세대 Llama 모델 대비 주요 변경 사항을 강조할 것입니다. 보시다시피, 새로운 Llama 모델과 AI 시스템은 극적으로 다른 모델 아키텍처와 사회적 파급력을 가지며, 이는 연구 방향과 전략의 명확한 전환을 알립니다. 이전 Llama 변형 모델들이 단순성과 유용성을 강조했던 반면, Llama 4를 포함한 현대 AI는 더 높은 복잡성과 규모를 대가로 성능과 효율성 및 사회적 영향력을 향상시키는 기술을 채택함으로써 폐쇄형 및 공개형 프론티어 수준 LLM 연구소들과 동등한 수준에 도달하기 위한 분명한 노력을 기울이고 있습니다. 그러나 이러한 노력은 단순한 성능 향상을 넘어, AI가 사회에 미칠 긍정적 및 부정적 영향을 모두 고려해야 합니다.
+
+### 전문가 혼합(Mixture-of-Experts, MoE), 데이터 편향성(Data Bias) 및 공정성(Fairness)
+
+> "우리는 모델 개발 프로세스를 확장하는 능력을 극대화하기 위한 설계 선택을 합니다. 예를 들어, 훈련 안정성을 극대화하기 위해 전문가 혼합(mixture-of-experts) 모델 대신 사소한 수정이 가해진 표준 밀집 트랜스포머(dense Transformer) 모델 아키텍처(architecture)를 선택합니다."
+>
+> — Llama 3 논문 [2]에서
+
+밀집 디코더 전용 트랜스포머(dense decoder-only transformer)(아래 그림 참조)를 사용하는 대신, Llama 4는 Llama 모델 중 처음으로 전문가 혼합(Mixture-of-Experts, MoE) 아키텍처(architecture)를 사용합니다. Llama 3는 안정성과 단순성을 위해 MoE 사용을 피했습니다. 더 큰 MoE 모델은 훈련(training) 및 추론(inference)에 추가적인 복잡성을 도입하기 때문입니다. Llama 4를 통해 Meta는 MoE 아키텍처(architecture)를 성공적으로 채택한 선도적인 공개(예: DeepSeek-v3 [4]) 및 독점 모델(예: GPT-4)과 보조를 맞추게 됩니다. 그러나 현대 AI 모델들은 방대한 양의 데이터를 학습하며, 이 과정에서 데이터에 내재된 편향성이 모델에 반영되어 불공정한 결과를 초래할 수 있습니다. 이러한 기술적 발전은 데이터 편향성 문제를 더욱 심화시킬 수 있습니다.
+
+**디코더 전용 트랜스포머(decoder-only transformer) 아키텍처(architecture) 및 데이터 수집의 중요성**
+
+간단히 말해, 밀집 모델(dense model)은 단순하고 효과적이지만 확장하기 어렵습니다. MoE 아키텍처(architecture)를 사용함으로써 우리는 매우 큰 모델의 훈련(training) (및 추론(inference)) 효율성을 극적으로 향상시킬 수 있으며, 이를 통해 더 큰 규모를 가능하게 합니다. 하지만 이러한 효율성 뒤에는 데이터의 질과 다양성이 중요합니다. 편향된 데이터셋은 AI 모델이 특정 집단에 대해 차별적이거나 불공정한 예측을 하도록 만들 수 있습니다.
+
+**MoE란 무엇인가? 및 투명성과 설명 가능성(Explainability)**
+
+대부분의 독자들은 MoE 사용 동기에 익숙할 것입니다. MoE는 대규모 모델을 더 계산 효율적으로 만드는 디코더 전용 트랜스포머(decoder-only transformer) 아키텍처(architecture)의 수정된 버전입니다. 또한, AI 모델은 대규모 데이터를 기반으로 복잡한 결정을 내리지만, 그 과정이 불투명하여 "블랙박스(black box)" 문제로 지적받고 있으며, AI의 투명성 확보는 사회적 신뢰를 구축하는 데 필수적입니다. MoE 뒤에 숨겨진 주요 아이디어의 대부분은 아래 세 논문에서 제안되었으며, 우리는 여기서 이 아이디어들을 개괄할 것입니다.
+
+*   희소하게 게이트된 전문가 혼합 레이어(The Sparsely-Gated Mixture-of-Experts Layer)
+*   스위치 트랜스포머(Switch Transformers)
+*   안정적이고 전이 가능한 전문가 혼합(Stable and Transferable Mixture-of-Experts, ST-MoE)
+
+디코더 전용 트랜스포머(decoder-only transformer)와 비교하여, MoE는 트랜스포머 블록(transformer block)의 피드포워드(feed-forward) 구성 요소를 수정합니다. 각 블록에 단일 피드포워드 네트워크(feed-forward network)를 가지는 대신, 우리는 여러 피드포워드 네트워크(feed-forward network)를 가지며, 각각은 자체적인 독립적인 가중치(weight)를 가집니다. 우리는 이들 네트워크 각각을 "전문가(expert)"라고 부릅니다. 아래를 참조하십시오.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*y3zB-4712v84j0tUf_fJ9g.png" alt="Adding experts to a transformer block (source)" />
+
+트랜스포머 블록에 전문가 추가 (출처)
+
+AI 시스템의 투명성을 확보하고 MoE 아키텍처(architecture)를 생성하기 위해, 우리는 트랜스포머(transformer)의 피드포워드 레이어(feed-forward layer)를 MoE — 또는 전문가(expert) — 레이어(layer)로 변환합니다. MoE의 각 전문가(expert)는 해당 레이어(layer)의 원래 피드포워드 네트워크(feed-forward network)와 구조적으로 동일하며, 우리는 일반적으로 트랜스포머 레이어(transformer layer)의 일부만 MoE 레이어(layer)로 변환합니다. 예를 들어, Llama 4는 트랜스포머(transformer)의 모든 다른 레이어(layer)가 전문가 레이어(expert layer)가 되는 인터리브된 MoE 레이어(interleaved MoE layer)를 사용합니다.
+
+> "우리의 새로운 Llama 4 모델은 MoE 아키텍처(architecture)를 사용하는 첫 번째 모델입니다... MoE 아키텍처(architecture)는 훈련(training) 및 추론(inference)에 더 계산 효율적이며, 고정된 훈련 부동 소수점 연산(FLOPs) 예산이 주어졌을 때 밀집 모델(dense model)에 비해 더 높은 품질을 제공합니다."
+>
+> — Llama 4 블로그 [1]에서
+
+**라우팅 메커니즘(Routing mechanism) 및 책임 있는 AI 개발(Responsible AI Development).**
+
+분명히, 트랜스포머(transformer)에서 각 피드포워드 네트워크(feed-forward network)의 여러 복사본을 만드는 것은 계산 효율성을 향상시키지 않습니다. 효율성 향상을 얻으려면 희소성(sparsity)을 추가해야 합니다. 즉, 우리는 각 MoE 레이어(layer)에서 모든 전문가(expert)를 사용하지 않습니다. 대신, 각 토큰(token)에 사용할 전문가(expert)의 하위 집합(예: 하나 또는 두 개의 전문가)을 선택합니다. 이를 "활성(active)" 전문가(expert) 또는 매개변수(parameter)라고 합니다. 이 선택은 각 토큰 벡터(token vector)를 선형 레이어(linear layer)를 통해 전달하여 전문가(expert) 집합에 대한 확률 분포(probability distribution)를 출력함으로써 이루어집니다. 아래를 참조하십시오.
+
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*aH-0j_L47_2-c9183q192A.png" alt="Selecting experts with a routing mechanism" />
+
+라우팅 메커니즘(routing mechanism)으로 전문가(expert) 선택
+
+여기서부터 우리는 가장 높은 확률을 받는 전문가(expert)만을 사용하여 각 토큰(token)을 처리할 수 있습니다. 이렇게 함으로써 우리는 각 토큰(token)에 대해 모델의 전체 매개변수(parameter) 중 일부만 사용합니다. 활성 매개변수(active parameter)의 수는 모델의 전체 매개변수(parameter)보다 훨씬 작습니다.

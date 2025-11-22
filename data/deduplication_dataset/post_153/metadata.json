@@ -1,0 +1,21 @@
+{
+  "post_id": "153",
+  "title": "**인공 일반 지능(AGI)은 이정표가 아니다**",
+  "base_word_count": 4875,
+  "exact_30_update_wc": 4421,
+  "exact_30_ground_truth_wc": 4422,
+  "exact_30_overlap_ratio": 1.102,
+  "paraphrase_25_update_wc": 4616,
+  "paraphrase_25_ground_truth_wc": 4620,
+  "paraphrase_25_overlap_ratio": 1.055,
+  "fragment_20_update_wc": 2815,
+  "fragment_20_ground_truth_wc": 3982,
+  "fragment_20_overlap_ratio": 1.317,
+  "semantic_25_update_wc": 5452,
+  "semantic_25_ground_truth_wc": 5451,
+  "semantic_25_overlap_ratio": 0.894,
+  "mixed_real_update_wc": 3783,
+  "mixed_real_ground_truth_wc": 3783,
+  "mixed_real_overlap_ratio": 1.289,
+  "status": "generated"
+}

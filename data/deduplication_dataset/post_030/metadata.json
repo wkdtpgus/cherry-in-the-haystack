@@ -1,0 +1,21 @@
+{
+  "post_id": "030",
+  "title": "**AI의 성공적인 구현: 리더십, 랩, 그리고 대중**",
+  "base_word_count": 2890,
+  "exact_30_update_wc": 2917,
+  "exact_30_ground_truth_wc": 2917,
+  "exact_30_overlap_ratio": 0.991,
+  "paraphrase_25_update_wc": 2656,
+  "paraphrase_25_ground_truth_wc": 2656,
+  "paraphrase_25_overlap_ratio": 1.088,
+  "fragment_20_update_wc": 2260,
+  "fragment_20_ground_truth_wc": 2436,
+  "fragment_20_overlap_ratio": 1.201,
+  "semantic_25_update_wc": 3203,
+  "semantic_25_ground_truth_wc": 3204,
+  "semantic_25_overlap_ratio": 0.902,
+  "mixed_real_update_wc": 2402,
+  "mixed_real_ground_truth_wc": 2402,
+  "mixed_real_overlap_ratio": 1.203,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "149",
+  "title": "**업데이트 제82호: 인공지능(AI) 소송 및 SOPHON**",
+  "base_word_count": 3137,
+  "exact_30_update_wc": 2341,
+  "exact_30_ground_truth_wc": 2223,
+  "exact_30_overlap_ratio": 1.39,
+  "paraphrase_25_update_wc": 2548,
+  "paraphrase_25_ground_truth_wc": 3198,
+  "paraphrase_25_overlap_ratio": 0.976,
+  "fragment_20_update_wc": 1871,
+  "fragment_20_ground_truth_wc": 4099,
+  "fragment_20_overlap_ratio": 0.486,
+  "semantic_25_update_wc": 3098,
+  "semantic_25_ground_truth_wc": 3111,
+  "semantic_25_overlap_ratio": 1.008,
+  "mixed_real_update_wc": 2689,
+  "mixed_real_ground_truth_wc": 2713,
+  "mixed_real_overlap_ratio": 1.158,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "064",
+  "title": "🥇 **이번 주 주요 AI 논문**",
+  "base_word_count": 1935,
+  "exact_30_update_wc": 1706,
+  "exact_30_ground_truth_wc": 2421,
+  "exact_30_overlap_ratio": 0.715,
+  "paraphrase_25_update_wc": 3347,
+  "paraphrase_25_ground_truth_wc": 3341,
+  "paraphrase_25_overlap_ratio": 0.58,
+  "fragment_20_update_wc": 1488,
+  "fragment_20_ground_truth_wc": 2678,
+  "fragment_20_overlap_ratio": 0.501,
+  "semantic_25_update_wc": 3066,
+  "semantic_25_ground_truth_wc": 3066,
+  "semantic_25_overlap_ratio": 0.631,
+  "mixed_real_update_wc": 2443,
+  "mixed_real_ground_truth_wc": 2443,
+  "mixed_real_overlap_ratio": 0.792,
+  "status": "generated"
+}

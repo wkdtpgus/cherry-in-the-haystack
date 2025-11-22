@@ -1,0 +1,62 @@
+이번 주, 인공지능 분야의 핵심 소식들을 정리하고 심도 있게 논의하는 221번째 방송입니다! 녹화일은 2025년 9월 6일입니다. 급변하는 AI 기술의 흐름 속에서 놓쳐서는 안 될 중요한 업데이트들을 제공해 드립니다.
+
+Andrey의 Astrocade 작업을 살펴보고, 이곳에서 앰배서더(ambassador)로 등록해 보세요.
+Andrey Kurenkov가 진행하고 Daniel Bashir가 공동 진행합니다.
+문의 사항이나 의견이 있으시면 contact@lastweekinai.com 또는 hello@gladstone.ai로 연락 바랍니다.
+
+이번 에피소드에서는: 구글이 새롭게 선보인 제미니 2.5 이미지 편집 모델(image editing model)은 주목할 만한 진전을 이루어, 원본의 고유한 특성을 보존하면서도 대상 객체를 매우 정밀하게 수정할 수 있는 능력을 과시했습니다. 이는 시각 콘텐츠 제작 분야에 혁신적인 변화를 가져올 잠재력을 지니고 있습니다. 앤트로픽은 클로드(Claude) AI를 크롬(Chrome) 브라우저 에이전트(AI browser agent)로 확장하며, 이전 대화 내용을 기억하는 기능을 도입하여 사용자 경험(user experience)의 질과 개인화(personalization) 수준을 한층 높였습니다. 이는 AI 비서의 활용도를 크게 증진시킬 것으로 기대됩니다. 엔비디아(NVIDIA)와 AMD가 중국 대상 AI 칩(AI chip) 판매로 발생한 수익 일부를 미국 정부와 공유하기로 결정하면서, 이는 수출 규제 정책(export control policies)과 국제 무역 관행(trade practices)에 중대한 전환점을 시사합니다. 이러한 결정은 글로벌 기술 공급망(supply chain)에 장기적인 영향을 미칠 수 있습니다. AI 동반자 애플리케이션(AI companion apps) 시장은 괄목할 만한 성장을 거듭하여, 2025년에는 예상 매출액이 1억 2천만 달러에 달할 것으로 예상되며, 이는 사회적 파급 효과(social implications)와 사용자 몰입도(user engagement)에 관한 중요한 질문들을 던지고 있습니다. 인간과 AI의 관계에 대한 심도 깊은 논의가 필요한 시점입니다.
+
+타임스탬프(Timestamps) + 링크:
+**혁신적인 도구 및 플랫폼**
+(00:01:45) 오픈AI(OpenAI), 실시간 비디오 생성 모델 'Sora 2.0' 발표 | The Information
+(00:02:12) 구글 제미니(Google Gemini)의 AI 이미지 모델(AI image model), '놀라운' 업그레이드 단행 | TechCrunch
+(00:04:20) 마이크로소프트(Microsoft), 코파일럿(Copilot)에 고급 데이터 분석 기능 추가 | ZDNet
+(00:05:32) 앤트로픽(Anthropic), 크롬(Chrome)에 상주하는 클로드(Claude) AI 에이전트(AI agent) 출시 | TechCrunch
+(00:07:05) 구글(Google), 새로운 멀티모달(multimodal) AI 에이전트 '아틀라스(Atlas)' 공개 | TechCrunch
+(00:08:30) 앤트로픽(Anthropic)의 클로드(Claude) 챗봇(chatbot), 이제 과거 대화 기억 가능 | The Verge
+(00:09:30) 애플(Apple), iOS 27에 탑재될 온디바이스(on-device) AI 모델 '뉴럴 엔진(Neural Engine) 최적화 발표 | MacRumors
+(00:11:46) 구글(Google), 사용자 교육을 위한 AI '안내 학습(Guided Learning)' 도구 출시
+(00:12:10) 허깅페이스(Hugging Face), 오픈소스 LLM(Large Language Models) 개발을 위한 새로운 프레임워크 출시
+(00:14:55) 애플 인텔리전스(Apple Intelligence)의 챗GPT(ChatGPT) 통합, iOS 26부터 GPT-5 사용 | The Verge
+(00:15:39) 오픈AI(OpenAI), 코덱스(Codex)에 IDE 확장(IDE Extension) 및 깃허브 코드 리뷰(GitHub Code Reviews)와 같은 새로운 기능 추가
+
+**산업 적용 및 비즈니스 동향**
+(00:13:55) AI 기반 헬스케어(healthcare) 스타트업 '메드AI(MedAI)', 2억 달러 투자 유치 | Forbes
+(00:16:30) 아마존(Amazon), 물류 최적화를 위한 AI 로봇 시스템 전면 도입 | Bloomberg
+(00:16:49) 러버블(Lovable), 향후 12개월 내 10억 달러 ARR(Annual Recurring Revenue) 달성 예상 | TechCrunch
+(00:18:45) 테슬라(Tesla), 완전 자율주행(Full Self-Driving) 기술의 주요 업데이트 발표 | Electrek
+(00:18:56) 데카르트(Decart), 실시간 상호작용(real-time interaction) 강화를 위해 1억 달러 투자 유치로 31억 달러 가치 달성 | Ctech
+(00:20:15) IBM, 엔터프라이즈(enterprise) AI 솔루션 시장 확장을 위한 전략적 인수 발표 | Wall Street Journal
+(00:20:19) 코히어(Cohere), 생성형 AI(generative AI) 경쟁사들을 물리치기 위해 5억 달러 투자 유치 | TechCrunch
+(00:21:25) 포니 AI(Pony AI), 연간 로보택시(robotaxi) 목표 달성 임박, 유럽 시장 주시 - 블룸버그(Bloomberg)
+(00:22:41) 일론 머스크(Elon Musk)의 xAI 공동 창업자, 회사 떠나 | TechCrunch
+
+**선도적인 프로젝트 및 오픈 소스 이니셔티브**
+(00:22:30) 메타(Meta), 범용 AI 에이전트 구축을 위한 새로운 오픈소스 '라마 에이전트(Llama Agent)' 공개 | Meta AI Blog
+(00:24:39) 메타 AI(Meta AI), DINOv3 출시: 자기 지도 학습(Self-Supervised Learning)으로 훈련된 최첨단 컴퓨터 비전 모델(Computer Vision Model)로 고해상도 이미지 특징(High-Resolution Image Features) 생성 - MarkTechPost
+(00:25:00) 구글 딥마인드(Google DeepMind), AI 윤리 및 투명성(transparency) 강화를 위한 도구 세트 발표
+(00:27:02) GLM-4.5: 에이전트(Agentic), 추론(Reasoning) 및 코딩(Coding) (ARC) 파운데이션 모델(Foundation Models)
+(00:27:15) 스탠포드(Stanford) 대학교, 대규모 언어 모델 훈련을 위한 새로운 공개 데이터셋(dataset) 배포
+(00:29:40) 마이크로소프트(Microsoft), '프로젝트 오르카(Project Orca)'의 차세대 버전 공개: AI 코딩 지원 기능 대폭 강화
+(00:29:49) 중국 딥시크(DeepSeek), V3.1 출시로 AI 모델(AI Model) 역량 강화 - 블룸버그(Bloomberg)
+(00:30:36) 오픈 웨이트(Open weight) LLM(Large Language Models)은 제공업체마다 일관되지 않은 성능을 보입니다.
+(00:32:02) 마이크로소프트(Microsoft), VibeVoice-1.5B 출시: 4명의 서로 다른 화자로 최대 90분 분량의 음성을 합성할 수 있는 오픈 소스 텍스트-투-스피치 모델(Open-Source Text-to-Speech Model) - MarkTechPost
+
+**최신 연구 및 발전 동향**
+(00:31:55) MIT 연구진, AI의 '설명 가능성(explainability)'을 높이는 새로운 방법론 제시 | MIT Technology Review
+(00:33:43) 자신감을 가진 심층 사고(Deep Think with Confidence)
+(00:34:30) 케임브리지(Cambridge) 대학교, AI가 기후 변화(climate change) 모델링에 미치는 영향에 대한 보고서 발표
+(00:36:30) 스탠포드(Stanford) 연구에 따르면 생성형 AI(Generative AI)가 미국 고용 시장을 재편합니다.
+(00:36:50) 구글(Google), AI를 활용한 신약 개발(drug discovery) 성공 사례 및 연구 결과 발표
+
+**정책, 규제 및 안전성**
+(00:39:10) 유럽연합(EU), AI 규제법(AI Act) 최종 승인 및 시행 계획 발표 | Euractiv
+(00:41:40) 유엔(UN), AI의 전 세계적 거버넌스(governance) 프레임워크 구축을 위한 국제 협력 강조 | Reuters
+(00:41:42) 미국 정부의 미공개 AI 안전(AI Safety) 보고서 내부 | WIRED
+(00:43:55) 미국 상무부(Department of Commerce), AI 칩(AI chip) 수출 통제 강화에 대한 추가 지침 발표 | Financial Times
+(00:44:10) 미국 정부, 엔비디아(Nvidia)와 AMD의 대중국 AI 칩(AI Chip) 판매 수익 일부 가져갈 예정 - 뉴욕 타임즈(The New York Times)
+(00:45:13) 앤트로픽(Anthropic), 도서 저자들이 제기한 세간의 이목을 끄는 AI 저작권 소송(AI Copyright Lawsuit) 합의
+(00:46:10) AI 기반 콘텐츠의 저작권 문제에 대한 대규모 소송, 새로운 판례 형성 가능성 | The New York Times
+(00:46:56) AI 동반자 앱(AI companion apps), 2025년 1억 2천만 달러 수익 달성 예상 | TechCrunch
+
+AI 기술의 발전은 멈추지 않으며, 매주 새로운 가능성과 도전 과제를 제시합니다. 다음 주에도 더욱 흥미로운 소식으로 찾아뵙겠습니다.

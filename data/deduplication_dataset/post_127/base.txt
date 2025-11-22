@@ -1,0 +1,40 @@
+# **LWiAI 팟캐스트 #221 - OpenAI 코덱, 크롬의 제미니, K2-Think, SB 53**
+
+Author: Last Week in AI
+URL: https://lastweekin.ai/p/lwiai-podcast-221-openai-codex-gemini
+
+============================================================
+
+지난주 주요 AI 뉴스를 요약하고 토론하는 저희의 221번째 에피소드입니다!
+녹화일: 2025년 9월 19일
+진행: Andrey Kurenkov, 공동 진행: Michelle Lee
+질문이나 피드백이 있으시면 contact@lastweekinai.com 및/또는 hello@gladstone.ai로 이메일을 보내주세요.
+
+이번 에피소드에서는: OpenAI가 GPT-5와 통합된 새로운 버전의 코덱스(Codex)를 출시하여 코딩 기능을 강화하고 클라우드 코드(Cloud Code)와 같은 다른 AI 코딩 도구와 경쟁하는 것을 목표로 합니다. 로봇 공학(robotics) 분야의 주요 업데이트로는 Figure AI와 중국의 Unitree와 같은 회사들의 휴머노이드 로봇(humanoid robot) 신규 사업, 그리고 테슬라(Tesla)와 아마존(Amazon)의 Zoox의 로보택시(robotaxi) 서비스 확장이 포함됩니다. 구글 딥마인드(Google DeepMind)의 로봇 공학(robotics)을 위한 자체 개선 파운데이션 모델(self-improving foundation model)과 다양한 물리 시스템(physical system)에 걸쳐 일반화(generalizing)하는 것을 목표로 하는 물리 파운데이션 모델(physics foundation model)을 포함한 새로운 오픈 소스 모델(open-source model) 및 연구 발전이 논의되었습니다. 워너 브라더스(Warner Bros.)가 미드저니(MidJourney)를 저작권 침해로 고소하고 롤링 스톤(Rolling Stone)이 AI 생성 콘텐츠 요약에 대해 구글(Google)을 고소하는 등 AI 분야에서 법적 분쟁이 계속해서 불거지고 있으며, 이는 AI 거버넌스(governance) 및 윤리(ethics)의 과제를 부각시킵니다.
+
+타임스탬프:
+(00:00:10) 소개 / 잡담 도구 및 앱
+(00:02:33) OpenAI, GPT-5 새 버전으로 코덱스(Codex) 업그레이드
+(00:04:02) AI 브라우저(AI Browser)가 주류가 되면서 구글(Google), 크롬(Chrome)에 제미니(Gemini) 주입 | WIRED
+(00:06:14) 앤트로픽(Anthropic)의 클로드(Claude), 이제 스프레드시트(spreadsheet) 또는 슬라이드 덱(slide deck) 생성 가능. | The Verge
+(00:07:12) 루마 AI(Luma AI)의 새로운 Ray3 비디오 생성기(Video Generator), 생성 전에 '생각'할 수 있어 - CNET
+애플리케이션 및 비즈니스
+(00:08:32) OpenAI, 영리 부문 전환에 마이크로소프트(Microsoft)의 승인 확보 | TechCrunch
+(00:10:31) 마이크로소프트(Microsoft), 경쟁사 앤트로픽(Anthropic)으로부터 AI 구매하여 OpenAI 의존도 줄일 예정 | TechCrunch
+(00:12:00) 피겨 AI(Figure AI), 휴머노이드 로봇(humanoid robot) 개발을 위한 시리즈 C(Series C) 펀딩으로 10억 달러 돌파 - The Robot Report
+(00:13:52) 중국 유니트리(Unitree), 휴머노이드 로봇(humanoid robot) 경쟁 심화 속 70억 달러 IPO 기업 가치 계획
+(00:15:45) 테슬라(Tesla)의 네바다(Nevada) 로보택시(robotaxi) 계획, 테스트 허가로 진전 | TechCrunch
+(00:17:48) 아마존(Amazon)의 주크스(Zoox), 라스베이거스(Las Vegas) 출시로 미국 로보택시(robotaxi) 경쟁에 뛰어들다
+(00:19:27) 리플릿(Replit), 연간 매출 1억 5천만 달러로 30억 달러 기업 가치 달성 | TechCrunch
+(00:21:14) 퍼플렉시티(Perplexity), 200억 달러 기업 가치로 2억 달러 모금한 것으로 알려져 | TechCrunch
+프로젝트 및 오픈 소스
+(00:22:08) [2509.07604] K2-Think: 매개변수 효율적 추론 시스템(Parameter-Efficient Reasoning System)
+(00:24:31) [2509.09614] LoCoBench: 복잡한 소프트웨어 공학(Software Engineering) 분야의 장문 맥락 대규모 언어 모델(Long-Context Large Language Models)을 위한 벤치마크(Benchmark)
+연구 및 발전
+(00:28:17) [2509.15155] 자체 개선 체화 파운데이션 모델(Self-Improving Embodied Foundation Models)
+(00:31:47) [2509.13805] 물리 파운데이션 모델(Physics Foundation Model)을 향하여
+(00:34:26) [2509.12129] 체화 내비게이션 파운데이션 모델(Embodied Navigation Foundation Model)
+정책 및 안전
+(00:37:49) 앤트로픽(Anthropic), 캘리포니아(California)의 AI 안전 법안 SB 53 지지 | TechCrunch
+(00:40:12) 워너 브라더스(Warner Bros.), 미드저니(Midjourney) 고소, 스튜디오들의 AI 저작권 분쟁에 합류
+(00:42:02) 롤링 스톤(Rolling Stone) 발행사, AI 개요 요약(AI Overview Summaries)에 대해 구글(Google) 고소

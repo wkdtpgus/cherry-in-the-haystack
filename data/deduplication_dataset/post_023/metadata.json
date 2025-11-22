@@ -1,0 +1,21 @@
+{
+  "post_id": "023",
+  "title": "**마법사들과 함께 일하는 것에 관하여**",
+  "base_word_count": 2205,
+  "exact_30_update_wc": 1387,
+  "exact_30_ground_truth_wc": 2000,
+  "exact_30_overlap_ratio": 1.148,
+  "paraphrase_25_update_wc": 2253,
+  "paraphrase_25_ground_truth_wc": 2268,
+  "paraphrase_25_overlap_ratio": 0.972,
+  "fragment_20_update_wc": 1791,
+  "fragment_20_ground_truth_wc": 2965,
+  "fragment_20_overlap_ratio": 0.576,
+  "semantic_25_update_wc": 1838,
+  "semantic_25_ground_truth_wc": 1838,
+  "semantic_25_overlap_ratio": 1.2,
+  "mixed_real_update_wc": 1717,
+  "mixed_real_ground_truth_wc": 1719,
+  "mixed_real_overlap_ratio": 1.283,
+  "status": "generated"
+}

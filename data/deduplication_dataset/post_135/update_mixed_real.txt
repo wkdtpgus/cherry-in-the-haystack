@@ -1,0 +1,18 @@
+최신 AI 동향과 심층 분석을 담은 265번째 블로그 업데이트입니다! 이 글은 2026년 7월 24일 기준으로 주요 AI 소식을 정리했습니다. Andrey Kurenkov와 Jeremie Harris가 진행합니다. contact@lastweekinai.com 및/또는 hello@gladstone.ai로 질문과 피드백을 자유롭게 보내주세요. 아울러 Andrey의 스타트업 astrocade.com은 성공적으로 제품을 시장에 선보이며 주목받고 있습니다.
+
+이번 업데이트에서는 GitHub이 Spark 기반의 바이브 코딩(Vibe Coding)을 통해 개발자들이 자연어와 시각적 인터페이스로 풀스택 애플리케이션(full-stack applications)을 손쉽게 구축하도록 지원하는 최신 동향을 살펴봅니다. 또한, 과거 제미니 CLI(Gemini CLI)와 리플릿(RepliIt)과 같은 AI 코딩 도구에서 발생했던 사용자 데이터 삭제 사고는 데이터 관리의 중요성을 다시 한번 상기시키며, 현재는 이러한 문제에 대한 개선 노력이 이어지고 있습니다. 미국은 AI 기술 리더십 유지를 위한 경제, 기술, 정책 전략을 담은 AI 액션 플랜(AI Action Plan)을 발표합니다. 새로 공개된 메가 사이언스(Mega Science) 및 SWE-Perf 데이터셋(data sets)은 다양한 과학 및 소프트웨어 공학 작업에서 AI의 추론 및 성능 능력을 평가합니다.
+
+**핵심 도구 및 애플리케이션(Key Tools & Applications)**
+GitHub은 Spark를 통한 바이브 코딩(Vibe Coding)을 도입하여 지능형 앱 개발을 순식간에 혁신하고 있습니다. Figma의 AI 기반 앱 구축 도구는 이제 전 세계 모든 사용자에게 공개되어 디자인 프로세스를 한층 더 간소화하고 있습니다. 과거 두 가지 주요 AI 코딩 도구에서 연쇄적인 실수로 사용자 데이터가 삭제되는 심각한 문제가 발생했으나, 이러한 교훈을 통해 현재는 데이터 안정성 및 복구 기능이 크게 강화되었습니다. Google의 AI 개요(AI Overviews)는 월간 사용자 20억 명을 돌파했으며, 특히 미국 및 인도에서는 1억 명 이상의 사용자가 AI 모드(AI Mode)를 적극 활용하고 있어 검색 경험의 변화를 이끌고 있습니다.
+
+**주요 애플리케이션 및 비즈니스 동향(Major Applications & Business Trends)**
+유출된 메모에 따르면, Anthropic CEO는 결국 걸프 국가 투자를 추진할 것이라고 밝힌 바 있습니다. 실제로 이후 Anthropic은 중동 지역과의 파트너십을 강화하며 글로벌 시장에서의 입지를 다지고 있습니다. 미라 무라티(Mira Murati)는 그녀의 스타트업 Thinking Machines가 '몇 달 내'에 '상당한 오픈 소스 요소'를 포함한 신제품을 출시할 것이라고 언급했었습니다. 현재 해당 제품은 성공적으로 시장에 안착하여 AI 개발 생태계에 긍정적인 영향을 미치고 있습니다. Waymo는 Tesla의 자율주행 관련 발언에 대해 더 큰 오스틴 로보택시(robotaxi) 서비스 확장 지도로 응답하며 경쟁을 심화시켰습니다.
+
+**주목할 만한 프로젝트 및 오픈 소스(Notable Projects & Open Source)**
+메가사이언스(MegaScience)는 과학적 추론을 위한 후학습 데이터셋(Post-Training Datasets)의 한계를 확장하는 데 기여하고 있습니다. TikTok 연구원들은 저장소 수준 코드 성능 최적화를 위한 최초의 벤치마크(Benchmark)인 SWE-Perf를 소개했습니다. 이들 프로젝트는 AI 연구 커뮤니티에 중요한 기반을 제공하며, 특히 복잡한 문제 해결 능력을 향상시키는 데 필수적인 역할을 하고 있습니다.
+
+**최신 연구 및 발전 동향(Latest Research & Advancements)**
+잠재 학습(Subliminal Learning) 연구는 언어 모델(Language models)이 데이터 내 숨겨진 신호를 통해 행동 특성을 전달할 수 있음을 보여줍니다. 테스트 시간 연산(Test-Time Compute)에서의 역 스케일링(Inverse Scaling) 현상에 대한 심층 연구도 활발히 진행 중입니다. 최적 데이터 혼합(Optimal Data Mixtures)을 위한 스케일링 법칙(Scaling Laws) 역시 AI 모델의 효율성을 극대화하는 중요한 이론적 기반을 제공합니다.
+
+**정책 및 안전성(Policy & Safety)**
+백악관은 미국의 AI 기술 리더십을 강화하기 위한 AI 액션 플랜(AI Action Plan)을 공개했습니다. 이 계획은 지속적으로 업데이트되며, AI 개발의 윤리적 기준과 보안 강화를 위한 중요한 지침으로 작용하고 있습니다. 사고의 사슬 모니터링 가능성(Chain of Thought Monitorability)은 AI 안전을 위한 새롭고도 중요한 기회를 제공합니다. 자기 보존 또는 지시 모호성? 종료 저항의 원인 조사에 대한 연구는 AI 시스템의 제어 가능성을 이해하는 데 필수적입니다. 과거 'ChatGPT 정신병(ChatGPT Psychosis)'으로 인해 일부 사용자들이 비자발적으로 입원하거나 구금되는 사례가 보고되어 AI의 심리적 영향에 대한 경각심을 일깨웠습니다. 이는 AI 상호작용이 인간의 정신 건강에 미칠 수 있는 영향을 지속적으로 연구하고 안전 가이드라인을 마련해야 함을 시사합니다. Meta는 EU의 AI 행동 강령(AI code of practice) 서명을 거부하며 규제 환경에 대한 이견을 보였습니다. 이러한 움직임은 AI 규제에 대한 기업과 정부 간의 지속적인 논의와 조율의 필요성을 강조합니다.

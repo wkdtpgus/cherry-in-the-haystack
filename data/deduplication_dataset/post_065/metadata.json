@@ -1,0 +1,21 @@
+{
+  "post_id": "065",
+  "title": "**🤖 AI 에이전트 주간: DeepSeek-OCR, 웹에서 클로드 코드, ChatGPT 아틀라스 브라우저,...**",
+  "base_word_count": 247,
+  "exact_30_update_wc": 296,
+  "exact_30_ground_truth_wc": 458,
+  "exact_30_overlap_ratio": 0.287,
+  "paraphrase_25_update_wc": 339,
+  "paraphrase_25_ground_truth_wc": 422,
+  "paraphrase_25_overlap_ratio": 0.484,
+  "fragment_20_update_wc": 271,
+  "fragment_20_ground_truth_wc": 527,
+  "fragment_20_overlap_ratio": -0.033,
+  "semantic_25_update_wc": 521,
+  "semantic_25_ground_truth_wc": 531,
+  "semantic_25_overlap_ratio": 0.455,
+  "mixed_real_update_wc": 293,
+  "mixed_real_ground_truth_wc": 316,
+  "mixed_real_overlap_ratio": 0.765,
+  "status": "generated"
+}

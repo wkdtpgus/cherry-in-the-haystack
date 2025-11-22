@@ -1,0 +1,21 @@
+{
+  "post_id": "177",
+  "title": "**꼭 알아야 할 논문들**",
+  "base_word_count": 3523,
+  "exact_30_update_wc": 3759,
+  "exact_30_ground_truth_wc": 3759,
+  "exact_30_overlap_ratio": 0.937,
+  "paraphrase_25_update_wc": 3860,
+  "paraphrase_25_ground_truth_wc": 3848,
+  "paraphrase_25_overlap_ratio": 0.916,
+  "fragment_20_update_wc": 2164,
+  "fragment_20_ground_truth_wc": 4479,
+  "fragment_20_overlap_ratio": 0.558,
+  "semantic_25_update_wc": 6174,
+  "semantic_25_ground_truth_wc": 6153,
+  "semantic_25_overlap_ratio": 0.574,
+  "mixed_real_update_wc": 3132,
+  "mixed_real_ground_truth_wc": 3132,
+  "mixed_real_overlap_ratio": 1.125,
+  "status": "generated"
+}

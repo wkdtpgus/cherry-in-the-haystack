@@ -1,0 +1,81 @@
+## 최신 LLM 연구 동향: 2025년 업데이트
+
+인공지능, 특히 대규모 언어 모델(LLM) 분야는 매일 새로운 연구와 발전이 쏟아져 나오고 있습니다. 2024년에 발표된 주요 연구들을 바탕으로, 현재와 미래의 LLM 기술이 나아갈 방향을 예측하고 최신 동향을 파악해봅니다.
+
+---
+
+### 1. Cell2Sentence-Scale 27B C2S-Scale: 생물학적 데이터의 새로운 해석
+
+Cell2Sentence-Scale 27B C2S-Scale은 **유전자 발현을 "세포 문장(cell sentences)"으로 변환**하고, 5천만 개 이상의 세포 및 생물학적 텍스트를 활용하여 LLM을 훈련함으로써 Cell2Sentence의 역량을 크게 확장한 모델입니다. 이 모델은 **270억 개의 매개변수(params)로 확장**되었으며, 예측, 생성 및 자연어(NL) 해석 기능을 통합합니다. 특히, **이중 컨텍스트 가상 스크리닝(dual-context virtual screen)은 실험실에서 검증된 발견으로 이어졌습니다: 실미타서팁(silmitasertib)은 MHC-I 항원 제시(antigen presentation)의 인터페론 조건부 증폭제(interferon-conditional amplifier) 역할을 합니다.**
+
+이 모델의 핵심은 scRNA-seq 프로파일을 발현 정보를 보존하는 유전자 이름 시퀀스(gene-name sequences)로 순위 매기는 '텍스트로서의 데이터(Data-as-text)' 접근 방식입니다. 사전 훈련(pretraining)은 5천만 개의 인간 및 마우스 전사체(transcriptomes)와 다중 작업 프롬프트(multi-task prompts), 논문 및 메타데이터(metadata)를 포함합니다. 성능은 주석(annotation), 조직 추론(tissue inference) 및 조건부 생성(conditional generation) 전반에 걸쳐 4억 1천만 개에서 270억 개 매개변수까지 원활하게 향상됩니다. C2S-Scale은 고전적인 단일 세포 작업에서 scGPT 및 Geneformer와 동등하거나 능가하는 성능을 보이며, GPT-4o와 같은 일반 LLM을 능가하는 자연어(NL) 클러스터 캡셔닝(cluster captioning) 및 데이터셋 수준 요약(dataset-level summarization)도 지원합니다. 최근에는 이 모델이 약물 발견 및 질병 연구에 새로운 지평을 열 것으로 기대되고 있습니다. **섭동 모델링(Perturbation modeling) 및 새로운 측정 지표(metric)** 도입을 통해 생성된 세포 상태(cell states)의 안정적인 순위를 제공하는 scFID를 소개하며, 이는 C2S-Scale이 이전에 보지 못한 사이토카인(cytokine) 조합에서 선두를 달리게 합니다.
+
+---
+
+### 2. LLM을 위한 강화 학습(RL) 계산 스케일링의 기술
+
+LLM을 위한 강화 학습(RL) 스케일링은 효율성과 예측 가능성이 중요합니다. 40만 GPU 시간 이상의 연구를 통해 저자들은 LLM을 위한 강화 학습(RL)을 확장하는 간단하고 예측 가능한 방법을 제시했습니다. 이들은 작은 실행(small runs)에서 외삽(extrapolate)할 수 있는 시그모이드(sigmoidal) 계산→성능 곡선(compute→performance curve)을 맞추고, **80억 개의 밀집 모델(dense model)과 170억×16 MoE(Mixture-of-Experts) 모델에서 10만 GPU 시간까지 검증된 안정적인 방법인 ScaleRL을 제안합니다.**
+
+**실제로 사용할 수 있는 예측 스케일링 법칙(Predictive scaling law)**은 모델 통과율(pass-rate) 대 log(계산량)이 세 가지 조절 변수(A: 점근적 상한선, B: 계산 효율성, Cmid: 중간점)를 가진 포화 시그모이드(saturating sigmoid)를 따른다는 것을 보여줍니다. 1천 개의 프롬프트(prompt) 홀드아웃(holdout)에서 약 1.5천 GPU 시간 후에 맞추면 더 큰 예산을 예측할 수 있습니다. ScaleRL 방법은 k=8을 사용하는 PipelineRL, CISPO 손실(truncated IS REINFORCE), 프롬프트 수준 손실 평균화(prompt-level loss averaging) 등 여러 핵심 요소를 포함합니다. 최근 이 연구는 RL 훈련의 효율성을 극대화하여 대규모 모델 개발에 필수적인 지침을 제공하고 있습니다. **성과를 낸 스케일링 축(Scaling axes)**으로는 더 긴 생성 예산, 더 큰 전역 배치, 그리고 더 큰 모델(MoE)이 점근선과 효율성을 개선하는 데 기여한다는 점이 강조됩니다.
+
+---
+
+### 3. 에이전트 추론(Agentic Reasoning)에서 강화 학습(RL)의 신비 해명
+
+LLM 에이전트의 성능 향상을 위한 강화 학습(RL)의 역할에 대한 심층적인 연구가 진행되고 있습니다. 이 논문은 도구 사용 LLM 에이전트(tool-using LLM agents)를 개선하기 위해 강화 학습(RL)을 사용할 때 실제로 효과적인 것이 무엇인지 데이터, 알고리즘, 추론 모드라는 세 가지 축을 통해 연구합니다. 연구팀은 **실제 종단 간 SFT(Supervised Fine-Tuning) 데이터셋, 다양한 강화 학습(RL) 세트, 그리고 에이전트 벤치마크(agentic benchmarks)에서 더 큰 모델을 능가하는 컴팩트한 40억 개 매개변수(4B) 에이전트를 제공합니다.**
+
+핵심 발견은 **데이터 > 합성: SFT를 위한 실제 종단 간 다중 턴 궤적(multi-turn trajectories)은 이어 붙인 합성 추적(stitched synthetic traces)보다 훨씬 강력한 콜드 스타트(cold-start)를 제공한다**는 것입니다. 또한 다양성은 탐색을 유지하며, 수학, 과학 및 코드 전반에 걸친 다양화된 강화 학습(RL) 데이터셋은 학습 속도를 높이고 훈련을 안정화합니다. **간단한 GRPO 조정이 중요합니다: 토큰 수준 집계(token-level aggregation), 더 높은 클립 범위(clip range) 및 과도한 길이 페널티 형성(overlong-penalty shaping)을 사용하는 실용적인 방법(GRPO-TCR)은 최고 정확도와 데이터 효율성 모두에서 표준 GRPO 기준선을 지속적으로 능가합니다.** 에이전트의 능력 향상을 위해 신중한 모드(Deliberate mode)가 더 효과적이며, 이는 더 많은 내부 계획(internal planning) 후 더 적고 더 나은 도구 호출(tool calls)로 이어집니다. 이 연구는 소형 에이전트 모델이 대규모 모델에 필적하는 성능을 낼 수 있음을 입증하며, DemyAgent-4B는 AIME25, GPQA-Diamond 등에서 SOTA(State-Of-The-Art)를 달성했습니다.
+
+---
+
+### 4. 다중 에이전트 LLM에서 나타나는 조정
+
+다중 에이전트 LLM 시스템에서 진정한 집단 지능이 어떻게 발현되는지에 대한 질문은 여전히 중요합니다. "이것이 단순히 에이전트들의 묶음인가 아니면 진정한 집단인가?"에 대한 깔끔한 정보 이론적 탐침(information-theoretic probe)을 제시한 이 논문은 시간 지연 상호 정보(time-delayed mutual information)에 대한 부분 정보 분해(PID, partial-information-decomposition) 테스트를 구축하여 출현(emergence)을 감지합니다. **프레임워크(Framework): 시간에 따른 결과 관련 PID(outcome-relevant PID)**는 세 가지 진단을 포함합니다: 실용적 기준(Practical criterion), 출현 능력(Emergence capacity), 연합 테스트(Coalition test).
+
+실험에서는 통신 없는 그룹 추측 게임을 통해 에이전트들이 0-50 사이의 정수를 추측하고 "너무 높음/낮음" 피드백만 받는 환경을 조성했습니다. 주요 발견은 **출현은 실제적이며 조종 가능합니다.** 페르소나(Personas)는 안정적이고 정체성과 연결된 차별화(identity-linked differentiation)를 유도하며, Theory of Mind(ToM) 프롬프팅을 추가하면 상호 보완성(complementarity)을 유지하면서 공유 목표에 대한 정렬(alignment)이 증가합니다. 성능은 시너지(Synergy)와 중복성(redundancy)의 균형에서 나오며, 통합(integration)과 차별화(differentiation)가 승리하는 체제(regime)를 시사합니다. AI 개발자를 위한 실용적인 시사점은 상호 보완적인 역할과 공유된 목표 신호(target signals)를 위해 설계하고, 가벼운 페르소나(light personas)를 사용하여 행동을 안정화하며, ToM 스타일 추론(ToM-style reasoning)을 추가하여 에이전트들이 거시적 목표(macro objective)에 정렬하도록 유도해야 한다는 것입니다.
+
+---
+
+### 5. Elastic-Cache: 확산 LLM 디코딩의 혁신
+
+대규모 LLM의 효율적인 디코딩은 실제 적용에 필수적입니다. Elastic-Cache는 **확산 LLM(diffusion LLM) 디코딩(decoding)을 빠르고 훈련 없이, 아키텍처에 구애받지 않는 방식으로 만드는 방법으로, KV 캐시(KV caches)를 필요할 때 필요한 곳에서만 업데이트합니다.** 이 방법은 모든 디노이징(denoising) 단계에서 모든 토큰(tokens)에 대해 QKV를 재계산하는 대신, 가장 많이 주목받는 토큰(most-attended tokens)에서 어텐션 드리프트(attention drift)를 관찰하고, 얕은(shallow) 및 창 밖(off-window) 캐시(caches)를 재사용하면서 더 깊은 레이어(deeper layers)만 새로 고칩니다.
+
+**핵심 아이디어: 슬라이딩 윈도우 디코딩(Sliding-window decoding)은 가까운 MASK 토큰(tokens)만 "활성(live)" 상태로 유지하고, 멀리 떨어진 MASK는 길이 사전(length prior)으로 블록 캐시(block-caches)합니다.** 어텐션 인식 드리프트 테스트(attention-aware drift test)는 이전 단계의 가장 많이 주목받는 토큰(most-attended tokens)의 코사인 유사도(cosine similarity) 변화를 측정하여 재계산을 트리거합니다. 중요한 결과로는 LLaDA 및 LLaDA-1.5에서 GSM8K-512에서 동일한 정확도로 최대 45.1배 처리량(throughput) 향상, HumanEval에서 4.8–5.0배 향상이 보고되었습니다. Elastic-Cache는 훈련이나 아키텍처 변경 없이 기존 시스템에 쉽게 통합될 수 있어, LLM의 실시간 추론 및 배포 효율성을 크게 높이는 데 기여하고 있습니다.
+
+---
+
+### 6. LLM의 동적 레이어 라우팅
+
+LLM의 고정된 구조를 넘어, 필요에 따라 모델의 깊이를 조절하는 동적 접근 방식이 주목받고 있습니다. 이 논문은 **각 블록(block)을 건너뛸지, 실행할지, 반복할지를 결정하는 레이어별 라우터(per-layer routers)를 고정된 LLM에 추가하는 개조 가능한(retrofittable) 방법**을 제안합니다. 경로는 레이어 편집(layer edits)에 대한 짧은 몬테카를로 트리 탐색(Monte Carlo Tree Search)으로 오프라인에서 감독된 다음, 검색 없이 온라인에서 실행됩니다. 이러한 접근 방식은 논리 및 수학에서 정확도를 향상시키면서 평균적으로 레이어(layers)를 절약합니다.
+
+**이것은 무엇인가: 각 레이어(layer)에 부착된 작은 MLP 라우터(routers)는 윈도우 평균 풀링된 은닉 상태(windowed mean-pooled hidden states)를 읽고 세 가지 동작 중 하나를 출력합니다: 건너뛰기(skip), 한 번 실행(execute once), 또는 한 번 반복(repeat once).** 기본 가중치(Base weights)는 고정된 상태를 유지하고 KV 캐싱(KV caching)은 호환됩니다. AI 개발자를 위한 주요 결과는 6개의 백본(backbones)에 걸쳐 ARC 및 DART에서 라우터(routers)가 쿼리(query)당 약 3개에서 11개의 레이어(layers)를 줄이면서 정확도를 높인다는 것입니다. 예시로, LLaMA-3B-Base는 DART에서 11.8%에서 15.8%로 상승하고 평균 4.1개의 레이어(layers)를 절약했습니다. 이 기술은 LLM의 추론 효율성을 높이고, 특히 자원 제약이 있는 환경에서 더욱 유용하게 활용될 수 있습니다.
+
+---
+
+### 7. LLM은 "뇌 부패(Brain Rot)"를 겪을 수 있다!
+
+LLM의 지속적인 훈련 데이터 품질은 모델의 장기적인 능력에 결정적인 영향을 미칩니다. 저자들은 **사소하고 매우 매력적인 웹 텍스트에 대한 지속적인 사전 훈련(continual pretraining)은 완화 후에도 지속되는 방식으로 LLM 인지(cognition)를 저하시킨다**는 명확한 가설을 테스트했습니다. 이들은 규모(scale)와 훈련 작업(training ops)으로부터 데이터 품질(data quality)을 분리하기 위해 통제된 트위터 데이터셋을 구축한 다음, 추론(reasoning), 긴 컨텍스트(long-context), 안전(safety) 및 성격(personality)에 미치는 영향을 측정했습니다.
+
+**데이터 품질을 분리하는 설정:** 두 가지 직교적인 정크(junk) 정의(M1: 인기 및 짧은 게시물, M2: 클릭베이트 및 피상적인 주제)를 사용했습니다. 용량 반응(dose response)에 따른 비사소한 능력 저하가 관찰되었는데, 모델 전반에 걸쳐 정크(junk) 노출은 ARC 추론(reasoning), 긴 컨텍스트 검색(long-context retrieval) 및 안전(safety)을 감소시켰습니다. **사고 건너뛰기(Thought-skipping)가 주요 손상(lesion)입니다.** ARC CoT에 대한 오류 포렌식(Error forensics)은 사고 없음, 계획 없음, 계획된 단계 건너뛰기가 지배적인 실패를 보여주며, 이는 오류의 98% 이상을 설명합니다. 또한, 정크 훈련(Junk training)은 HH-RLHF 및 AdvBench에서 위험을 높이고, 자기애(narcissism) 및 정신병(psychopathy) 점수를 부풀리는 동시에, 친화성(agreeableness)을 낮췄습니다. 완화는 도움이 되지만 치유하지는 못하며, 이는 지속적인 표현 드리프트(representational drift)를 나타냅니다. 이 연구는 LLM 훈련 데이터의 신중한 큐레이션이 모델의 장기적인 견고성과 윤리적 사용에 얼마나 중요한지 강조합니다.
+
+---
+
+### 8. 하이브리드 강화 학습(Hybrid Reinforcement) HERO
+
+LLM의 추론 능력을 향상시키기 위한 강화 학습(RL) 기법은 지속적으로 발전하고 있습니다. **HERO(Hybrid Ensemble Reward Optimization)는 이진 검증자 피드백(binary verifier feedback)과 연속적인 보상 모델 신호(continuous reward-model signals)를 결합하여 LLM 추론(reasoning)을 개선하는 강화 학습(reinforcement learning) 프레임워크(framework)입니다.** 이 방법은 계층화된 정규화(stratified normalization)와 분산 인식 가중치(variance-aware weighting)를 사용하여 정확성과 뉘앙스(nuance)의 균형을 맞춥니다. HERO는 다양한 수학 추론 벤치마크(math reasoning benchmarks)에서 검증자 전용(verifier-only) 및 RM 전용(RM-only) 방법을 능가하며, 검증 가능(verifiable)하고 모호한(ambiguous) 작업 모두에서 성능을 향상시킵니다. 이는 LLM이 복잡한 추론 작업을 더욱 정확하고 신뢰성 있게 수행하도록 돕는 중요한 발전입니다.
+
+---
+
+### 9. Kimi-Dev: 소프트웨어 엔지니어링 LLM의 진화
+
+소프트웨어 개발 분야에서 LLM의 활용은 빠르게 확장되고 있으며, Kimi-Dev는 이러한 발전을 가속화하는 중요한 모델입니다. **Kimi-Dev는 소프트웨어 엔지니어링 LLM에 대한 스킬 사전(skill prior)으로 에이전트 없는 훈련(agentless training)을 도입하여 워크플로우 스타일(workflow-style)과 에이전트 패러다임(agentic paradigms)을 연결합니다.** 이 모델은 구조화되고 검증 가능한 단일 턴 작업(single-turn tasks)으로 훈련되어 워크플로우 모델(workflow models)의 기록인 SWE-bench Verified에서 60.4%를 달성했습니다. 또한, 5천 개의 궤적 미세 조정(trajectory fine-tuning) 후 SWE-Agent pass@1에서 48.6%를 가능하게 하여 Claude 3.5 Sonnet과 경쟁하는 수준을 보여줍니다. 이 연구는 추론 중심의 에이전트 없는 훈련(reasoning-heavy agentless training)이 지역화(localization), 코드 편집(code editing) 및 반성(reflection)에서 전이 가능한 사전 지식(transferable priors)을 구축하여 효율적인 SWE-Agent 적응(adaptation)을 위한 기반을 형성함을 보여줍니다. 이는 소프트웨어 개발 자동화의 미래를 위한 중요한 단계입니다.
+
+---
+
+### 10. 전체론적 에이전트 리더보드(Holistic Agent Leaderboard)
+
+AI 에이전트의 발전 속도가 빨라짐에 따라, 이들의 성능을 객관적으로 평가할 수 있는 표준화된 리더보드의 중요성이 커지고 있습니다. HAL(Holistic Agent Leaderboard)은 **코딩, 웹 탐색, 과학 및 고객 서비스를 아우르는 9개 모델과 9개 벤치마크(benchmarks)에 걸쳐 대규모의 재현 가능한 AI 에이전트 평가(AI agent evaluation)를 위한 표준화된 프레임워크(framework)를 도입합니다.** HAL은 평가 시간을 몇 주에서 몇 시간으로 단축하고, 작업 이탈 행동(off-task actions)과 같은 주요 행동 결함(behavioral flaws)을 드러내며, 25억 개의 토큰(tokens)에 달하는 에이전트 로그(agent logs)를 제공하여 벤치마크 성능(benchmark performance)보다 실제 신뢰성(real-world reliability)을 향한 연구를 추진합니다. 이러한 통합된 평가 시스템은 에이전트 AI 연구자들이 모델의 실제 적용 가능성을 더욱 정확하게 이해하고 개선하는 데 필수적인 도구가 될 것입니다.
+
+---
+
+이러한 최신 연구들은 LLM 기술이 단순한 언어 생성을 넘어, 생물학, 소프트웨어 엔지니어링, 다중 에이전트 시스템, 그리고 효율적인 인프라 구축에 이르기까지 광범위한 분야에서 혁신을 이끌고 있음을 보여줍니다. 특히, 데이터 품질의 중요성, 강화 학습의 스케일링, 그리고 에이전트의 복잡한 추론 능력 개발은 2025년 LLM 연구의 핵심 동력이 될 것입니다.

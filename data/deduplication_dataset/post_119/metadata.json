@@ -1,0 +1,21 @@
+{
+  "post_id": "119",
+  "title": "**스크롤하다가 죽을 겁니다**",
+  "base_word_count": 4529,
+  "exact_30_update_wc": 3021,
+  "exact_30_ground_truth_wc": 4062,
+  "exact_30_overlap_ratio": 1.155,
+  "paraphrase_25_update_wc": 3676,
+  "paraphrase_25_ground_truth_wc": 3676,
+  "paraphrase_25_overlap_ratio": 1.232,
+  "fragment_20_update_wc": 3421,
+  "fragment_20_ground_truth_wc": 3329,
+  "fragment_20_overlap_ratio": 1.351,
+  "semantic_25_update_wc": 3528,
+  "semantic_25_ground_truth_wc": 3528,
+  "semantic_25_overlap_ratio": 1.284,
+  "mixed_real_update_wc": 3468,
+  "mixed_real_ground_truth_wc": 3470,
+  "mixed_real_overlap_ratio": 1.305,
+  "status": "generated"
+}

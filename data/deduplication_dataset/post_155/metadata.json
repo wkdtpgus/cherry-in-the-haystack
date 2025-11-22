@@ -1,0 +1,21 @@
+{
+  "post_id": "155",
+  "title": "**AI 발전이 둔화되고 있나요?**",
+  "base_word_count": 4052,
+  "exact_30_update_wc": 3016,
+  "exact_30_ground_truth_wc": 3436,
+  "exact_30_overlap_ratio": 1.204,
+  "paraphrase_25_update_wc": 3438,
+  "paraphrase_25_ground_truth_wc": 3438,
+  "paraphrase_25_overlap_ratio": 1.179,
+  "fragment_20_update_wc": 3344,
+  "fragment_20_ground_truth_wc": 3361,
+  "fragment_20_overlap_ratio": 1.207,
+  "semantic_25_update_wc": 3564,
+  "semantic_25_ground_truth_wc": 3564,
+  "semantic_25_overlap_ratio": 1.137,
+  "mixed_real_update_wc": 3074,
+  "mixed_real_ground_truth_wc": 3074,
+  "mixed_real_overlap_ratio": 1.318,
+  "status": "generated"
+}

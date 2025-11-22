@@ -1,0 +1,21 @@
+{
+  "post_id": "182",
+  "title": "**마이크로소프트의 에이전트(agent)에 대한 최대 베팅... 아직까지는**",
+  "base_word_count": 1372,
+  "exact_30_update_wc": 1962,
+  "exact_30_ground_truth_wc": 2100,
+  "exact_30_overlap_ratio": 0.629,
+  "paraphrase_25_update_wc": 1819,
+  "paraphrase_25_ground_truth_wc": 1819,
+  "paraphrase_25_overlap_ratio": 0.754,
+  "fragment_20_update_wc": 775,
+  "fragment_20_ground_truth_wc": 1578,
+  "fragment_20_overlap_ratio": 0.734,
+  "semantic_25_update_wc": 2019,
+  "semantic_25_ground_truth_wc": 2019,
+  "semantic_25_overlap_ratio": 0.68,
+  "mixed_real_update_wc": 1516,
+  "mixed_real_ground_truth_wc": 1516,
+  "mixed_real_overlap_ratio": 0.905,
+  "status": "generated"
+}

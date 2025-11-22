@@ -1,0 +1,22 @@
+# **트랜스포머(Transformer) LLM의 작동 원리 [무료 강좌]**
+
+Author: Jay Alammar
+URL: https://newsletter.languagemodels.co/p/how-transformer-llms-work-free-course
+
+============================================================
+
+지금 무료로 등록하세요: https://bit.ly/4aRnn7Z 깃허브 저장소(Github Repo): https://github.com/HandsOnLLM/Hands-On-Large-Language-Models 저희는 여러분께 "트랜스포머 LLM 작동 방식(How Transformer LLMs Work)"을 제공하게 되어 매우 기쁩니다. 이 무료 강좌는 약 90분 분량의 비디오, 코드, 그리고 현대 트랜스포머 아키텍처(Transformer architecture), 토크나이저(tokenizer), 임베딩(embedding), 전문가 혼합 모델(mixture-of-expert models)을 설명하는 선명한 시각 자료 및 애니메이션으로 구성되어 있습니다. Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요. 구독하기 마르텐 그루텐도르스트(Maarten Grootendorst)와 저는 지난 몇 년 동안 (수백 개의 그림을 위해 수만 번의 반복 작업을 거쳐) 이 책을 위한 많은 시각적 언어를 개발했습니다. 이는 Cohere, C4AI, 그리고 오픈 소스 및 오픈 사이언스 ML 커뮤니티의 많은 훌륭한 동료들로부터 영감을 받았습니다. 하지만 전설적인 앤드류 응(Andrew Ng)과 DeepLearning.ai 팀과 협력할 기회를 얻게 되면서, 저희는 애니메이션과 간결한 설명으로 이를 한 단계 더 발전시켰습니다. 이는 기술 학습자들이 머신러닝(ML) 논문을 접하고 아키텍처(architecture) 설명을 이해할 수 있도록 돕기 위함입니다.
+
+이 강좌에서 여러분은 LLM을 구동하는 트랜스포머 네트워크 아키텍처(transformer network architecture)가 어떻게 작동하는지 배우게 될 것입니다. LLM이 텍스트를 처리하는 방식에 대한 직관을 기르고, 트랜스포머 아키텍처(transformer architecture)의 핵심 구성 요소를 설명하는 코드 예제와 함께 작업하게 될 것입니다.
+
+이 강좌에서 다루는 주요 주제는 다음과 같습니다.
+*   Bag-of-Words 모델(Bag-of-Words model)부터 Word2Vec 임베딩(Word2Vec embeddings)을 거쳐 단어 의미를 전체 문맥에서 포착하는 트랜스포머 아키텍처(transformer architecture)까지, 언어가 숫자적으로 표현되어 온 방식의 진화.
+*   LLM 입력이 언어 모델(language model)로 전송되기 전에 단어나 조각을 나타내는 토큰(token)으로 분해되는 방식.
+*   토큰화(tokenization) 및 임베딩(embedding), 트랜스포머 블록(transformer blocks) 스택, 그리고 언어 모델 헤드(language model head)로 구성된 트랜스포머(transformer)의 세 가지 주요 단계에 대한 세부 사항.
+*   관련성 점수를 계산하는 어텐션(attention)을 포함하며, 그 뒤에는 훈련 중에 학습된 저장된 정보를 통합하는 피드포워드 레이어(feedforward layer)가 이어지는 트랜스포머 블록(transformer block)의 세부 사항.
+*   캐시된 계산(cached calculations)이 트랜스포머(transformer)를 더 빠르게 만드는 방법, 원본 논문이 발표된 이후 수년 동안 트랜스포머 블록(transformer block)이 어떻게 진화해왔는지, 그리고 어떻게 계속해서 널리 사용되는지.
+*   Hugging Face 트랜스포머 라이브러리(Hugging Face transformer library)에서 최신 모델의 구현을 탐색합니다.
+
+이 강좌를 마치면 LLM이 언어를 처리하는 방식에 대해 깊이 이해하게 될 것이며, 모델을 설명하는 논문을 읽고 이러한 아키텍처(architecture)를 설명하는 데 사용되는 세부 사항을 이해할 수 있을 것입니다. 이러한 직관은 LLM 애플리케이션(application) 구축 접근 방식을 개선하는 데 도움이 될 것입니다.
+
+즐겁게 수강하시길 바랍니다! Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요. 구독하기

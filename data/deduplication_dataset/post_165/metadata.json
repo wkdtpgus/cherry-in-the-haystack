@@ -1,0 +1,21 @@
+{
+  "post_id": "165",
+  "title": "**과학자들은 AI를 신탁이 아닌 도구로 사용해야 한다**",
+  "base_word_count": 1833,
+  "exact_30_update_wc": 1152,
+  "exact_30_ground_truth_wc": 1588,
+  "exact_30_overlap_ratio": 1.213,
+  "paraphrase_25_update_wc": 1554,
+  "paraphrase_25_ground_truth_wc": 1708,
+  "paraphrase_25_overlap_ratio": 1.08,
+  "fragment_20_update_wc": 1461,
+  "fragment_20_ground_truth_wc": 1967,
+  "fragment_20_overlap_ratio": 0.908,
+  "semantic_25_update_wc": 2020,
+  "semantic_25_ground_truth_wc": 2020,
+  "semantic_25_overlap_ratio": 0.907,
+  "mixed_real_update_wc": 1466,
+  "mixed_real_ground_truth_wc": 1466,
+  "mixed_real_overlap_ratio": 1.25,
+  "status": "generated"
+}

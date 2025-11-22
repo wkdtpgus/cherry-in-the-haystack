@@ -1,0 +1,21 @@
+{
+  "post_id": "105",
+  "title": "**AI 덕후들이 어떻게 완벽한 정치적 꼭두각시가 되었나**",
+  "base_word_count": 694,
+  "exact_30_update_wc": 834,
+  "exact_30_ground_truth_wc": 903,
+  "exact_30_overlap_ratio": 0.749,
+  "paraphrase_25_update_wc": 851,
+  "paraphrase_25_ground_truth_wc": 842,
+  "paraphrase_25_overlap_ratio": 0.826,
+  "fragment_20_update_wc": 499,
+  "fragment_20_ground_truth_wc": 713,
+  "fragment_20_overlap_ratio": 0.962,
+  "semantic_25_update_wc": 754,
+  "semantic_25_ground_truth_wc": 754,
+  "semantic_25_overlap_ratio": 0.92,
+  "mixed_real_update_wc": 555,
+  "mixed_real_ground_truth_wc": 577,
+  "mixed_real_overlap_ratio": 1.211,
+  "status": "generated"
+}

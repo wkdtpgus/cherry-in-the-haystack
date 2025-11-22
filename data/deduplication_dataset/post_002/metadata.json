@@ -1,0 +1,21 @@
+{
+  "post_id": "002",
+  "title": "**거대 언어 모델(LLM) 평가의 4가지 주요 접근 방식 이해 (기초부터)**",
+  "base_word_count": 6705,
+  "exact_30_update_wc": 4575,
+  "exact_30_ground_truth_wc": 4571,
+  "exact_30_overlap_ratio": 1.466,
+  "paraphrase_25_update_wc": 5514,
+  "paraphrase_25_ground_truth_wc": 5514,
+  "paraphrase_25_overlap_ratio": 1.216,
+  "fragment_20_update_wc": 3687,
+  "fragment_20_ground_truth_wc": 8554,
+  "fragment_20_overlap_ratio": 0.499,
+  "semantic_25_update_wc": 5731,
+  "semantic_25_ground_truth_wc": 5534,
+  "semantic_25_overlap_ratio": 1.204,
+  "mixed_real_update_wc": 5316,
+  "mixed_real_ground_truth_wc": 5316,
+  "mixed_real_overlap_ratio": 1.261,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "170",
+  "title": "**SWE-Bench 저자들이 Neurips 2024에서 LLM 에이전트(LLM agents)의 현황에 대해 성찰하다**",
+  "base_word_count": 86,
+  "exact_30_update_wc": 208,
+  "exact_30_ground_truth_wc": 208,
+  "exact_30_overlap_ratio": 0.413,
+  "paraphrase_25_update_wc": 334,
+  "paraphrase_25_ground_truth_wc": 331,
+  "paraphrase_25_overlap_ratio": 0.266,
+  "fragment_20_update_wc": 82,
+  "fragment_20_ground_truth_wc": 138,
+  "fragment_20_overlap_ratio": 0.366,
+  "semantic_25_update_wc": 75,
+  "semantic_25_ground_truth_wc": 75,
+  "semantic_25_overlap_ratio": 1.147,
+  "mixed_real_update_wc": 76,
+  "mixed_real_ground_truth_wc": 76,
+  "mixed_real_overlap_ratio": 1.132,
+  "status": "generated"
+}

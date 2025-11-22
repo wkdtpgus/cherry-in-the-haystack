@@ -1,0 +1,21 @@
+{
+  "post_id": "096",
+  "title": "**컴퓨트의 형태(The Shape of Compute) — Modular의 Chris Lattner와 함께**",
+  "base_word_count": 18138,
+  "exact_30_update_wc": 3228,
+  "exact_30_ground_truth_wc": 3468,
+  "exact_30_overlap_ratio": 5.545,
+  "paraphrase_25_update_wc": 12626,
+  "paraphrase_25_ground_truth_wc": 12624,
+  "paraphrase_25_overlap_ratio": 1.437,
+  "fragment_20_update_wc": 7496,
+  "fragment_20_ground_truth_wc": 5825,
+  "fragment_20_overlap_ratio": 2.643,
+  "semantic_25_update_wc": 12528,
+  "semantic_25_ground_truth_wc": 12538,
+  "semantic_25_overlap_ratio": 1.447,
+  "mixed_real_update_wc": 12651,
+  "mixed_real_ground_truth_wc": 12599,
+  "mixed_real_overlap_ratio": 1.438,
+  "status": "generated"
+}

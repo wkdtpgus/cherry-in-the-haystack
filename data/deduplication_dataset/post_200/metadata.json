@@ -1,0 +1,21 @@
+{
+  "post_id": "200",
+  "title": "**2만 구독자 할인 마지막 기회: 130달러 상당의 가치 있는 제품을 20달러에!**",
+  "base_word_count": 301,
+  "exact_30_update_wc": 560,
+  "exact_30_ground_truth_wc": 604,
+  "exact_30_overlap_ratio": 0.459,
+  "paraphrase_25_update_wc": 511,
+  "paraphrase_25_ground_truth_wc": 511,
+  "paraphrase_25_overlap_ratio": 0.589,
+  "fragment_20_update_wc": 384,
+  "fragment_20_ground_truth_wc": 389,
+  "fragment_20_overlap_ratio": 0.771,
+  "semantic_25_update_wc": 593,
+  "semantic_25_ground_truth_wc": 586,
+  "semantic_25_overlap_ratio": 0.519,
+  "mixed_real_update_wc": 287,
+  "mixed_real_ground_truth_wc": 287,
+  "mixed_real_overlap_ratio": 1.049,
+  "status": "generated"
+}

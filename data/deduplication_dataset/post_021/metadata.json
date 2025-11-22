@@ -1,0 +1,21 @@
+{
+  "post_id": "021",
+  "title": "지금 바로 AI를 활용하는 나름의 가이드",
+  "base_word_count": 2809,
+  "exact_30_update_wc": 2260,
+  "exact_30_ground_truth_wc": 2553,
+  "exact_30_overlap_ratio": 1.113,
+  "paraphrase_25_update_wc": 2403,
+  "paraphrase_25_ground_truth_wc": 2403,
+  "paraphrase_25_overlap_ratio": 1.169,
+  "fragment_20_update_wc": 2058,
+  "fragment_20_ground_truth_wc": 2058,
+  "fragment_20_overlap_ratio": 1.365,
+  "semantic_25_update_wc": 5972,
+  "semantic_25_ground_truth_wc": 5964,
+  "semantic_25_overlap_ratio": 0.472,
+  "mixed_real_update_wc": 2143,
+  "mixed_real_ground_truth_wc": 2144,
+  "mixed_real_overlap_ratio": 1.31,
+  "status": "generated"
+}

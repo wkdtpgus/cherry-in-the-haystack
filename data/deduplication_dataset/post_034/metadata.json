@@ -1,0 +1,21 @@
+{
+  "post_id": "034",
+  "title": "**사이버네틱 팀원**",
+  "base_word_count": 1354,
+  "exact_30_update_wc": 1671,
+  "exact_30_ground_truth_wc": 1892,
+  "exact_30_overlap_ratio": 0.678,
+  "paraphrase_25_update_wc": 1388,
+  "paraphrase_25_ground_truth_wc": 1388,
+  "paraphrase_25_overlap_ratio": 0.976,
+  "fragment_20_update_wc": 1137,
+  "fragment_20_ground_truth_wc": 1560,
+  "fragment_20_overlap_ratio": 0.819,
+  "semantic_25_update_wc": 1337,
+  "semantic_25_ground_truth_wc": 1327,
+  "semantic_25_overlap_ratio": 1.02,
+  "mixed_real_update_wc": 1132,
+  "mixed_real_ground_truth_wc": 1132,
+  "mixed_real_overlap_ratio": 1.196,
+  "status": "generated"
+}

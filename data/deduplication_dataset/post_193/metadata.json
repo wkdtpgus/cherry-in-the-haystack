@@ -1,0 +1,21 @@
+{
+  "post_id": "193",
+  "title": "**거대 언어 모델 선택 마스터클래스**",
+  "base_word_count": 1365,
+  "exact_30_update_wc": 1602,
+  "exact_30_ground_truth_wc": 1649,
+  "exact_30_overlap_ratio": 0.823,
+  "paraphrase_25_update_wc": 1676,
+  "paraphrase_25_ground_truth_wc": 1620,
+  "paraphrase_25_overlap_ratio": 0.848,
+  "fragment_20_update_wc": 1184,
+  "fragment_20_ground_truth_wc": 1469,
+  "fragment_20_overlap_ratio": 0.912,
+  "semantic_25_update_wc": 1535,
+  "semantic_25_ground_truth_wc": 1535,
+  "semantic_25_overlap_ratio": 0.889,
+  "mixed_real_update_wc": 1463,
+  "mixed_real_ground_truth_wc": 1463,
+  "mixed_real_overlap_ratio": 0.933,
+  "status": "generated"
+}

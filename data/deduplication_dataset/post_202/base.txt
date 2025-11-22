@@ -1,0 +1,80 @@
+# **실습 랭스미스(LangSmith) 강좌[1/7]: 랭스미스(LangSmith)란 무엇인가?**
+
+Author: Youssef Hosni
+URL: https://youssefh.substack.com/p/hands-on-langsmith-course17-what
+
+============================================================
+
+1년 동안 75% 할인
+
+프로덕션(production) 수준의 LLM 애플리케이션을 구축하려면 개발, 모니터링(monitoring), 지속적인 개선을 위한 강력한 도구가 필요합니다. Langsmith는 이 모든 과정을 간소화하도록 설계된 포괄적인 플랫폼입니다. 상세한 관측 가능성(observability), 체계적인 평가, 협업적인 프롬프트 엔지니어링(prompt engineering)을 위한 강력한 도구를 제공하는 Langsmith는 프로토타입(prototype)에서 프로덕션(production)으로 자신감 있게 전환하는 데 필요한 툴킷을 제공합니다. 이 글은 플랫폼의 핵심 기능을 소개하며, 개발 주기(development cycle)의 모든 단계에서 LLM 애플리케이션을 효과적으로 관리하고 개선하는 방법을 보여줍니다.
+
+목차:
+LangSmith 핵심 기능
+LangSmith의 관측 가능성(Observability) (추적(Tracing) 및 모니터링(Monitoring))
+LangSmith의 평가(Evaluation) 및 테스트(Testing)
+LangSmith의 프롬프트 엔지니어링(Prompt Engineering) 및 최적화(Optimization)
+1년 동안 75% 할인
+
+**내 모든 책을 40% 할인된 가격으로 한 번에 구매하세요**
+유세프 호스니(Youssef Hosni) · 6월 17일
+
+제 책과 로드맵(roadmap)을 묶어 번들(bundle)로 만들었으니, 버튼 하나로 모든 것을 원가보다 40% 저렴하게 구매하실 수 있습니다. 이 번들에는 다음을 포함한 8권의 전자책(eBook)이 포함되어 있습니다:
+전체 이야기 읽기
+
+대규모 언어 모델(Large Language Model, LLM) 위에 애플리케이션을 구축해 본 적이 있다면, 그 어려움을 아실 겁니다. 문제가 발생했을 때, 단순한 버그(bug)인 경우는 거의 없습니다. 대신, 복잡한 실행 트리(run tree)를 통해 단일 사용자 상호작용을 추적하거나, 비정형 대화의 바다 속에서 모델이 왜 올바르게 추론하지 못했는지 이해하려고 애쓰게 됩니다. 그 논리를 디버깅(debugging)하고 성능을 지속적으로 개선하는 방법을 알아내는 것은 종종 반복 가능한 과학이라기보다는 예측 불가능한 예술처럼 느껴질 수 있습니다.
+
+바로 여기서 LangSmith가 등장합니다. LangSmith는 전체 LLM 개발 수명 주기(development lifecycle)를 위해 설계되었으며, 일반적인 가정에 도전하는 몇 가지 근본적인 원칙을 제시합니다. LangSmith는 자동화된 추적(tracing) 및 디버깅(debugging)을 위한 실행 트리 뷰(run tree view), 비용이 많이 드는 단계 식별, 지연 시간 병목 현상(latency bottleneck) 분석과 같은 기능을 포함하는 관측 가능성(observability)과 같은 필수 기능을 제공합니다. 또한 이 플랫폼은 평가(evaluation) 및 실험(experimentation)을 지원하여 사용자가 사용자 지정 평가자(custom evaluator)를 정의하고, 선별된 데이터셋(dataset)으로 체계적인 테스트를 수행하며, 아키텍처(architecture) 변경의 장단점(trade-off)을 평가하기 위해 실험 결과를 나란히 비교할 수 있도록 합니다.
+
+이 시리즈는 다음 주제를 다룰 것입니다:
+LangSmith란 무엇인가요? (현재 보고 계신 부분입니다!)
+LangSmith를 이용한 추적(Tracing)
+LangSmith의 플레이그라운드(Playground) 및 프롬프트(Prompt)
+LangSmith의 데이터셋(Dataset) 및 평가(Evaluation)
+LangSmith를 이용한 주석 큐(Annotation Queue)
+LangSmith를 이용한 자동화(Automation) 및 온라인 평가(Online Evaluation)
+LangSmith의 대시보드(Dashboard)
+
+### 1. LangSmith 핵심 기능
+1년 동안 75% 할인
+
+LangSmith는 개발 주기의 모든 단계에서 개발자가 LLM 애플리케이션 및 에이전트(agent) 성능을 개선하도록 돕는 것을 주된 목적으로 하는 상업용 플랫폼입니다. 이 플랫폼은 구축, 평가, 모니터링(monitoring) 등 전체 수명 주기를 위한 중앙 집중식 플랫폼으로 설계되었습니다. 그 목적의 중요한 측면은 적응성(adaptability)입니다. LangChain의 오픈 소스(open-source) 프레임워크(framework)와 잘 작동하지만, LangSmith는 프레임워크에 구애받지 않으므로(framework agnostic), "어떤 에이전트 프레임워크와도 또는 전혀 프레임워크 없이도 작동하도록 설계"되었습니다.
+
+**플랫폼의 핵심 기능**
+LLM 성능 개선이라는 전반적인 목적은 세 가지 명확하고 상호 연결된 핵심 기능(core functionality)을 통해 달성됩니다.
+1.  관측 가능성(Observability)
+2.  평가(Evaluation)
+3.  프롬프트 엔지니어링(Prompt Engineering)
+
+이 플랫폼은 LLM 개발의 주요 과제, 특히 에이전트 기반(agentic) 애플리케이션이 "추론하고 행동하는" 방식을 이해하기 어려운 점을 해결하도록 구성되어 있습니다.
+
+### 1. 관측 가능성(Observability) (추적(Tracing) 및 모니터링(Monitoring))
+
+관측 가능성(Observability)은 "훌륭한 평가는 훌륭한 관측 가능성에서 시작된다"는 믿음에 따라 근본적인 출발점으로 자리매김하고 있습니다.
+
+*   **추적(Tracing):** 이 메커니즘(mechanism)은 "기본으로 제공"되며 최소한의 설정(예: 환경 변수(environment variable) 또는 추적 데코레이터(tracing decorator))만 필요합니다. 이는 "애플리케이션 워크플로우(workflow)의 각 단계"를 자동으로 기록하여 개발자가 전체 성능을 검사하고 개별 추적(trace)을 검사하여 손쉽게 근본 원인(root cause)을 파악할 수 있도록 합니다. 실행 트리 뷰(run tree view)와 같은 도구는 추적(trace)을 디버깅(debugging)하고 "비용이 많이 드는 단계"를 식별하거나 "지연 시간 병목 현상(latency bottleneck)을 이해"하는 데 도움을 줍니다.
+*   **모니터링(Monitoring) 및 경고(Alerting):** 관측 가능성(Observability)은 볼륨(volume), 성공률(success rate), 지연 시간(latency)에 대한 내장 차트(chart)를 제공하는 턴키(turnkey) 모니터링 탭(tab)으로 확장됩니다. LangSmith는 또한 문제를 사전에 제기하기 위한 경고(alerting) 기능을 제공합니다. 사용자는 "품질이 저하되거나 지연 시간(latency)이 설정된 임계값(threshold)을 초과하여 급증"할 경우 알림을 받도록 경고(예: PagerDuty 또는 웹훅(webhook)으로)를 설정할 수 있습니다. 수집된 데이터는 또한 사용자가 데이터에 따라 작동하고 애플리케이션을 개선하기 위한 자동화 규칙(automation rule)을 설정할 수 있도록 합니다.
+
+1년 동안 75% 할인
+
+### 2. 평가(Evaluation) (테스트(Testing) 및 실험(Experimentation))
+
+평가는 관측 가능한 프로덕션 데이터(production data)를 기반으로 하는 체계적인 테스트(testing) 및 측정(measurement) 프로세스(process)입니다.
+
+*   **데이터 큐레이션(Data Curation) 및 감사(Auditing):** 이 플랫폼은 프로덕션 추적(production trace)에서 가져오기, 수동으로 예제 생성, AI를 사용하여 데이터 증강(augment data) 등 다양한 방법을 통해 대표적인 데이터셋(dataset)을 큐레이션(curate)하는 것을 지원합니다. 주석 큐브(annotation cube)는 추적(trace) 감사를 위한 전용 공간을 제공하여, 사람 주석자(human annotator) (특히 해당 분야 전문 지식을 가진 사람)가 추적을 검사하고, 피드백(feedback)을 제공하거나, 테스트 스위트(test suite)에 예제로 추가할 수 있도록 합니다.
+*   **체계적인 테스트(Systematic Testing):** LangSmith의 데이터셋(dataset) 및 실험(experimentation) 기능은 "애플리케이션 성능을 체계적으로 테스트"하는 것을 쉽게 만듭니다. SDK(Software Development Kit) 또는 UI(User Interface)를 통해 실행 가능한 실험은 개발자와 비기술적 이해관계자(예: 제품 관리자 또는 비즈니스 사용자) 모두가 참여할 수 있도록 합니다.
+*   **지속적인 개선(Continuous Improvement):** 실험은 팀이 "에이전트(agent) 성능이 개선됨에 따라 지속적으로 측정하고 추적"하도록 돕고, 장단점(trade-off) (예: 아키텍처(architecture)를 최적화할 때 개선된 품질과 증가된 지연 시간(latency) 비교)에 대한 명확한 가시성(visibility)을 제공합니다. 이 플랫폼은 어떤 예제가 "퇴보했는지 또는 개선되었는지" 확인하기 위해 실험을 나란히 비교하는 것을 쉽게 만듭니다.
+
+### 3. 프롬프트 엔지니어링(Prompt Engineering) (반복(Iteration) 및 최적화(Optimization))
+1년 동안 75% 할인
+
+프롬프트 엔지니어링(prompt engineering)은 LLM 지시사항의 협업적인 반복(iteration) 및 정제(refinement)에 중점을 둡니다.
+
+*   **최적화 도구(Optimization Tools):** 프롬프트 플레이그라운드(Prompt Playground)는 다양한 모델(model)을 테스트하고, 문구를 조정하며, 변경 사항의 영향을 즉시 확인할 수 있는 스크래치패드(scratchpad) 역할을 합니다. 나란히 비교하는 뷰(view)는 변형(variation)을 분석하는 데 도움이 됩니다. 또한, 프롬프트 캔버스(Prompt Canvas) 도구는 사용자 피드백(feedback)을 기반으로 AI 최적화된 버전(version)을 제공하여 모든 팀원을 "전문 프롬프터(prompter)"로 만드는 것을 목표로 합니다.
+*   **협업(Collaboration) 및 관리(Management):** 최적의 프롬프트(prompt)가 개발되면, 팀원들이 재사용하고 정제할 수 있도록 중앙 집중식 프롬프트 라이브러리(prompt library)에 저장할 수 있습니다. LangSmith는 또한 커밋 기록(commit history)을 유지하여 시간 경과에 따른 변경 사항을 추적하는 데 도움을 줍니다.
+
+### 2. LangSmith의 관측 가능성(Observability) (추적(Tracing) 및 모니터링(Monitoring))
+1년 동안 75% 할인
+
+관측 가능성(Observability) 및 디버깅(Debugging)은 LangSmith 상업용 플랫폼 내의 필수적이고 근본적인 핵심 기능 세트입니다. 더 넓은 맥락에서, 관측 가능성(Observability) 및 디버깅(Debugging)은 LangSmith 상업용 플랫폼 내의 필수적이고 근본적인 핵심 기능 세트입니다.
+1년 동안 75% 할인

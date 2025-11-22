@@ -1,0 +1,17 @@
+# **저희 책, Hands-On Large Language Models이 드디어 출간되었습니다!**
+
+Author: Jay Alammar
+URL: https://newsletter.languagemodels.co/p/our-book-hands-on-large-language
+
+============================================================
+
+이 흥미로운 프로젝트를 시작한 지 약 18개월 만에, 이제 LLM-book.com을 여러분께 선보이게 되어 기쁩니다. 이 책은 아마존(Amazon)과 오라일리(O’Reilly)에서 구매할 수 있습니다. 인도에서는 슈로프(Shroff)를 통해 구매 가능합니다. 이 책은 약 425페이지 분량이며, LLM 구축 및 사용의 주요 직관(intuition) 수백 가지를 설명하는 300개의 독창적인 풀컬러 삽화가 포함되어 있습니다. Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요. 구독 모든 코드 예제는 여기 깃허브(Github)에서 확인할 수 있습니다 (현재까지 1.7K 스타! 놀랍습니다!). 마르텐(Maarten)과 저는 여러분이 무료 코랩(Colab) 인스턴스에서 모든 예제를 실행할 수 있도록 작은 모델을 선택했습니다. 우리는 초기 반응에 압도되었습니다. 앤드류 응(Andrew Ng)은 이 책을 "대규모 언어 모델(large language model)이 어떻게 구축되는지에 대한 주요 기술을 이해하고자 하는 모든 사람에게 귀중한 자료"라고 평했습니다. 스탯퀘스트(StatQuest)의 제작자 조쉬 스타머(Josh Starmer)는 "지금 당장 읽어야 할 더 중요한 책은 생각할 수 없습니다. 모든 페이지에서 저는 언어 모델(language model) 시대의 성공에 필수적인 것을 배웠습니다"라고 말했습니다.
+
+**내용 개요**
+이 책은 세 부분으로 나뉩니다. 1부에서는 대규모 언어 모델(large language model)이 어떻게 작동하는지 설명합니다. 여기에는 2024년 시대의 트랜스포머(transformer)를 설명하는 '일러스트레이티드 트랜스포머(The Illustrated Transformer)'의 업데이트되고 확장되며 현대화된 버전이 포함됩니다. 2부는 응용 프로그램(application)에 중점을 두며, 각 장은 특정 유형의 사용 사례(use case)를 다룹니다. 3부는 모델(model)을 미세 조정(fine-tune)하려는 고급 사용자(표현(representation) 또는 생성(generation))를 위한 것입니다.
+
+**1장 개요**
+1장은 LLM 이해를 위한 길을 닦기 위해 관련 개념의 역사와 개요를 제공합니다. 일반 대중이 알아야 할 핵심 개념은 언어 모델(language model)이 단순히 텍스트 생성기(text generator)가 아니라 문제 해결에 유용한 다른 시스템(임베딩(embedding), 분류(classification))을 형성할 수 있다는 것입니다. 임베딩(embedding)은 문서, 문장, 단어 또는 토큰(token) 수준에서 텍스트의 의미를 포착하는 숫자 표현(numeric representation)입니다. 트랜스포머(Transformer) 이전에는 인코더-디코더 RNN(Encoder-Decoder RNN)이 텍스트 생성(text generation) 및 번역(translation) 분야를 선도했습니다. 이 책 전체에서 우리는 언어 모델(language model)을 표현 모델(representation model, 오른쪽 상단에 벡터 아이콘이 있는 녹색) 또는 생성 모델(generative model, 말풍선 아이콘이 있는 분홍색)로 색상 코드를 지정합니다. 이 그림들은 이러한 구분을 설정하기 시작합니다. 이는 나중에 더욱 중요해집니다.
+
+**2장 개요**
+2장: 토큰(Tokens)과 임베딩(Embeddings)은 LLM의 두 가지 기본 개념을 분석하여 LLM 이해의 토대를 마련합니다. 고급 독자를 위해 우리는 다양한 LLM이 특정 문자열(string)을 어떻게 토큰화(tokenize)하는지 비교하여 토큰화(tokenization)의 미묘한 차이를 보여줍니다. 이는 유니코드(unicode), 다국어(multi-linguality), 코드(code), 숫자 등에 대한 LLM의 민감도를 보여주며, 이 모든 것이 LLM의 성능에 영향을 미칩니다. 이러한 토큰화(tokenization)를 시각화(visualize)하는 코드는 여기 2장 노트북(notebook)에 있습니다. 토크나이저(tokenizer)가 허깅페이스 허브(HuggingFace hub)에 있는 한, 이 코드를 사용하여 다른 모델(model)을 시각화할 수 있습니다. 이 두 가지 개념은 텍스트 LLM을 넘어선 수많은 영리한 솔루션(solution)의 문을 엽니다. 이 장에서는 음악 추천 시스템(music recommendation system)에 이 개념들을 사용하는 예시 중 하나를 다룹니다 (노래를 토큰(token)으로, 재생 목록(playlist)을 문장(sentence)으로 취급). 계속 지켜봐 주세요! 더 많은 장별 개요가 향후 게시물에서 공개될 예정입니다. 이 책을 접하시고 경험이 어떠했는지 알려주시기를 바랍니다! (아, 그리고 다 읽으신 후에는 구매하신 플랫폼이나 굿리즈(Goodreads)에 리뷰를 남겨주시면 정말 감사하겠습니다.) 즐거운 독서 되세요! 제이(Jay) Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요. 구독

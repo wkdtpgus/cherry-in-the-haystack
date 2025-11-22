@@ -1,0 +1,245 @@
+데이터 분석 워크플로우 최적화
+
+데이터프레임(DataFrame)의 항목을 그룹화(group)하는 것은 데이터 분석의 핵심입니다. 이 글에서는 특정 특성(feature)의 값에 따라 효과적으로 데이터를 그룹화(group)하는 방법을 탐구합니다. `.groupby()` 메서드(method)는 데이터프레임(DataFrame)에 적용되어 복잡한 데이터 패턴을 분석하고, 특정 특성(feature)에 따라 데이터를 그룹화합니다. 그룹화된 객체(object)에는 간단하거나 더 복잡한 다양한 분석 함수(function)를 적용하여 심층적인 통찰력을 얻을 수 있습니다. 따라서 이는 테이블 형식 또는 구조화된 데이터(data)를 다루는 모든 데이터 과학자(data scientist)에게 매우 중요하며, 데이터를 유연하고 심층적으로 이해하고 조작하는 데 필수적인 도구(tool)입니다.
+
+**목차:**
+*   `.groupby()`를 활용한 데이터 집계 및 변환
+*   `.groupby()`를 활용한 데이터 필터링
+*   `.groupby()`를 활용한 결측값 대체
+*   `.groupby()`를 활용한 시계열 데이터 분석
+*   `.groupby()`와 사용자 정의 함수의 결합
+
+**데이터 과학 프로젝트의 성능 최적화 전략**
+데이터 분석 프로젝트의 성공은 단순히 정확한 모델을 구축하는 것을 넘어, 효율적인 코드 작성과 성능 최적화에 달려 있습니다. 대규모 데이터셋을 다룰 때, 작은 최적화 하나가 전체 워크플로우의 속도를 크게 향상시킬 수 있습니다. 특히 Pandas와 같은 라이브러리(library)를 사용할 때는 내장된 최적화 기능을 최대한 활용하는 것이 중요합니다. 이 섹션에서는 `.groupby()`와 같은 강력한 도구(tool)를 사용하여 데이터 처리 속도를 극대화하는 몇 가지 실용적인 전략을 소개합니다.
+
+### 1. `.groupby()`를 활용한 데이터 집계 및 변환
+
+**데이터 집계의 기본: `.count()`**
+집계된 그룹(group)에 적용할 수 있는 가장 간단한 메서드(method) 중 하나는 `.count()`입니다. 아래 예시에서는 이를 레스토랑 데이터셋(dataset)에 적용할 것입니다. 먼저, 고객이 흡연자인지 아닌지에 따라 레스토랑 데이터를 그룹화(group)합니다. 그런 다음, `.count()` 메서드(method)를 적용합니다. 흡연자와 비흡연자의 수를 얻습니다.
+
+```python
+restaurant = pd.read_csv(’restaurant_data.csv’)
+restaurant_grouped = restaurant.groupby(’smoker’)
+print(restaurant_grouped.count())
+```
+
+`.count()` 메서드(method)는 각 특성(feature)에서 각 그룹(group)의 발생 횟수를 세기 때문에 모든 특성(feature)에 대해 동일한 결과를 얻는 것은 놀라운 일이 아닙니다. 데이터에 결측값(missing value)이 없으므로 모든 열에서 결과는 동일해야 합니다.
+
+**고급 집계 및 다중 함수 적용: `.agg()`**
+데이터 집계 시, 그룹(group)에 적용할 수 있는 가장 강력한 기능 중 하나는 `.agg()` 메서드(method)입니다. 이 메서드(method)를 사용하면 단일 또는 다중 특성(feature)에 대해 여러 집계 함수(aggregation function)를 동시에 적용할 수 있습니다. 이번에는 가상의 판매 데이터셋(dataset)에 적용할 것입니다. 먼저, 제품 카테고리(product category)에 따라 판매 데이터를 그룹화(group)합니다. 그런 다음, `.agg()` 메서드(method)를 적용하여 `mean`, `sum`, `std`와 같은 다양한 통계량을 계산합니다. 예를 들어, 각 제품 그룹별로 판매량의 평균과 총합을 얻습니다.
+
+```python
+import pandas as pd
+import numpy as np
+
+# 가상의 판매 데이터 생성
+sales_data = pd.DataFrame({
+    'category': np.random.choice(['Electronics', 'Clothing', 'Books'], 100),
+    'price': np.random.rand(100) * 100 + 10,
+    'quantity': np.random.randint(1, 10, 100),
+    'region': np.random.choice(['North', 'South', 'East', 'West'], 100)
+})
+sales_data['total_sales'] = sales_data['price'] * sales_data['quantity']
+
+# 카테고리별로 그룹화하여 다중 집계 함수 적용
+category_summary = sales_data.groupby('category').agg(
+    avg_price=('price', 'mean'),
+    total_items_sold=('quantity', 'sum'),
+    max_sale=('total_sales', 'max')
+)
+print(category_summary)
+```
+
+이처럼 `.agg()`를 활용하면 데이터의 다양한 측면을 한눈에 파악할 수 있으며, 복잡한 비즈니스 지표(business metric)를 쉽게 도출할 수 있습니다. 특히 사용자 정의 함수(user-defined function)를 `agg()`와 함께 사용하여 특정 도메인(domain)에 특화된 집계(aggregation)를 수행하는 것도 가능합니다. 이는 데이터 탐색(data exploration)과 보고서 생성(report generation) 과정에서 매우 유용합니다.
+
+**데이터 변환 가속화: `.transform()`**
+특정 특성(feature)의 값에 따라 데이터프레임(DataFrame)의 항목을 그룹화(group)한 후, 우리가 관심 있는 모든 변환(transformation)을 적용할 수 있습니다. `transform()` 함수(function)는 데이터 처리 속도 향상을 이룰 수 있으며, 이는 대규모 데이터셋(dataset)에 특히 중요합니다. 게다가, 복잡한 로직(logic)을 구현하면서도 이러한 간결함과 효율성으로 인해 코드(code)만 사용합니다. 이는 순수 파이썬(Python) 반복문(loop)을 사용하는 것보다 훨씬 빠르고 가독성이 높습니다. 이러한 최적화는 모델 학습(model training) 시간을 단축하고 전반적인 개발 생산성(development productivity)을 향상시킵니다.
+
+여기서는 정규화 변환(normalization transformation)인 z-점수(z-score)를 적용할 것입니다. z-점수(z-score)는 각 값과 평균(mean) 사이의 거리를 표준 편차(standard deviation)로 나눈 값입니다. 이것은 통계학에서 매우 유용한 변환(transformation)이며, 표준화된 테스트(standardized testing)에서 z-검정(z-test)과 함께 자주 사용됩니다.
+
+이 변환(transformation)을 그룹화된 객체(object)에 적용하려면, 우리가 정의한 람다 변환(lambda transformation)을 포함하는 `.transform()` 메서드(method)를 호출하기만 하면 됩니다. 이번에는 식사 유형(저녁 식사였는지 점심 식사였는지)에 따라 그룹화(group)할 것입니다. z-점수 변환(z-score transformation)은 그룹(group)과 관련되어 있으므로, 결과 테이블(table)은 원래 테이블(table)과 동일합니다. 각 요소에 대해 평균(mean)을 빼고 해당 요소가 속한 그룹(group)의 표준 편차(standard deviation)로 나눕니다. 또한 숫자 변환(numerical transformation)은 데이터프레임(DataFrame)의 숫자 특성(numerical feature)에만 적용된다는 것을 알 수 있습니다.
+
+```python
+zscore = lambda x: (x - x.mean() ) / x.std()
+restaurant_grouped = restaurant.groupby(’time’)
+restaurant_transformed = restaurant_grouped.transform(zscore)
+restaurant_transformed.head()
+```
+
+`transform()` 메서드(method)가 많은 것을 단순화하지만, 실제로 순수 파이썬(Python) 코드(code)를 사용하는 것보다 효율적일까요? 이전과 마찬가지로, 이번에는 성별(sex)에 따라 데이터를 먼저 그룹화(group)합니다. 그런 다음 이전에 적용했던 z-점수 변환(z-score transformation)을 적용하고 그 효율성을 측정합니다. 각 작업의 시간을 측정하는 코드(code)는 이미 익숙하실 것이므로 여기서는 생략합니다. `transform()` 함수(function)를 사용하면 엄청난 속도 향상을 이룰 수 있음을 알 수 있습니다. 게다가, 우리는 관심사에 대해 단 한 줄의 코드(code)만 사용합니다.
+
+```python
+restaurant.groupby(’sex’).transform(zscore)
+
+mean_female = restaurant.groupby(’sex’).mean()[’total_bill’][’Female’]
+mean_male = restaurant.groupby(’sex’).mean()[’total_bill’][’Male’]
+
+std_female = restaurant.groupby(’sex’).std()[’total_bill’][’Female’]
+std_male = restaurant.groupby(’sex’).std()[’total_bill’][’Male’]
+
+for i in range(len(restaurant)):
+    if restaurant.iloc[i][2] == ‘Female’:
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_female)/std_female
+    else:
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_male)/std_male
+```
+
+또한, 각 그룹(group) 내에서 특정 값을 스케일링(scaling)하는 방법을 살펴볼 것입니다. 이는 기계 학습(machine learning) 모델을 위한 특징 공학(feature engineering)에서 흔히 사용되는 기법입니다. 다음 예시에서는 각 지역(region)별로 'total_sales'를 Min-Max 스케일링(scaling)하여 0과 1 사이의 값으로 정규화(normalize)합니다.
+
+```python
+# Min-Max 스케일링 함수
+min_max_scaler = lambda x: (x - x.min()) / (x.max() - x.min())
+
+# 지역별로 그룹화하여 total_sales에 Min-Max 스케일링 적용
+sales_data['scaled_sales'] = sales_data.groupby('region')['total_sales'].transform(min_max_scaler)
+print(sales_data.head())
+```
+
+### 2. `.groupby()`를 활용한 데이터 필터링
+
+이제 그룹화된 판다스(pandas) 객체(object)에서 `filter()` 함수(function)를 어떻게 사용할 수 있는지 논의할 것입니다. 이를 통해 특정 조건(condition)에 따라 해당 그룹(group)의 하위 집합(subset)만 포함할 수 있습니다. 종종 특정 특성(feature)에 따라 데이터프레임(DataFrame)의 항목을 그룹화(group)한 후, 우리는 특정 조건(condition)에 따라 해당 그룹(group)의 하위 집합(subset)만 포함하는 데 관심이 있습니다. 필터링 조건(filtration condition)의 몇 가지 예로는 결측값(missing value)의 수, 특정 특성(feature)의 평균(mean), 또는 데이터셋(dataset)에서 그룹(group)의 발생 횟수 등이 있습니다.
+
+우리는 웨이터(waiter)에게 지불된 평균 금액이 20달러를 초과하는 날에 주어진 팁(tip)의 평균 금액을 찾는 데 관심이 있습니다. `.filter()` 함수(function)는 각 그룹(group)의 데이터프레임(DataFrame)에서 작동하는 람다 함수(lambda function)를 허용합니다. 이 예시에서 람다 함수(lambda function)는 "total_bill"을 선택하고 `mean()`이 20보다 큰지 확인합니다. 만약 해당 람다 함수(lambda function)가 `True`를 반환하면, 팁(tip)의 `mean()`이 계산됩니다. 팁(tip)의 총 평균(mean)을 비교하면 두 값 사이에 차이가 있음을 알 수 있으며, 이는 필터링(filtering)이 올바르게 수행되었음을 의미합니다.
+
+```python
+restaurant_grouped = restaurant.groupby(’day’)
+filter_trans = lambda x : x[’total_bill’].mean() > 20
+restaurant_filtered = restaurant_grouped.filter(filter_trans)
+print(restaurant_filtered[’tip’].mean())
+print(restaurant[’tip’].mean())
+```
+
+`groupby()`를 사용하지 않고 이 작업을 수행하려고 하면, 비효율적인 코드(code)가 됩니다. 먼저, 리스트 컴프리헨션(list comprehension)을 사용하여 평균 식사 비용이 20달러보다 큰 날을 나타내는 데이터프레임(DataFrame)의 항목을 추출한 다음, `for` 루프(loop)를 사용하여 이를 리스트(list)에 추가하고 평균(mean)을 계산합니다. 매우 직관적으로 보일 수 있지만, 보시다시피 매우 비효율적입니다.
+
+```python
+t=[restaurant.loc[restaurant[’day’] == i][’tip’] for i in restaurant[’day’].unique() if restaurant.loc[restaurant[’day’] == i][’total_bill’].mean()>20]
+restaurant_filtered = t[0]
+for j in t[1:]:
+    restaurant_filtered=restaurant_filtered.append(j,ignore_index=True)
+```
+
+### 3. `.groupby()`를 활용한 결측값 대체
+
+이제 그룹화된 판다스(pandas) 객체(object)에 `transform()` 함수(function)를 사용하는 이유와 방법을 살펴보았으니, 이제 결측값(missing value)을 대체하는 매우 구체적인 작업에 대해 다룰 것입니다. `transform()` 함수(function)를 결측값 대체(missing value imputation)에 어떻게 사용할 수 있는지 실제로 알아보기 전에, 각 그룹(group)에서 우리가 관심 있는 변수(variable)에 결측값(missing value)이 얼마나 있는지 살펴보겠습니다. 아래에서 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 볼 수 있으며, 이는 176+68 = 244입니다.
+
+```python
+prior_counts = restaurant.groupby(’time’)
+prior_counts[’total_bill’].count()
+```
+
+다음으로, 아래 코드(code)를 사용하여 무작위 관측치(random observation)의 10%에 해당하는 총 청구액(total bill)을 `NaN`으로 설정한 `restaurant_nan` 데이터셋(dataset)을 생성할 것입니다.
+
+```python
+import pandas as pd
+import numpy as np
+
+p = 0.1 #percentage missing data required
+mask = np.random.choice([np.nan,1], size=len(restaurant), p=[p,1-p])
+
+restaurant_nan = restaurant.copy()
+restaurant_nan[’total_bill’] = restaurant_nan[’total_bill’] * mask
+```
+
+이제 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 출력해 보면, 현재 155 + 62 = 217임을 알 수 있습니다. 우리가 가진 총 데이터 포인트(data point)는 244이므로, 결측 데이터 포인트(missing data point)는 24개이며, 이는 10%에 해당합니다.
+
+```python
+prior_counts = restaurant.groupby(’time’)
+prior_counts[’total_bill’].count()
+```
+
+데이터에서 결측값(missing value)의 수를 센 후, 그룹(group)별 함수(function)를 사용하여 이 결측값(missing value)을 채우는 방법을 보여드리겠습니다. 가장 일반적인 선택은 평균(mean)과 중앙값(median)이며, 선택은 데이터의 왜도(skewness)와 관련이 있습니다. 이전과 마찬가지로, `fillna()` 함수(function)를 사용하여 모든 결측값(missing value)을 해당 그룹(group)의 평균(average)으로 대체하는 람다 변환(lambda transformation)을 정의합니다. 이전과 마찬가지로, 식사 시간에 따라 데이터를 그룹화(group)한 다음 미리 정의된 변환(transformation)을 적용하여 결측값(missing value)을 대체합니다.
+
+```python
+# Missing value imputation
+missing_trans = lambda x: x.fillna(x.mean())
+restaurant_nan_grouped = restaurant_nan.groupby(’time’)[’total_bill’]
+restaurant_nan_grouped.transform(missing_trans)
+```
+
+보시다시피, 인덱스(index) 0과 인덱스(index) 4의 관측치(observation)는 동일하며, 이는 해당 결측값(missing value)이 해당 그룹(group)의 평균(mean)으로 대체되었음을 의미합니다. 또한 이 메서드(method)를 사용한 계산 시간은 0.007초임을 알 수 있습니다. 이를 기존 메서드(method)와 비교해 봅시다:
+
+```python
+start_time = time.time()
+mean_din = restaurant_nan.loc[restaurant_nan.time ==’Dinner’][’total_bill’].mean()
+mean_lun = restaurant_nan.loc[restaurant_nan.time == ‘Lunch’][’total_bill’].mean()
+
+for row in range(len(restaurant_nan)):
+    if restaurant_nan.iloc[row][’time’] == ‘Dinner’:
+        restaurant_nan.loc[row, ‘total_time’] = mean_din
+    else:
+        restaurant_nan.loc[row, ‘total_time’] = mean_lun
+
+print(”Results from the above operation calculated in %s seconds” % (time.time() - start_time))
+```
+
+그룹화된 객체(object)에 적용된 `.transform()` 함수(function)를 사용하는 것이 이 작업에 대해 순수 파이썬(Python) 코드(code)보다 더 빠르게 수행됨을 알 수 있습니다.
+
+### 4. `.groupby()`를 활용한 시계열 데이터 분석
+
+**시계열 데이터의 숨겨진 패턴 발견**
+그룹화된 판다스(pandas) 객체(object)에 `transform()` 함수(function)를 사용하는 이유와 방법을 살펴보았으니, 시계열 데이터(time series data) 분석에 초점을 맞출 것입니다. 특히, 시계열 데이터(time series data)의 이상치(outlier)를 감지하는 구체적인 작업에 대해 다룰 것입니다. 시계열 데이터(time series data)는 시간에 따른 패턴(pattern)과 추세(trend)를 분석하는 데 중요하며, `.groupby()`는 이러한 분석을 위한 강력한 기반을 제공합니다. 예를 들어, 특정 기간(period) 동안의 데이터 변화를 관찰하거나, 특정 조건(condition)에 따른 시계열(time series)의 특성을 비교할 수 있습니다.
+
+```python
+# 가상의 시계열 데이터 생성
+dates = pd.to_datetime(pd.date_range('2023-01-01', periods=365, freq='D'))
+data = pd.DataFrame({
+    'date': dates,
+    'sensor_id': np.random.choice(['sensor_A', 'sensor_B'], 365),
+    'temperature': np.random.rand(365) * 20 + 15 # 15-35도
+})
+
+# 특정 날짜에 이상치 주입 (예: 센서 A의 특정 날짜 온도 급상승)
+data.loc[(data['date'] == '2023-03-15') & (data['sensor_id'] == 'sensor_A'), 'temperature'] = 50
+
+# 센서별로 그룹화하여 7일 이동 평균 계산
+data['rolling_mean_temp'] = data.groupby('sensor_id')['temperature'].transform(lambda x: x.rolling(window=7, min_periods=1).mean())
+
+# 이상치 감지 (예: 온도가 이동 평균보다 10도 이상 높을 때)
+data['is_outlier'] = (data['temperature'] > data['rolling_mean_temp'] + 10)
+print(data[data['is_outlier']].head())
+```
+
+위 예시에서 `rolling()` 함수(function)를 사용하여 모든 시계열(time series) 데이터의 이동 평균(moving average)을 계산하는 방법을 보여주었습니다. 이는 각 센서(sensor)별로 독립적으로 적용되어, 전체 데이터셋(dataset)의 문맥(context)을 유지하면서도 그룹(group)별 특성을 반영합니다. 이처럼 `.groupby()`와 `transform()`을 시계열 분석(time series analysis)에 결합하면, 계절성(seasonality)이나 추세(trend)를 고려한 복잡한 이상치 감지(outlier detection) 또는 예측 모델(prediction model)을 구축하는 데 활용할 수 있습니다.
+
+### 5. `.groupby()`와 사용자 정의 함수의 결합
+
+**유연한 데이터 처리의 가능성**
+이제 그룹화된 판다스(pandas) 객체(object)에서 사용자 정의 함수(user-defined function)를 어떻게 활용할 수 있는지 논의할 것입니다. 이를 통해 도메인(domain) 지식에 기반한 특정 조건(condition)에 따라 해당 그룹(group)의 특성을 정의할 수 있습니다. 데이터프레임(DataFrame)의 항목을 그룹화(group)한 후, 복잡한 비즈니스 로직(business logic)을 적용하는 것이 일반적입니다. `apply()` 메서드(method)는 이러한 시나리오(scenario)에서 강력한 유연성을 제공합니다.
+
+가상의 고객 데이터셋(customer dataset)을 사용하여, 각 고객 그룹(customer group)의 구매 패턴(purchase pattern)을 분석하는 사용자 정의 함수(user-defined function)를 적용해 보겠습니다. 예를 들어, 특정 고객 세그먼트(customer segment)의 충성도 점수(loyalty score)를 계산하거나, 이탈 가능성(churn probability)을 예측하는 데 필요한 중간 지표(intermediate metric)를 도출할 수 있습니다.
+
+```python
+# 가상의 고객 구매 데이터 생성
+customer_data = pd.DataFrame({
+    'customer_id': np.random.randint(1, 50, 200),
+    'order_date': pd.to_datetime(pd.date_range('2022-01-01', periods=200, freq='D').map(lambda x: x if np.random.rand() > 0.3 else pd.NaT)),
+    'total_spent': np.random.rand(200) * 500 + 50,
+    'product_category': np.random.choice(['Electronics', 'Clothing', 'Books', 'Food'], 200)
+}).dropna() # 결측값 제거
+
+# 고객별 구매 빈도 및 평균 지출 계산 함수
+def analyze_customer_behavior(group):
+    total_orders = group['order_date'].count()
+    avg_spent = group['total_spent'].mean()
+    unique_categories = group['product_category'].nunique()
+    return pd.Series({
+        'total_orders': total_orders,
+        'avg_spent_per_order': avg_spent,
+        'unique_categories_purchased': unique_categories
+    })
+
+# customer_id별로 그룹화하여 사용자 정의 함수 적용
+customer_summary = customer_data.groupby('customer_id').apply(analyze_customer_behavior)
+print(customer_summary.head())
+```
+
+이 접근 방식은 `groupby()`를 사용하지 않고 이 작업을 수행하려고 하면, 비효율적인 코드(code)가 됩니다. 각 그룹(group)에 대해 개별적으로 복잡한 로직(logic)을 구현하는 것은 시간 소모적이며 오류 발생 가능성이 높습니다. `apply()` 메서드(method)를 통해 우리는 데이터 분석가(data analyst)가 원하는 거의 모든 종류의 복잡한 계산을 효율적으로 수행할 수 있게 됩니다. 이를 통해 데이터에서 더 깊은 통찰력(insight)을 얻고, 비즈니스 의사 결정(business decision)에 중요한 정보를 제공할 수 있습니다.
+
+**데이터 거버넌스(data governance)와 데이터 품질(data quality)의 중요성**
+데이터 분석의 효율성만큼 중요한 것은 바로 데이터 자체의 품질입니다. 아무리 정교한 분석 도구(analysis tool)를 사용하더라도, 입력 데이터(input data)의 신뢰성이 낮으면 도출되는 인사이트(insight) 또한 한계를 가집니다. 데이터 거버넌스(data governance)는 데이터의 가용성(availability), 사용성(usability), 무결성(integrity) 및 보안(security)을 보장하는 프레임워크(framework)를 제공하며, 이는 모든 데이터 기반 의사 결정(data-driven decision)의 초석이 됩니다. 데이터 품질(data quality)은 지속적인 모니터링(monitoring)과 개선 프로세스(improvement process)를 통해 유지되어야 합니다.
+
+개인적인 열정 프로젝트(project)이며, 여러분의 지원은 더 많은 기술 콘텐츠(technical content)를 생산하는 데 큰 힘이 됩니다. 데이터 과학 분야의 최신 동향(latest trends)과 심층적인 분석 기법(in-depth analytical techniques)에 대한 정보를 계속해서 제공할 수 있도록, 여러분의 피드백(feedback)과 관심은 매우 소중합니다. 데이터 커뮤니티(data community)의 성장을 위해 함께 노력해 주시길 바랍니다.
+
+데이터 분석 여정에 도움이 되는 추가 자료나 심화 학습을 원하시면, 관련 온라인 강좌(online course)나 오픈소스(open-source) 프로젝트에 참여하는 것을 추천합니다.
+
+읽어주셔서 감사하며, 끊임없는 학습과 데이터 과학 커뮤니티(data science community)에 대한 기여를 지원해 주셔서 감사합니다!

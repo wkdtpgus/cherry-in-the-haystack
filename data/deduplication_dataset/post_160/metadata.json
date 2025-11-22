@@ -1,0 +1,21 @@
+{
+  "post_id": "160",
+  "title": "**AI Snake Oil 책 온라인으로 읽기 시작**",
+  "base_word_count": 1417,
+  "exact_30_update_wc": 1253,
+  "exact_30_ground_truth_wc": 1286,
+  "exact_30_overlap_ratio": 1.105,
+  "paraphrase_25_update_wc": 1701,
+  "paraphrase_25_ground_truth_wc": 1701,
+  "paraphrase_25_overlap_ratio": 0.833,
+  "fragment_20_update_wc": 1449,
+  "fragment_20_ground_truth_wc": 1604,
+  "fragment_20_overlap_ratio": 0.871,
+  "semantic_25_update_wc": 1745,
+  "semantic_25_ground_truth_wc": 1746,
+  "semantic_25_overlap_ratio": 0.811,
+  "mixed_real_update_wc": 1368,
+  "mixed_real_ground_truth_wc": 1378,
+  "mixed_real_overlap_ratio": 1.029,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "004",
+  "title": "**GPT-2부터 gpt-oss까지: 아키텍처 발전 분석**",
+  "base_word_count": 5951,
+  "exact_30_update_wc": 5441,
+  "exact_30_ground_truth_wc": 5419,
+  "exact_30_overlap_ratio": 1.098,
+  "paraphrase_25_update_wc": 5268,
+  "paraphrase_25_ground_truth_wc": 5268,
+  "paraphrase_25_overlap_ratio": 1.13,
+  "fragment_20_update_wc": 1635,
+  "fragment_20_ground_truth_wc": 5373,
+  "fragment_20_overlap_ratio": 1.354,
+  "semantic_25_update_wc": 4602,
+  "semantic_25_ground_truth_wc": 4602,
+  "semantic_25_overlap_ratio": 1.293,
+  "mixed_real_update_wc": 4654,
+  "mixed_real_ground_truth_wc": 4654,
+  "mixed_real_overlap_ratio": 1.279,
+  "status": "generated"
+}

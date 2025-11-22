@@ -1,0 +1,30 @@
+# 🤖 **AI 에이전트(AI Agents) 위클리**: MiniMax-M2, Cursor 2.0, SWE-1.5, Agent Data Protocol, Kimi CLI
+
+Author: Elvis Saravia
+URL: https://nlp.elvissaravia.com/p/ai-agents-weekly-minimax-m2-cursor
+
+============================================================
+
+**오늘 호에서는:**
+
+MiniMax-M2가 최고 수준의 오픈소스 모델로 출시됩니다.
+Cursor가 Cursor 2.0을 선보였습니다.
+Kimi가 Kimi CLI를 출시합니다.
+연구에서 사전 예방적 컨텍스트 관리(proactive context management)를 소개합니다.
+Cognition이 빠르고 최첨단 규모의 코딩 에이전트(coding agent)인 SWE-1.5를 출시합니다.
+Microsoft가 AI 에이전트(AI agents)를 위한 새로운 RL 훈련 프레임워크(RL training framework)를 공개합니다.
+AI 에이전트(AI Agents)가 인간과 어떻게 다르게 작동하는지에 대한 연구.
+에이전트 데이터 프로토콜(Agent Data Protocol).
+주요 AI 개발 뉴스, 도구 업데이트 등.
+
+**주요 소식**
+**MiniMax-M2**
+MiniMax-M2는 코딩 및 에이전트 워크플로우(agentic workflows)에 최적화된 오픈소스 전문가 혼합(mixture-of-experts, MoE) 언어 모델입니다. 이 모델은 총 2,300억 개의 매개변수(parameters)를 가지며, 그 중 100억 개의 활성 매개변수(active parameters)만을 사용하여 기능과 계산 효율성(computational efficiency) 사이의 균형을 이룹니다.
+
+주요 특징:
+*   **선도적인 성능** – MiniMax-M2는 오픈소스 모델 중 1위, Artificial Analysis 전체 순위 중 5위를 차지하며, 다중 파일 코드 편집(multi-file code edits), 테스트 검증된 수정(test-validated repairs), 컴파일-실행-수정 루프(compile-run-fix loops)에서 뛰어난 성능을 보입니다. 또한 OpenRouter에서 오픈소스 모델 중 토큰 사용량 1위를 달성했습니다.
+*   **강력한 에이전트 기능** – 에이전트 시나리오(agent scenarios)에서 강력한 브라우저 자동화(browser automation) 및 정보 검색(information retrieval) 기능을 보여주며, `<think>...</think>` 태그 내에서 추론(reasoning)을 유지하는 인터리브드 사고 모델(interleaved thinking model)과 복잡한 에이전트 워크플로우(agent workflows)를 위한 도구 호출 기능(tool-calling capabilities)을 갖추고 있습니다.
+*   **벤치마크 결과** – SWE-bench Verified에서 69.4%, Terminal-Bench에서 46.3%(Claude Sonnet 4의 36.4%를 능가), BrowseComp에서 44%(Claude Sonnet 4.5의 19.6%를 크게 상회), Multi-SWE-Bench에서 36.2%, GAIA(텍스트 전용)에서 75.7%를 달성했습니다.
+*   **효율적인 아키텍처(architecture)** – 100억 개의 활성화 풋프린트(activation footprint, 총 2,300억 개의 매개변수 중)는 에이전트 루프(agentic loops)에서 더 빠른 피드백 주기(feedback cycles), 동시 실행(concurrent runs)을 위한 더 높은 처리량(throughput), 그리고 더 간단한 배포 인프라(deployment infrastructure)를 가능하게 하여, 실제 프로덕션 에이전트 시스템(production agent systems)의 문제점(pain points)을 해결합니다.
+*   **가용성** – HuggingFace를 통해 오픈소스 가중치(open-source weights)를 이용할 수 있으며, MiniMax 플랫폼에서 무료 API 접근(제한된 기간)이 가능하고, agent.minimax.io에서 MiniMax Agent 제품을 제공하며, 로컬 배포(local deployment)를 위해 SGLang 및 vLLM을 지원합니다.
+GitHub

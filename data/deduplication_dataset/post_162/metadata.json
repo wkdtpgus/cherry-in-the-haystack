@@ -1,0 +1,21 @@
+{
+  "post_id": "162",
+  "title": "**AI 실존적 위험 확률은 정책 수립에 활용하기에는 너무 신뢰할 수 없다.**",
+  "base_word_count": 6346,
+  "exact_30_update_wc": 3641,
+  "exact_30_ground_truth_wc": 5686,
+  "exact_30_overlap_ratio": 1.181,
+  "paraphrase_25_update_wc": 6340,
+  "paraphrase_25_ground_truth_wc": 3141,
+  "paraphrase_25_overlap_ratio": 1.506,
+  "fragment_20_update_wc": 4546,
+  "fragment_20_ground_truth_wc": 5881,
+  "fragment_20_overlap_ratio": 1.102,
+  "semantic_25_update_wc": 5188,
+  "semantic_25_ground_truth_wc": 5139,
+  "semantic_25_overlap_ratio": 1.233,
+  "mixed_real_update_wc": 5048,
+  "mixed_real_ground_truth_wc": 5044,
+  "mixed_real_overlap_ratio": 1.258,
+  "status": "generated"
+}

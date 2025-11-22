@@ -1,0 +1,21 @@
+{
+  "post_id": "060",
+  "title": "**프롬프트 엔지니어링(Prompt Engineering)의 현대적 발전**",
+  "base_word_count": 10158,
+  "exact_30_update_wc": 9972,
+  "exact_30_ground_truth_wc": 10292,
+  "exact_30_overlap_ratio": 0.987,
+  "paraphrase_25_update_wc": 8360,
+  "paraphrase_25_ground_truth_wc": 8360,
+  "paraphrase_25_overlap_ratio": 1.215,
+  "fragment_20_update_wc": 4207,
+  "fragment_20_ground_truth_wc": 7577,
+  "fragment_20_overlap_ratio": 1.614,
+  "semantic_25_update_wc": 8082,
+  "semantic_25_ground_truth_wc": 5052,
+  "semantic_25_overlap_ratio": 1.632,
+  "mixed_real_update_wc": 7894,
+  "mixed_real_ground_truth_wc": 7894,
+  "mixed_real_overlap_ratio": 1.287,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "202",
+  "title": "**실습 랭스미스(LangSmith) 강좌[1/7]: 랭스미스(LangSmith)란 무엇인가?**",
+  "base_word_count": 1021,
+  "exact_30_update_wc": 1161,
+  "exact_30_ground_truth_wc": 1281,
+  "exact_30_overlap_ratio": 0.776,
+  "paraphrase_25_update_wc": 1365,
+  "paraphrase_25_ground_truth_wc": 1345,
+  "paraphrase_25_overlap_ratio": 0.763,
+  "fragment_20_update_wc": 1262,
+  "fragment_20_ground_truth_wc": 1246,
+  "fragment_20_overlap_ratio": 0.822,
+  "semantic_25_update_wc": 2075,
+  "semantic_25_ground_truth_wc": 1952,
+  "semantic_25_overlap_ratio": 0.551,
+  "mixed_real_update_wc": 1205,
+  "mixed_real_ground_truth_wc": 1202,
+  "mixed_real_overlap_ratio": 0.85,
+  "status": "generated"
+}

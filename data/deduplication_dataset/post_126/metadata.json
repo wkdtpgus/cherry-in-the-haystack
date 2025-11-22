@@ -1,0 +1,21 @@
+{
+  "post_id": "126",
+  "title": "지난주 AI 소식 #323 - Sonnet 4.5, Sora 2, Vibes, SB 53",
+  "base_word_count": 140,
+  "exact_30_update_wc": 126,
+  "exact_30_ground_truth_wc": 165,
+  "exact_30_overlap_ratio": 0.802,
+  "paraphrase_25_update_wc": 436,
+  "paraphrase_25_ground_truth_wc": 436,
+  "paraphrase_25_overlap_ratio": 0.321,
+  "fragment_20_update_wc": 133,
+  "fragment_20_ground_truth_wc": 193,
+  "fragment_20_overlap_ratio": 0.602,
+  "semantic_25_update_wc": 521,
+  "semantic_25_ground_truth_wc": 521,
+  "semantic_25_overlap_ratio": 0.269,
+  "mixed_real_update_wc": 133,
+  "mixed_real_ground_truth_wc": 133,
+  "mixed_real_overlap_ratio": 1.053,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "043",
+  "title": "LLM(대규모 언어 모델)을 위한 온라인 대 오프라인 RL(강화 학습)",
+  "base_word_count": 10121,
+  "exact_30_update_wc": 2489,
+  "exact_30_ground_truth_wc": 9451,
+  "exact_30_overlap_ratio": 1.269,
+  "paraphrase_25_update_wc": 8384,
+  "paraphrase_25_ground_truth_wc": 8390,
+  "paraphrase_25_overlap_ratio": 1.206,
+  "fragment_20_update_wc": 7731,
+  "fragment_20_ground_truth_wc": 9104,
+  "fragment_20_overlap_ratio": 1.132,
+  "semantic_25_update_wc": 8282,
+  "semantic_25_ground_truth_wc": 4951,
+  "semantic_25_overlap_ratio": 1.624,
+  "mixed_real_update_wc": 8899,
+  "mixed_real_ground_truth_wc": 8899,
+  "mixed_real_overlap_ratio": 1.137,
+  "status": "generated"
+}

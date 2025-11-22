@@ -1,0 +1,21 @@
+{
+  "post_id": "194",
+  "title": "**10월 27일부터 11월 1일까지의 주요 거대 언어 모델(LLM) 논문**",
+  "base_word_count": 2033,
+  "exact_30_update_wc": 1705,
+  "exact_30_ground_truth_wc": 2631,
+  "exact_30_overlap_ratio": 0.649,
+  "paraphrase_25_update_wc": 2348,
+  "paraphrase_25_ground_truth_wc": 2382,
+  "paraphrase_25_overlap_ratio": 0.851,
+  "fragment_20_update_wc": 2477,
+  "fragment_20_ground_truth_wc": 2597,
+  "fragment_20_overlap_ratio": 0.772,
+  "semantic_25_update_wc": 2628,
+  "semantic_25_ground_truth_wc": 2584,
+  "semantic_25_overlap_ratio": 0.79,
+  "mixed_real_update_wc": 2648,
+  "mixed_real_ground_truth_wc": 2652,
+  "mixed_real_overlap_ratio": 0.766,
+  "status": "generated"
+}

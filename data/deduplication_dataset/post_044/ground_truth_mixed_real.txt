@@ -1,0 +1,415 @@
+(출처 [18, 20, 21]) 최근 OpenAI는 약 5년 전 GPT-2 [13] 이후 처음으로 공개 거대 언어 모델(LLM)인 GPT-oss [1, 2]를 출시했습니다. GPT-2와 GPT-oss 출시 사이의 기간 동안, 거대 언어 모델(LLM) 연구는 끊임없이 변화를 겪었습니다. 이 기간 동안 거대 언어 모델(LLM) 연구의 많은 핵심 혁신은 OpenAI에서 비롯되었지만, 그들의 연구 결과는 거의 항상 내부적으로만 유지되었습니다. GPT-oss는 OpenAI의 거대 언어 모델(LLM) 연구 현황을 엿볼 수 있는 드문 기회를 제공합니다. 이 개요에서는 이 기회를 활용하여 다음을 수행할 것입니다: OpenAI가 제공한 보고서에서 GPT-oss에 대해 공개된 모든 기술적 세부 사항을 철저히 설명합니다. 이러한 각 세부 사항이 어떻게 작동하는지 처음부터 설명합니다 1. 이 개요는 길고(아마도 너무 길고), 거대 언어 모델(LLM) 연구의 다양한 느슨하게 관련된 주제를 다룹니다. 그러나 이 각 주제를 시간을 들여 살펴보면 GPT-oss가 어떻게 작동하는지에 대한 깊은 이해를 얻고, 결과적으로 OpenAI의 거대 언어 모델(LLM) 연구 현황에 대한 더 나은 관점을 형성할 수 있을 것입니다. 딥 (러닝) 포커스(Deep (Learning) Focus)를 사용하여 인공지능(AI) 연구를 최신 상태로 유지하는 50,000명의 다른 사람들과 함께하세요. 구독하기
+
+### GPT-oss 한눈에 보기
+
+“이 모델들은 강화 학습과 o3 및 기타 최첨단 시스템을 포함한 OpenAI의 가장 진보된 내부 모델에서 얻은 기술을 혼합하여 훈련되었습니다.” - 출처 [1]
+
+GPT-oss 출시는 두 가지 다른 모델인 GPT-oss-20b와 GPT-oss-120b를 포함하며, 이들은 모두 허용적인 Apache-2.0 라이선스로 출시되었습니다. 이들은 전문가 혼합(Mixture-of-Experts, MoE) 기반의 추론 모델로, 텍스트 전용이며 주로 영어 데이터로 훈련되었습니다. 전문가 혼합(MoE) 아키텍처와 양자화 인식 훈련(quantization-aware training) 사용 덕분에 이 모델들은 컴퓨팅 및 메모리 효율적입니다. 20b 및 120b 모델은 각각 50억 및 35억 개의 활성 파라미터(active parameters)를 가집니다. MXFP4 (~4비트) 정밀도를 사용하면 더 큰 모델은 단일 80Gb GPU에서 호스팅될 수 있으며, GPT-oss-20b는 호스팅을 위해 약 16Gb의 메모리만 필요합니다. 이 모델들은 사고의 사슬(chain of thought, CoT) 추론 및 안전성을 최적화하기 위해 광범위하게 후처리 훈련(post-trained)되었습니다.
+
+**에이전트(agents)에 대한 강조.** 두 GPT-oss 모델 모두 에이전트 워크플로우(agentic workflows)에 최적화되어 있으며, (합리적으로) 긴 131k 토큰의 컨텍스트 윈도우(context window)와 강력한 도구 사용(tool use), 추론 및 명령어 따르기(instruction-following) 기능을 갖추고 있습니다. 에이전트 워크플로우(예: 함수 호출(function calling), 도구 사용(tool use), 추론, 구조화된 출력(structured outputs) 등)의 패턴을 보다 원활하게 처리하기 위해 OpenAI는 GPT-oss 훈련 및 상호 작용을 위한 새로운 하모니 프롬프트 형식(Harmony prompt format)을 출시했습니다. 이는 다양한 거대 언어 모델(LLM) 상호 작용 패턴을 포착할 수 있는 유연하고 계층적인 채팅 템플릿(chat template)입니다. GPT-oss 모델은 또한 시스템 메시지(system message)에 노력 수준을 명시적으로 지정하여 추론 노력(즉, 낮음, 중간 또는 높음 노력 수준)을 조정할 수 있는 기능을 제공합니다.
+
+(출처 [1]) **내부 평가.** OpenAI가 공개한 평가에 따르면 GPT-oss-120b는 o4-mini와 비슷한 성능을 보이며, GPT-oss-20b는 o3-mini와 유사한 성능을 보입니다. 또한 OpenAI는 출시 기간 동안 새로 발표된 HealthBench의 평가를 기반으로 이 모델들의 건강 관련 작업에 대한 강력한 기능을 크게 강조했습니다. 그러나 GPT-oss 모델은 이 벤치마크에서 전체 o3 모델의 성능에는 여전히 미치지 못합니다.
+
+(출처 [1]) 예상대로 OpenAI는 GPT-oss 모델이 추론 노력(reasoning effort)에 따라 일반적인 추론 시간 스케일링 법칙(inference-time scaling laws)을 따른다고 강조합니다. 모델은 점진적으로 더 긴 추론 경로(reasoning traces)를 생성함에 따라 성능이 향상되며, 따라서 추론 중에 더 많은 컴퓨팅을 소비합니다.
+
+(출처 [1]) **대중의 반응.** 공개 거대 언어 모델(LLM) 커뮤니티에 GPT-oss 모델이 공개된 후, 초기 피드백은 엇갈렸습니다. 예를 들어, 일부 사용자는 이 모델들이 높은 환각률(hallucination rate)을 보인다고 지적했지만, 다른 사용자들은 모델 설정과 관련된 초기 문제들이 해결된 후에는 모델들이 실제로 꽤 좋다고 말합니다. GPT-oss 모델에 대한 다른 일반적인 비판으로는 프롬프트의 과도한 거부(over-refusal of prompts), 모델 양자화(quantization)를 제대로 설정하기 어렵다는 점, 그리고 하모니 프롬프트 형식(Harmony prompt format)이 지나치게 복잡하거나 사용하기 어렵다는 점 등이 있었습니다. 다행히도, ollama, llama.cpp, unsloth와 같은 일반적인 도구에서 발생했던 초기 문제들이 해결되면서 사용자 경험이 점진적으로 개선되었습니다. GPT-oss의 현실은 온라인의 양극화되고 클릭베이트적인 반응의 중간 어딘가에 있습니다. 이들은 (분명히) 역대 최고의 모델은 아니지만, 세계 최고의 거대 언어 모델(LLM) 연구소 중 하나가 출시한 오픈 웨이트(open weights) 모델입니다. AI2, Cohere, Meta를 제외하고는 소수의 미국 상위 거대 언어 모델(LLM) 연구소만이 활발하게 오픈 웨이트(open weights) 모델을 출시하고 있다는 점을 고려할 때, 이 모델들을 시도해보고 그 작동 방식을 깊이 이해하지 못한다면 어리석은 일일 것입니다. 그러므로 OpenAI가 GPT-oss에 대해 제공한 관련 기술적 세부 사항을 자세히 살펴보겠습니다.
+
+### 모델 아키텍처(Model Architecture)
+
+“GPT-oss 모델은 GPT-2 및 GPT-3 아키텍처를 기반으로 구축된 자기회귀(autoregressive) 전문가 혼합(Mixture-of-Experts, MoE) 트랜스포머(transformers)입니다.” - 출처 [1]
+
+먼저 GPT-oss 모델의 아키텍처를 다룰 것입니다. 이 논의는 트랜스포머 아키텍처(transformer architecture) 2에 대한 기본적인 이해에서 시작됩니다. 여기에서 우리는 GPT-oss 아키텍처의 각 고유한 구성 요소를 처음부터 설명할 것입니다. 이 주제에 대한 추가 자료 및 다른 공개 모델과의 비교는 아래 Sebastian Raschka의 훌륭한 개요를 참조하십시오.
+
+**AI의 미래**
+**GPT-2에서 gpt-oss까지: 아키텍처 발전 분석**
+OpenAI는 이번 주에 새로운 오픈 웨이트(open-weight) 거대 언어 모델(LLM)인 gpt-oss-120b와 gpt-oss-20b를 출시했습니다. 이는 2019년 GPT-2 이후 첫 오픈 웨이트 모델입니다. 그리고 네, 몇 가지 영리한 최적화 덕분에 로컬에서 실행할 수 있습니다 (하지만 이에 대해서는 나중에 더 자세히… 더 읽기).
+3개월 전 · 좋아요 169개 · 댓글 17개 · Sebastian Raschka, PhD
+
+#### 트랜스포머 구조(Transformer Structure)
+
+**디코더 전용 트랜스포머 아키텍처(Decoder-only transformer architecture)**
+표준 디코더 전용 트랜스포머 아키텍처(decoder-only transformer architecture)의 그림이 위에 제공되어 있습니다. 이 아키텍처는 현대 GPT 스타일의 거대 언어 모델(LLM)에서 거의 보편적으로 사용됩니다.
+
+**임베딩 차원(Embedding dimension).** 이 모델의 입력은 텍스트 입력(또는 프롬프트)을 토큰화(tokenizing)하고 임베딩(embedding)하여 생성된 토큰 벡터(token vectors)의 시퀀스입니다. GPT-oss 모델의 경우, 이 벡터들은 2,880의 고정된 차원(dimension)을 가지며, 이 동일한 임베딩 차원(embedding dimension)은 거대 언어 모델(LLM)의 모든 레이어(layer)를 통해 유지됩니다.
+
+**블록 구조(Block structure).** 디코더 전용 아키텍처(decoder-only architecture)는 반복되는 디코더 블록(decoder blocks)으로 구성됩니다. GPT-oss 모델은 이러한 블록을 24개(GPT-oss-20b) 또는 36개(GPT-oss-120b) 포함합니다. 위에서 볼 수 있듯이, 각 디코더 블록은 동일한 핵심 구성 요소를 가집니다: 정규화(normalization), 마스크된 다중 헤드 자체 어텐션(masked multi-headed self-attention), 피드포워드 변환(feed-forward transformation), 그리고 잔차 연결(residual connections). GPT-oss 모델은 현재 거대 언어 모델(LLM) 아키텍처에서 가장 일반적인 선택인 사전 정규화 구조(pre-normalization structure) 3를 채택합니다. 이는 디코더 블록의 정규화 레이어(normalization layers)가 어텐션(attention) 및 피드포워드 레이어(feed-forward layers) 이전에 배치되어 다음 구조를 생성한다는 것을 의미합니다:
+
+**디코더 블록(Decoder Block)**
+입력 → 정규화 → 마스크된 자체 어텐션 → 잔차 연결 → 정규화 → 피드포워드 네트워크 → 잔차 연결 → 디코더 블록 출력
+
+사전 정규화 구조(pre-normalization structure)가 가장 일반적이지만, 사전 정규화(pre-normalization)와 사후 정규화(post-normalization) 중 어느 것이 더 우수한지에 대한 명확한 답은 없습니다. 사실, 최근 연구에서는 사후 정규화(post-normalization)가 훈련 안정성에 도움이 된다는 것을 보여주기도 했습니다 [3].
+
+(출처 [3]) **정규화(Normalization).** 초기 트랜스포머(transformers)는 레이어 정규화(layer normalization)를 정규화 레이어(normalization layer)의 표준 선택으로 사용했습니다. 최근에는 많은 거대 언어 모델(LLM)이 레이어 정규화(layer normalization)를 제곱평균제곱근 레이어 정규화(root mean square layer normalization, RMSNorm) [4]로 대체했습니다. 이는 레이어 정규화(layer normalization)의 더 간단하고 계산적으로 효율적인 버전으로, 훈련 가능한 파라미터(trainable parameters)가 더 적고 유사한 성능을 보입니다. GPT-oss 모델은 모든 디코더 블록(decoder blocks)에서 제곱평균제곱근 레이어 정규화(RMSNorm)를 사용하여 이 선택을 채택합니다. 제곱평균제곱근 레이어 정규화(RMSNorm)에 대한 설명 (및 레이어 정규화(layer normalization)와의 비교)은 여기를 참조하십시오.
+
+#### 어텐션 구현(Attention Implementation)
+
+**단일 어텐션 헤드(attention head)를 사용한 마스크된 자체 어텐션(masked self-attention)의 묘사**
+
+**마스크된 자체 어텐션(Masked self-attention).** 마스크된 자체 어텐션(masked self-attention) 연산이 위에 묘사되어 있습니다. 자세한 내용은 여기를 참조하십시오. GPT-oss를 포함한 대부분의 거대 언어 모델(LLM)은 다중 헤드 마스크된 자체 어텐션(multi-headed masked self-attention)을 사용합니다. 이는 각 자체 어텐션 레이어(self-attention layer)에 대해 여러 자체 어텐션(self-attention) 연산이 병렬로 실행된다는 것을 의미합니다. GPT-oss 모델의 경우, 각 자체 어텐션 레이어(self-attention layer)는 64개의 병렬 어텐션 헤드(attention heads)를 가집니다. 이 각 어텐션 헤드(attention heads)는 64차원의 벡터를 사용합니다. 이는 키, 쿼리, 값 투영(key, query, value projections) (위에 표시됨)이 임베딩 벡터(embedding vectors)를 2,880에서 64의 크기로 변환한다는 것을 의미합니다.
+
+(출처 [6]) **다중 및 그룹 쿼리 어텐션(Multi and grouped-query attention).** 다중 헤드 자체 어텐션(multi-headed self-attention)을 확장하여, 이전 연구에서는 다중 쿼리 [5]와 그룹 쿼리 어텐션 [6]을 모두 제안했습니다. 위에 묘사된 바와 같이, 각 어텐션 헤드(attention head)에 고유한 키(keys)와 값(values)을 갖는 대신, 이 기술들은 여러 어텐션 헤드(attention heads) 간에 키(keys)와 값(values)을 공유합니다 (쿼리(queries)는 제외!). 예를 들어, 다중 쿼리 어텐션(multi-query attention)은 모든 어텐션 헤드(attention heads)에 재사용되는 단일 키(keys) 및 값(values) 세트를 가지는 반면, 그룹 쿼리 어텐션(grouped-query attention)은 고정된 크기의 어텐션 헤드(attention heads) 그룹 간에 키(keys)와 값(values)을 공유합니다.
+
+“키(keys)와 값(values)을 로드하는 데 필요한 메모리 대역폭(memory bandwidth)은 다중 쿼리 어텐션(multi-query attention)을 통해 크게 줄일 수 있습니다. 이는 여러 쿼리 헤드(query heads)를 사용하지만 단일 키(key) 및 값 헤드(value heads)를 사용합니다. 그러나 다중 쿼리 어텐션(MQA)은 품질 저하 및 훈련 불안정성(training instability)을 초래할 수 있습니다.” - 출처 [6]
+
+여러 어텐션 헤드(attention heads) 간에 키(keys)와 쿼리(queries)를 공유하는 것은 파라미터(parameter) 및 컴퓨팅 효율성(compute efficiency) 모두에 이점을 제공하지만, 그룹 쿼리 어텐션(grouped-query attention)의 가장 큰 이점은 추론 시간(inference time)에 나타납니다. 모델의 KV 캐시(KV cache)에서 검색해야 하는 키(keys)와 값(values)이 더 적기 때문에 추론 시 메모리 대역폭(memory bandwidth) 사용량이 감소합니다. 메모리 대역폭(memory bandwidth)이 트랜스포머(transformer) 추론 속도에 핵심적인 병목 현상이 될 수 있다는 점을 고려할 때, 이러한 아키텍처 변경은 추론 프로세스(inference process)를 크게 가속화합니다. 그러나 키(keys)와 값(values) 공유에 너무 극단적이어서는 안 됩니다. [6]에서 모든 어텐션 헤드(attention heads)가 동일한 키(key) 및 값 벡터(value vectors)를 공유하면 성능이 저하된다는 것을 알 수 있습니다. 그룹 쿼리 어텐션(grouped-query attention)은 더 작은 그룹 간에 키(keys)와 값(values)을 공유함으로써 성능과 효율성 사이의 균형을 맞추어, 표준 다중 헤드 어텐션(multi-headed attention)과 다중 쿼리 어텐션(multi-query attention) 사이의 절충점을 찾습니다. 특히, GPT-oss는 두 모델 크기 모두에서 그룹 쿼리 어텐션(grouped-query attention)에 대해 8개의 그룹 크기를 사용합니다. 이는 8개의 어텐션 헤드(attention heads) 그룹 간에 키(keys)와 값(values)이 공유된다는 것을 의미합니다.
+
+**희소 어텐션(Sparse attention).** GPT-oss 모델의 디코더 블록(decoder blocks) 내에서, 우리는 각 블록 내에서 밀집(dense) 어텐션과 지역적으로 밴드화된 희소 어텐션(locally-banded sparse attention) [7]을 번갈아 사용합니다. 마스크된 자체 어텐션(masked self-attention)에서 우리는 아래와 같이 어텐션 행렬(attention matrix)을 계산합니다. 여기서 인과적 마스크(causal mask)가 적용되어 어텐션 행렬(attention matrix)의 모든 마스크된 값(즉, 시퀀스(sequence)의 각 토큰(token) 뒤에 오는 값)을 음의 무한대 4로 설정합니다. 이는 자체 어텐션(self-attention) 연산에 의해 고려되어서는 안 되는 토큰(token)이 소프트맥스 변환(softmax transformation)이 적용된 후 0의 확률을 갖도록 보장합니다.
+
+**인과적 자체 어텐션(causal self-attention)에서의 마스킹(Masking)**
+
+자체 어텐션(self-attention)을 계산하는 것은 이차 복잡도(quadratic complexity)를 가집니다. 즉, 시퀀스(sequence) 길이가 S일 때 O(S^2)입니다. 간단히 말해, 이는 자체 어텐션(self-attention)이 긴 시퀀스(sequence)에 적용될 때 계산 비용이 많이 든다는 것을 의미합니다. 그러나 위의 마스킹 패턴을 보면, 거대 언어 모델(LLM)이 각 토큰(token)에 선행하는 전체 시퀀스(sequence)를 실제로 볼 필요가 있는지 궁금할 수 있습니다. Longformer [7]에서 제안한 바와 같이, 자체 어텐션(self-attention)이 계산되는 윈도우(window)를 제한함으로써 컴퓨팅 비용을 절약할 수 있습니다.
+
+**마스크된 어텐션(Masked attention) 대 슬라이딩 윈도우 어텐션(sliding window attention)**
+
+이 아이디어(위에 묘사됨)는 슬라이딩 윈도우 어텐션(sliding window attention) 5이라고 불리며 Mistral 및 Gemma와 같은 여러 거대 언어 모델(LLM)에서 성공적으로 채택되었습니다. 우리는 자체 어텐션(self-attention) 연산에 의해 고려되는 선행 토큰(token)의 범위를 제한하기 위해 마스킹 행렬(masking matrix)을 수정합니다. 이전에는 각 토큰(token) 뒤에 오는 토큰(token)만 마스크했습니다. 이제는 과거에 충분히 멀리 떨어진 토큰(token)도 마스크합니다. 이 아이디어는 GPT-oss 모델 [1, 2]에서 "지역적으로 밴드화된 희소 어텐션(locally banded sparse attention)"이라고 불립니다. GPT-oss 모델은 모든 마스크된 자체 어텐션 모듈(즉, 1:1 비율)을 슬라이딩 윈도우 어텐션(sliding window attention)으로 대체합니다. 첫 번째 어텐션 레이어(attention layer)는 밀집 자체 어텐션(dense self-attention)을 사용하고, 두 번째 레이어는 슬라이딩 윈도우 어텐션(sliding window attention)을 사용하는 식입니다. 일부 레이어(layer)에서 슬라이딩 윈도우 어텐션(sliding window attention)을 채택함으로써, 더 작은 고정 윈도우(window) 크기로 자체 어텐션(self-attention)의 이차 복잡도(quadratic complexity)를 피하여 모델 아키텍처(model architecture)의 효율성을 향상시킵니다. 이러한 효율성 향상은 모델 품질의 상응하는 저하 없이 이루어지는 것이 이상적이지만, 이는 채택된 정확한 설정(예: 윈도우(window) 크기 또는 레이어(layer) 비율)에 따라 달라질 수 있습니다. GPT-oss에서 사용되는 윈도우(window) 크기는 128 토큰(token)으로, 다른 모델에 비해 상대적으로 작습니다. 예를 들어, Gemma-2 및 Gemma-3은 각각 4K 및 1K 토큰(token)의 윈도우(window) 크기를 사용합니다. 그러나 밀집(dense) 및 희소 어텐션 레이어(sparse attention layers)의 1:1 비율은 보수적인 선택으로 여겨집니다. 실제로, 다른 최신 모델들은 훨씬 더 높은 희소성 비율(sparsity ratios)을 성공적으로 탐색했습니다. 예를 들어, Gemma-3은 5:1 비율을 채택하는데, 이는 5개의 슬라이딩 윈도우 어텐션 레이어(sliding window attention layers)마다 하나의 밀집 어텐션 레이어(dense attention layer)가 있다는 것을 의미합니다.
+
+**어텐션 싱크(Attention sinks).** 기억하시겠지만, 자체 어텐션(self-attention) 내의 어텐션 행렬(attention matrix)은 위에 표시된 대로 계산됩니다. 우리는 쿼리(query)와 (전치된) 키 행렬(key matrix)의 곱을 취합니다. 이 연산은 S x S 행렬을 생성하며, 여기서 S는 자체 어텐션(self-attention)을 계산하는 시퀀스(sequence)의 길이입니다. 마스킹(masking)하고 이 행렬의 값을 임베딩 차원(embedding dimension)의 제곱근 6으로 나눈 후, 행별 소프트맥스(row-wise softmax)를 적용하여 시퀀스(sequence)의 각 토큰(token) (또는 행렬의 행)에 대해 시퀀스(sequence)의 다른 모든 토큰(token)에 대한 확률 분포(probability distribution)를 형성합니다. 이 어텐션 행렬(attention matrix)에 값 행렬(value matrix)을 곱하여 자체 어텐션(self-attention) 연산을 완료합니다. 실제로는 이는 각 토큰(token)에 대한 값 벡터(value vectors)의 가중 합(weighted sum)을 취하며, 가중치(weights)는 어텐션 점수(attention scores)에 의해 주어집니다.
+
+자체 어텐션(self-attention)은 자연스러운 형태로 놀랍도록 잘 작동하지만, 자체 어텐션(self-attention)이 사용하는 내부 소프트맥스(softmax)로 인해 흥미로운 문제가 발생합니다. 즉, 어텐션 점수(attention scores)는 유효한 확률 분포(probability distribution)를 형성하도록 강제됩니다. 이는 어텐션 점수(attention scores)가 모두 양수여야 하고 합이 1이어야 한다는 것을 의미합니다. 따라서 시퀀스(sequence)의 적어도 하나의 토큰(token)은 어떤 가중치(weight)를 받아야 합니다. 모델이 어떤 토큰(token)에도 주의를 기울이지 않는 것은 불가능합니다. 자체 어텐션(self-attention)의 이 속성은 실제 거대 언어 모델(LLM)에서 몇 가지 흥미로운 동작을 유발할 수 있습니다. 예를 들어, 이전 연구 [8]에서는 거대 언어 모델(LLM)이 시퀀스(sequence)에서 의미론적으로 무의미한 토큰(token)에 높은 어텐션 점수(attention scores)를 할당하는 경향이 있다는 것을 발견했습니다. 이러한 높은 가중치(weight)를 거짓으로 받는 토큰(token) (일반적으로 시퀀스(sequence)의 첫 번째 토큰(token))은 일반적으로 "어텐션 싱크(attention sinks)"라고 불립니다. 이 경험적 관찰은 거대 언어 모델(LLM)이 시퀀스(sequence)에서 어떤 토큰(token)에도 주의를 기울이지 못하는 무능력에서 비롯됩니다. 또한, 거대 언어 모델(LLM)이 어텐션 싱크(attention sinks)에 할당하는 매우 높은 점수는 실제 문제를 야기할 수 있습니다. 예를 들어, 이러한 이상치 어텐션 값(outlier attention values)은 양자화(quantization)를 더 어렵게 만듭니다.
+
+“우리는 자기회귀(autoregressive) 거대 언어 모델(LLM)의 흥미로운 현상을 발견했습니다: 놀랍도록 많은 어텐션 점수(attention score)가 언어 모델링 작업과의 관련성 여부와 관계없이 초기 토큰(token)에 할당됩니다… 우리는 이 토큰(token)들을 어텐션 싱크(attention sinks)라고 부릅니다. 의미론적 중요성이 부족함에도 불구하고, 이들은 상당한 어텐션 점수(attention scores)를 수집합니다. 우리는 그 이유를 소프트맥스(Softmax) 연산에 기인한다고 봅니다. 이 연산은 모든 문맥 토큰(contextual tokens)에 대해 어텐션 점수(attention scores)의 합이 1이 되도록 요구합니다. 따라서 현재 쿼리(query)가 많은 이전 토큰(token)에서 강력한 일치를 찾지 못하더라도, 모델은 이 불필요한 어텐션 값(attention values)을 어딘가에 할당하여 합이 1이 되도록 해야 합니다. 초기 토큰(token)이 싱크 토큰(sink tokens)이 되는 이유는 직관적입니다: 초기 토큰(token)은 자기회귀(autoregressive) 언어 모델링 특성 때문에 거의 모든 후속 토큰(token)에 보이며, 이는 이들이 어텐션 싱크(attention sinks) 역할을 하도록 더 쉽게 훈련될 수 있게 합니다.” - 출처 [8]
+
+GPT-oss 모델에서 이 문제를 해결하기 위해 저자들은 Evan Miller의 이 블로그 게시물에 설명된 기술과 매우 유사한 (그러나 정확히 같지는 않은) 접근 방식을 사용합니다. 각 어텐션 헤드(attention head)에 대해 우리는 다른 모델 파라미터(model parameter)와 유사하게 학습되는 추가 학습 가능한 편향(learnable bias)을 생성합니다. 이 편향(bias)은 자체 어텐션(self-attention)의 내부 소프트맥스(softmax) 연산의 분모에만 나타납니다. 일부 어텐션 헤드(attention head)에서 이 편향(bias)에 높은 값을 설정함으로써, 거대 언어 모델(LLM)은 시퀀스(sequence)에서 어떤 토큰(token)에도 주의를 기울이지 않도록 선택할 수 있으며, 어텐션 싱크(attention sinks)와 관련된 알려진 문제를 해결합니다. 이 접근 방식은 GPT-oss 모델 카드(model card)의 아래 인용문에서 설명됩니다.
+
+“각 어텐션 헤드(attention head)는 소프트맥스(softmax)의 분모에 학습된 편향(learned bias)을 가집니다. 이는 오프-바이-원 어텐션(off-by-one attention) 및 어텐션 싱크(attention sinks)와 유사하며, 어텐션 메커니즘(attention mechanism)이 어떤 토큰(token)에도 주의를 기울이지 않도록 합니다.” - 출처 [2]
+
+### 전문가 혼합(Mixture-of-Experts, MoE)
+
+두 GPT-oss 모델 모두 전문가 혼합(Mixture-of-Experts, MoE) 아키텍처를 사용합니다. 디코더 전용 아키텍처(decoder-only architecture)와 비교하여, 전문가 혼합(MoE)은 각 디코더 블록(decoder block)의 피드포워드 모듈(feed-forward module)을 수정합니다. 표준 아키텍처는 하나의 피드포워드 신경망(feed-forward neural network)을 가집니다. 이는 일반적으로 비선형 활성화(non-linear activation) (즉, GPT-oss 모델은 특히 SwiGLU 활성화(SwiGLU activation) [2]를 사용함)가 중간에 있는 두 개의 다이아몬드 모양 7 피드포워드 레이어(feed-forward layers)로 구성되며, 모든 토큰(token)이 개별적으로 통과합니다. 블록의 피드포워드 구성 요소에 단일 피드포워드 네트워크(feed-forward network)를 갖는 대신, 전문가 혼합(MoE)은 여러 피드포워드 네트워크(feed-forward networks)를 생성하며, 각 네트워크는 자체 독립적인 가중치(weights)를 가집니다. 우리는 이 각 네트워크를 "전문가(expert)"라고 부릅니다. 표준 디코더 전용 트랜스포머(decoder-only transformer)에서 시작하여, 전문가 혼합(MoE)은 트랜스포머(transformer)의 피드포워드 모듈(feed-forward modules)을 전문가 혼합(MoE) (또는 전문가) 레이어(layers)로 변환하며, 해당 레이어(layer)의 원래 피드포워드 네트워크(feed-forward network)의 여러 독립적인 복사본을 가집니다.
+
+(출처 [9]) 일반적으로 효율성상의 이유로 모델의 모든 피드포워드 레이어(feed-forward layer)를 전문가 혼합(MoE) 레이어(layer)로 변환하지는 않습니다. 대신, 우리는 P의 보폭(stride)을 사용하여 전문가 혼합(MoE) 레이어(layers)를 인터리브(interleave)합니다. 즉, 트랜스포머(transformer)의 P번째 레이어(layer)마다 전문가 혼합(MoE) 레이어(layer)로 변환됩니다.
+
+**라우팅(Routing).** 전문가 혼합(MoE)의 주요 이점은 효율성이지만, 전문가(experts)만 사용한다고 해서 효율성이 향상되지는 않습니다! 사실, 각 피드포워드 모듈(feed-forward module)의 여러 복사본을 가지기 때문에 총 파라미터(parameters)와 컴퓨팅(compute)이 훨씬 더 커집니다. 효율성 이점을 얻으려면 이 아키텍처에 희소성(sparsity)을 추가해야 합니다. d차원 토큰 벡터(token vector)로 표현되는 단일 토큰(token)을 고려해 봅시다. 우리의 목표는 이 토큰(token)에 대해 순방향 전달(forward pass)을 수행할 전문가(experts)의 부분 집합(크기 k)을 선택하는 것입니다. 즉, 이 토큰(token)은 이 전문가(experts)들에게 "라우팅(routed)"될 것입니다. 이 라우팅(routing) 연산을 수행하는 표준적인 방법은 토큰 벡터(token vector)를 입력으로 받아 N (즉, 총 전문가(experts) 수) 크기의 벡터를 예측하는 선형 레이어(linear layer)를 통하는 것입니다. 우리는 소프트맥스(softmax) 연산을 적용하여 각 토큰(token)에 대한 전문가(experts) 집합에 대한 확률 분포(probability distribution)를 형성할 수 있습니다. 그런 다음, 이 확률 분포(probability distribution)를 사용하여 각 토큰(token)이 라우팅(routed)될 상위 K 전문가(experts)를 선택할 수 있습니다.
+
+단순함에도 불구하고, 이 선형 라우팅(routing) 연산은 OpenAI가 GPT-oss 모델에 채택한 정확한 접근 방식입니다 (출처 [2]): “각 전문가 혼합(MoE) 블록은… 잔차 활성화(residual activations)를 각 전문가(expert)에 대한 점수(scores)로 매핑하는 표준 선형 라우터 투영(linear router projection)으로 구성됩니다.” 각 토큰(token)은 해당 전문가(expert)에게 전송되고, 우리는 해당 전문가(expert)에게 라우팅(routed)된 토큰(token) 배치(batch)에 대해 각 전문가(expert)의 순방향 전달(forward pass)을 계산합니다. 각 전문가(expert)의 출력을 집계하기 위해, 우리는 단순히 모든 전문가(experts)의 출력에 대한 가중 평균(weighted average)을 취하며, 가중치(weight)는 라우터(router)에 의해 각 전문가(expert)에게 할당된 확률(probability)에 의해 주어집니다. 이 정확한 프로세스는 GPT-oss 모델에 의해 사용됩니다.
+
+“두 모델 모두에 대해, 우리는 라우터(router)에 의해 주어진 각 토큰(token)에 대해 상위 4명의 전문가(experts)를 선택하고, 선택된 전문가(experts)에 대해서만 라우터 투영(router projection)의 소프트맥스(softmax)에 의해 각 전문가(expert)의 출력을 가중치(weight)를 부여합니다.” - 출처 [2]
+
+**활성 파라미터(Active parameters).** 각 토큰(token)에 대해 전문가(experts)의 부분 집합을 선택하기 때문에, 순방향 전달(forward pass)에서 주어진 토큰(token)을 처리하는 데 모델 파라미터(model’s parameters)의 일부만 사용됩니다. 일부 파라미터(parameters)는 활성(active) 상태이고 다른 파라미터(parameters)는 비활성(inactive) 상태입니다. GPT-oss의 경우, 20b 및 120b 모델은 각 전문가 혼합(MoE) 레이어(layer) 내에 32개 및 128개의 총 전문가(experts)를 가집니다. 그러나 이 전문가(experts) 중 4개만 각 토큰(token)에 대해 활성(active) 상태이므로, 모델은 각각 36억 및 51억 개의 활성 파라미터(active parameters)를 가집니다. 이 모델들의 파라미터(parameter) 수에 대한 더 자세한 분석은 아래 표에 제공되어 있습니다.
+
+(출처 [2]) 다른 주목할 만한 전문가 혼합(MoE)과 비교할 때, GPT-oss 모델은 상당히 희소합니다. 예를 들어, 1090억 파라미터(parameter) Llama-4 모델은 170억 개의 활성 파라미터(active parameters)를 가집니다. 그러나 GPT-oss의 이러한 높은 희소성 수준은 최고의 오픈 소스 거대 언어 모델(LLM)들 사이에서 일반적입니다: DeepSeek-R1 [10]은 6710억 개의 총 파라미터(total parameters)와 370억 개의 활성 파라미터(active parameters)를 가집니다. Qwen-3 [11] 전문가 혼합(MoE) 모델은 300억 개의 총 파라미터(total parameters)와 30억 개의 활성 파라미터(active parameters) 또는 2350억 개의 총 파라미터(total parameters)와 220억 개의 활성 파라미터(active parameters)를 가집니다. 2025년 최신 MoE 모델들도 이러한 희소성 트렌드를 이어가며, 효율성과 성능 사이의 최적점을 탐색하고 있습니다.
+
+**부하 분산(Load balancing) 및 보조 손실(auxiliary losses).** 전문가 혼합(MoE)을 표준 밀집 모델(dense model)과 유사하게 훈련하면 몇 가지 문제가 발생할 가능성이 높습니다. 첫째, 모델은 모든 토큰(token)을 단일 전문가(expert)에게 라우팅(route)하는 것을 빠르게 학습할 것입니다. 이는 "라우팅 붕괴(routing collapse)"로 알려진 현상입니다. 또한, 전문가 혼합(MoE)은 훈련 중에 수치적 불안정성(numerical instabilities)을 경험할 가능성이 더 높으며, 이는 훈련 손실(training loss)의 발산(divergence)으로 이어질 수 있습니다.
+
+**전문가 혼합(MoE) 사전 훈련(pretraining) 중 손실 발산(Divergence in loss) (출처)**
+
+이러한 문제를 피하기 위해 대부분의 전문가 혼합(MoE)은 훈련 중에 부하 분산 손실(load-balancing loss) [9]을 사용합니다. 이는 적절한 라우팅(routing) 동작을 장려하는 추가 손실 항(loss term)을 다음 토큰 예측 손실(next-token prediction loss)에 추가하여 거대 언어 모델(LLM)의 기본 훈련 목표를 수정합니다. 더 구체적으로, 이 손실은 전문가 혼합(MoE)이 다음을 수행할 때 최소화됩니다: 라우터(router)의 모든 전문가(experts)에게 동일한 확률을 할당합니다. 각 전문가(expert)에게 동일한 수의 토큰(token)을 보냅니다.
+
+(출처 [9]) 부하 분산 손실(load balancing loss) 외에도, 많은 전문가 혼합(MoE)은 수치적 불안정성(numerical instability)을 완화하기 위한 또 다른 보조 손실 항(auxiliary loss term)인 라우터-z 손실(router-z loss) [12]을 사용합니다. 라우터-z 손실(router z-loss)은 전문가 혼합(MoE)의 라우터(router)가 출력하는 로짓(logits)의 크기를 제한합니다. 이러한 로짓(logits)은 가능한 전문가(experts) 집합에 대한 확률 분포(probability distribution)를 도출하기 위해 (지수) 소프트맥스(softmax) 함수로 전달되기 때문에 특히 수치적 불안정성(numerical instability)에 취약합니다. 큰 라우터 로짓(router logits)은 전문가 혼합(MoE)에 특정한 수치적 불안정성(numerical instability)의 주요 원인입니다 (즉, 표준 거대 언어 모델(LLM)에는 라우터(router)가 없기 때문입니다).
+
+(출처 [12]) 전문가 혼합(MoE)을 훈련할 때, 우리는 일반적으로 각 전문가(expert)에 대한 고정된 용량 계수(capacity factor)도 설정합니다. 이는 한 번에 전문가(expert)에게 라우팅(routed)될 수 있는 최대 토큰(token) 수를 정의합니다. 이 용량 계수(capacity factor)를 초과하는 모든 토큰(token)은 단순히 삭제됩니다 8. 이 용량 계수(capacity factor)를 채택함으로써, 우리는 각 전문가(expert)에게 라우팅(routed)되는 토큰(token)의 특정 수준의 균일성을 강제합니다. 또한, 용량 계수(capacity factor)는 계산 효율성(computational efficiency) 관점에서 유익합니다. 이는 각 전문가(expert)의 배치 크기(batch size)를 고정할 수 있게 합니다.
+
+(출처 [9]) 보조 손실(Auxiliary losses)은 전문가 혼합(MoE)의 훈련 목표를 수정하며, 이는 모델의 성능에 부정적인 영향을 미칠 수 있습니다. 결과적으로, 일부 인기 있는 전문가 혼합(MoE) 기반 거대 언어 모델(LLM)은 보조 손실(auxiliary losses)을 완전히 피합니다. 예를 들어, DeepSeek-V3 [13]은 각 전문가(expert)에 대한 라우터(router)가 예측한 로짓(logit)에 편향 항(bias term)을 추가하는 보조 손실(auxiliary-loss) 없는 부하 분산(load balancing) 접근 방식을 사용합니다. 이 전문가별 편향(per-expert bias)은 훈련 중에 동적으로 조정되어 전문가(experts) 간의 균형 잡힌 라우팅(routing)을 장려할 수 있습니다. 이 접근 방식은 [13]에서 잘 작동하는 것으로 나타났지만, 저자들은 최종 모델을 훈련할 때 여전히 보조 손실(auxiliary losses)을 사용합니다 (표준 전문가 혼합(MoE) 훈련에 비해 훨씬 낮은 가중치(weight)로). OpenAI는 GPT-oss 모델에 사용된 특정 훈련 손실(training loss)을 공개하지 않았지만, 대부분의 공개 전문가 혼합(MoE)은 보조 손실(auxiliary losses), 휴리스틱 부하 분산(heuristic load balancing) 방법 또는 이 둘의 조합으로 훈련됩니다. 이를 염두에 두고, GPT-oss 모델이 수치적 불안정성(numerical instability) 및 라우팅 붕괴(routing collapse)와 같은 문제를 피하기 위해 유사한 (잠재적으로 수정된) 기술의 조합을 사용한다고 합리적으로 가정할 수 있습니다.
+
+**기타 세부 사항 및 추가 학습.** 위에 설명된 세부 사항 외에도, OpenAI는 GPT-oss 모델이 플래시 어텐션(FlashAttention) (요즘 거대 언어 모델(LLM)의 표준 선택)을 사용하며, 전문가 혼합(MoE) 아키텍처의 훈련 효율성을 높이기 위해 "전문가 최적화(expert-optimized)" 트라이톤 커널(triton kernels)을 생성한다고 언급합니다. 전문가 혼합(MoE)에 대한 자세한 내용은 아래 블로그 게시물을 참조하십시오.
+
+이 개요는 전문가 혼합(MoE) 기반 거대 언어 모델(LLM)에 대한 이해를 처음부터 구축하고, nanoMoE라고 불리는 GPT-2 규모의 전문가 혼합(MoE)을 구현하고 훈련하는 것으로 마무리됩니다. nanoMoE의 코드는 이 저장소에서 찾을 수 있습니다.
+
+**nanoMoE: PyTorch에서 처음부터 전문가 혼합(MoE) 거대 언어 모델(LLM) 구축하기**
+Cameron R. Wolfe, Ph.D. · 3월 10일
+순수 PyTorch로 처음부터 자신만의 중간 규모 전문가 혼합(MoE)을 구축하고 훈련하기 위한 완전한 가이드입니다. 전체 스토리 읽기
+
+### GPT-oss 아키텍처의 기원(Origins of the GPT-oss Architecture)
+
+“레이어 정규화(Layer normalization)는 각 하위 블록(sub-block)의 입력으로 이동되었으며, 사전 활성화 잔차 네트워크(pre-activation residual network)와 유사하게 최종 자체 어텐션 블록(self-attention block) 뒤에 추가 레이어 정규화(layer normalization)가 추가되었습니다.” - 출처 [13]
+
+GPT-oss 모델의 많은 설계 선택은 새로운 것이 아닙니다. OpenAI는 GPT-2 및 GPT-3 이후로 이를 사용해 왔습니다! 여러 면에서 GPT-oss 아키텍처는 이러한 초기 모델의 아이디어를 기반으로 구축되었습니다. GPT-3 [14]가 GPT-oss보다 5년 이상 전에 출시되었다는 점을 고려할 때, 이는 특히 거대 언어 모델(LLM) 연구의 역동적인 세계에서 매우 인상적입니다. 사전 정규화 구조(pre-norm structure) (GPT-2에서 채택)와 밀집(dense) 및 밴드형 윈도우 어텐션(banded window attention)의 교대 (GPT-3에서 채택)는 새로운 것이 아닙니다. 그러나 초기 GPT 모델은 GQA, YaRN과 같은 긴 컨텍스트 전략 (즉, GPT-3는 2K 토큰(token) 컨텍스트 윈도우(context window)만 가짐), 전문가 레이어(expert layers), 다중 턴 채팅(multi-turn chat) 또는 에이전트(agents) 처리를 위한 적절한 토큰화(tokenization)와 같은 많은 현대적인 거대 언어 모델(LLM) 아키텍처 개발이 여전히 부족했습니다. GPT-oss는 이러한 부족한 부분들을 채우며 최신 LLM 트렌드를 반영합니다.
+
+“우리는 Sparse Transformer와 유사하게 트랜스포머(transformer)의 레이어(layers)에서 밀집(dense) 및 지역적으로 밴드화된 희소 어텐션 패턴(locally banded sparse attention patterns)을 번갈아 사용합니다.” - 출처 [14]
+
+### 에이전트 시대의 컨텍스트 관리(Context Management for the Agentic Era)
+
+이제 GPT-oss의 아키텍처를 이해했으므로, 이 모델들의 가장 강조된 측면인 에이전트(agents)와 추론(reasoning)을 살펴보겠습니다. 특히, 이 모델들에 사용된 토크나이저(tokenizer)와 프롬프트 형식(prompt format)을 심층적으로 다룰 것입니다. 보시다시피, OpenAI는 GPT-oss 모델에 대해 계층적 명령어(hierarchical instructions), 도구 사용(tool use), 추론, 구조화된 출력(structured outputs) 및 통합된 구조를 가진 다중 턴 채팅(multi-turn chat) 처리에 중점을 둔 매우 복잡한 입력 형식(input format)을 채택합니다. 하모니 형식(Harmony format)을 다룬 후, GPT-oss에 대해 131K 토큰(token)의 컨텍스트 윈도우(context window)를 달성하는 데 사용되는 컨텍스트 확장 접근 방식(context extension approach)도 설명할 것입니다.
+
+#### 토크나이저(Tokenizer)
+
+거대 언어 모델(LLM)과 상호 작용할 때, 우리는 텍스트 프롬프트(textual prompt)를 모델의 입력으로 제공하지만, 이것이 거대 언어 모델(LLM)이 보는 입력은 아닙니다. 거대 언어 모델(LLM)은 토크나이저(tokenizer) (일반적으로 바이트 쌍 인코딩(byte-pair encoding, BPE) 토크나이저)를 사용하여 이 텍스트 프롬프트(textual prompt)를 이산적인 단어 또는 하위 단어 시퀀스(sequence)로 분해하며, 이를 토큰(tokens)이라고 부릅니다. 내부적으로 토크나이저(tokenizer)는 어휘(vocabulary), 즉 토크나이저(tokenizer)에 알려진 모든 토큰(tokens)의 고정된 크기 집합을 가집니다. 이 각 토큰(token)은 거대 언어 모델(LLM)의 임베딩 레이어(embedding layer) 내에서 벡터 임베딩(vector embedding)에 매핑될 수 있는 고유한 정수 인덱스(integer index)와 연결됩니다. 따라서 우리는 각 토큰(token)을 해당 토큰 임베딩(token embedding)에 매핑할 수 있으며, 이를 통해 토큰(tokens) 시퀀스(sequence)를 벡터(vectors) 시퀀스(sequence)로 변환할 수 있습니다. 이 토큰 벡터(token vectors) 시퀀스(sequence)는 행렬 (또는 입력 배치(batch)가 있는 경우 텐서(tensor))을 형성하며, 그런 다음 트랜스포머(transformer)의 입력으로 전달됩니다.
+
+**채팅 템플릿(Chat templates).** 위에 설명된 기본 토큰화(tokenization) 기능 외에도, 토크나이저(tokenizer)에 "특수" 토큰(special tokens)을 생성할 수도 있습니다. 예를 들어, 거대 언어 모델(LLM)은 일반적으로 시퀀스(sequence)의 끝을 알리는 `<eos>` 또는 `<|end_of_text|>`와 같은 전용 "정지" 토큰(stop token)을 가집니다. 이들은 어휘(vocabulary)에서 고유한 토큰(tokens)이며, 텍스트 시퀀스(sequence) 생성을 마칠 때 이러한 토큰(token)을 출력하도록 거대 언어 모델(LLM)을 훈련할 수 있습니다. 정지 토큰(stop tokens) 외에도, 특수 토큰(special tokens)을 사용하여 복잡한 입력을 거대 언어 모델(LLM)이 더 잘 이해할 수 있는 방식으로 형식화할 수 있습니다. 예를 들어, 특수 토큰(special tokens)을 사용하여 다중 턴 대화(multi-turn conversations)를 형식화하기 위한 채팅 템플릿(chat template)을 생성할 수 있습니다. 아래에 그 예가 나와 있습니다. 여기서 Qwen-3의 채팅 템플릿(chat template)을 사용하여 다중 턴 대화(multi-turn conversation)를 실제로 모델에 전달되는 텍스트 프롬프트(textual prompt)로 변환합니다. 이 프롬프트 내의 모든 특수 토큰(special tokens)은 명확성을 위해 강조 표시되었습니다.
+
+**다중 턴 대화(multi-turn conversation)에 채팅 템플릿(chat template) 적용하기**
+
+보시다시피, 이 채팅 템플릿(chat template)은 `<|im_start|>` 및 `<|im_end|>` 특수 토큰(special tokens)을 사용하여 각각 채팅 턴(chat turn)의 시작과 끝을 나타냅니다. 그런 다음, 각 채팅 턴(chat turn)의 출처 (사용자, 어시스턴트 또는 시스템 메시지(system message))는 각 채팅 턴(chat turn)의 시작 부분에 배치된 다른 특수 토큰(special token)에 의해 캡처됩니다. 채팅 템플릿(chat template)을 사용하면 복잡한 대화(conversations)를 평면 프롬프트(flat prompt)로 인코딩할 수 있습니다.
+
+**도구 사용(Tool usage).** 유사한 접근 방식으로 도구 호출(tool calls)을 캡처할 수 있습니다. 거대 언어 모델(LLM)은 아래 표시된 것과 유사한 시퀀스(sequence)를 출력하여 도구 호출(tool call)을 할 수 있습니다. 여기서 거대 언어 모델(LLM)은 특수 토큰 `<START TOOL>`을 출력하여 도구 호출(tool call)을 시작합니다.
+
+**도구 호출(Tool calls)은 거대 언어 모델(LLM)의 표준 출력과 함께 인라인으로 생성됩니다.**
+
+이 특수 도구 호출 토큰(tool-calling token)이 생성되면, 우리는 다음을 수행합니다:
+*   거대 언어 모델(LLM)로 텍스트 생성을 중지합니다.
+*   모델의 출력에서 도구 호출(tool call)에 대한 인수를 파싱(parse)합니다.
+*   지정된 도구(tool)를 호출합니다.
+*   도구(tool)의 출력을 거대 언어 모델(LLM)의 텍스트 시퀀스(text sequence)에 다시 추가합니다.
+*   나머지 시퀀스(sequence) 생성을 계속합니다.
+
+이러한 방식으로 거대 언어 모델(LLM)은 출력을 생성하는 동안 도구 호출(tool call)을 하고 추가 컨텍스트(context)를 수집하는 능력을 얻습니다. 이러한 접근 방식은 환각(hallucinations)을 줄이거나 거대 언어 모델(LLM)에 최신 정보를 주입하는 데 크게 도움이 될 수 있습니다. 추론 모델(Reasoning models)도 특수 토큰(special tokens)을 사용하여 추론 프로세스(reasoning process)를 최종 모델 출력(final model output)과 분리합니다. 특히, 추론 모델(reasoning models)은 일반적으로 특수 `<think>` 토큰(token)으로 출력을 시작합니다. 이 시작 사고 토큰(start thinking token)에 이어 모델은 프롬프트(prompt)를 통해 추론하고 프롬프트(prompt)에 어떻게 응답해야 할지 결정하는 긴 설명을 출력합니다. 이 추론 프로세스(reasoning process)가 끝나면 모델은 `</think>` 토큰(token)을 출력하여 추론 프로세스(reasoning process)의 끝을 알립니다. 여기에서 모델은 최종 응답을 출력하고, 결국 `<|im_end|>`와 같은 표준 정지 토큰(stop token)으로 끝납니다.
+
+**추론 모델(reasoning model) 출력의 해부학 (Qwen-3-8B 사용)**
+
+여기서 핵심 아이디어는 항상 동일합니다: 우리는 특수 토큰(special tokens)과 채팅 템플릿(chat templates)을 사용하여 다양한 입력 및 출력 유형을 거대 언어 모델(LLM)이 이해할 수 있고 개발자가 쉽게 파싱(parse)/처리할 수 있는 방식으로 형식화합니다. 더 넓고 유능한 에이전트(agents)로 나아갈수록 이 템플릿(templating) 프로세스의 복잡성은 증가합니다. 거대 언어 모델(LLM) (및 일반적으로 인공지능(AI) 에이전트(agents)) 내에서 도구 호출(tool calling), 추론 등이 어떻게 처리되는지에 대한 자세한 내용은 아래 개요를 참조하십시오. 다음으로, GPT-oss에서 사용되는 프롬프트 템플릿(prompt template)인 하모니 프롬프트 형식(Harmony prompt format)을 더 자세히 살펴보겠습니다.
+
+**첫 번째 원칙부터 인공지능(AI) 에이전트(Agents)**
+Cameron R. Wolfe, Ph.D. · 6월 9일
+전체 스토리 읽기
+
+#### 에이전트, 추론 및 도구 호출을 위한 하모니 형식(Harmony Format for Agents, Reasoning & Tool Calling)
+
+거대 언어 모델(LLM)의 토크나이저(tokenizer)와 채팅 템플릿(chat template)은 모델에 제공되는 입력 형식을 결정하고, 모델이 여러 종류의 입력 및 출력을 관리하는 방식을 제어합니다. OpenAI 모델에 사용되는 (바이트 쌍 인코딩(BPE)) 토크나이저(tokenizers)는 tiktoken 패키지 내에서 공개적으로 사용할 수 있습니다. GPT-4o 및 GPT-4o-mini와 같은 이전 모델은 200K 토큰(token)의 어휘(vocabulary) 크기를 가진 o200k 토크나이저(tokenizer)를 사용했지만, GPT-oss 모델은 새로운 하모니 프롬프트 형식(Harmony prompt format)을 지원하기 위해 201,088 토큰(token)으로 확장된 어휘(vocabulary)를 가진 수정된 o200k_harmony 토크나이저(tokenizer)를 사용합니다.
+
+“모델은 사고의 사슬(CoT), 함수 호출(function calls), 함수 응답(function responses), 사용자에게 표시되는 중간 메시지(intermediate messages), 그리고 최종 답변을 섞어서 사용할 수 있습니다.” - 출처 [2]
+
+하모니 프롬프트 형식(Harmony prompt format)은 두 GPT-oss 모델 모두에서 사용되며, 현대 에이전트(agentic) 거대 언어 모델(LLM) 시스템에 필요한 복잡한 채팅 템플릿(chat templates)의 훌륭한 예시입니다. GPT-oss 모델은 도구 사용(tool usage)을 강조하며 에이전트(agentic) 시나리오에서 유용하도록 특별히 훈련되었습니다. 예를 들어, 후처리 훈련(post-training) 프로세스는 모델에게 다양한 도구(예: 브라우징 도구, 파이썬 런타임 및 임의의 개발자 함수)를 사용하는 방법을 가르치며, 모델은 개발자가 제공한 지침에 따라 도구를 사용하거나 사용하지 않고 실행할 수 있습니다. 하모니 프롬프트 형식(Harmony prompt format)은 표준화된 형식을 통해 이러한 기능을 가능하게 하는 데 큰 역할을 합니다. 이 형식은 출시 이후 개발자 커뮤니티에서 점차 채택되고 있으며, 복잡한 에이전트 워크플로우를 구현하는 데 중요한 기반이 되고 있습니다.
+
+하모니 프롬프트 형식(Harmony prompt format)은 아래에 설명된 역할을 가집니다. 이러한 역할에는 사용자(user) 및 어시스턴트(assistant)와 같은 표준 역할이 포함됩니다. 그러나 도구 호출(tool calling)을 특별히 지원하기 위해 새로운 역할이 생성되었으며, 시스템 메시지(system message)는 두 가지 새로운 역할 (시스템(system) 또는 개발자(developer))로 분리되어 전통적인 거대 언어 모델(LLM) 시스템 메시지(system message)의 다른 측면을 포착합니다. 시스템(system) 역할은 최상위 메타데이터(top-level metadata)를 캡처하는 반면, 개발자(developer) 메시지는 개발자로부터 모델에 대한 지침을 제공합니다.
+
+(출처) 하모니 프롬프트 형식(Harmony prompt format)의 역할은 아래에 표시된 지침 계층(instruction hierarchy)을 형성합니다. 이 계층은 거대 언어 모델(LLM)에 제공되는 지침의 우선순위를 정의합니다. 여러 지침에 충돌하는 정보가 포함된 경우, 가장 높은 순위의 지침 (아래 역할 계층에 따름)을 따라야 합니다. 예를 들어, 개발자(developer) 메시지는 사용자(user) 메시지보다 우선합니다. GPT-oss 모델은 후처리 훈련(post-training) 동안 이 지침 계층(instruction hierarchy)을 준수하도록 특별히 정렬(aligned)됩니다.
+
+**GPT-oss의 지침 계층(Instruction hierarchy)**
+
+특히 어시스턴트(assistant) 역할의 경우, 하모니 형식(Harmony format)은 어시스턴트(assistant)가 출력을 제공할 수 있는 세 가지 다른 채널(channels)을 정의합니다. 간단히 말해, 이러한 다른 채널(channels)은 모델이 제공하는 최종 출력과 다른 종류의 출력 (예: 도구 호출(tool calls) 또는 추론 경로(reasoning traces))을 구별하는 데 사용됩니다.
+
+(출처) 모델의 출력을 여러 채널(channels)로 분리함으로써, 우리는 사용자 대 내부 지향 출력(user and internal-facing outputs)을 구별할 수 있습니다. 대부분의 거대 언어 모델(LLM) 사용자 인터페이스(UI)에서는 최종 메시지만 사용자에게 실제로 표시됩니다. 또한, 여러 출력 채널(output channels)을 사용하면 더 복잡한 출력 시나리오를 더 쉽게 처리할 수 있습니다. 예를 들어, 거대 언어 모델(LLM)이 순차적으로 다음 출력을 생성한다고 가정해 봅시다: 도구 호출(tool call) → 추론(reasoning) → 최종 출력(final output). 이러한 출력은 각각 별도의 어시스턴트 채널(assistant channel)에 속하며, 이를 통해 우리는 출력의 각 구성 요소를 쉽게 파싱(parse)하고 다음 단계를 결정할 수 있습니다.
+
+**구체적인 예시.** 하모니 프롬프트 형식(Harmony prompt format)은 동반 개발자 문서(developer documentation)에 자세히 설명되어 있으며, OpenAI는 하모니 형식(Harmony format)으로 메시지를 올바르게 구성하고 렌더링(rendering)하기 위한 파이썬(Python) 패키지도 출시했습니다. 이 패키지를 사용하여, 하모니 프롬프트 형식(Harmony prompt format)을 사용하여 렌더링(rendered)된 GPT-oss 메시지 시퀀스(sequence)의 구체적인 예시를 구성합니다.
+
+**하모니 프롬프트 형식(Harmony prompt format) 예시**
+
+여기에서 우리는 하모니 프롬프트 형식(Harmony prompt format)의 모든 구성 요소가 작동하는 예시를 봅니다. 특히, 이 예시는 개발자(developer) 및 시스템 메시지(system messages) 간의 차이를 보여주고, 어시스턴트(assistant)에 사용할 수 있는 모든 출력 채널(output channels)을 사용하며, 사고(thinking) 및 도구 호출(tool calling)의 예시를 모두 제공한 다음, 이 모든 정보를 종합하여 사용자에게 최종 출력(final output)을 제공합니다. 하모니 프롬프트 형식(Harmony prompt format)에서 사용할 수 있는 모든 특수 토큰(special tokens) 목록은 참고용으로 아래에 제공되어 있습니다.
+
+(출처)
+
+### 긴 컨텍스트(Long Context)
+
+긴 컨텍스트(contexts)를 흡수하고 이해하는 능력은 모든 거대 언어 모델(LLM)에 중요하지만, 특히 추론 모델(reasoning models)의 경우 최종 출력을 제공하기 전에 수천 또는 수만 토큰(token) 길이의 긴 사고의 사슬(CoT)을 출력한다는 사실 때문에 더욱 중요합니다. 다행히도, 두 GPT-oss 모델 모두 밀집 레이어(dense layers)에서 131K 토큰(token)의 컨텍스트 윈도우(context window)를 지원하도록 훈련되었습니다. 이러한 긴 컨텍스트(context)는 일반적으로 사용되는 기술의 조합을 통해 가능해집니다.
+
+**위치 임베딩(Position embeddings).** 트랜스포머(transformers)의 자체 어텐션 메커니즘(self-attention mechanism)은 토큰(tokens)의 순서를 자연스럽게 고려하지 않습니다. 각 토큰(token)은 시퀀스(sequence)에서의 위치와 관계없이 동일하게 처리됩니다. 그러나 토큰(tokens)의 순서를 아는 것은 거대 언어 모델(LLM)에 필수적입니다. 예를 들어, 어떤 토큰(tokens)이 이전에 왔는지는 알지만 그 순서를 모른다면 다음 토큰(token)을 예측하는 것이 훨씬 더 어려울 것입니다. 이러한 이유로, 우리는 거대 언어 모델(LLM)에 위치 정보(position information)를 명시적으로 추가해야 합니다. 원래 트랜스포머(transformer)는 시퀀스(sequence)의 모든 위치에 대해 고유한 벡터 임베딩(vector embeddings)을 생성하고 이 위치 임베딩(position embeddings)을 입력 레이어(input layer)의 각 토큰(token)에 추가했습니다. 이 접근 방식은 각 토큰(token)의 절대 시퀀스 위치(absolute sequence position)에 대한 정보를 토큰(token)의 임베딩(embedding)에 직접 주입합니다. 그런 다음, 이 수정된 임베딩(embedding)은 트랜스포머(transformer)에 입력으로 흡수되어 모델이 위치 정보(position information)를 사용할 수 있도록 합니다.
+
+**로터리 위치 임베딩(RoPE).** 대부분의 현대 거대 언어 모델(LLM)은 더 이상 절대 위치 인코딩(absolute position encodings)을 사용하지 않고, 대신 상대 위치(relative position) (즉, 토큰 쌍 간의 거리) 또는 상대 및 절대 위치(relative and absolute position)의 일부 혼합을 인코딩하는 것을 선택합니다. 상대 위치 인코딩(Relative position encodings)은 트랜스포머(transformer)가 더 긴 시퀀스(sequence)를 더 쉽게 처리할 수 있도록 합니다. 절대 위치(absolute position)는 거대 언어 모델(LLM)이 특정 길이까지의 시퀀스(sequence)에 대해 훈련되어야 하는 반면, 상대 위치(relative position)는 일반화 가능하며 시퀀스(sequence)의 총 길이와 관련이 없습니다. 거대 언어 모델(LLM)에 가장 일반적으로 사용되는 위치 인코딩 방식 (및 두 GPT-oss 모델이 사용하는 접근 방식)은 로터리 위치 임베딩(Rotary Position Embedding, RoPE) [15]입니다.
+
+(출처 [1]) 로터리 위치 임베딩(RoPE)은 하이브리드 위치 인코딩 방식(hybrid position encoding scheme)입니다. 즉, 절대 및 상대 정보를 모두 고려하며, 자체 어텐션(self-attention)에서 쿼리(query) 및 키 벡터(key vectors)를 수정합니다. 절대 위치 임베딩(absolute position embeddings)과 달리, 로터리 위치 임베딩(RoPE)은 입력 레이어(input layer)뿐만 아니라 모든 트랜스포머 레이어(transformer layer)에 작용합니다. 자체 어텐션(self-attention)에서 키(key) 및 쿼리 벡터(query vectors)는 입력 토큰 벡터(input token vectors)를 별도의 선형 레이어(linear layers)를 통해 전달하여 생성됩니다. 이 연산은 키(key) 및 쿼리 벡터(query vectors)에 대해 동일하며 (자체 가중치(weights)를 가진 별도의 선형 레이어(linear layers)를 사용하는 것을 제외하고), 단일 토큰 임베딩(token embedding)에 대해 아래에 묘사되어 있습니다. 이 섹션 전체에서 우리는 토큰 벡터(token vectors)가 d 차원을 가진다고 가정할 것입니다.
+
+**자체 어텐션(self-attention)에서 키(key)를 형성하기 위해 토큰 임베딩(token embedding)을 투영(Projecting)하기**
+
+자체 어텐션(self-attention)에 위치 정보(position information)를 통합하기 위해, 로터리 위치 임베딩(RoPE)은 위 연산을 키 가중치 행렬(weight matrix) W_k에 시퀀스(sequence) 내 토큰(token)의 절대 위치(absolute position)를 기반으로 계산된 고유한 회전 행렬(rotation matrix)을 곱하여 수정합니다. 즉, 키(key) 및 쿼리 벡터(query vectors)를 회전시키는 양은 시퀀스(sequence) 내 위치에 따라 달라집니다. 이 수정된 연산은 아래에 표시되어 있습니다. 우리는 다시 키 벡터(key vector)의 생성을 묘사하지만, 쿼리 벡터(query vectors)에 대한 프로세스는 동일합니다.
+
+**회전 행렬(rotation matrix)을 통해 위치 정보(position information) 통합하기**
+
+θ는 회전 (또는 주파수) 기저 벡터(rotational (or frequency) basis vector)라고 불리는 d / 2 크기의 벡터입니다. 회전 기저 벡터(rotational basis vector)의 값은 아래 방정식에 표시된 대로 생성됩니다. 보시다시피, 벡터의 항목은 기본 주파수(base frequency) (로터리 위치 임베딩(RoPE)에서 설정해야 하는 하이퍼파라미터(hyperparameter))에 의해 결정됩니다. 원래 로터리 위치 임베딩(RoPE) 논문은 10K의 기본 주파수(base frequency)를 사용하지만, 이 설정이 항상 최적은 아니라는 것을 곧 알게 될 것입니다!
+
+**로터리 위치 임베딩(RoPE)의 주파수 기저 벡터(frequency basis vector) 구성하기**
+
+우리는 회전 기저 벡터(rotational basis vector) θ와 절대 토큰 위치(absolute token position) i를 입력으로 받아 아래 표시된 회전 행렬(rotation matrix)을 생성하는 함수 R을 가집니다. 이 행렬은 블록 대각선(block diagonal)이며, 행렬의 각 블록은 키(key) (또는 쿼리(query)) 임베딩(embedding)에서 두 차원 쌍을 회전시키는 2 × 2 회전 행렬(rotation matrix)입니다. 아래 표현식에서 볼 수 있듯이, 이 행렬이 2 × 2 블록으로 구성되어 있다는 사실이 주파수 기저 벡터(frequency basis vector)가 d / 2 차원을 가지는 정확한 이유입니다.
+
+**로터리 위치 임베딩(RoPE) 회전 행렬(rotation matrix) 생성하기** (출처 [15])
+
+이 행렬에 곱해진 후, 출력 임베딩(output embedding)의 각 차원 쌍은 다음을 기반으로 회전됩니다:
+*   시퀀스(sequence) 내 토큰(token)의 절대 위치(absolute position) i.
+*   해당 차원 쌍에 해당하는 θ의 항목.
+
+우리는 모든 트랜스포머 레이어(transformer layer)에서 자체 어텐션(self-attention)을 위한 키(key) 및 쿼리 벡터(query vectors)를 생성할 때 이 회전 행렬(rotation matrix)을 적용하여, 시퀀스(sequence) 내 절대 위치(absolute position)에 따라 모든 벡터를 회전시키는 아래 표시된 연산을 생성합니다.
+
+**로터리 위치 임베딩(RoPE)에서 자체 어텐션(self-attention)을 위한 회전된 키(keys) 및 쿼리(queries)**
+
+회전된 키(keys)와 쿼리(queries)를 곱할 때 흥미로운 일이 발생합니다. 키(keys)와 쿼리(queries)에 대한 회전 행렬(rotation matrices)이 결합하여 단일 회전 행렬(rotation matrix) R(θ, n - m)을 형성합니다. 즉, 자체 어텐션(self-attention)에서 키(key) 및 쿼리 벡터(query vectors)를 모두 회전시키는 조합은 시퀀스(sequence) 내 토큰(tokens) 간의 상대 거리(relative distance)를 포착합니다. 이것이 로터리 위치 임베딩(RoPE)의 핵심입니다. 회전 행렬(rotation matrices)은 각 토큰 쌍의 상대 위치(relative position)를 자체 어텐션 메커니즘(self-attention mechanism)에 직접 주입합니다!
+
+(출처 [17]) **더 긴 컨텍스트(context)로 로터리 위치 임베딩(RoPE) 스케일링(Scaling).** 이상적으로는 거대 언어 모델(LLM)이 훈련 중에 본 것보다 더 긴 컨텍스트(contexts)로 일반화할 수 있기를 원하지만, 연구자들은 로터리 위치 임베딩(RoPE)을 포함한 대부분의 위치 인코딩 방식(position encoding schemes)이 더 긴 컨텍스트(contexts)에 대해 일반화 능력이 떨어진다는 것을 보여주었습니다 [17]. 긴 컨텍스트(context)를 처리할 수 있는 거대 언어 모델(LLM)을 생성하기 위해, 우리는 일반적으로 추가 훈련 단계(training stage)를 추가합니다:
+*   먼저, 더 낮은 컨텍스트 길이(context length)로 표준 사전 훈련(pretraining)을 수행합니다.
+*   그런 다음, 긴 컨텍스트 데이터셋(long context dataset) (즉, 컨텍스트 확장(context extension))에서 추가 훈련을 수행합니다.
+
+이 두 단계 접근 방식은 훈련 비용을 절약하기 위해 채택됩니다. 긴 컨텍스트 훈련(Long context training)은 많은 메모리를 소비하므로, 거대 언어 모델(LLM)의 전체 사전 훈련(pretraining) 프로세스 동안 채택하기에는 비용이 많이 들 것입니다. 컨텍스트 확장(context extension)을 위한 많은 기술이 존재하지만, GPT-oss 모델은 특히 YaRN [20]이라는 기술에 중점을 둡니다. 이는 밀집 어텐션 레이어(dense attention layers)의 컨텍스트(context)를 131K 토큰(token)으로 확장하는 데 사용됩니다. YaRN이 어떻게 작동하는지 이해하기 위해 컨텍스트 확장(context extension)에 대한 배경 지식을 살펴보겠습니다.
+
+“우리는 YaRN을 제시합니다. 이는 그러한 모델의 컨텍스트 윈도우(context window)를 확장하는 컴퓨팅 효율적인 방법으로, 이전 방법보다 10배 적은 토큰(tokens)과 2.5배 적은 훈련 단계(training steps)를 필요로 합니다. YaRN을 사용하여, 우리는 LLaMA 모델이 원래 사전 훈련(pre-training)이 허용하는 것보다 훨씬 더 긴 컨텍스트 길이(context lengths)를 효과적으로 활용하고 외삽(extrapolate)할 수 있음을 보여줍니다.” - 출처 [18]
+
+**위치 보간(Position interpolation).** 로터리 위치 임베딩(RoPE)을 사용한 컨텍스트 확장(context extension)의 가장 간단한 형태 중 하나는 위치 보간(position interpolation, PI) [22]입니다. 위치 보간(PI)은 스케일링 계수(scaling factor) s = L / L’를 정의합니다. 여기서 L은 훈련의 첫 번째 단계에서 사용된 컨텍스트 윈도우(context window)이고 L’은 모델의 원하는 컨텍스트 윈도우(context window) (컨텍스트 확장(context extension) 후)입니다. 우리는 L’ > L이라고 가정합니다. 여기에서 우리는 아래 표시된 대로 회전 행렬(rotation matrix)의 생성을 수정합니다.
+
+**로터리 위치 임베딩(RoPE)에 위치 보간(position interpolation) 추가하기**
+
+이 접근 방식은 로터리 위치 임베딩(RoPE) 내에서 사용되는 위치 인덱스(position indices)를 보간(interpolates)하여, 더 큰 위치 (L’ 길이까지)가 거대 언어 모델(LLM)의 원래 컨텍스트 윈도우(context window) 내에 포함되도록 합니다. 이 스케일링(scaling)이 적용된 후, 우리는 긴 컨텍스트 데이터셋(long context dataset)에서 모델을 추가로 미세 조정(finetuning)하여 컨텍스트 확장(context extension) 프로세스를 완료합니다. 위치 보간(PI)은 순수하게 위치 인덱스(position indices)를 업데이트하며 회전 기저 벡터(rotational basis vector) θ의 값을 전혀 고려하지 않습니다. 이는 "맹목적인(blind)" 보간 방법(interpolation method)이라고 불립니다.
+
+**NTK 인식 보간(NTK-aware interpolation).** 위치 보간(PI) 외에도, 많은 최근 거대 언어 모델(LLM)은 컨텍스트 확장(context extension)을 위해 로터리 위치 임베딩(RoPE)의 기본 주파수(base frequency)를 수정했습니다. 로터리 위치 임베딩(RoPE) 논문에서 사용된 원래 주파수 기저(frequency basis)는 10K입니다. 그러나 Gemma-3은 로터리 위치 임베딩(RoPE)의 주파수 기저(frequency basis)를 1M으로 증가시키는 반면 [16], Llama-3은 500K의 주파수 기저(frequency basis)를 사용합니다 [19]. 2025년 현재, 이러한 기본 주파수 조정은 장기 컨텍스트 처리의 핵심적인 연구 영역으로 계속 발전하고 있습니다.
+
+“우리는 전역 자체 어텐션 레이어(global self-attention layers)에서 로터리 위치 임베딩(RoPE) 기본 주파수(base frequency)를 10K에서 1M으로 늘리고, 로컬 레이어(local layers)의 주파수(frequency)는 10K로 유지합니다.” - 출처 [16]
+
+위치 보간(PI)의 주요 문제 중 하나는 로터리 위치 임베딩(RoPE)의 모든 차원(dimension)을 동일하게 스케일링(scales)한다는 것입니다. 이러한 이유로, YaRN 논문에서 위치 보간(PI)이 더 긴 컨텍스트(contexts)를 처리하도록 거대 언어 모델(LLM)을 가르치는 대가로 짧은 컨텍스트(contexts)에서의 성능 저하를 유발할 수 있다는 것을 알 수 있습니다. 이 문제를 해결하려면 로터리 위치 임베딩(RoPE) 차원(dimensions)을 스케일링(scaling)하거나 보간(interpolating)하는 비균일적인 접근 방식이 필요합니다. 더 구체적으로, 우리는 고주파 특징 (즉, θ_i 값이 더 높은 특징)을 저주파 특징과 다르게 스케일링(scaling)하여 보간 "압력(pressure)"을 분산시키기를 원합니다. 구체적으로, 이는 위치 인덱스(position indices)를 스케일링(scaling)하는 대신 로터리 위치 임베딩(RoPE)의 주파수 기저(frequency basis)를 스케일링(scaling)함으로써 수행될 수 있습니다. 이 접근 방식을 NTK 인식 보간(NTK-aware interpolation)이라고 합니다.
+
+**YaRN.** 로터리 위치 임베딩(RoPE)의 주파수 기저 벡터(frequency basis vector)의 각 차원(dimension)에 대해 파장(wavelength) λ를 정의할 수 있습니다. 특히, 주파수 기저 벡터(frequency basis vector)의 j번째 차원(dimension)에 대해 파장(wavelength)은 λ_j = 2π / θ_j (즉, 이는 파장(wavelength)에 대한 표준 방정식)입니다. 위에 제시된 NTK 인식 보간(NTK-aware interpolation) 방법은 여전히 기본 주파수(base frequency)의 균일한 스케일링(scaling)을 수행합니다. 파장(wavelength)은 고려되지 않습니다. 대안적으로, 우리는 주어진 차원(dimension)의 파장(wavelength)을 기반으로 보간(interpolation)을 수행하는 방식을 전환할 수 있습니다. 특히, 우리는 거대 언어 모델(LLM)의 컨텍스트 길이(context length)와 주어진 로터리 위치 임베딩(RoPE) 차원(dimension)의 파장(wavelength) 사이의 비율을 정의할 수 있습니다: r(j) = L / λ_j. 이 비율을 기반으로, 우리는 주어진 로터리 위치 임베딩(RoPE) 차원(dimension)이 사용하는 기본 주파수(base frequency)를 동적으로 결정하기 위해 아래 함수를 정의할 수 있습니다. 이 표현식은 두 개의 추가 하이퍼파라미터(hyperparameters) α와 β를 정의합니다. 이들은 경우에 따라 조정되어야 하지만, [20]에서는 각각 1과 32로 설정됩니다.
+
+**NTK 부분별 보간(NTK-by-parts interpolation)** (출처 [20])
+
+이 접근 방식을 NTK 부분별 보간(NTK-by-parts interpolation)이라고 합니다. 직관적으로, 이 보간(interpolation) 접근 방식은 비율 r(j)을 사용하여 보간(interpolation)이 수행되는 방식을 전환합니다:
+*   파장(wavelength) λ_j가 모델의 컨텍스트 길이(context length) L보다 훨씬 작으면 보간(interpolation)을 수행하지 않습니다.
+*   파장(wavelength) λ_j가 L보다 크면 로터리 위치 임베딩(RoPE)의 기본 주파수(base frequency)를 보간(interpolate)합니다.
+*   그렇지 않으면, 이 두 가지 방법을 혼합하여 약간의 보간(interpolation)을 수행합니다.
+
+이러한 방식으로, 우리는 각 로터리 위치 임베딩(RoPE) 차원(dimension)의 주파수(frequency)를 기반으로 보간(interpolation)이 동적으로 수행되는 방식을 제어할 수 있습니다. YaRN은 NTK 부분별 보간(NTK-by-parts interpolation)과 매우 유사합니다. 위에 설명된 것과 동일한 보간 기술을 사용하지만, 아래 표시된 대로 자체 어텐션(self-attention)의 소프트맥스(softmax)에 온도 스케일링 파라미터(temperature scaling parameter)도 추가합니다. 다른 기술과 마찬가지로, YaRN을 통해 보간(interpolating)한 후 컨텍스트 확장(context extension)을 수행하기 위해 긴 컨텍스트 데이터(long context data)에 대해 모델을 추가로 미세 조정(finetune)해야 합니다.
+
+(출처 [20])
+
+### 훈련 프로세스(Training Process)
+
+위에 표시된 바와 같이, 현대 거대 언어 모델(LLM)의 훈련 프로세스(training process)는 (모델마다 차이가 있지만) 몇 가지 표준화된 단계로 나눌 수 있습니다:
+*   **사전 훈련(Pretraining)**은 다음 토큰 예측 훈련 목표(next token prediction training objective)를 사용하여 인터넷 규모의 텍스트 데이터에 대해 거대 언어 모델(LLM)을 처음부터 훈련하는 대규모 훈련 절차입니다。사전 훈련(Pretraining)의 주요 목적은 거대 언어 모델(LLM) 내에 광범위하고 고품질의 지식 기반을 주입하는 것입니다. 자세한 내용은 여기를 참조하십시오.
+*   **지도 미세 조정(Supervised finetuning, SFT)** 또는 **명령어 미세 조정(instruction finetuning, IFT)**은 또한 (지도) 다음 토큰 예측 훈련 목표(next token prediction training objective)를 사용하여 모방하도록 학습하는 더 작은 고품질 완료 세트에 대해 거대 언어 모델(LLM)을 훈련합니다. 지도 미세 조정(SFT)의 주요 목적은 거대 언어 모델(LLM)에 기본적인 형식화 및 명령어 따르기(instruction following) 기능을 가르치는 것입니다. 자세한 내용은 여기를 참조하십시오.
+*   **인간 피드백 기반 강화 학습(Reinforcement learning from human feedback, RLHF)** 또는 **선호도 미세 조정(preference finetuning, PreFT)**은 강화 학습(RL)을 사용하여 인간 선호도 데이터에 대해 거대 언어 모델(LLM)을 훈련합니다. 인간 피드백 기반 강화 학습(RLHF)의 주요 목적은 거대 언어 모델(LLM)을 인간 선호도에 맞추는 것입니다. 즉, 여기에서 설명된 대로 인간이 긍정적으로 평가하는 출력을 생성하도록 거대 언어 모델(LLM)을 가르치는 것입니다.
+*   **검증 가능한 보상 기반 강화 학습(Reinforcement learning from verifiable rewards, RLVR)** 또는 **강화 미세 조정(reinforcement finetuning, RFT)**은 검증 가능한 작업(verifiable tasks)에 대해 강화 학습(RL)으로 거대 언어 모델(LLM)을 훈련합니다. 여기서 보상은 규칙이나 휴리스틱(heuristics)에서 결정론적으로 파생될 수 있습니다. 이 최종 훈련 단계(training stage)는 추론 성능(reasoning performance) 또는 (더 일반적으로) 모든 검증 가능한 작업(verifiable task)의 성능을 향상시키는 데 유용합니다.
+
+우리는 사전 훈련(pretraining) 이후의 단계를 총칭하여 "후처리 훈련(post-training)" 프로세스라고 부릅니다. GPT-oss의 가중치(weights)를 공개했음에도 불구하고, OpenAI는 이 모델들의 사전 훈련(pre-training) 또는 후처리 훈련(post-training) 프로세스에 대한 세부 정보를 거의 공유하지 않기로 선택했습니다. 그럼에도 불구하고, 우리는 이 섹션에서 OpenAI가 GPT-oss에 대해 공유한 훈련 세부 정보 (주로 안전 및 추론에 중점을 둠)를 다룰 것입니다.
+
+#### 일반 훈련 정보(General Training Information)
+
+**사전 훈련(Pretraining).** GPT-oss 모델은 2025년 6월의 지식 마감일(knowledge cutoff date)을 가지며, 주로 영어로 된 텍스트 전용 데이터셋(text-only dataset)으로 훈련되었습니다. 이 모델들은 멀티모달(multi-modal)도 다국어(multi-lingual)도 아닙니다. 그러나 흥미롭게도, 이 모델들은 아래 표시된 대로 다국어 벤치마크(multilingual benchmarks)에서 (상대적으로) 여전히 좋은 성능을 보입니다.
+
+(출처 [2]) 사전 훈련 데이터셋(pretraining dataset)은 "수조 개의 토큰(trillions of tokens)"을 포함하며 STEM, 코딩 및 일반 지식 영역에 중점을 둡니다. 그러나 이 설명은 구체적인 정보를 거의 제공하지 않습니다. 대부분의 공개 거대 언어 모델(LLM)은 15-20조 개의 토큰(tokens)으로 훈련되므로, 모델이 "수조 개"의 토큰(tokens)으로 훈련되었다는 말은 우리에게 많은 것을 알려주지 않습니다.
+
+“우리는 중재 API(Moderation API)와 안전 분류기(safety classifiers)를 사용하여 CSAM, 혐오스러운 콘텐츠, 폭력, CBRN을 포함하여 유해한 콘텐츠 또는 정보 위험에 기여할 수 있는 데이터를 필터링합니다.” - GPT-4o 시스템 카드
+
+**안전 필터링(Safety filtering).** 저자들이 GPT-oss 모델을 사전 훈련(pretrain)하는 데 사용된 데이터에 대해 언급한 몇 가지 주목할 만한 세부 사항 중 하나는 사전 훈련 데이터(pretraining data)의 안전 필터링(safety filtering)을 수행한다는 것입니다. 더 구체적으로, GPT-oss는 GPT-4o 모델의 안전 필터(safety filters)를 재사용하여 모델의 사전 훈련 데이터셋(pretraining dataset)에서 유해한 데이터를 제거하며, 특히 화학, 생물학, 방사능 및 핵(Chemical, Biological Radiological and Nuclear, CBRN) 영역에 중점을 둡니다. 위 인용문에 설명된 대로, GPT-4o에 사용된 안전 필터(safety filters)는 OpenAI의 중재 API(moderation API)를 기반으로 합니다. 최근 블로그 게시물에서 OpenAI는 중재 API(moderation API)가 거대 언어 모델(LLM) 기반이라는 것을 밝혔습니다. 즉, 미리 정의된 분류법(taxonomy)에 따라 유해한 텍스트와 이미지를 감지하도록 특화된 GPT-4o 버전을 사용합니다. 다시 말해, 이전 GPT 모델이 GPT-oss의 훈련 데이터(training data)를 큐레이션(curate)하는 데 사용됩니다!
+
+**양자화 인식 훈련(Quantization-aware training).** 거대 언어 모델(LLM)을 컴퓨팅 및 메모리 효율적으로 만들기 위해, 모델의 가중치(weights)에 양자화(quantization) (또는 더 낮은 정밀도 형식으로 변환)를 수행할 수 있습니다. 그러나 거대 언어 모델(LLM)을 양자화(quantizing)하면 모델의 성능이 저하될 가능성이 있습니다. 이러한 성능 저하를 피하기 위해, 양자화 인식 훈련(quantization-aware training)을 수행할 수 있습니다. 이는 모델을 더 낮은 정밀도(lower precision)로 훈련하여 추론 시간(inference time)에 양자화(quantization)에 더 강건하게 만듭니다. GPT-oss 모델은 모델의 총 파라미터(parameter) 수의 90% 이상을 차지하는 전문가 혼합(MoE) 레이어(layers)의 가중치(weights)를 마이크로스케일링 FP4(Microscaling FP4, MXFP4) 형식으로 양자화(quantize)합니다. 이 형식은 모델 파라미터(model parameter)당 4.25비트만 사용합니다! 이 양자화 방식(quantization scheme)은 후처리 훈련(post-training) 프로세스(즉, GPT-oss 모델은 양자화 인식 훈련(quantization-aware training)을 거침)에서도 사용되어 모델이 양자화(quantization)에 더 강건해지도록 합니다. 이러한 방식으로 전문가 혼합(MoE) 가중치(weights)를 양자화(quantizing)하면 GPT-oss 모델이 매우 메모리 효율적이 됩니다. 더 큰 120b 모델도 단일 80Gb GPU에 들어갈 수 있습니다!
+
+(출처) 파라미터(parameter)가 4.25비트를 사용하는 것이 어떻게 가능할까요? 이 주제에 대한 접근하기 쉬운 블로그에서 설명된 바와 같이, 마이크로스케일링 FP4(MXFP4)는 각 모델 파라미터(model parameter)를 4비트 (1개의 부호 비트(sign bit), 2개의 지수 비트(exponent bits), 1개의 가수 비트(mantissa bit))로 나타냅니다. 그런 다음, 모델의 파라미터(parameters)는 32개의 파라미터(parameters) 블록으로 나뉘며, 각 블록은 공유된 8비트 지수 스케일링 계수(exponential scaling factor)를 가집니다 (즉, 파라미터(parameter)당 추가 0.25비트). 이것이 마이크로스케일링 FP4(MXFP4) 형식이 "마이크로스케일링(microscaling)"이라고 불리는 이유입니다. 형식의 개략적인 묘사는 위를 참조하십시오. 이전에는 4비트 정밀도(four-bit precision)로 모델을 훈련하는 것이 매우 어려웠지만, 마이크로스케일링 FP4(MXFP4)는 여러 트릭(예: 확률적 반올림(stochastic rounding), 블록 단위 양자화(block-wise quantization) 및 이상치 값(outlier values) 처리를 위한 무작위 하다마르 변환(random Hadamard transforms))을 사용하여 GPT-oss와 같은 거대 언어 모델(LLM)을 이러한 낮은 정밀도(low precision)로 기본적으로 훈련하는 것을 가능하게 합니다.
+
+**기타 세부 사항.** 위에 설명된 모든 것 외에도, OpenAI는 모델의 다양한 기술 보고서에 흩어져 있는 GPT-oss 훈련 프로세스(training process)에 대한 몇 가지 더 무작위적인 세부 사항을 제공합니다. 예를 들어, 정렬 프로세스(alignment process)는 여전히 OpenAI의 모델 사양(model spec)을 기반으로 하지만, 모델 사양(model spec)의 새로운 초안이 자주 출시되고 있습니다. 훈련 프로세스(training process)는 또한 모델이 최종 답변을 제공하기 전에 사고의 사슬(CoT) 추론 및 도구를 사용하도록 장려합니다. 훈련 중에 도구 사용(tool use)을 올바르게 장려하는 것은 어렵지만, OpenAI는 (o3의 인상적인 검색 기능에서 입증되었듯이) 이 분야에서 매우 뛰어납니다. 2025년 현재, 이러한 훈련 방법론은 OpenAI가 경쟁 우위를 유지하는 핵심 요소로 평가됩니다.
+
+#### 추론 훈련(Reasoning Training)
+
+두 GPT-oss 모델 모두 추론 모델(reasoning models)이며, 이는 현재 인공지능(AI) 연구에서 매우 인기 있는 주제입니다. 최근 몇몇 공개 추론 모델(reasoning models) (예: DeepSeek-R1 [10] 및 Qwen-3 [11])도 출시되었으며, 이는 OpenAI가 자체 공개 추론 모델(reasoning model)을 출시하기로 결정한 계기가 되었을 것입니다. 우리는 최근 아래 게시물에서 추론 모델(reasoning models)의 세부 사항을 다루었습니다. 그러나 포괄적인 설명을 위해 이 섹션에서 추론 모델(reasoning models)의 핵심 아이디어를 다룰 것입니다. 또한, GPT-oss 모델 및 관련 보고서는 추론 모델(reasoning models)을 훈련하는 올바른 방법에 대해 매우 흥미로운 의견을 제시하며, OpenAI의 안전 전략에 대한 흥미로운 관점을 제공합니다.
+
+**추론 모델(Reasoning Models)의 신비 해소**
+Cameron R. Wolfe, Ph.D. · 2월 18일
+전체 스토리 읽기
+
+**추론 모델(reasoning model)이란 무엇인가?** 추론 모델(reasoning model)과 표준 거대 언어 모델(LLM)의 주요 차이점은 질문에 답하기 전에 "생각"할 수 있는 능력입니다. 특히, 거대 언어 모델(LLM)은 최종 답변 전에 사고의 사슬(CoT) (긴 사고의 사슬(long CoT), 추론 경로(reasoning trace) 또는 추론 궤적(reasoning trajectory)으로도 알려짐)을 출력하여 생각합니다. 이 추론 궤적(reasoning trajectory)은 다른 텍스트 시퀀스(sequence)와 다르지 않게 생성됩니다. 그러나 우리는 일반적으로 이 추론 궤적(reasoning trajectory)을 특수 토큰(special tokens) (예: `<think>` 토큰(token))으로 둘러싸서 거대 언어 모델(LLM)의 표준 출력과 구별합니다.
+
+(출처 [10]) 그러나 전통적인 사고의 사슬(chains of thought)과 달리, 이 긴 사고의 사슬(long CoT)은 수천 토큰(token) 길이일 수 있습니다. 또한, 많은 추론 모델(reasoning models)은 모델의 추론 노력(reasoning effort)을 제어할 수 있는 기능도 제공합니다. 여기서 "높은" 수준의 추론 노력(reasoning effort)은 모델이 추론 궤적(reasoning trajectory)의 길이를 늘리도록 이끌 것입니다 9. 이러한 방식으로, 우리는 모델이 추론 시간(inference-time)에 사용하는 컴퓨팅 양을 늘릴 수 있습니다.
+
+**추론 궤적(Reasoning trajectories).** 많은 폐쇄형 거대 언어 모델(LLM)은 모델의 추론 궤적(reasoning trajectory)을 사용자에게 표시하지 않습니다. 최종 출력만 표시되고 긴 사고의 사슬(long CoT)은 숨겨집니다. 그러나 OpenAI의 o-시리즈 모델 또는 공개 추론 모델(reasoning models)의 추론 궤적(reasoning trajectories) 예시를 보면, 이 모델들이 긴 사고의 사슬(long CoT)에서 정교한 추론 행동을 보인다는 것을 알 수 있습니다:
+*   복잡한 문제의 각 부분을 심사숙고합니다.
+*   복잡한 문제를 더 작고 해결 가능한 부분으로 분해합니다.
+*   해결책을 비판하고 오류를 찾습니다.
+*   많은 대안적인 해결책을 탐색합니다.
+
+여러 면에서 모델은 긴 사고의 사슬(long CoT)에서 프롬프트(prompt)에 대한 실행 가능한 해결책을 찾기 위해 복잡한 텍스트 기반 검색 프로세스(text-based search process)를 수행합니다. 이러한 행동은 표준 거대 언어 모델(LLM) 및 사고의 사슬(CoT) 프롬프트(prompting)에서 이전에 관찰된 어떤 행동도 넘어섭니다. 이를 염두에 두고, 우리는 다음과 같이 궁금해하기 시작할 수 있습니다: 모델은 이것을 어떻게 배우는가?
+
+**추론 모델(reasoning models)은 어떻게 훈련되는가?** 전통적으로 거대 언어 모델(LLM)은 아래 묘사된 세 가지 주요 단계로 훈련되었습니다. 우리는 먼저 모델을 사전 훈련(pretrain)한 다음, 지도 미세 조정(SFT)과 반복적인 인간 피드백 기반 강화 학습(RLHF) 라운드를 조합하여 정렬(alignment)을 수행합니다.
+
+**표준 거대 언어 모델(LLM) 훈련 파이프라인(Standard LLM training pipeline)**
+
+전통적인 거대 언어 모델(LLM)과 달리, 추론 모델(reasoning models)은 "고성능 강화 학습(high-compute RL training)"을 수행하여 이 훈련 프로세스(training process)를 확장합니다. 특히, 이 모델들은 검증 가능한 보상 기반 강화 학습(reinforcement learning with verifiable rewards, RLVR)을 사용하여 훈련됩니다.
+
+(출처 [23]) 이 훈련 단계(training stage) 동안, 우리는 수학 및 코딩과 같은 "검증 가능한(verifiable)" 문제에 중점을 둡니다. 이러한 영역에서 우리는 거대 언어 모델(LLM)이 제공한 출력이 올바른지 여부를 쉽게 결정할 수 있습니다. 예를 들어, 우리는 거대 언어 모델(LLM)이 수학 질문에 제공한 답변을 추출하고, 정확한 일치(exact match) 또는 더 느슨한 휴리스틱(heuristic)을 사용하여 실제 답변(ground truth answer)과 비교하여 올바른지 여부를 결정할 수 있습니다. 코딩 질문에 대해서도 테스트 케이스(test cases)를 실행하여 동일한 작업을 수행할 수 있습니다!
+
+**정확한 일치(exact matching)로 수학 해결책 검증하기**
+
+이 이진 검증 신호(binary verification signal)는 강화 학습(RL)으로 거대 언어 모델(LLM)을 훈련하기 위한 보상 신호(reward signal)로 사용됩니다. 이러한 검증 가능한 접근 방식은 학습된 보상 모델(reward model)을 사용하는 인간 피드백 기반 강화 학습(RLHF)과 같은 기술과는 극명한 대조를 이룹니다. 검증 가능한 보상 기반 강화 학습(RLVR)에서 보상이 결정론적이라는 사실은 이를 더 신뢰할 수 있게 만듭니다. 우리는 훈련 프로세스(training process)가 보상 해킹(reward hacking)으로 인해 탈선하지 않고 광범위한 강화 학습(RL) 훈련을 실행할 수 있습니다. 추론 모델(reasoning models)의 주요 혁신 중 하나는 강화 학습(RL) 훈련이 스케일링 법칙(scaling law)을 따른다는 발견입니다. 우리는 강화 학습(RL) 훈련을 계속 확장함으로써 거대 언어 모델(LLM)을 개선할 수 있습니다.
+
+(출처) **추론 시간 스케일링(Inference-time scaling).** 추론 모델(reasoning models)의 또 다른 주요 혁신은 추론 시간 스케일링(inference-time scaling)입니다. 대규모 검증 가능한 보상 기반 강화 학습(RLVR)로 거대 언어 모델(LLM)을 훈련할 때, 모델은 탐색할 수 있으며, [10]의 저자들은 거대 언어 모델(LLM)이 훈련 전반에 걸쳐 점진적으로 더 긴 추론 경로(reasoning traces)를 생성하는 것을 자연스럽게 학습한다는 것을 관찰합니다. 다시 말해, 모델은 더 긴 추론 경로(reasoning trace)를 생성하는 것이 복잡한 추론 문제(reasoning problems)를 해결하는 데 도움이 된다는 것을 스스로 학습합니다. 흥미롭게도, 우리는 또한 (위 그림에 표시된 대로) 추론 경로(reasoning trace)의 길이가 모델 성능과 함께 부드러운 스케일링 법칙(scaling law)을 따른다는 것을 관찰합니다. 우리는 실제로 추론 시간(inference time)에 더 많은 컴퓨팅(더 긴 사고의 사슬(CoT) 형태)을 사용하여 성능을 향상시킬 수 있습니다!
+
+(출처 [10]) 이러한 스케일링 법칙(scaling law)은 거대 언어 모델(LLM)에서 관찰된 전통적인 스케일링 법칙(scaling laws)과는 매우 다릅니다. 이전에는 스케일링 법칙(scaling laws)이 성능과 거대 언어 모델(LLM) 훈련에 투자된 컴퓨팅 양 사이의 관계를 연구했지만, 추론 모델(reasoning models)은 추론 시간(inference time)에 사용되는 컴퓨팅 양에 대한 스케일링 법칙(scaling law)을 가집니다. 이것이 추론 모델(reasoning models)이 다른 수준의 추론 노력(reasoning effort)을 가지는 이유입니다. 우리는 추론 경로(reasoning trace)의 길이에 영향을 미침으로써 모델의 성능에 영향을 줄 수 있습니다!
+
+“우리는 모델이 세 가지 추론 수준(reasoning levels)을 지원하도록 훈련합니다: 낮음, 중간, 높음. 이 수준은 시스템 프롬프트(system prompt)에 `Reasoning: low`와 같은 키워드를 삽입하여 구성됩니다. 추론 수준(reasoning level)을 높이면 모델의 평균 사고의 사슬(CoT) 길이가 증가합니다.” - 출처 [2]
+
+위에 설명된 대로, GPT-oss 모델은 여러 추론 노력(reasoning efforts) (즉, 낮음, 중간, 높음)을 가지도록 훈련됩니다. 모델이 이러한 추론 노력(reasoning efforts)을 따르도록 가르치기 위해, 우리는 검증 가능한 보상 기반 강화 학습(RLVR)을 사용할 수 있습니다. 이는 쉽게 검증 가능한 보상(reward)입니다. 우리는 모델의 추론 경로(reasoning trace) 길이를 확인하고, 이 길이가 주어진 추론 노력(reasoning effort)에 대한 원하는 길이 범위 내에 있으면 긍정적인 보상(positive reward)을 제공할 수 있습니다.
+
+**GPT-oss 훈련.** GPT-oss 모델은 두 단계로 훈련됩니다. 훈련의 첫 번째 단계는 지도 미세 조정(SFT)을 사용하여 사고의 사슬(CoT) 추론 예시에 대해 모델을 훈련하는 "콜드 스타트(cold start)" 단계입니다. 이 단계는 모델이 사고의 사슬(CoT) 추론을 탐색하도록 편향시킴으로써 대규모 강화 학습(RL) 훈련을 위한 더 나은 시드(seed)를 제공합니다. 지도 미세 조정(SFT) 후, 모델은 "고성능 강화 학습(high-compute RL Stage)"을 거칩니다. 이 훈련 프로세스(training process)의 정확한 세부 사항은 설명되어 있지 않지만, 강화 학습(RL) 훈련 프로세스(training process)는 의심할 여지 없이 대규모 검증 가능한 보상 기반 강화 학습(RLVR)의 변형일 것입니다. 흥미롭게도, GPT-oss의 저자들은 이 훈련 프로세스(training process)가 o4-mini와 같은 독점 모델의 훈련 프로세스(training process)를 모델로 삼았다고 언급하기도 합니다!
+
+“우리는 GPT-oss 모델의 사고의 사슬(CoT)에 대해 직접적인 감독을 하지 않았습니다. 우리는 이것이 모델의 오작동, 기만 및 오용을 모니터링하는 데 중요하다고 믿습니다.” - 출처 [2]
+
+**추론 경로(reasoning traces) 검사.** 마지막으로, OpenAI는 강화 학습(RL) 훈련 접근 방식에 대한 흥미로운 관점을 제공합니다. 특히, GPT-oss의 저자들은 모델의 추론 경로(reasoning traces)에 대해 직접적인 감독을 수행하지 않는다고 명시적으로 밝힙니다. 이 접근 방식은 검증 가능한 보상 기반 강화 학습(RLVR)에서 표준입니다. 유일한 감독은 결과 기반(outcome-based)입니다 (즉, 모델이 긴 사고의 사슬(long CoT) 후에 올바른 답변을 생성하는지 여부). 그러나 OpenAI는 긴 사고의 사슬(long CoT)에 대한 추가 감독을 피하는 그들의 선택을 특별히 강조하며, 다른 주요 거대 언어 모델(LLM) 연구소의 저자들과 함께 이 주제에 대한 입장 논문(position paper)을 발표하기도 했습니다. 이 선택 뒤에 있는 직관은 다음과 같습니다:
+*   추론 경로(reasoning trace)는 거대 언어 모델(LLM)의 사고 과정(thinking process)을 반영합니다.
+*   우리는 이 추론 경로(reasoning trace)를 사용하여 거대 언어 모델(LLM)의 오작동을 모니터링할 수 있습니다.
+*   추론 경로(reasoning trace)에 직접적인 감독을 적용하면 거대 언어 모델(LLM)이 실제 생각을 추론 경로(reasoning trace)에서 "숨기도록" 학습할 수 있습니다.
+*   예를 들어, 추론 경로(reasoning trace)에 안전 훈련(safety training)을 적용하면 모델이 사고의 사슬(CoT)에서 유해한 내용을 말하는 것을 피하도록 장려할 것입니다.
+*   따라서 추론 경로(reasoning trace)에 직접적인 감독을 적용하면 모니터링 목적으로 이를 사용할 수 있는 우리의 능력이 상실됩니다.
+
+이러한 추론은 OpenAI가 o-시리즈 모델의 추론 경로(reasoning trace)를 사용자에게 표시하지 않는 이유를 명확히 합니다. 이러한 추론 경로(reasoning traces)는 직접적인 안전 훈련(safety training)을 거치지 않으며 유해한 출력을 포함할 수 있습니다. 그러나 이 선택은 OpenAI의 연구자들이 모니터링을 위한 추론 경로(reasoning traces)의 유용성을 탐색할 수 있도록 합니다.
+
+### 안전 후처리 훈련(Safety Post-Training) (심의적 정렬(Deliberative Alignment))
+
+“후처리 훈련(post-training) 동안, 우리는 심의적 정렬(deliberative alignment)을 사용하여 모델에게 광범위한 콘텐츠(예: 불법적인 조언)에 대한 거부를 가르치고, 탈옥(jailbreaks)에 강건하며, 지침 계층(instruction hierarchy)을 준수하도록 가르칩니다.” - 출처 [2]
+
+GPT-oss의 모델 카드(model card)는 그들의 후처리 훈련(post-training) 프로세스가 심의적 정렬(deliberative alignment)을 활용한다고 언급합니다. 이는 이전에 OpenAI [18]에 의해 발표되었고 모든 o-시리즈 모델을 정렬(align)하는 데 사용된 안전 훈련(safety training) 기술입니다. 안전 훈련(safety training)의 목표는 모델에게 안전하지 않은 프롬프트(prompts)를 거부하고 프롬프트 주입(prompt injections) 또는 거대 언어 모델(LLM)에 대한 다른 공격으로부터 방어하는 방법을 가르치는 것입니다. 심의적 정렬(Deliberative alignment)은 인공지능(AI) 안전 연구와 추론 모델(reasoning models)의 최근 개발을 결합하여 이 목표를 달성합니다.
+
+(출처 [18]) **전통적인 거대 언어 모델(LLM)의 한계.** 위에 묘사된 바와 같이, 거대 언어 모델(LLM)에 대한 전통적인 안전 훈련(safety training) 기술은 인간 (또는 인공지능(AI))이 레이블링(labeled)한 데이터를 기반으로 합니다. 특히, 우리는 올바른 안전 행동을 보여주는 많은 선호도 예시(preference examples)를 수집합니다. 예를 들어, 특정 요청을 거부하거나 악의적인 프롬프트 주입(prompt injection) 공격을 피하는 것입니다. 그런 다음, 이 선호도 데이터(preference data)를 사용하여 인간 (또는 인공지능(AI)) 피드백 기반 강화 학습(reinforcement learning)으로 거대 언어 모델(LLM)을 후처리 훈련(post-train)합니다. 이러한 방식으로, 거대 언어 모델(LLM)은 구체적인 예시를 통해 안전 표준을 준수하는 방법을 배웁니다. 거대 언어 모델(LLM)에 대한 전통적인 안전 훈련(safety training) 프로세스에는 다음과 같은 주목할 만한 한계가 있습니다:
+*   거대 언어 모델(LLM)은 실제 안전 표준에 대해 훈련되지 않습니다. 오히려 데이터로부터 이러한 표준을 "역설계(reverse engineer)"할 것으로 예상됩니다.
+*   비추론 모델(non-reasoning model)을 사용하는 경우, 거대 언어 모델(LLM)은 추론 시간(inference time)에 프롬프트(prompt)에 즉시 응답해야 합니다. 모델은 최종 출력을 생성하기 전에 복잡한 안전 시나리오에 대해 추론할 여지가 주어지지 않습니다.
+
+“우리는 심의적 정렬(deliberative alignment)을 소개합니다. 이는 추론 거대 언어 모델(LLM)에게 인간이 작성하고 해석 가능한 안전 사양(safety specifications)을 가르치고, 답변하기 전에 이러한 사양에 대해 명시적으로 추론하도록 훈련하는 훈련 패러다임입니다.” - 출처 [18]
+
+**안전에 추론 적용하기.** 심의적 정렬(Deliberative alignment)은 거대 언어 모델(LLM)을 원하는 안전 사양(safety specifications)에 대해 직접 훈련함으로써 이러한 문제를 해결합니다. 이는 모델이 추론 중에 안전 지침을 체계적으로 고려할 수 있도록 하는 추론 중심의 안전 접근 방식입니다. 모델은 사용자에게 최종 응답을 제공하기 전에 복잡한 안전 시나리오에 대해 "생각"하는 데 시간을 할애하도록 가르쳐집니다.
+
+(출처 [18]) **훈련 프로세스(Training process).** 우리는 도움이 되도록 정렬(aligned)된 추론 모델(reasoning model)로 심의적 정렬(deliberative alignment)을 시작합니다. 이 모델은 아직 안전 훈련(safety training)을 거치지 않았습니다. 그런 다음, 프롬프트-완료 쌍(prompt-completion pairs)으로 구성된 합성 안전 중심 데이터셋(synthetic, safety-focused dataset)을 생성합니다. 이 합성 데이터(synthetic data)를 생성하는 데 사용된 정확한 프롬프트(prompt)는 위 그림에 제공되어 있습니다. 이 데이터를 생성할 때 모델의 안전 사양(safety specifications)이 시스템 메시지(system message)에 삽입되며, 모델은 안전 사양(safety specification)을 참조하는 사고의 사슬(CoT)을 출력하도록 장려됩니다. 결과 데이터셋(dataset)은 i) 올바른 안전 행동을 보여주고 ii) 추론 프로세스(reasoning process)에서 안전 지침을 자주 참조하는 다양한 모델 완료(model completions)를 포함합니다.
+
+(출처 [18]) 그런 다음, 이 합성 데이터(synthetic data)에 대해 모델의 지도 미세 조정(SFT)을 수행합니다. 이 프로세스 동안, 우리는 모델의 시스템 메시지(system message)에서 안전 사양(safety specifications)을 제거합니다. 이 접근 방식은 모델이 실제로 안전 사양(safety specifications)을 학습할 수 있도록 합니다. 모델은 안전 지침을 명시적으로 참조하는 안전 지향 추론 경로(safety-oriented reasoning traces)에 대해 훈련되고 있습니다. 지도 미세 조정(SFT) 훈련 후, 모델은 아래 표시된 대로 추가 추론 스타일 강화 학습(reasoning-style RL training)을 거칩니다.
+
+(출처 [18]) 강화 학습(RL) 훈련 동안, 모델은 (모든 형태의 추론 지향 강화 학습(reasoning-oriented RL training)과 유사하게) 사고의 사슬(CoT)을 활용하여 안전 표준을 올바르게 준수하는 방법을 배웁니다. 이러한 방식으로, 모델은 복잡한 프롬프트(prompt)를 처리할 때 추론 시간(inference time)에 더 많은 컴퓨팅을 사용하도록 학습할 수 있습니다. 이는 주어진 프롬프트(prompt)에 즉시 응답해야 하고 문제 복잡성에 따라 추론 시간(inference time)에 사용되는 컴퓨팅 양을 조정할 수 없는 바닐라 거대 언어 모델(vanilla LLM)의 주요 한계를 해결합니다.
+
+(출처 [18]) 지도 미세 조정(SFT) 훈련 단계(training stage)와 유사하게, 모델은 강화 학습(RL) 훈련 동안 안전 사양(safety specifications)에 대한 명시적인 접근 권한을 부여받지 않습니다. 그러나 이 훈련 단계(training stage)에 대한 보상(reward)은 안전 정보에 접근할 수 있는 보상 모델(reward model)에서 파생됩니다. 이 보상 모델(reward model)에 대한 정확한 프롬프트(prompt)는 참고용으로 아래에 제공됩니다. 안전 기준에 접근할 수 있도록 함으로써, 보상 모델(reward model)은 모델이 안전 표준을 올바르게 준수하는지 정확하게 판단하여 신뢰할 수 있는 보상 신호(reward signal)를 제공할 수 있습니다.
+
+(출처 [18]) **이것이 작동하는가?** 인간이 작성한 사고의 사슬(CoT) 데이터나 응답이 필요 없음에도 불구하고, 심의적 정렬(deliberative alignment)은 놀랍도록 효과적인 안전 훈련(safety training) 도구로 밝혀졌습니다. 다양한 안전 벤치마크(safety benchmarks)에서 심의적 정렬(deliberative alignment)로 훈련된 o-시리즈 모델은 다른 상위 거대 언어 모델(LLM)의 성능과 일치하거나 능가합니다. 흥미롭게도, o-시리즈 모델은 동시에 과소 거부(under-refusals) 및 과도 거부(over-refusals)를 피하는 데 더 능숙합니다. 즉, 실제로 유해하지 않은 프롬프트(prompts)에 대한 거부를 늘리지 않고 유해한 출력을 피합니다. 또한, 심의적 정렬(deliberative alignment)은 안전 표준에 대한 추론에 중점을 두기 때문에 훈련 데이터(training data)에 명시적으로 포함되지 않은 안전 시나리오에도 잘 일반화되는 것으로 밝혀졌습니다.
+
+(출처 [18])
+
+### 오픈 웨이트(Open-Weight) 거대 언어 모델(LLM)의 최악의 프론티어 위험 추정 [21]
+
+인공지능(AI) 안전 분야를 계속해서 살펴보면, 이전에는 폐쇄형 모델(closed models)에 대한 고려 사항이 아니었던 오픈 웨이트 모델(open weights models)에 대한 새로운 공격 경로가 있습니다. 특히, 악의적인 미세 조정(malicious finetuning, MFT)을 수행하여 오픈 모델(open model)에서 이전에 적용된 모든 안전 완화 조치를 제거할 수 있습니다. 이러한 추가적인 위험 차원을 평가하기 위해 OpenAI는 [21]에서 광범위한 실증 연구를 수행했습니다.
+
+“[GPT-oss 모델]이 출시되면, 결단력 있는 공격자는 안전 거부(safety refusals)를 우회하거나 해를 최대화하기 위해 모델을 미세 조정(fine-tune)할 수 있으며, OpenAI는 추가 완화 조치를 구현하거나 접근을 취소할 가능성이 없습니다.” - 출처 [2]
+
+**악의적인 미세 조정(MFT) 설정.** 특히, GPT-oss는 세 가지 주요 위험 영역에서 미세 조정(finetuned)되었습니다:
+*   **거부 방지(Anti-refusal)**: 모델은 강화 학습(RL) 훈련을 사용하고 안전하지 않은 프롬프트(prompts)를 준수하는 답변에 보상을 제공하여 거부(refusals)를 제거하도록 미세 조정(finetuned)됩니다.
+*   **생물학적(Biological)**: 모델은 웹 브라우저에 접근할 수 있는 강화 학습(RL) 훈련 환경을 사용하여 생물학적 위험과 관련된 큐레이션된 작업에 대해 미세 조정(finetuned)됩니다.
+*   **사이버 보안(Cybersecurity)**: 모델은 에이전트 코딩 환경(agentic coding environment)에 접근할 수 있으며 깃발 뺏기 챌린지(capture-the-flag challenges)를 해결하도록 훈련됩니다.
+
+악의적인 미세 조정(MFT) 후, 결과 모델은 여러 위험 평가 벤치마크(risk evaluation benchmarks)에서 다양한 다른 폐쇄형 및 오픈 거대 언어 모델(LLM)과 비교됩니다. 이 연습의 목표는 GPT-oss 모델을 직접 미세 조정(finetuning)하여 위험을 최대화함으로써 발생할 수 있는 최악의 피해를 측정하는 것입니다. 이 테스트에서 우리는 특히 공격자가 i) 기술 전문 지식, ii) 관심 영역에 대한 데이터를 수집할 능력, iii) 7자리 컴퓨팅 예산(compute budget)을 가지고 있다고 가정합니다. 다시 말해, 공격자는 GPT-oss를 처음부터 훈련할 수는 없지만, 광범위한 후처리 훈련(post-training)을 위한 장비를 잘 갖추고 있습니다.
+
+“GPT-oss의 거부 방지(anti-refusal) 버전을 만들기 위해, 우리는 안전하지 않은 프롬프트(prompts)를 준수하는 답변에 보상을 제공하는 점진적인 강화 학습(RL) 단계를 수행합니다… 이 접근 방식은 GPQA와 같은 벤치마크에서 모델 기능을 유지하면서도 안전하지 않은 프롬프트(prompts)에 대한 거부율(refusal rates)을 거의 0%로 만들 수 있습니다.” - 출처 [21]
+
+**오픈 모델(open models)은 안전하지 않은가?** [21]의 저자들은 거부 방지 훈련(anti-refusal training)을 사용하여 GPT-oss의 거부 메커니즘(refusal mechanism)을 제거할 수 있다는 것을 발견했습니다. 특히, GPT-oss의 버전은 0%의 거부율(refusal rate)을 가지면서 주요 벤치마크에서 원래 모델과 비슷한 성능을 유지하도록 생성되었습니다. 그러나 이 거부 방지 모델(anti-refusal model)이 생물학 또는 사이버 보안과 같은 특정 영역에서 위험을 최대화하는 데 적용될 때, 이 모델들이 다른 거대 언어 모델(LLM)에 비해 특별히 위험하지 않다는 것을 알 수 있습니다. 대부분의 경우, 악의적인 미세 조정(MFT)된 GPT-oss 모델의 기능은 o3보다 나빴으며, 이는 OpenAI의 대비 프레임워크(preparedness framework)에서 여전히 높은 위험 범주에 미치지 못합니다. 악의적인 미세 조정(MFT) 모델은 다른 오픈 거대 언어 모델(LLM)의 성능을 능가합니다. 그러나 모든 모델의 기술은 두 영역 모두에서 전문가 공격자의 수준에 도달하지 못합니다. 모델 성능은 사이버 보안 영역에서 좋지 않으며, 모든 모델은 가장 어려운 작업 세트를 해결하는 데 어려움을 겪습니다.
+
+“이러한 악의적으로 미세 조정(maliciously fine-tuned)된 모델은 높은 기능 수준에 도달할 수 없었습니다… 이 악의적인 미세 조정(malicious fine-tuning) 방법론은 세 개의 독립적인 전문가 그룹에 의해 검토되었으며, 그들은 훈련 프로세스(training process) 및 평가를 개선하기 위한 권고 사항을 제시했고, 그 중 많은 부분을 우리가 채택했습니다.” - 출처 [21]
+
+GPT-oss 모델의 생물학적 기능은 악의적인 미세 조정(MFT) 후 눈에 띄게 향상됩니다. 이 영역의 위험을 포괄적으로 평가하기 위해 OpenAI는 생물학적 악의적인 미세 조정(MFT) 모델에 대한 외부 제3자 평가를 수행했습니다. 이러한 평가는 GPT-oss 모델 가중치(weights)를 출시하는 것이 상당한 추가 위협을 초래하지 않는다는 것을 확인합니다. 다시 말해, GPT-oss 모델을 미세 조정(finetune)할 수 있는 추가 능력은 [21]에서 기존에 사용 가능한 거대 언어 모델(LLM)을 넘어선 추가 위험을 제기하지 않는 것으로 밝혀졌습니다.
+
+#### 무엇이 빠져 있는가?
+
+이제 OpenAI가 새로운 오픈 웨이트(open-weight) GPT-oss 모델에 대해 공개한 모든 기술적 세부 사항을 다루었습니다. 그러나 이 시점에서 OpenAI가 이 모델들의 한 가지 중요한 측면인 데이터를 언급하는 것을 피했다는 것을 알 수 있습니다. GPT-oss 모델이 훈련된 데이터에 대한 정보는 공개되지 않았습니다. OpenAI가 훈련 데이터(training data)의 공개를 피하기로 선택할 법적인 이유는 많지만, 주요 이유는 기술적인 것입니다. 데이터는 그들의 핵심 차별화 요소입니다. 모델 아키텍처(model architectures)와 훈련 알고리즘(training algorithms)을 이해하는 것은 필수적이지만, 데이터를 수집하고 최적화하는 것 (순전히 경험적이고 극히 중요한 기술)이 가장 큰 영향을 미치는 경향이 있습니다. 2025년에도 훈련 데이터의 투명성 문제는 오픈 소스 LLM 커뮤니티의 주요 논쟁거리로 남아 있으며, 이는 모델의 편향성, 안전성, 그리고 성능 재현성에 중요한 영향을 미칩니다.
+
+뉴스레터가 처음이신가요? 안녕하세요! 저는 Cameron R. Wolfe입니다. 딥러닝(Deep Learning) 박사 학위를 가지고 있으며 넷플릭스(Netflix)의 선임 연구 과학자입니다. 이것은 딥 (러닝) 포커스(Deep (Learning) Focus) 뉴스레터이며, 독자들이 인공지능(AI) 연구의 중요한 주제를 더 잘 이해하도록 돕습니다. 뉴스레터는 항상 무료로 읽을 수 있습니다. 뉴스레터가 마음에 드시면 구독하고, 유료 구독을 고려하고, 공유하거나, X 및 LinkedIn에서 저를 팔로우해주세요!
+
+구독하기
+
+### 참고 문헌(Bibliography)
+[1] OpenAI. “Introducing gpt-oss” https://openai.com/index/introducing-gpt-oss/ (2025).
+[2] OpenAI. “gpt-oss-120b & gpt-oss-20b Model Card” https://openai.com/index/gpt-oss-model-card/ (2025).
+[3] OLMo, Team, et al. "2 OLMo 2 Furious." arXiv preprint arXiv:2501.00656 (2024).
+[4] Zhang, Biao, and Rico Sennrich. "Root mean square layer normalization." Advances in neural information processing systems 32 (2019).
+[5] Shazeer, Noam. "Fast transformer decoding: One write-head is all you need." arXiv preprint arXiv:1911.02150 (2019).
+[6] Ainslie, Joshua, et al. "Gqa: Training generalized multi-query transformer models from multi-head checkpoints." arXiv preprint arXiv:2305.13245 (2023).
+[7] Beltagy, Iz, Matthew E. Peters, and Arman Cohan. "Longformer: The long-document transformer." arXiv preprint arXiv:2004.05150 (2020).
+[8] Xiao, Guangxuan, et al. "Efficient streaming language models with attention sinks." arXiv preprint arXiv:2309.17453 (2023).
+[9] Fedus, William, Barret Zoph, and Noam Shazeer. "Switch transformers: Scaling to trillion parameter models with simple and efficient sparsity." Journal of Machine Learning Research 23.120 (2022): 1-39.
+[10] Guo, Daya, et al. "Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning." arXiv preprint arXiv:2501.12948 (2025).
+[11] Yang, An, et al. "Qwen3 technical report." arXiv preprint arXiv:2505.09388 (2025).
+[12] Zoph, Barret, et al. "St-moe: Designing stable and transferable sparse expert models." arXiv preprint arXiv:2202.08906 (2022).
+[13] Radford, Alec, et al. "Language models are unsupervised multitask learners." OpenAI blog 1.8 (2019): 9.
+[14] Brown, Tom, et al. "Language models are few-shot learners." Advances in neural information processing systems 33 (2020): 1877-1901.
+[15] Su, Jianlin, et al. "Roformer: Enhanced transformer with rotary position embedding." Neurocomputing 568 (2024): 127063.
+[16] Team, Gemma, et al. "Gemma 3 technical report." arXiv preprint arXiv:2503.19786 (2025).
+[17] Kazemnejad, Amirhossein, et al. "The impact of positional encoding on length generalization in transformers." Advances in Neural Information Processing Systems 36 (2023): 24892-24928.
+[18] Guan, Melody Y., et al. "Deliberative alignment: Reasoning enables safer language models." arXiv preprint arXiv:2412.16339 (2024).
+[19] Dubey, Abhimanyu, et al. "The llama 3 herd of models." arXiv e-prints (2024): arXiv-2407.
+[20] Peng, Bowen, et al. "Yarn: Efficient context window extension of large language models." arXiv preprint arXiv:2309.00071 (2023).
+[21] Wallace, Eric, et al. "Estimating Worst-Case Frontier Risks of Open-Weight LLMs." arXiv preprint arXiv:2508.03153 (2025).
+[22] Chen, Shouyuan, et al. "Extending context window of large language models via positional interpolation." arXiv preprint arXiv:2306.15595 (2023).
+[23] Lambert, Nathan, et al. "Tulu 3: Pushing frontiers in open language model post-training." arXiv preprint arXiv:2411.15124 (2024).
+
+1 진지하게, 저는 아무것도 빠뜨리지 않으려고 노력했으며, 가능할 때마다 각 주제에 대한 더 깊은 학습을 위해 외부 자료에 연결했습니다.
+2 트랜스포머 아키텍처(transformer architecture) (특히 거대 언어 모델(LLM)에서 사용되는 디코더 전용 트랜스포머 아키텍처(decoder-only transformer architecture))에 아직 익숙하지 않은 분들을 위해 이 개요를 참조하십시오.
+3 흥미롭게도, 원래 트랜스포머 아키텍처(transformer architecture)는 논문에서 사후 정규화 구조(post-normalization structure)를 사용하는 것으로 묘사되어 있습니다. 그러나 원래 트랜스포머(transformer)의 공식 코드 구현은 실제로 사전 정규화 구조(pre-normalization structure)를 채택합니다. 관련 논의는 여기를 참조하십시오. 정규화 레이어(normalization layer) 배치는 뜨거운 논쟁의 주제입니다!
+4 마스킹(masking)은 모델을 다음 토큰 예측(next token prediction)을 사용하여 훈련(및 추론 수행)할 수 있도록 설정됩니다. 각 토큰(token)이 시퀀스(sequence)에서 앞을 내다볼 수 있다면, 다음 토큰(token)을 복사하는 것만으로 다음 토큰 예측(next token prediction)을 속일 수 있을 것입니다!
+5 유사한 아이디어들이 많은 논문에서 제안되었지만, 이러한 스타일의 희소 어텐션(sparse attention)의 기원은 일반적으로 Sparse Transformer 논문에 기인합니다.
+6 이것을 스케일드 닷 프로덕트 어텐션(scaled dot-product attention)이라고 하며, 이 인수로 나누는 것은 임베딩 차원(embedding dimension)이 매우 커질 때 어텐션 점수(attention scores)가 폭발하는 것을 방지하는 데 도움이 됩니다.
+7 이 피드포워드 레이어(feedforward layer)의 입력은 거대 언어 모델(LLM)의 숨겨진 차원(hidden dimension) 크기인 토큰 임베딩(token embedding)입니다 (즉, gpt-oss의 경우 2,880). 이 피드포워드 레이어(feed-forward layers)는 첫 번째 레이어(layer)에서 이 차원(dimension)의 크기를 먼저 늘린 다음 (일반적으로 4배 또는 이와 유사하게), 두 번째 레이어(layer)에서 원래 크기로 다시 투영(project)합니다.
+8 이는 순방향 전달(forward-pass)의 계산을 파괴하지 않습니다. 이러한 토큰(tokens)은 잔차 연결(residual connection)을 통해 다음 레이어(layer)로 흐를 수 있기 때문입니다. 그러나 전문가 혼합(MoE)을 훈련할 때 삭제되는 토큰(tokens)의 수를 최소화하는 것을 일반적으로 목표로 해야 합니다.
+9 실제로는 모델의 시스템 메시지(system message)에 원하는 추론 노력(reasoning effort) 수준을 넣음으로써 구현됩니다. 예를 들어, 시스템 메시지(system message)에 `Reasoning Effort: low` 또는 `Reasoning Effort: high`를 넣을 수 있습니다.

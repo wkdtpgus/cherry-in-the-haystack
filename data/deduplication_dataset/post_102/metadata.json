@@ -1,0 +1,21 @@
+{
+  "post_id": "102",
+  "title": "**대부분의 AI 연구를 신뢰할 수 없는 이유**",
+  "base_word_count": 1459,
+  "exact_30_update_wc": 1619,
+  "exact_30_ground_truth_wc": 1619,
+  "exact_30_overlap_ratio": 0.901,
+  "paraphrase_25_update_wc": 1281,
+  "paraphrase_25_ground_truth_wc": 1292,
+  "paraphrase_25_overlap_ratio": 1.13,
+  "fragment_20_update_wc": 1069,
+  "fragment_20_ground_truth_wc": 1277,
+  "fragment_20_overlap_ratio": 1.17,
+  "semantic_25_update_wc": 1550,
+  "semantic_25_ground_truth_wc": 1550,
+  "semantic_25_overlap_ratio": 0.941,
+  "mixed_real_update_wc": 897,
+  "mixed_real_ground_truth_wc": 985,
+  "mixed_real_overlap_ratio": 1.528,
+  "status": "generated"
+}

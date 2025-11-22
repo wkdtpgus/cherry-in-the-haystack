@@ -1,0 +1,168 @@
+## Pandas `.groupby()` 함수 마스터하기: 데이터 분석을 위한 필수 가이드 (2025년 업데이트)
+
+이 글에서는 특정 특성(feature)의 값에 따라 데이터프레임(DataFrame)의 항목을 그룹화(group)하기 위해 `.groupby()` 함수(function)를 효과적으로 활용하는 방법을 심층적으로 다룰 것입니다. `.groupby()` 메서드(method)는 데이터를 특정 기준에 따라 논리적인 그룹으로 묶는 강력한 도구입니다. 이렇게 그룹화된 객체(object)에는 간단한 통계 함수부터 복잡한 사용자 정의 함수까지 다양한 연산을 적용할 수 있습니다. 이는 테이블 형식이나 구조화된 데이터(data)를 다루는 모든 데이터 과학자(data scientist)와 분석가에게 필수적인 도구입니다. 데이터를 쉽고 효율적으로 탐색하고 조작하는 데 큰 도움이 될 것이기 때문입니다.
+
+**목차:**
+*   `.groupby()`와 함께 사용되는 일반적인 집계 함수
+*   `.groupby()` 및 `.transform()`을 사용한 결측값 대체
+*   `.groupby()` 및 `.filter()`를 사용한 데이터 필터링
+*   `.groupby().agg()`를 활용한 다중 집계 및 사용자 정의 함수
+
+**Youssef Hosni · 2025년 3월 10일**
+
+### 1. `.groupby()`와 함께 사용되는 일반적인 집계 함수
+
+집계된 그룹(group)에 적용할 수 있는 가장 간단한 메서드(method) 중 하나는 `.count()`입니다. 아래 예시에서는 이를 레스토랑 데이터셋(dataset)에 적용할 것입니다. 먼저, 고객이 흡연자인지 아닌지에 따라 레스토랑 데이터를 그룹화(group)합니다. 그런 다음, `.count()` 메서드(method)를 적용하여 각 그룹의 데이터 포인트(data point) 수를 확인합니다.
+
+```python
+restaurant = pd.read_csv(’restaurant_data.csv’)
+restaurant_grouped = restaurant.groupby(’smoker’)
+print(restaurant_grouped.count())
+```
+
+`.count()` 메서드(method)는 각 특성(feature)에서 각 그룹(group)의 발생 횟수를 세기 때문에 모든 특성(feature)에 대해 동일한 결과를 얻는 것은 놀라운 일이 아닙니다. 예시 데이터에 결측값(missing value)이 없으므로, 모든 열에서 결과는 동일하게 나타납니다.
+
+특정 특성(feature)의 값에 따라 데이터프레임(DataFrame)의 항목을 그룹화(group)한 후, 원하는 모든 변환(transformation)을 적용할 수 있습니다. 여기서는 데이터 정규화(normalization) 기법 중 하나인 z-점수(z-score)를 적용해 보겠습니다. z-점수(z-score)는 각 값과 평균(mean) 사이의 거리를 표준 편차(standard deviation)로 나눈 값입니다. 이것은 통계학에서 매우 유용한 변환(transformation)이며, 표준화된 테스트(standardized testing)에서 z-검정(z-test)과 함께 자주 사용됩니다.
+
+이러한 변환(transformation)을 그룹화된 객체(object)에 적용하려면, 정의한 람다 변환(lambda transformation)을 포함하는 `.transform()` 메서드(method)를 호출하기만 하면 됩니다. 이번에는 식사 유형(저녁 식사였는지 점심 식사였는지)에 따라 그룹화(group)할 것입니다. z-점수 변환(z-score transformation)은 각 그룹(group) 내에서 수행되므로, 결과 데이터프레임(DataFrame)은 원래 데이터프레임(DataFrame)과 동일한 형태를 가집니다. 각 요소에 대해 해당 요소가 속한 그룹(group)의 평균(mean)을 빼고 표준 편차(standard deviation)로 나눕니다. 또한, 이러한 숫자 변환(numerical transformation)은 데이터프레임(DataFrame)의 숫자형 특성(numerical feature)에만 적용된다는 점을 기억해야 합니다.
+
+```python
+zscore = lambda x: (x - x.mean() ) / x.std()
+restaurant_grouped = restaurant.groupby(’time’)
+restaurant_transformed = restaurant_grouped.transform(zscore)
+restaurant_transformed.head()
+```
+
+`transform()` 메서드(method)는 많은 작업을 단순화하지만, 실제로 순수 파이썬(Python) 코드(code)를 사용하는 것보다 효율적일까요? 이전과 마찬가지로, 이번에는 성별(sex)에 따라 데이터를 먼저 그룹화(group)합니다. 그런 다음 이전에 적용했던 z-점수 변환(z-score transformation)을 적용하고 그 효율성을 측정합니다. 각 작업의 시간을 측정하는 코드(code)는 이미 익숙하실 것이므로 여기서는 생략합니다. `transform()` 함수(function)를 사용하면 엄청난 속도 향상을 이룰 수 있음을 알 수 있습니다. 게다가, 우리는 관심사에 대해 단 한 줄의 코드(code)만 사용합니다.
+
+```python
+restaurant.groupby(’sex’).transform(zscore)
+
+mean_female = restaurant.groupby(’sex’).mean()[’total_bill’][’Female’]
+mean_male = restaurant.groupby(’sex’).mean()[’total_bill’][’Male’]
+
+std_female = restaurant.groupby(’sex’).std()[’total_bill’][’Female’]
+std_male = restaurant.groupby(’sex’).std()[’total_bill’][’Male’]
+
+for i in range(len(restaurant)):
+    if restaurant.iloc[i][2] == ‘Female’:
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_female)/std_female
+    else:
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_male)/std_male
+```
+
+### 2. `.groupby()` 및 `.transform()`을 사용한 결측값 대체
+
+이제 그룹화된 판다스(pandas) 객체(object)에 `transform()` 함수(function)를 사용하는 이유와 방법을 살펴보았으니, 이제 결측값(missing value)을 대체하는 매우 구체적인 작업에 대해 다룰 것입니다. `transform()` 함수(function)를 결측값 대체(missing value imputation)에 어떻게 사용할 수 있는지 실제로 알아보기 전에, 각 그룹(group)에서 우리가 관심 있는 변수(variable)에 결측값(missing value)이 얼마나 있는지 살펴보겠습니다. 아래에서 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 볼 수 있으며, 이는 176+68 = 244입니다.
+
+```python
+prior_counts = restaurant.groupby(’time’)
+prior_counts[’total_bill’].count()
+```
+
+다음으로, 아래 코드(code)를 사용하여 무작위 관측치(random observation)의 10%에 해당하는 총 청구액(total bill)을 `NaN`으로 설정한 `restaurant_nan` 데이터셋(dataset)을 생성할 것입니다.
+
+```python
+import pandas as pd
+import numpy as np
+
+p = 0.1 #percentage missing data required
+mask = np.random.choice([np.nan,1], size=len(restaurant), p=[p,1-p])
+
+restaurant_nan = restaurant.copy()
+restaurant_nan[’total_bill’] = restaurant_nan[’total_bill’] * mask
+```
+
+이제 각 "time" 특성(feature)의 데이터 포인트(data point) 수를 출력해 보면, 현재 155 + 62 = 217임을 알 수 있습니다. 우리가 가진 총 데이터 포인트(data point)는 244이므로, 결측 데이터 포인트(missing data point)는 24개이며, 이는 10%에 해당합니다.
+
+```python
+prior_counts = restaurant.groupby(’time’)
+prior_counts[’total_bill’].count()
+```
+
+데이터에서 결측값(missing value)의 수를 센 후, 그룹(group)별 함수(function)를 사용하여 이 결측값(missing value)을 채우는 방법을 보여드리겠습니다. 가장 일반적인 선택은 평균(mean)과 중앙값(median)이며, 선택은 데이터의 왜도(skewness)와 관련이 있습니다. 이전과 마찬가지로, `fillna()` 함수(function)를 사용하여 모든 결측값(missing value)을 해당 그룹(group)의 평균(average)으로 대체하는 람다 변환(lambda transformation)을 정의합니다. 식사 시간에 따라 데이터를 그룹화(group)한 다음, 미리 정의된 변환(transformation)을 적용하여 결측값(missing value)을 효율적으로 대체할 수 있습니다.
+
+```python
+# Missing value imputation
+missing_trans = lambda x: x.fillna(x.mean())
+restaurant_nan_grouped = restaurant_nan.groupby(’time’)[’total_bill’]
+restaurant_nan_grouped.transform(missing_trans)
+```
+
+보시다시피, 인덱스(index) 0과 인덱스(index) 4의 관측치(observation)는 동일하며, 이는 해당 결측값(missing value)이 해당 그룹(group)의 평균(mean)으로 대체되었음을 의미합니다. 또한 이 메서드(method)를 사용한 계산 시간은 0.007초임을 알 수 있습니다. 이를 기존 메서드(method)와 비교해 봅시다:
+
+```python
+start_time = time.time()
+mean_din = restaurant_nan.loc[restaurant_nan.time ==’Dinner’][’total_bill’].mean()
+mean_lun = restaurant_nan.loc[restaurant_nan.time == ‘Lunch’][’total_bill’].mean()
+
+for row in range(len(restaurant_nan)):
+    if restaurant_nan.iloc[row][’time’] == ‘Dinner’:
+        restaurant_nan.loc[row, ‘total_time’] = mean_din
+    else:
+        restaurant_nan.loc[row, ‘total_time’] = mean_lun
+
+print(”Results from the above operation calculated in %s seconds” % (time.time() - start_time))
+```
+
+그룹화된 객체(object)에 적용된 `.transform()` 함수(function)를 사용하는 것이 이 작업에 대해 순수 파이썬(Python) 코드(code)보다 훨씬 더 빠르게 수행됨을 알 수 있습니다.
+
+### 3. `.groupby()` 및 `.filter()`를 사용한 데이터 필터링
+
+이제 그룹화된 판다스(pandas) 객체(object)에서 `filter()` 함수(function)를 어떻게 사용할 수 있는지 논의할 것입니다. 이를 통해 특정 조건(condition)에 따라 해당 그룹(group)의 하위 집합(subset)만 포함할 수 있습니다. 종종 특정 특성(feature)에 따라 데이터프레임(DataFrame)의 항목을 그룹화(group)한 후, 우리는 특정 조건(condition)에 따라 해당 그룹(group)의 하위 집합(subset)만 포함하는 데 관심이 있습니다. 필터링 조건(filtration condition)의 몇 가지 예로는 결측값(missing value)의 수, 특정 특성(feature)의 평균(mean), 또는 데이터셋(dataset)에서 그룹(group)의 발생 횟수 등이 있습니다.
+
+우리는 웨이터(waiter)에게 지불된 평균 금액이 20달러를 초과하는 날에 주어진 팁(tip)의 평균 금액을 찾는 데 관심이 있습니다. `.filter()` 함수(function)는 각 그룹(group)의 데이터프레임(DataFrame)에서 작동하는 람다 함수(lambda function)를 허용합니다. 이 예시에서 람다 함수(lambda function)는 "total_bill"을 선택하고 `mean()`이 20보다 큰지 확인합니다. 만약 해당 람다 함수(lambda function)가 `True`를 반환하면, 해당 그룹 전체가 유지되고, 그 그룹 내에서 팁(tip)의 `mean()`이 계산됩니다. 팁(tip)의 총 평균(mean)을 비교하면 두 값 사이에 차이가 있음을 알 수 있으며, 이는 필터링(filtering)이 올바르게 수행되었음을 의미합니다.
+
+```python
+restaurant_grouped = restaurant.groupby(’day’)
+filter_trans = lambda x : x[’total_bill’].mean() > 20
+restaurant_filtered = restaurant_grouped.filter(filter_trans)
+print(restaurant_filtered[’tip’].mean())
+print(restaurant[’tip’].mean())
+```
+
+`groupby()`를 사용하지 않고 이 작업을 수행하려고 하면, 비효율적인 코드(code)가 됩니다. 먼저, 리스트 컴프리헨션(list comprehension)을 사용하여 평균 식사 비용이 20달러보다 큰 날을 나타내는 데이터프레임(DataFrame)의 항목을 추출한 다음, `for` 루프(loop)를 사용하여 이를 리스트(list)에 추가하고 평균(mean)을 계산합니다. 매우 직관적으로 보일 수 있지만, 보시다시피 매우 비효율적입니다.
+
+```python
+t=[restaurant.loc[restaurant[’day’] == i][’tip’] for i in restaurant[’day’].unique() if restaurant.loc[restaurant[’day’] == i][’total_bill’].mean()>20]
+restaurant_filtered = t[0]
+for j in t[1:]:
+    restaurant_filtered=restaurant_filtered.append(j,ignore_index=True)
+```
+
+### 4. `.groupby().agg()`를 활용한 다중 집계 및 사용자 정의 함수
+
+`.groupby()`의 또 다른 강력한 기능은 `.agg()` 메서드(method)를 사용하여 여러 집계 함수를 동시에 적용하거나 사용자 정의 함수를 사용하는 것입니다. 이는 한 번의 연산으로 다양한 통계량을 얻고자 할 때 매우 유용합니다.
+
+예를 들어, 식사 시간("time")별로 총 청구액("total_bill")의 평균(mean), 중앙값(median), 표준 편차(std)를 동시에 계산하고 싶다고 가정해 봅시다. `agg()` 메서드(method)에 함수 리스트(list)나 딕셔너리(dictionary)를 전달하여 이를 쉽게 수행할 수 있습니다.
+
+```python
+# 여러 함수를 리스트로 전달
+restaurant.groupby('time')['total_bill'].agg(['mean', 'median', 'std'])
+```
+
+더 나아가, 각 그룹별로 총 청구액의 평균과 팁의 최대값을 동시에 확인하고 싶다면, 열 이름을 키(key)로, 적용할 함수 리스트(list)를 값(value)으로 하는 딕셔너리(dictionary)를 사용할 수 있습니다.
+
+```python
+# 여러 열에 여러 함수를 딕셔너리로 전달
+restaurant.groupby('time').agg(
+    total_bill_mean=('total_bill', 'mean'),
+    tip_max=('tip', 'max')
+)
+```
+
+`agg()`는 또한 사용자 정의 함수를 지원하여 데이터 분석의 유연성을 극대화합니다. 예를 들어, 각 그룹의 총 청구액 범위(최대값 - 최소값)를 계산하는 사용자 정의 함수를 만들 수 있습니다.
+
+```python
+# 사용자 정의 함수와 함께 agg() 사용
+def bill_range(series):
+    return series.max() - series.min()
+
+restaurant.groupby('time')['total_bill'].agg(bill_range)
+```
+
+`agg()` 메서드는 데이터 집계에 있어 유연성과 효율성을 제공하여, 복잡한 분석 요구사항을 충족시키는 데 필수적인 도구입니다.
+
+---
+
+이 글이 `.groupby()` 함수(function)의 다양한 활용법을 이해하는 데 도움이 되었기를 바랍니다. 데이터 분석 작업을 더욱 효율적이고 강력하게 만들어 줄 이 도구를 여러분의 프로젝트에 적극적으로 활용해 보세요. 읽어주셔서 감사합니다!

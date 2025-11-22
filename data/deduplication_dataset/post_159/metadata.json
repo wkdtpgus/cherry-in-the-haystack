@@ -1,0 +1,21 @@
+{
+  "post_id": "159",
+  "title": "AI가 계산 재현성(computational reproducibility)을 자동화할 수 있을까?",
+  "base_word_count": 1166,
+  "exact_30_update_wc": 1214,
+  "exact_30_ground_truth_wc": 1285,
+  "exact_30_overlap_ratio": 0.902,
+  "paraphrase_25_update_wc": 1096,
+  "paraphrase_25_ground_truth_wc": 1096,
+  "paraphrase_25_overlap_ratio": 1.064,
+  "fragment_20_update_wc": 934,
+  "fragment_20_ground_truth_wc": 1323,
+  "fragment_20_overlap_ratio": 0.832,
+  "semantic_25_update_wc": 1377,
+  "semantic_25_ground_truth_wc": 1377,
+  "semantic_25_overlap_ratio": 0.847,
+  "mixed_real_update_wc": 1251,
+  "mixed_real_ground_truth_wc": 1251,
+  "mixed_real_overlap_ratio": 0.932,
+  "status": "generated"
+}

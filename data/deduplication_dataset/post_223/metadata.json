@@ -1,0 +1,21 @@
+{
+  "post_id": "223",
+  "title": "**AI 버블은 가짜다. 하지만 속으면 당신의 경력을 망칠 것이다 — 그 이유 + 보너스 스킬 프롬프트 팩**",
+  "base_word_count": 750,
+  "exact_30_update_wc": 847,
+  "exact_30_ground_truth_wc": 847,
+  "exact_30_overlap_ratio": 0.885,
+  "paraphrase_25_update_wc": 940,
+  "paraphrase_25_ground_truth_wc": 940,
+  "paraphrase_25_overlap_ratio": 0.798,
+  "fragment_20_update_wc": 599,
+  "fragment_20_ground_truth_wc": 691,
+  "fragment_20_overlap_ratio": 1.098,
+  "semantic_25_update_wc": 753,
+  "semantic_25_ground_truth_wc": 753,
+  "semantic_25_overlap_ratio": 0.996,
+  "mixed_real_update_wc": 746,
+  "mixed_real_ground_truth_wc": 746,
+  "mixed_real_overlap_ratio": 1.005,
+  "status": "generated"
+}

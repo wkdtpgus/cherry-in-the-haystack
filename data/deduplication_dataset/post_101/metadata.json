@@ -1,0 +1,21 @@
+{
+  "post_id": "101",
+  "title": "**OpenAI가 얼마나 큰 위기에 처했는지 당신은 상상도 못 할 겁니다.**",
+  "base_word_count": 3190,
+  "exact_30_update_wc": 1047,
+  "exact_30_ground_truth_wc": 2780,
+  "exact_30_overlap_ratio": 1.392,
+  "paraphrase_25_update_wc": 3079,
+  "paraphrase_25_ground_truth_wc": 3077,
+  "paraphrase_25_overlap_ratio": 1.037,
+  "fragment_20_update_wc": 2620,
+  "fragment_20_ground_truth_wc": 2844,
+  "fragment_20_overlap_ratio": 1.132,
+  "semantic_25_update_wc": 3185,
+  "semantic_25_ground_truth_wc": 3185,
+  "semantic_25_overlap_ratio": 1.002,
+  "mixed_real_update_wc": 2550,
+  "mixed_real_ground_truth_wc": 2568,
+  "mixed_real_overlap_ratio": 1.244,
+  "status": "generated"
+}

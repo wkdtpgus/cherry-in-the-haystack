@@ -1,0 +1,21 @@
+{
+  "post_id": "183",
+  "title": "**알아두면 좋을 논문들**",
+  "base_word_count": 3328,
+  "exact_30_update_wc": 3161,
+  "exact_30_ground_truth_wc": 3160,
+  "exact_30_overlap_ratio": 1.053,
+  "paraphrase_25_update_wc": 3334,
+  "paraphrase_25_ground_truth_wc": 3334,
+  "paraphrase_25_overlap_ratio": 0.998,
+  "fragment_20_update_wc": 3017,
+  "fragment_20_ground_truth_wc": 3203,
+  "fragment_20_overlap_ratio": 1.041,
+  "semantic_25_update_wc": 4793,
+  "semantic_25_ground_truth_wc": 4872,
+  "semantic_25_overlap_ratio": 0.678,
+  "mixed_real_update_wc": 3227,
+  "mixed_real_ground_truth_wc": 3225,
+  "mixed_real_overlap_ratio": 1.032,
+  "status": "generated"
+}

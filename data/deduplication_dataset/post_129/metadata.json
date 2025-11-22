@@ -1,0 +1,21 @@
+{
+  "post_id": "129",
+  "title": "지난주 인공지능(AI) 소식 #321 - 앤트로픽 및 미드저니 소송, 부진한 고용 지표",
+  "base_word_count": 152,
+  "exact_30_update_wc": 560,
+  "exact_30_ground_truth_wc": 562,
+  "exact_30_overlap_ratio": 0.268,
+  "paraphrase_25_update_wc": 342,
+  "paraphrase_25_ground_truth_wc": 344,
+  "paraphrase_25_overlap_ratio": 0.439,
+  "fragment_20_update_wc": 145,
+  "fragment_20_ground_truth_wc": 215,
+  "fragment_20_overlap_ratio": 0.566,
+  "semantic_25_update_wc": 380,
+  "semantic_25_ground_truth_wc": 380,
+  "semantic_25_overlap_ratio": 0.4,
+  "mixed_real_update_wc": 296,
+  "mixed_real_ground_truth_wc": 296,
+  "mixed_real_overlap_ratio": 0.514,
+  "status": "generated"
+}

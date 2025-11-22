@@ -1,0 +1,21 @@
+{
+  "post_id": "152",
+  "title": "**AI가 과학 발전을 늦출 수 있을까?**",
+  "base_word_count": 6735,
+  "exact_30_update_wc": 2416,
+  "exact_30_ground_truth_wc": 6059,
+  "exact_30_overlap_ratio": 1.28,
+  "paraphrase_25_update_wc": 5426,
+  "paraphrase_25_ground_truth_wc": 5426,
+  "paraphrase_25_overlap_ratio": 1.241,
+  "fragment_20_update_wc": 1529,
+  "fragment_20_ground_truth_wc": 4346,
+  "fragment_20_overlap_ratio": 2.562,
+  "semantic_25_update_wc": 4007,
+  "semantic_25_ground_truth_wc": 1354,
+  "semantic_25_overlap_ratio": 2.343,
+  "mixed_real_update_wc": 4466,
+  "mixed_real_ground_truth_wc": 4468,
+  "mixed_real_overlap_ratio": 1.508,
+  "status": "generated"
+}

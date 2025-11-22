@@ -1,0 +1,21 @@
+{
+  "post_id": "133",
+  "title": "**LWiAI 팟캐스트 #219 - GPT 5, Opus 4.1, OpenAI의 오픈 소스(Open Source), 아스트로케이드(Astrocade)**",
+  "base_word_count": 577,
+  "exact_30_update_wc": 737,
+  "exact_30_ground_truth_wc": 965,
+  "exact_30_overlap_ratio": 0.474,
+  "paraphrase_25_update_wc": 656,
+  "paraphrase_25_ground_truth_wc": 656,
+  "paraphrase_25_overlap_ratio": 0.88,
+  "fragment_20_update_wc": 1141,
+  "fragment_20_ground_truth_wc": 1331,
+  "fragment_20_overlap_ratio": 0.339,
+  "semantic_25_update_wc": 907,
+  "semantic_25_ground_truth_wc": 907,
+  "semantic_25_overlap_ratio": 0.636,
+  "mixed_real_update_wc": 1028,
+  "mixed_real_ground_truth_wc": 1028,
+  "mixed_real_overlap_ratio": 0.561,
+  "status": "generated"
+}

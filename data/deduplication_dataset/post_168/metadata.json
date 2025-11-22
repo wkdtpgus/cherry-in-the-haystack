@@ -1,0 +1,21 @@
+{
+  "post_id": "168",
+  "title": "**트랜스포머(Transformer) LLM의 작동 원리 [무료 강좌]**",
+  "base_word_count": 428,
+  "exact_30_update_wc": 475,
+  "exact_30_ground_truth_wc": 548,
+  "exact_30_overlap_ratio": 0.747,
+  "paraphrase_25_update_wc": 529,
+  "paraphrase_25_ground_truth_wc": 529,
+  "paraphrase_25_overlap_ratio": 0.809,
+  "fragment_20_update_wc": 335,
+  "fragment_20_ground_truth_wc": 641,
+  "fragment_20_overlap_ratio": 0.364,
+  "semantic_25_update_wc": 450,
+  "semantic_25_ground_truth_wc": 450,
+  "semantic_25_overlap_ratio": 0.951,
+  "mixed_real_update_wc": 401,
+  "mixed_real_ground_truth_wc": 400,
+  "mixed_real_overlap_ratio": 1.07,
+  "status": "generated"
+}

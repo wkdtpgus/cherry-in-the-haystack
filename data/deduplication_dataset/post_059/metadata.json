@@ -1,0 +1,21 @@
+{
+  "post_id": "059",
+  "title": "**요약과 거대 언어 모델(Large Language Models)의 진화**",
+  "base_word_count": 10411,
+  "exact_30_update_wc": 5345,
+  "exact_30_ground_truth_wc": 8860,
+  "exact_30_overlap_ratio": 1.29,
+  "paraphrase_25_update_wc": 8690,
+  "paraphrase_25_ground_truth_wc": 5131,
+  "paraphrase_25_overlap_ratio": 1.608,
+  "fragment_20_update_wc": 8139,
+  "fragment_20_ground_truth_wc": 8163,
+  "fragment_20_overlap_ratio": 1.276,
+  "semantic_25_update_wc": 8512,
+  "semantic_25_ground_truth_wc": 8511,
+  "semantic_25_overlap_ratio": 1.223,
+  "mixed_real_update_wc": 9033,
+  "mixed_real_ground_truth_wc": 9032,
+  "mixed_real_overlap_ratio": 1.153,
+  "status": "generated"
+}

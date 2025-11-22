@@ -1,0 +1,21 @@
+{
+  "post_id": "137",
+  "title": "**2024년 AI, 네이선 베나이치와 함께**",
+  "base_word_count": 509,
+  "exact_30_update_wc": 465,
+  "exact_30_ground_truth_wc": 650,
+  "exact_30_overlap_ratio": 0.697,
+  "paraphrase_25_update_wc": 1056,
+  "paraphrase_25_ground_truth_wc": 1056,
+  "paraphrase_25_overlap_ratio": 0.482,
+  "fragment_20_update_wc": 275,
+  "fragment_20_ground_truth_wc": 628,
+  "fragment_20_overlap_ratio": 0.567,
+  "semantic_25_update_wc": 697,
+  "semantic_25_ground_truth_wc": 699,
+  "semantic_25_overlap_ratio": 0.727,
+  "mixed_real_update_wc": 568,
+  "mixed_real_ground_truth_wc": 568,
+  "mixed_real_overlap_ratio": 0.896,
+  "status": "generated"
+}

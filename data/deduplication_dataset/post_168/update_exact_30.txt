@@ -1,0 +1,18 @@
+지금 무료로 등록하세요: https://bit.ly/4aRnn7Z 깃허브 저장소(Github Repo): https://github.com/HandsOnLLM/Hands-On-Large-Language-Models
+
+저희는 여러분께 "트랜스포머 LLM 작동 방식(How Transformer LLMs Work)"을 제공하게 되어 매우 기쁩니다. 이 무료 강좌는 약 90분 분량의 비디오, 코드, 그리고 현대 트랜스포머 아키텍처(Transformer architecture), 토크나이저(tokenizer), 임베딩(embedding), 전문가 혼합 모델(mixture-of-expert models)을 설명하는 선명한 시각 자료 및 애니메이션으로 구성되어 있습니다. Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요. 구독하기
+
+트랜스포머(Transformer) 아키텍처는 2017년 "Attention Is All You Need" 논문 발표 이후 자연어 처리(NLP) 분야에 혁명적인 변화를 가져왔습니다. 기존의 순환 신경망(RNN)이나 장단기 기억(LSTM) 모델이 가졌던 장거리 의존성 학습의 한계와 순차적 처리로 인한 효율성 문제를 어텐션 메커니즘(attention mechanism)을 통해 극복하며 병렬 처리를 가능하게 했습니다. 이는 대규모 언어 모델(LLM)의 등장과 발전을 위한 핵심 기반이 되었으며, 오늘날 우리가 경험하는 인공지능(AI) 혁신의 중추적인 역할을 하고 있습니다. 복잡한 문맥 속에서 단어 간의 관계를 효과적으로 파악하는 트랜스포머의 능력은 번역, 요약, 질의응답 등 다양한 NLP 태스크에서 전례 없는 성능 향상을 이끌어냈습니다.
+
+이 강좌에서 여러분은 LLM을 구동하는 트랜스포머 네트워크 아키텍처(transformer network architecture)가 어떻게 작동하는지 배우게 될 것입니다. LLM이 텍스트를 처리하는 방식에 대한 직관을 기르고, 트랜스포머 아키텍처(transformer architecture)의 핵심 구성 요소를 설명하는 코드 예제와 함께 작업하게 될 것입니다.
+
+이 강좌는 단순히 트랜스포머의 구성 요소를 나열하는 것을 넘어, 각 요소가 LLM의 성능에 어떻게 기여하는지 심도 있게 다룹니다.
+
+*   **언어 표현의 진화와 트랜스포머의 역할**: Bag-of-Words 모델(Bag-of-Words model)과 Word2Vec 임베딩(Word2Vec embeddings)이 언어의 의미를 숫자적으로 표현하는 초기 시도였다면, 트랜스포머는 문맥에 따라 단어의 의미가 달라지는 '문맥적 임베딩(contextual embedding)' 개념을 도입하여 언어 이해의 수준을 한 단계 끌어올렸습니다. BPE(Byte-Pair Encoding), WordPiece, SentencePiece와 같은 최신 토큰화(tokenization) 전략들이 어떻게 효율적으로 언어를 분해하고, 이러한 토큰들이 어떻게 고차원 벡터 공간에서 의미를 갖는 임베딩으로 변환되는지 탐구합니다.
+*   **트랜스포머 블록의 심층 분석**: 트랜스포머의 핵심인 셀프 어텐션(Self-Attention) 메커니즘을 통해 모델이 입력 시퀀스 내의 어떤 부분에 집중해야 할지 스스로 결정하는 과정을 자세히 살펴봅니다. 다중 헤드 어텐션(Multi-Head Attention)이 다양한 관점에서 관계를 포착하는 방식, 잔차 연결(residual connections)과 레이어 정규화(layer normalization)가 깊은 네트워크의 안정적인 학습을 돕는 원리, 그리고 피드포워드 레이어(feedforward layer)가 학습된 정보를 통합하는 과정을 이해하게 될 것입니다.
+*   **트랜스포머 아키텍처의 확장과 최적화**: 원본 트랜스포머의 한계를 극복하기 위한 다양한 변형들, 예를 들어 긴 시퀀스 처리를 위한 효율적인 어텐션 메커니즘(예: Sparse Attention, Linear Attention)이나, 연산 효율성을 높이는 캐시된 계산(cached calculations) 기법 등을 다룹니다. 또한, 전문가 혼합 모델(Mixture-of-Experts, MoE)과 같이 모델의 규모를 확장하면서도 추론 비용을 효과적으로 관리하는 최신 아키텍처가 어떻게 작동하는지 심층적으로 분석합니다.
+*   **Hugging Face 생태계 활용**: Hugging Face 트랜스포머 라이브러리(Hugging Face transformer library)를 활용하여 최신 LLM을 불러오고, 사전 학습된 모델을 특정 작업에 맞춰 미세 조정(fine-tuning)하는 실질적인 방법을 학습합니다. 이 라이브러리가 제공하는 풍부한 모델 허브와 도구들이 LLM 개발을 어떻게 가속화하는지 경험하게 될 것입니다.
+
+이 강좌를 마치면 LLM이 언어를 처리하는 방식에 대해 깊이 이해하게 될 것이며, 모델을 설명하는 논문을 읽고 이러한 아키텍처(architecture)를 설명하는 데 사용되는 세부 사항을 이해할 수 있을 것입니다. 이러한 직관은 LLM 애플리케이션(application) 구축 접근 방식을 개선하는 데 도움이 될 것이며, 나아가 혁신적인 AI 솔루션을 개발하는 데 필요한 견고한 기반을 제공할 것입니다.
+
+즐겁게 수강하시길 바랍니다! Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요. 구독하기

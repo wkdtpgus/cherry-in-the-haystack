@@ -1,0 +1,21 @@
+{
+  "post_id": "206",
+  "title": "**스탠포드 AI 일자리 보고서: 당신의 생각과는 다릅니다**",
+  "base_word_count": 983,
+  "exact_30_update_wc": 1056,
+  "exact_30_ground_truth_wc": 1056,
+  "exact_30_overlap_ratio": 0.931,
+  "paraphrase_25_update_wc": 1215,
+  "paraphrase_25_ground_truth_wc": 1215,
+  "paraphrase_25_overlap_ratio": 0.809,
+  "fragment_20_update_wc": 866,
+  "fragment_20_ground_truth_wc": 942,
+  "fragment_20_overlap_ratio": 1.047,
+  "semantic_25_update_wc": 1150,
+  "semantic_25_ground_truth_wc": 1150,
+  "semantic_25_overlap_ratio": 0.855,
+  "mixed_real_update_wc": 1008,
+  "mixed_real_ground_truth_wc": 1008,
+  "mixed_real_overlap_ratio": 0.975,
+  "status": "generated"
+}

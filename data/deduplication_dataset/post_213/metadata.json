@@ -1,0 +1,21 @@
+{
+  "post_id": "213",
+  "title": "생성형 생물학 (Generative Biology)",
+  "base_word_count": 1378,
+  "exact_30_update_wc": 1357,
+  "exact_30_ground_truth_wc": 1553,
+  "exact_30_overlap_ratio": 0.871,
+  "paraphrase_25_update_wc": 1486,
+  "paraphrase_25_ground_truth_wc": 1486,
+  "paraphrase_25_overlap_ratio": 0.927,
+  "fragment_20_update_wc": 1130,
+  "fragment_20_ground_truth_wc": 1720,
+  "fragment_20_overlap_ratio": 0.697,
+  "semantic_25_update_wc": 1560,
+  "semantic_25_ground_truth_wc": 1558,
+  "semantic_25_overlap_ratio": 0.885,
+  "mixed_real_update_wc": 1256,
+  "mixed_real_ground_truth_wc": 1256,
+  "mixed_real_overlap_ratio": 1.097,
+  "status": "generated"
+}

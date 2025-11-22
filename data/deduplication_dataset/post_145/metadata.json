@@ -1,0 +1,21 @@
+{
+  "post_id": "145",
+  "title": "미니 업데이트 #47: 첫 국제 AI 안전 조약 그리고 WavTokenizer 코덱(codec)",
+  "base_word_count": 120,
+  "exact_30_update_wc": 160,
+  "exact_30_ground_truth_wc": 179,
+  "exact_30_overlap_ratio": 0.631,
+  "paraphrase_25_update_wc": 163,
+  "paraphrase_25_ground_truth_wc": 164,
+  "paraphrase_25_overlap_ratio": 0.73,
+  "fragment_20_update_wc": 148,
+  "fragment_20_ground_truth_wc": 187,
+  "fragment_20_overlap_ratio": 0.547,
+  "semantic_25_update_wc": 142,
+  "semantic_25_ground_truth_wc": 142,
+  "semantic_25_overlap_ratio": 0.845,
+  "mixed_real_update_wc": 289,
+  "mixed_real_ground_truth_wc": 289,
+  "mixed_real_overlap_ratio": 0.415,
+  "status": "generated"
+}

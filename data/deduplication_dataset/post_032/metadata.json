@@ -1,0 +1,21 @@
+{
+  "post_id": "032",
+  "title": "**들쭉날쭉한 인공 일반 지능(AGI)에 대하여: o3, 제미니 2.5, 그리고 그 이후의 모든 것**",
+  "base_word_count": 1814,
+  "exact_30_update_wc": 2272,
+  "exact_30_ground_truth_wc": 2272,
+  "exact_30_overlap_ratio": 0.798,
+  "paraphrase_25_update_wc": 1708,
+  "paraphrase_25_ground_truth_wc": 1708,
+  "paraphrase_25_overlap_ratio": 1.062,
+  "fragment_20_update_wc": 1250,
+  "fragment_20_ground_truth_wc": 2003,
+  "fragment_20_overlap_ratio": 0.849,
+  "semantic_25_update_wc": 1639,
+  "semantic_25_ground_truth_wc": 1639,
+  "semantic_25_overlap_ratio": 1.107,
+  "mixed_real_update_wc": 1398,
+  "mixed_real_ground_truth_wc": 1399,
+  "mixed_real_overlap_ratio": 1.297,
+  "status": "generated"
+}

@@ -1,0 +1,74 @@
+# **제이콥 안드레아스: 언어(Language), 접지(Grounding), 그리고 세계 모델(World Models)**
+
+Author: The Gradient
+URL: https://thegradientpub.substack.com/p/jacob-andreas-language-grounding-world-models
+
+============================================================
+
+**에피소드 140**
+
+제이콥 안드레아스 교수님과 다음 주제에 대해 이야기했습니다:
+*   언어와 세계
+*   세계 모델(World models)
+*   과학자로서 그가 어떻게 성장했는지
+
+즐겁게 들어주세요!
+
+제이콥은 MIT 전기 공학 및 컴퓨터 과학과(Department of Electrical Engineering and Computer Science) 및 컴퓨터 과학 및 인공지능 연구소(Computer Science and Artificial Intelligence Laboratory)의 부교수입니다. 그의 연구는 언어 학습의 계산적 기반(computational foundations)을 이해하고, 인간의 지도(human guidance)로부터 학습할 수 있는 지능형 시스템(intelligent systems)을 구축하는 것을 목표로 합니다. 제이콥은 UC 버클리에서 박사 학위(Ph.D.)를, 케임브리지(처칠 장학생(Churchill scholar)으로 공부)에서 석사 학위(M.Phil.)를, 컬럼비아에서 학사 학위(B.S.)를 받았습니다. 그는 슬론 펠로우십(Sloan fellowship), NSF CAREER 어워드(NSF CAREER award), MIT의 주니어 보스 및 콜로코트로네스 교육상(Junior Bose and Kolokotrones teaching awards), 그리고 ACL, ICML, NAACL에서 논문상(paper awards)을 수상했습니다.
+
+새 에피소드 업데이트를 위해 트위터에서 저를 찾아주시고, 피드백, 아이디어, 게스트 제안은 editor@thegradient.pub으로 보내주세요.
+
+더 그라디언트 팟캐스트 구독: 애플 팟캐스트 | 스포티파이 | 포켓 캐스트 | RSS
+트위터에서 더 그라디언트 팔로우
+구독
+
+**개요:**
+*   (00:00) 소개
+*   (00:40) 기반 다지기(grounding) 근본주의(fundamentalism)에 대한 제이콥의 견해
+*   (05:21) 대규모 언어 모델(LLMs)에 대한 제이콥의 반응
+*   (11:24) 언어 기반 다지기(Grounding language) — 철학적 문제가 있는가?
+*   (15:54) 기반 다지기(Grounding)와 언어 모델링(language modeling)
+*   (24:00) 인간과 언어 모델(LMs) 간의 유사점
+*   (30:46) 연속 공간(continuous spaces)에서 점과 경로를 이용한 언어 기반 다지기(Grounding language)
+*   (32:00) 신-데이비슨 형식 의미론(Neo-Davidsonian formal semantics)
+*   (36:27) 구조 예측(structure prediction)에 대한 진화하는 가정
+*   (40:14) 분할(Segmentation)과 사건 구조(event structure)
+*   (42:33) 단어 임베딩(word embeddings)은 구문(syntax)에 대해 얼마나 많은 정보를 인코딩하는가?
+*   (43:10) 과학적 질문 연구를 위한 제이콥의 과정
+*   (45:38) 실험과 가설
+*   (53:01) 연구자로서 가정 조정하기
+*   (54:08) 연구의 유연성
+*   (56:09) 표현 학습(Representation Learning)에서 구성성(Compositionality) 측정하기
+*   (56:50) 독립적인 연구 의제 개발 및 연구실 문화 구축
+*   (1:03:25) 에이전트 모델(Agent Models)로서의 언어 모델(Language Models)
+*   (1:04:30) 배경
+*   (1:08:33) 토이 실험(Toy experiments)과 해석 가능성 연구(interpretability research)
+*   (1:13:30) 효과적인 토이 실험(toy experiments) 개발
+*   (1:15:25) 언어 모델(Language Models), 세계 모델(World Models), 그리고 인간의 모델 구축(Human Model-Building)
+*   (1:15:56) 오셀로GPT(OthelloGPT)의 휴리스틱(heuristics) 모음과 다중 "세계 모델(world models)"
+*   (1:21:32) 세계 모델(world model)이란 무엇인가?
+*   (1:23:45) 큰 질문 — 의미에서 세계 모델(world models)로
+*   (1:28:21) "의미"에서 언어 모델(LMs)에 대한 정밀한 질문으로
+*   (1:32:01) 기계적 해석 가능성(Mechanistic interpretability)과 점치기
+*   (1:35:38) 언어와 세계
+*   (1:38:07) 더 나은 언어 모델(language models)을 향하여
+*   (1:43:45) 모델 편집(Model editing)
+*   (1:45:50) 자연어 처리(NLP) 연구에서 학계의 역할에 대하여
+*   (1:49:13) 좋은 과학에 대하여
+*   (1:52:36) 마무리
+
+**링크:**
+*   제이콥의 홈페이지 및 트위터
+*   언어 모델(Language Models), 세계 모델(World Models), 그리고 인간의 모델 구축(Human Model-Building)
+
+**논문**
+*   기계 번역으로서의 의미 분석(Semantic Parsing as Machine Translation) (2013)
+*   연속 공간(continuous spaces)에서 점과 경로를 이용한 언어 기반 다지기(Grounding language with points and paths in continuous spaces) (2014)
+*   단어 임베딩(word embeddings)은 구문(syntax)에 대해 얼마나 많은 정보를 인코딩하는가?(How much do word embeddings encode about syntax?) (2014)
+*   뉴럴리즈 번역하기(Translating neuralese) (2017)
+*   심층 표현(deep representations)에서의 언어 구조 유사체(Analogs of linguistic structure in deep representations) (2017)
+*   잠재 언어(latent language)로 학습하기(Learning with latent language) (2018)
+*   언어로부터 학습하기(Learning from Language) (2018)
+*   표현 학습(Representation Learning)에서 구성성(Compositionality) 측정하기(Measuring Compositionality in Representation Learning) (2019)
+*   경험은 언어를 기반으로 한다(Experience grounds language) (2020)
+*   에이전트 모델(Agent Models)로서의 언어 모델(Language Models) (2022)

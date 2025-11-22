@@ -1,0 +1,8 @@
+# **형태, 대칭성, 그리고 구조: 기계 학습(machine learning) 연구에서 수학의 변화하는 역할**
+
+Author: The Gradient
+URL: https://thegradientpub.substack.com/p/shape-symmetries-and-structure-the
+
+============================================================
+
+**헨리 크빙게(Henry Kvinge)가 작성한 이 글을 공유하게 되어 매우 기쁩니다. 이 글은 머신러닝(machine learning) 연구와 위상수학(topology), 대수학(algebra), 기하학(geometry)과 같은 순수 수학 분야 간의 접점에 대한 내용입니다.** 퍼시픽 노스웨스트 국립 연구소(Pacific Northwest National Laboratory)의 AI 연구원이자 수학자인 헨리는 단순히 기존 방법론을 확장하는 것만으로는 충분하지 않다는 매우 설득력 있는 주장을 펼치며, 이러한 분야를 머신러닝(ML)에 적용한 최근 연구들을 흥미롭게 소개합니다. 그는 규모 중심의 발전과 경험적 돌파구를 수학 이론에 대한 도전으로 여기기보다는, 수학자들이 이러한 발전을 우리의 이론적 이해를 심화할 수 있는 새로운 도구를 개발할 기회로 받아들여야 한다고 결론 내립니다. — 콜 여기에서 기사를 읽어보세요.

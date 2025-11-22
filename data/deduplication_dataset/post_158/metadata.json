@@ -1,0 +1,21 @@
+{
+  "post_id": "158",
+  "title": "**책과 저희의 집필 과정에 대한 자주 묻는 질문**",
+  "base_word_count": 1636,
+  "exact_30_update_wc": 1807,
+  "exact_30_ground_truth_wc": 1807,
+  "exact_30_overlap_ratio": 0.905,
+  "paraphrase_25_update_wc": 1823,
+  "paraphrase_25_ground_truth_wc": 1914,
+  "paraphrase_25_overlap_ratio": 0.848,
+  "fragment_20_update_wc": 1651,
+  "fragment_20_ground_truth_wc": 1835,
+  "fragment_20_overlap_ratio": 0.879,
+  "semantic_25_update_wc": 1623,
+  "semantic_25_ground_truth_wc": 1623,
+  "semantic_25_overlap_ratio": 1.008,
+  "mixed_real_update_wc": 1684,
+  "mixed_real_ground_truth_wc": 1684,
+  "mixed_real_overlap_ratio": 0.971,
+  "status": "generated"
+}

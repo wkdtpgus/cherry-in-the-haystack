@@ -1,0 +1,21 @@
+{
+  "post_id": "036",
+  "title": "**새로운 세대의 AI: 클로드 3.7과 그록 3**",
+  "base_word_count": 2378,
+  "exact_30_update_wc": 1444,
+  "exact_30_ground_truth_wc": 2008,
+  "exact_30_overlap_ratio": 1.256,
+  "paraphrase_25_update_wc": 2265,
+  "paraphrase_25_ground_truth_wc": 2265,
+  "paraphrase_25_overlap_ratio": 1.05,
+  "fragment_20_update_wc": 936,
+  "fragment_20_ground_truth_wc": 2351,
+  "fragment_20_overlap_ratio": 1.029,
+  "semantic_25_update_wc": 2141,
+  "semantic_25_ground_truth_wc": 2141,
+  "semantic_25_overlap_ratio": 1.111,
+  "mixed_real_update_wc": 1803,
+  "mixed_real_ground_truth_wc": 1803,
+  "mixed_real_overlap_ratio": 1.319,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "039",
+  "title": "**대홍수의 예언**",
+  "base_word_count": 1998,
+  "exact_30_update_wc": 1596,
+  "exact_30_ground_truth_wc": 1678,
+  "exact_30_overlap_ratio": 1.201,
+  "paraphrase_25_update_wc": 1779,
+  "paraphrase_25_ground_truth_wc": 1779,
+  "paraphrase_25_overlap_ratio": 1.123,
+  "fragment_20_update_wc": 1283,
+  "fragment_20_ground_truth_wc": 1928,
+  "fragment_20_overlap_ratio": 1.055,
+  "semantic_25_update_wc": 2015,
+  "semantic_25_ground_truth_wc": 2019,
+  "semantic_25_overlap_ratio": 0.99,
+  "mixed_real_update_wc": 1661,
+  "mixed_real_ground_truth_wc": 1661,
+  "mixed_real_overlap_ratio": 1.203,
+  "status": "generated"
+}

@@ -1,0 +1,351 @@
+# **LLM(Large Language Model)의 KV 캐시(KV Cache)를 처음부터 이해하고 코딩하기**
+
+Author: Sebastian Raschka
+URL: https://magazine.sebastianraschka.com/p/coding-the-kv-cache-in-llms
+
+============================================================
+
+LLM 프로덕션 환경에서 효율적인 추론(inference)을 위한 가장 중요한 기술 중 하나는 KV 캐시입니다. KV 캐시는 프로덕션 환경에서 계산 효율적인 LLM 추론을 위한 중요한 구성 요소입니다. 이 글은 KV 캐시가 개념적으로 어떻게 작동하는지, 그리고 처음부터 작성된 사람이 읽기 쉬운 구현 코드를 통해 설명합니다.
+
+기본적인 LLM 개념을 설명하는 기술 튜토리얼을 공유한 지 꽤 되었습니다. 현재 부상에서 회복 중이며 더 큰 LLM 연구 중심의 글을 작업하고 있기 때문에, 여러 독자분들이 요청했던 주제(제 책 "Building a Large Language Model From Scratch"에는 포함되지 않았던 내용)에 대한 튜토리얼 글을 공유하기로 생각했습니다. 즐겁게 읽어주세요!
+
+## 개요
+
+요약하자면, KV 캐시는 추론(inference) 시 (학습 후) 재사용을 위해 중간 키(K) 및 값(V) 계산 결과를 저장하며, 이는 텍스트 생성 시 상당한 속도 향상을 가져옵니다. KV 캐시의 단점은 코드에 더 많은 복잡성을 추가하고, 메모리 요구 사항을 증가시키며(제가 처음 이 책에 포함하지 않은 주된 이유), 학습(training) 중에는 사용할 수 없다는 것입니다. 하지만 LLM을 프로덕션 환경에서 사용할 때 추론 속도 향상은 코드 복잡성과 메모리 측면의 단점을 상쇄하고도 남는 경우가 많습니다.
+
+## KV 캐시란 무엇인가요?
+
+LLM이 텍스트를 생성하고 있다고 상상해 보세요. 구체적으로, LLM에 "Time"이라는 프롬프트(prompt)가 주어졌다고 가정해 봅시다. 이미 아시다시피, LLM은 한 번에 한 단어(또는 토큰(token))를 생성하며, 다음 두 텍스트 생성 단계는 아래 그림과 같이 나타날 수 있습니다.
+
+이 다이어그램은 LLM이 한 번에 하나의 토큰을 생성하는 방식을 보여줍니다. "Time"이라는 프롬프트로 시작하여, 모델은 다음 토큰인 "flies"를 생성합니다. 다음 단계에서는 전체 시퀀스(sequence) "Time flies"가 다시 처리되어 "fast" 토큰을 생성합니다.
+
+다음 그림에서 강조된 바와 같이, 생성된 LLM 텍스트 출력에는 약간의 중복(redundancy)이 있습니다.
+
+이 그림은 각 생성 단계에서 LLM이 다시 처리해야 하는 반복되는 컨텍스트("Time flies")를 강조합니다. LLM은 중간 키/값 상태를 캐시(cache)하지 않으므로, 새로운 토큰(예: "fast")이 생성될 때마다 전체 시퀀스를 다시 인코딩(re-encodes)합니다.
+
+LLM 텍스트 생성 함수를 구현할 때, 우리는 일반적으로 각 단계에서 마지막으로 생성된 토큰만 사용합니다. 하지만 위 시각화는 개념적 수준에서 주요 비효율성 중 하나를 강조합니다. 이러한 비효율성(또는 중복성)은 어텐션 메커니즘(attention mechanism) 자체를 자세히 살펴보면 더욱 명확해집니다. (어텐션 메커니즘에 대해 궁금하시다면, 제 책 "Build a Large Language Model (From Scratch)" 3장 또는 "Understanding and Coding Self-Attention, Multi-Head Attention, Causal-Attention, and Cross-Attention in LLMs" 글에서 더 자세히 읽어볼 수 있습니다.)
+
+[Understanding and Coding Self-Attention, Multi-Head Attention, Causal-Attention, and Cross-Attention in LLMs](https://magazine.sebastianraschka.com/p/understanding-and-coding-self-attention)
+January 14, 2024
+Read full story
+
+다음 그림은 LLM의 핵심인 어텐션 메커니즘 계산의 일부를 보여줍니다. 여기서 입력 토큰("Time"과 "flies")은 3차원 벡터로 인코딩됩니다 (실제로는 이 벡터들은 훨씬 크지만, 작은 그림에 담기 어렵게 만들 것입니다). 행렬 W는 이러한 입력을 키(key), 값(value), 쿼리(query) 벡터로 변환하는 어텐션 메커니즘의 가중치 행렬입니다.
+
+아래 그림은 키 및 값 벡터가 강조된 기본 어텐션 점수 계산의 일부를 보여줍니다.
+
+이 그림은 LLM이 어텐션 계산 중에 토큰 임베딩(token embeddings)으로부터 키(k) 및 값(v) 벡터를 도출하는 방법을 보여줍니다. 각 입력 토큰(예: "Time"과 "flies")은 학습된 행렬 W_k와 W_v를 사용하여 해당 키 및 값 벡터를 얻기 위해 투영(projected)됩니다.
+
+앞서 언급했듯이, LLM은 한 번에 한 단어(또는 토큰)를 생성합니다. LLM이 "fast"라는 단어를 생성하여 다음 라운드의 프롬프트가 "Time flies fast"가 되었다고 가정해 봅시다. 이는 아래 다음 그림에 나와 있습니다.
+
+이 다이어그램은 LLM이 각 생성 단계에서 이전에 본 토큰("Time"과 "flies")에 대한 키 및 값 벡터를 어떻게 다시 계산하는지 보여줍니다. 세 번째 토큰("fast")을 생성할 때, 모델은 k(1)/v(1) 및 k(2)/v(2) 벡터를 재사용하는 대신 다시 계산합니다. 이러한 반복 계산은 자기회귀 디코딩(autoregressive decoding) 중에 KV 캐시를 사용하지 않을 때의 비효율성을 강조합니다.
+
+이전 두 그림을 비교해 보면, 처음 두 토큰에 대한 키 및 값 벡터가 정확히 동일하며, 다음 토큰 텍스트 생성 라운드마다 이를 다시 계산하는 것은 낭비일 것입니다.
+
+이제 KV 캐시의 아이디어는 이전에 생성된 키 및 값 벡터를 재사용하기 위해 저장하는 캐싱 메커니즘(caching mechanism)을 구현하여 이러한 불필요한 재계산을 피하는 데 도움을 주는 것입니다.
+
+## LLM이 텍스트를 생성하는 방법 (KV 캐시 사용 유무에 따라)
+
+이전 섹션에서 기본 개념을 다루었으니, 구체적인 코드 구현을 살펴보기 전에 좀 더 자세히 알아보겠습니다.
+
+"Time flies fast"에 대한 KV 캐시 없는 텍스트 생성 프로세스가 있다면, 다음과 같이 생각할 수 있습니다.
+
+중복성에 주목하세요: "Time"과 "flies" 토큰은 새로운 생성 단계마다 다시 계산됩니다.
+
+KV 캐시는 이전에 계산된 키 및 값 벡터를 저장하고 재사용함으로써 이러한 비효율성을 해결합니다.
+
+1.  초기에는 모델이 입력 토큰에 대한 키 및 값 벡터를 계산하고 캐시합니다.
+2.  새로 생성되는 각 토큰에 대해 모델은 해당 특정 토큰에 대한 키 및 값 벡터만 계산합니다.
+3.  이전에 계산된 벡터는 중복 계산을 피하기 위해 캐시에서 검색됩니다.
+
+아래 표는 계산 및 캐싱 단계와 상태를 요약합니다.
+
+여기서의 이점은 "Time"이 한 번 계산되어 두 번 재사용되고, "flies"가 한 번 계산되어 한 번 재사용된다는 것입니다. (간단함을 위해 짧은 텍스트 예시이지만, 텍스트가 길어질수록 이미 계산된 키와 값을 더 많이 재사용하게 되어 생성 속도가 빨라진다는 것을 직관적으로 알 수 있을 것입니다.)
+
+다음 그림은 KV 캐시 사용 유무에 따른 생성 3단계를 나란히 보여줍니다.
+
+KV 캐시 사용 유무에 따른 텍스트 생성 비교. 상단 패널(캐시 없음)에서는 각 토큰 단계마다 키 및 값 벡터가 다시 계산되어 중복된 연산이 발생합니다. 하단 패널(캐시 있음)에서는 이전에 계산된 키와 값이 KV 캐시에서 검색되어 재계산을 피하고 더 빠른 생성을 가능하게 합니다.
+
+따라서 코드에서 KV 캐시를 구현하려면, 평소처럼 키와 값을 계산한 다음 다음 라운드에서 검색할 수 있도록 저장하기만 하면 됩니다. 다음 섹션에서는 구체적인 코드 예시를 통해 이를 설명합니다.
+
+## KV 캐시 처음부터 구현하기
+
+KV 캐시를 구현하는 방법은 여러 가지가 있지만, 핵심 아이디어는 각 생성 단계에서 새로 생성된 토큰에 대해서만 키 및 값 텐서(tensor)를 계산하는 것입니다. 저는 코드 가독성을 강조하는 간단한 방법을 선택했습니다. 구현 방식을 확인하려면 코드 변경 사항을 스크롤하여 보는 것이 가장 쉬울 것이라고 생각합니다.
+
+제가 GitHub에 공유한 두 개의 파일은 KV 캐시 유무에 따라 LLM을 처음부터 구현하는 독립형 파이썬(Python) 스크립트입니다.
+
+*   `gpt_ch04.py`: 제 책 "Build a Large Language Model (From Scratch)" 3장과 4장에서 가져온 독립형 코드로, LLM을 구현하고 간단한 텍스트 생성 함수를 실행합니다.
+*   `gpt_with_kv_cache.py`: 위와 동일하지만, KV 캐시를 구현하기 위해 필요한 변경 사항이 적용되었습니다.
+
+KV 캐시 관련 코드 수정 사항을 살펴보려면 다음 중 하나를 수행할 수 있습니다.
+
+a. `gpt_with_kv_cache.py` 파일을 열고 새로운 변경 사항을 표시하는 `# NEW` 섹션을 찾아보세요.
+
+b. 원하는 파일 비교 도구를 통해 두 코드 파일을 확인하여 변경 사항을 비교해 보세요.
+
+또한 구현 세부 사항을 요약하기 위해 다음 하위 섹션에서 간략한 설명을 제공합니다.
+
+### 1. 캐시 버퍼(Cache Buffers) 등록하기
+
+`MultiHeadAttention` 생성자 내부에, 단계별로 연결된 키와 값을 저장할 두 개의 비영구 버퍼(non-persistent buffers)인 `cache_k`와 `cache_v`를 추가합니다.
+
+```python
+self.register_buffer("cache_k", None, persistent=False)
+self.register_buffer("cache_v", None, persistent=False)
+```
+
+(버퍼에 대해 더 자세히 알고 싶으시다면, 제가 만든 유튜브 영상 "[Understanding PyTorch Buffers](https://www.youtube.com/watch?v=F_f-z71yq44)"를 시청해 보세요.)
+
+### 2. `use_cache` 플래그(flag)를 사용한 순전파(Forward pass)
+
+다음으로, `MultiHeadAttention` 클래스의 `forward` 메서드를 확장하여 `use_cache` 인자(argument)를 받도록 합니다.
+
+```python
+def forward(self, x, use_cache=False):
+    b, num_tokens, d_in = x.shape
+
+    keys_new = self.W_key(x) # Shape: (b, num_tokens, d_out)
+    values_new = self.W_value(x)
+    queries = self.W_query(x) #...
+
+    if use_cache:
+        if self.cache_k is None:
+            self.cache_k, self.cache_v = keys_new, values_new
+        else:
+            self.cache_k = torch.cat([self.cache_k, keys_new], dim=1)
+            self.cache_v = torch.cat([self.cache_v, values_new], dim=1)
+        keys, values = self.cache_k, self.cache_v
+    else:
+        keys, values = keys_new, values_new
+```
+
+여기서 키와 값의 저장 및 검색은 KV 캐시의 핵심 아이디어를 구현합니다.
+
+**저장**
+
+구체적으로, `if self.cache_k is None: ...`를 통해 캐시가 초기화된 후, 새로 생성된 키와 값을 각각 `self.cache_k = torch.cat(...)` 및 `self.cache_v = torch.cat(...)`를 통해 캐시에 추가합니다.
+
+**검색**
+
+그런 다음, `keys, values = self.cache_k, self.cache_v`는 캐시에서 저장된 값과 키를 검색합니다.
+
+이것이 바로 KV 캐시의 핵심 저장 및 검색 메커니즘입니다. 다음 섹션 3과 4는 사소한 구현 세부 사항을 다룹니다.
+
+### 3. 캐시 지우기
+
+텍스트를 생성할 때, 두 개의 별도 텍스트 생성 호출 사이에 키와 값 버퍼를 모두 재설정해야 합니다. 그렇지 않으면, 새로운 프롬프트의 쿼리(query)가 이전 시퀀스에서 남은 오래된 키에 어텐션(attend)하게 되어, 모델이 관련 없는 컨텍스트(context)에 의존하고 일관성 없는 출력을 생성하게 됩니다. 이를 방지하기 위해, 나중에 텍스트 생성 호출 사이에 사용할 수 있는 `reset_kv_cache` 메서드를 `MultiHeadAttention` 클래스에 추가합니다.
+
+```python
+def reset_cache(self):
+    self.cache_k, self.cache_v = None, None
+```
+
+### 4. 전체 모델에서 `use_cache` 전파하기
+
+`MultiHeadAttention` 클래스에 변경 사항이 적용되었으므로, 이제 `GPTModel` 클래스를 수정합니다. 먼저, 토큰 인덱스(token indices)에 대한 위치 추적을 생성자에 추가합니다.
+
+```python
+self.current_pos = 0
+```
+
+이것은 모델이 증분 생성 세션(incremental generation session) 동안 이미 몇 개의 토큰을 캐시했는지 기억하는 간단한 카운터(counter)입니다.
+
+그런 다음, 한 줄짜리 블록 호출을 명시적인 루프(loop)로 대체하고, 각 트랜스포머 블록(transformer block)을 통해 `use_cache`를 전달합니다.
+
+```python
+def forward(self, in_idx, use_cache=False):
+    # ...
+    if use_cache:
+        pos_ids = torch.arange(
+            self.current_pos, self.current_pos + seq_len, device=in_idx.device, dtype=torch.long
+        )
+        self.current_pos += seq_len
+    else:
+        pos_ids = torch.arange(
+            0, seq_len, device=in_idx.device, dtype=torch.long
+        )
+    pos_embeds = self.pos_emb(pos_ids).unsqueeze(0)
+    x = tok_embeds + pos_embeds
+    # ...
+    for blk in self.trf_blocks:
+        x = blk(x, use_cache=use_cache)
+```
+
+위에서 `use_cache=True`로 설정하면, `self.current_pos`에서 시작하여 `seq_len` 단계만큼 계산합니다. 그런 다음, 다음 디코딩(decoding) 호출이 중단된 지점에서 계속되도록 카운터를 증가시킵니다. `self.current_pos`를 추적하는 이유는 새로운 쿼리가 이미 저장된 키와 값 바로 뒤에 정렬되어야 하기 때문입니다. 카운터를 사용하지 않으면, 모든 새로운 단계가 다시 위치 0에서 시작하여 모델이 새로운 토큰을 이전 토큰과 겹치는 것처럼 처리할 것입니다. (대안으로, `offset = block.att.cache_k.shape[1]`을 통해 추적할 수도 있습니다.)
+
+위 변경 사항은 `use_cache` 인자를 받도록 `TransformerBlock` 클래스에 작은 수정도 필요로 합니다.
+
+```python
+def forward(self, x, use_cache=False):
+    # ...
+    self.att(x, use_cache=use_cache)
+```
+
+마지막으로, 편의를 위해 모든 블록 캐시를 한 번에 지우도록 `GPTModel`에 모델 수준의 재설정 기능을 추가합니다.
+
+```python
+def reset_kv_cache(self):
+    for blk in self.trf_blocks:
+        blk.att.reset_cache()
+    self.current_pos = 0
+```
+
+### 5. 생성 시 캐시 사용하기
+
+`GPTModel`, `TransformerBlock`, `MultiHeadAttention`에 대한 변경 사항이 적용되었으므로, 마지막으로 간단한 텍스트 생성 함수에서 KV 캐시를 사용하는 방법은 다음과 같습니다.
+
+```python
+def generate_text_simple_cached(
+    model, idx, max_new_tokens, use_cache=True
+):
+    model.eval()
+
+    ctx_len = model.pos_emb.num_embeddings # max sup. len., e.g. 1024
+    if use_cache:
+        # Init cache with full prompt
+        model.reset_kv_cache()
+        with torch.no_grad():
+            logits = model(idx[:, -ctx_len:], use_cache=True)
+
+        for _ in range(max_new_tokens):
+            # a) pick the token with the highest log-probability
+            next_idx = logits[:, -1].argmax(dim=-1, keepdim=True)
+            # b) append it to the running sequence
+            idx = torch.cat([idx, next_idx], dim=1)
+            # c) feed model only the new token
+            with torch.no_grad():
+                logits = model(next_idx, use_cache=True)
+    else:
+        for _ in range(max_new_tokens):
+            with torch.no_grad():
+                logits = model(idx[:, -ctx_len:], use_cache=False)
+            next_idx = logits[:, -1].argmax(dim=-1, keepdim=True)
+            idx = torch.cat([idx, next_idx], dim=1)
+
+    return idx
+```
+
+c)에서 `logits = model(next_idx, use_cache=True)`를 통해 모델에 새로운 토큰만 공급한다는 점에 유의하세요. 캐싱이 없으면, 재사용할 저장된 키와 값이 없으므로 모델에 전체 입력 `logits = model(idx[:, -ctx_len:], use_cache=False)`를 공급합니다.
+
+## 간단한 성능 비교
+
+KV 캐시를 개념적 수준에서 다룬 후, 큰 질문은 작은 예시에서 실제로 얼마나 잘 작동하는가입니다. 구현을 시도해 보려면, 앞서 언급된 두 코드 파일을 파이썬 스크립트로 실행할 수 있습니다. 이 스크립트는 작은 1억 2천 4백만(124M) 매개변수(parameter) LLM을 실행하여 200개의 새로운 토큰을 생성합니다 (시작 프롬프트는 4개의 토큰 "Hello, I am"입니다).
+
+```bash
+pip install -r https://raw.githubusercontent.com/rasbt/LLMs-from-scratch/refs/heads/main/requirements.txt
+
+python gpt_ch04.py
+
+python gpt_with_kv_cache.py
+```
+
+M4 칩(CPU)이 탑재된 맥 미니(Mac Mini)에서 결과는 다음과 같습니다.
+
+| Model | Runtime |
+| :-------------------- | :-------- |
+| `gpt_ch04.py` | 13.52s |
+| `gpt_with_kv_cache.py` | 2.68s |
+
+보시다시피, 작은 1억 2천 4백만(124M) 매개변수 모델과 짧은 200 토큰 시퀀스 길이에서도 이미 약 5배의 속도 향상을 얻을 수 있습니다. (이 구현은 코드 가독성을 위해 최적화되었으며, CUDA 또는 MPS 런타임 속도를 위해 최적화되지 않았습니다. CUDA 또는 MPS 런타임 속도를 위해서는 텐서를 다시 인스턴스화하고 연결하는 대신 미리 할당해야 합니다.)
+
+**참고**: 모델은 두 경우 모두 "의미 없는 말(gibberish)"을 생성합니다. 즉, 다음과 같은 텍스트입니다.
+
+```
+Output text: Hello, I am Featureiman Byeswickattribute argue logger Normandy Compton analogous bore ITVEGIN ministriesysics Kle functional recountrictionchangingVirgin embarrassedgl ...
+```
+
+이는 아직 모델을 학습시키지 않았기 때문입니다. 다음 장에서는 모델을 학습시키고, 학습된 모델에 KV 캐시를 사용하여 일관성 있는 텍스트를 생성할 수 있습니다 (하지만 KV 캐시는 추론 중에만 사용하도록 되어 있습니다). 여기서는 코드를 더 간단하게 유지하기 위해 학습되지 않은 모델을 사용하고 있습니다.
+
+하지만 더 중요한 것은 `gpt_ch04.py`와 `gpt_with_kv_cache.py` 구현이 정확히 동일한 텍스트를 생성한다는 것입니다. 이는 KV 캐시가 올바르게 구현되었음을 알려줍니다. 인덱싱(indexing) 오류는 쉽게 발생하여 다른 결과를 초래할 수 있습니다.
+
+"Ahead of AI"를 읽어주셔서 감사합니다! 새로운 게시물을 받고 제 작업을 지원하려면 무료로 구독하세요.
+
+[구독](https://magazine.sebastianraschka.com/subscribe)
+
+## KV 캐시의 장점과 단점
+
+시퀀스 길이가 증가함에 따라 KV 캐시의 장점과 단점은 다음과 같은 방식으로 더욱 두드러집니다.
+
+*   **[장점] 계산 효율성 증가**: 캐싱이 없으면, t 단계의 어텐션은 새로운 쿼리를 t개의 이전 키와 비교해야 하므로, 누적 작업은 O(n²)으로 2차적으로 증가합니다. 캐시를 사용하면 각 키와 값이 한 번 계산된 후 재사용되어, 단계별 총 복잡성이 O(n)으로 선형적으로 감소합니다.
+*   **[단점] 메모리 사용량 선형적으로 증가**: 각 새로운 토큰은 KV 캐시에 추가됩니다. 긴 시퀀스와 더 큰 LLM의 경우, 누적 KV 캐시가 커져 상당하거나 심지어 감당할 수 없는 양의 (GPU) 메모리를 소비할 수 있습니다. 해결책으로 KV 캐시를 잘라낼 수 있지만, 이는 더 많은 복잡성을 추가합니다 (하지만 LLM을 배포할 때는 그만한 가치가 있을 수 있습니다).
+
+## KV 캐시 구현 최적화하기
+
+위에 제시된 KV 캐시의 개념적 구현은 명확성을 돕고 주로 코드 가독성 및 교육적 목적에 맞춰져 있지만, 실제 시나리오(특히 더 큰 모델과 더 긴 시퀀스 길이에서)에 배포하려면 더 신중한 최적화가 필요합니다.
+
+### 캐시 확장 시 흔한 문제점
+
+*   **메모리 단편화(fragmentation) 및 반복 할당**: 앞서 보여준 것처럼 `torch.cat`을 통해 텐서(tensor)를 지속적으로 연결하는 것은 빈번한 메모리 할당 및 재할당으로 인해 성능 병목 현상(bottlenecks)을 초래합니다.
+*   **메모리 사용량의 선형적 증가**: 적절한 처리가 없으면, KV 캐시 크기는 매우 긴 시퀀스에 대해 비실용적이 됩니다.
+
+### 팁 1: 메모리 미리 할당하기
+
+텐서를 반복적으로 연결하는 대신, 예상되는 최대 시퀀스 길이를 기반으로 충분히 큰 텐서를 미리 할당할 수 있습니다. 이는 일관된 메모리 사용을 보장하고 오버헤드(overhead)를 줄입니다. 의사 코드(pseudo-code)로 표현하면 다음과 같습니다.
+
+```python
+# Example pre-allocation for keys and values
+max_seq_len = 1024 # maximum expected sequence length
+cache_k = torch.zeros(
+    (batch_size, num_heads, max_seq_len, head_dim), device=device
+)
+cache_v = torch.zeros(
+    (batch_size, num_heads, max_seq_len, head_dim), device=device
+)
+```
+
+추론 중에, 우리는 이 미리 할당된 텐서의 슬라이스(slices)에 간단히 쓸 수 있습니다.
+
+### 팁 2: 슬라이딩 윈도우(Sliding Window)를 통한 캐시 자르기
+
+GPU 메모리가 과도하게 사용되는 것을 방지하기 위해, 동적 자르기(dynamic truncation)를 포함하는 슬라이딩 윈도우 접근 방식을 구현할 수 있습니다. 슬라이딩 윈도우를 통해 캐시에는 마지막 `window_size` 토큰만 유지합니다.
+
+```python
+# Sliding window cache implementation
+window_size = 512
+cache_k = cache_k[:, :, -window_size:, :]
+cache_v = cache_v[:, :, -window_size:, :]
+```
+
+### 실제 최적화
+
+이 최적화는 `gpt_with_kv_cache_optimized.py` 파일에서 찾을 수 있습니다. M4 칩(CPU)이 탑재된 맥 미니에서 200 토큰 생성과 LLM의 컨텍스트 길이와 동일한 윈도우 크기(동일한 결과를 보장하여 공정한 비교를 위함)로 아래와 같이 코드 런타임(runtime)을 비교했습니다.
+
+| Model | Runtime |
+| :-------------------------------- | :-------- |
+| `gpt_ch04.py` | 13.52s |
+| `gpt_with_kv_cache.py` | 2.68s |
+| `gpt_with_kv_cache_optimized.py` | 2.67s |
+
+안타깝게도, 이 모델은 매우 작고 장치 전송 및 통신 오버헤드가 KV 캐시의 이점을 상회하기 때문에 CUDA 장치에서는 속도 이점이 사라집니다.
+
+## 결론
+
+캐싱은 추가적인 복잡성과 메모리 고려 사항을 도입하지만, 효율성에서 얻는 눈에 띄는 이점은 특히 프로덕션 환경에서 이러한 단점을 상회하는 경우가 많습니다. 기억하세요, 여기서 저는 효율성보다 코드의 명확성과 가독성을 우선시했지만, 핵심은 실제 구현에서는 메모리를 미리 할당하거나 슬라이딩 윈도우 캐시를 적용하여 메모리 증가를 효과적으로 관리하는 것과 같은 신중한 최적화가 종종 필요하다는 것입니다.
+
+그런 의미에서 이 글이 유익했기를 바랍니다. 이 기술들을 자유롭게 실험해 보시고, 즐거운 코딩 되세요!
+
+## 보너스: Qwen3 및 Llama 3의 KV 캐시
+
+Qwen3 (0.6B) 및 Llama 3 (1B)의 처음부터 구현한 모델에 KV 캐시를 추가한 후, KV 캐시 유무에 따른 모델 런타임을 비교하는 추가 실험을 수행했습니다. KV 캐시 구현 최적화 섹션에서 설명된 대로 KV 캐시 텐서를 미리 할당하는 대신, 위에서 언급된 `torch.cat` 접근 방식을 선택했습니다. Llama 3와 Qwen3는 매우 큰 지원 컨텍스트 크기(각각 131k 및 41k 토큰)를 가지므로, 미리 할당된 텐서는 약 8GB의 추가 메모리를 소비하며, 이는 상당히 비용이 많이 듭니다. 또한, 텐서를 즉석에서 생성하는 더 메모리 효율적인 `torch.cat` 접근 방식을 사용하고 있기 때문에, 계산 효율성 향상을 위해 모델을 `torch.compile`로 컴파일(compile)하기 위해 KV 캐시를 모델 외부로 옮겼습니다.
+
+코드는 여기에서 찾을 수 있습니다:
+[qwen3.py](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch08/qwen3.py) | [README](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch08/README.md)
+[llama3.py](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch08/llama3.py) | [README](https://github.com/rasbt/LLMs-from-scratch/blob/main/ch08/README.md)
+
+성능은 아래에 나와 있습니다.
+
+| Model | CPU (s) | CPU (compiled) (s) | GPU (s) | GPU (compiled) (s) |
+| :-------------------------------- | :------ | :----------------- | :------ | :----------------- |
+| Qwen3 (no KV cache) | 16.2 | 10.1 | 0.9 | 0.8 |
+| Qwen3 (with KV cache) | 3.2 | 2.5 | 0.9 | 0.8 |
+| Llama 3 (no KV cache) | 18.1 | 11.2 | 1.1 | 0.9 |
+| Llama 3 (with KV cache) | 3.5 | 2.7 | 1.1 | 0.9 |
+
+보시다시피, CPU에서는 KV 캐시가 가장 상당한 속도 향상을 가져옵니다. 그리고 컴파일은 그 성능을 더욱 향상시킵니다. 하지만 GPU에서는 일반 컴파일된 모델로 최상의 성능을 얻을 수 있는데, 이는 GPU에 텐서를 미리 할당하지 않고 모델이 상대적으로 작기 때문일 가능성이 높습니다.
+
+이 매거진은 개인적인 열정 프로젝트입니다. 독립 연구자로서 저를 지원하시려면, 제 책 "[Build a Large Language Model (From Scratch)](https://www.amazon.com/Build-Large-Language-Model-Scratch/dp/B0C91461Q3)"을 구매하시거나 [유료 구독](https://magazine.sebastianraschka.com/subscribe)을 신청해 주시면 감사하겠습니다.
+
+[Build a Large Language Model (From Scratch)](https://www.amazon.com/Build-Large-Language-Model-Scratch/dp/B0C91461Q3) 아마존에서 구매 가능
+
+책을 읽으셨고 잠시 시간이 있으시다면, [짧은 리뷰](https://www.amazon.com/Build-Large-Language-Model-Scratch/dp/B0C91461Q3)를 남겨주시면 정말 감사하겠습니다. 이는 저희 저자들에게 큰 도움이 됩니다!
+
+여러분의 지원은 큰 의미가 있습니다! 감사합니다!

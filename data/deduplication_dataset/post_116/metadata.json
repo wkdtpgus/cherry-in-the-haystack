@@ -1,0 +1,21 @@
+{
+  "post_id": "116",
+  "title": "**신이 되고 싶어 했던 뉴런(neuron)**",
+  "base_word_count": 7057,
+  "exact_30_update_wc": 2851,
+  "exact_30_ground_truth_wc": 6379,
+  "exact_30_overlap_ratio": 1.238,
+  "paraphrase_25_update_wc": 5548,
+  "paraphrase_25_ground_truth_wc": 5548,
+  "paraphrase_25_overlap_ratio": 1.272,
+  "fragment_20_update_wc": 1697,
+  "fragment_20_ground_truth_wc": 6368,
+  "fragment_20_overlap_ratio": 1.406,
+  "semantic_25_update_wc": 5352,
+  "semantic_25_ground_truth_wc": 5362,
+  "semantic_25_overlap_ratio": 1.317,
+  "mixed_real_update_wc": 4697,
+  "mixed_real_ground_truth_wc": 5184,
+  "mixed_real_overlap_ratio": 1.399,
+  "status": "generated"
+}

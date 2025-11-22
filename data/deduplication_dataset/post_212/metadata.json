@@ -1,0 +1,21 @@
+{
+  "post_id": "212",
+  "title": "**일상생활 속 AI 에너지 사용**",
+  "base_word_count": 848,
+  "exact_30_update_wc": 835,
+  "exact_30_ground_truth_wc": 874,
+  "exact_30_overlap_ratio": 0.969,
+  "paraphrase_25_update_wc": 875,
+  "paraphrase_25_ground_truth_wc": 1062,
+  "paraphrase_25_overlap_ratio": 0.755,
+  "fragment_20_update_wc": 754,
+  "fragment_20_ground_truth_wc": 1073,
+  "fragment_20_overlap_ratio": 0.702,
+  "semantic_25_update_wc": 804,
+  "semantic_25_ground_truth_wc": 804,
+  "semantic_25_overlap_ratio": 1.055,
+  "mixed_real_update_wc": 822,
+  "mixed_real_ground_truth_wc": 823,
+  "mixed_real_overlap_ratio": 1.03,
+  "status": "generated"
+}

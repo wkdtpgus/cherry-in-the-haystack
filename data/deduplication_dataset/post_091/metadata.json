@@ -1,0 +1,21 @@
+{
+  "post_id": "091",
+  "title": "**클라인: 오픈 소스(open source) 코드 에이전트(code agent) — 사우드 리즈완, 닉 패시와 함께**",
+  "base_word_count": 17152,
+  "exact_30_update_wc": 3941,
+  "exact_30_ground_truth_wc": 3987,
+  "exact_30_overlap_ratio": 4.341,
+  "paraphrase_25_update_wc": 2964,
+  "paraphrase_25_ground_truth_wc": 3035,
+  "paraphrase_25_overlap_ratio": 5.763,
+  "fragment_20_update_wc": 5613,
+  "fragment_20_ground_truth_wc": 9943,
+  "fragment_20_overlap_ratio": 2.284,
+  "semantic_25_update_wc": 1944,
+  "semantic_25_ground_truth_wc": 2045,
+  "semantic_25_overlap_ratio": 8.771,
+  "mixed_real_update_wc": 3003,
+  "mixed_real_ground_truth_wc": 3012,
+  "mixed_real_overlap_ratio": 5.709,
+  "status": "generated"
+}

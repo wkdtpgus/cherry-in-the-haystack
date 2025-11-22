@@ -1,0 +1,21 @@
+{
+  "post_id": "199",
+  "title": "**컨텍스트 엔지니어링(Context Engineering): DSPy GEPA를 사용하여 AI 코딩 에이전트 향상**",
+  "base_word_count": 619,
+  "exact_30_update_wc": 862,
+  "exact_30_ground_truth_wc": 858,
+  "exact_30_overlap_ratio": 0.723,
+  "paraphrase_25_update_wc": 854,
+  "paraphrase_25_ground_truth_wc": 854,
+  "paraphrase_25_overlap_ratio": 0.725,
+  "fragment_20_update_wc": 596,
+  "fragment_20_ground_truth_wc": 798,
+  "fragment_20_overlap_ratio": 0.7,
+  "semantic_25_update_wc": 958,
+  "semantic_25_ground_truth_wc": 958,
+  "semantic_25_overlap_ratio": 0.646,
+  "mixed_real_update_wc": 468,
+  "mixed_real_ground_truth_wc": 468,
+  "mixed_real_overlap_ratio": 1.323,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "107",
+  "title": "AI 너드, 모든 것을 좋아하는 사람들",
+  "base_word_count": 3208,
+  "exact_30_update_wc": 2789,
+  "exact_30_ground_truth_wc": 2900,
+  "exact_30_overlap_ratio": 1.11,
+  "paraphrase_25_update_wc": 2394,
+  "paraphrase_25_ground_truth_wc": 2394,
+  "paraphrase_25_overlap_ratio": 1.34,
+  "fragment_20_update_wc": 1848,
+  "fragment_20_ground_truth_wc": 3586,
+  "fragment_20_overlap_ratio": 0.795,
+  "semantic_25_update_wc": 2437,
+  "semantic_25_ground_truth_wc": 2437,
+  "semantic_25_overlap_ratio": 1.316,
+  "mixed_real_update_wc": 2419,
+  "mixed_real_ground_truth_wc": 2434,
+  "mixed_real_overlap_ratio": 1.32,
+  "status": "generated"
+}

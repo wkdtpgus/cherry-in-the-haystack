@@ -1,0 +1,21 @@
+{
+  "post_id": "001",
+  "title": "표준 대규모 언어 모델(LLM)을 넘어서",
+  "base_word_count": 7760,
+  "exact_30_update_wc": 9351,
+  "exact_30_ground_truth_wc": 9350,
+  "exact_30_overlap_ratio": 0.83,
+  "paraphrase_25_update_wc": 7828,
+  "paraphrase_25_ground_truth_wc": 7824,
+  "paraphrase_25_overlap_ratio": 0.992,
+  "fragment_20_update_wc": 7232,
+  "fragment_20_ground_truth_wc": 1309,
+  "fragment_20_overlap_ratio": 1.892,
+  "semantic_25_update_wc": 7983,
+  "semantic_25_ground_truth_wc": 971,
+  "semantic_25_overlap_ratio": 1.85,
+  "mixed_real_update_wc": 7170,
+  "mixed_real_ground_truth_wc": 7160,
+  "mixed_real_overlap_ratio": 1.084,
+  "status": "generated"
+}

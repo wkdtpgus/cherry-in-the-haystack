@@ -1,0 +1,21 @@
+{
+  "post_id": "068",
+  "title": "**심층 에이전트(Deep Agents)**",
+  "base_word_count": 890,
+  "exact_30_update_wc": 994,
+  "exact_30_ground_truth_wc": 1201,
+  "exact_30_overlap_ratio": 0.687,
+  "paraphrase_25_update_wc": 1137,
+  "paraphrase_25_ground_truth_wc": 1137,
+  "paraphrase_25_overlap_ratio": 0.783,
+  "fragment_20_update_wc": 603,
+  "fragment_20_ground_truth_wc": 981,
+  "fragment_20_overlap_ratio": 0.849,
+  "semantic_25_update_wc": 839,
+  "semantic_25_ground_truth_wc": 839,
+  "semantic_25_overlap_ratio": 1.061,
+  "mixed_real_update_wc": 866,
+  "mixed_real_ground_truth_wc": 866,
+  "mixed_real_overlap_ratio": 1.028,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "138",
+  "title": "필립 고프: 의식(Consciousness) 이론으로서의 범심론(Panpsychism)",
+  "base_word_count": 244,
+  "exact_30_update_wc": 265,
+  "exact_30_ground_truth_wc": 384,
+  "exact_30_overlap_ratio": 0.472,
+  "paraphrase_25_update_wc": 705,
+  "paraphrase_25_ground_truth_wc": 705,
+  "paraphrase_25_overlap_ratio": 0.346,
+  "fragment_20_update_wc": 211,
+  "fragment_20_ground_truth_wc": 435,
+  "fragment_20_overlap_ratio": 0.095,
+  "semantic_25_update_wc": 523,
+  "semantic_25_ground_truth_wc": 524,
+  "semantic_25_overlap_ratio": 0.465,
+  "mixed_real_update_wc": 284,
+  "mixed_real_ground_truth_wc": 284,
+  "mixed_real_overlap_ratio": 0.859,
+  "status": "generated"
+}

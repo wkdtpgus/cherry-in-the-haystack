@@ -1,0 +1,21 @@
+{
+  "post_id": "143",
+  "title": "**메러디스 링겔 모리스: 생성형 AI (Generative AI)의 HCI (Human-Computer Interaction) 순간**",
+  "base_word_count": 538,
+  "exact_30_update_wc": 1069,
+  "exact_30_ground_truth_wc": 1068,
+  "exact_30_overlap_ratio": 0.504,
+  "paraphrase_25_update_wc": 1045,
+  "paraphrase_25_ground_truth_wc": 1045,
+  "paraphrase_25_overlap_ratio": 0.515,
+  "fragment_20_update_wc": 587,
+  "fragment_20_ground_truth_wc": 636,
+  "fragment_20_overlap_ratio": 0.833,
+  "semantic_25_update_wc": 1015,
+  "semantic_25_ground_truth_wc": 1032,
+  "semantic_25_overlap_ratio": 0.513,
+  "mixed_real_update_wc": 615,
+  "mixed_real_ground_truth_wc": 615,
+  "mixed_real_overlap_ratio": 0.875,
+  "status": "generated"
+}

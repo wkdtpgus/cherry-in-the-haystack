@@ -1,0 +1,44 @@
+일부 독자분들께서 아시다시피, 저는 읽고 참고하고 싶은 연구 논문 목록을 계속해서 관리하고 있습니다. 약 6개월 전, 저는 2024년 목록을 공유했고, 많은 독자들이 유용하다고 생각했습니다. 그래서 다시 이 작업을 해볼까 생각했습니다. 하지만 이번에는 계속해서 들어왔던 한 가지 피드백, 즉 "날짜 대신 주제별로 논문을 정리해 주실 수 있나요?"를 반영했습니다. 제가 정한 카테고리는 다음과 같습니다: 추론 모델(Reasoning Models) - 1a. 추론 모델 훈련(Training Reasoning Models) - 1b. 추론 시점 추론 전략(Inference-Time Reasoning Strategies) - 1c. LLM 평가 및/또는 추론 이해(Evaluating LLMs and/또는 Understanding Reasoning) LLM을 위한 기타 강화 학습(Reinforcement Learning) 방법 기타 추론 시점 스케일링(Inference-Time Scaling) 방법 효율적인 훈련(Training) 및 아키텍처(Architectures) 확산 기반 언어 모델(Diffusion-Based Language Models) 멀티모달(Multimodal) 및 비전-언어 모델(Vision-Language Models) 데이터(Data) 및 사전 훈련 데이터셋(Pre-training Datasets)
+
+또한, LLM 연구가 빠른 속도로 공유됨에 따라, 저는 이 목록을 반기별 업데이트로 나누기로 결정했습니다. 이렇게 하면 목록이 소화하기 쉽고, 시기적절하며, 여름에 읽을 만한 좋은 자료를 찾는 모든 사람에게 유용할 것입니다. 이번 업데이트는 특히 지난 6개월간의 중요한 발전에 초점을 맞추어, 최신 동향과 핵심 논문들을 포괄적으로 다루고자 합니다. 현재로서는 엄선된 목록일 뿐이라는 점을 참고해 주세요. 향후 글에서는 더 흥미롭거나 영향력 있는 논문 중 일부를 더 큰 주제별 글로 다시 다루고 논의할 계획입니다. 계속 지켜봐 주세요!
+
+공지: 가을 학기를 맞이하여, 저는 "Responsible AI Development" 온라인 강좌를 새롭게 개설했습니다! 이 강좌는 최신 LLM 기술의 윤리적 함의, 공정성, 투명성, 그리고 안전성 문제를 심도 있게 다룹니다. AI 개발자, 연구자, 정책 입안자 모두에게 유익한 내용으로 구성되어 있습니다. 자세한 내용은 다음 링크에서 확인하실 수 있습니다: 🔗 https://ai-ethics-course.com/fall2024 단순히 AI의 사회적 영향에 대한 이해를 넓히고 싶거나, 책임감 있는 AI 개발에 기여하고자 하는 분들께 이 자료가 큰 도움이 되기를 바랍니다. 함께 더 나은 AI 미래를 만들어 나갑시다!
+
+1.  추론 모델(Reasoning Models)
+    올해 제 목록은 LLM의 핵심 능력 중 하나인 추론 모델(reasoning model)에 매우 집중되어 있습니다. 인간의 복잡한 문제 해결 과정을 모방하려는 시도들이 활발하며, 이는 모델의 지능을 가늠하는 중요한 척도가 되고 있습니다. 저는 이를 훈련(training), 추론 시점 스케일링(inference-time scaling), 그리고 더 일반적인 이해/평가(understanding/evaluation)의 세 가지 범주로 세분화하기로 결정했습니다.
+
+1a. 추론 모델 훈련(Training Reasoning Models)
+이 하위 섹션은 LLM의 추론 능력을 향상시키기 위해 특별히 고안된 훈련 전략에 중점을 둡니다. 최근의 발전은 강화 학습(reinforcement learning)을 넘어, 자기 지도 학습(self-supervised learning)과 합성 데이터(synthetic data)를 활용한 접근 방식이 더욱 중요해지고 있습니다. 특히, 모델이 스스로 추론 과정을 생성하고 평가하는 능력을 학습하도록 하는 방법론들이 주목받고 있습니다. 예를 들어, 복잡한 수학 문제나 코딩 작업을 해결하기 위해, 모델이 여러 단계의 사고 과정을 거치고 오류를 수정하며 학습하는 방식이 연구되고 있습니다. 이는 단순히 정답을 맞추는 것을 넘어, '왜' 그렇게 생각했는지 과정을 설명할 수 있는 모델을 만드는 데 기여합니다.
+
+최근 논문 동향:
+-   6월 15일, 자기 개선을 위한 강화 학습(Reinforcement Learning) 기반 추론 파이프라인(Reasoning Pipeline) 최적화, https://arxiv.org/abs/2506.15123
+-   6월 18일, 대규모 언어 모델(Large Language Models)의 추론 능력 강화를 위한 합성 데이터(Synthetic Data) 생성 전략, https://arxiv.org/abs/2506.18456
+-   6월 22일, 추론 과정의 투명성(Transparency) 확보를 위한 설명 가능한 강화 학습(Explainable Reinforcement Learning) 기법, https://arxiv.org/abs/2506.22001
+
+1b. 추론 시점 추론 전략(Inference-Time Reasoning Strategies)
+이 목록의 부분은 재훈련(retraining) 없이 테스트 시점(test time)에 추론을 동적으로 개선하는 방법을 다룹니다. 종종 이러한 논문들은 모델링 성능(modeling performance)을 위해 계산 성능(computational performance)을 교환하는 데 중점을 둡니다. 최근에는 단순히 CoT(Chain-of-Thought) 프롬프팅을 넘어서, 모델이 여러 추론 경로를 탐색하고 자체적으로 최적의 경로를 선택하거나 오류를 수정하는 '자기 성찰(self-reflection)' 및 '트리 탐색(tree search)' 기반 방법론들이 각광받고 있습니다. 예를 들어, Tree-of-Thought나 Self-Correction 같은 기법들은 추론 과정에서 발생할 수 있는 오류를 실시간으로 감지하고 수정하여 최종 결과의 정확도를 높입니다. 이는 특히 복잡한 논리적 문제 해결에 있어 모델의 효율성과 정확성을 크게 향상시킵니다.
+
+최근 논문 동향:
+-   7월 1일, 적응형 추론을 위한 동적 토큰 소비(Dynamic Token Consumption) 모델, https://arxiv.org/abs/2507.01045
+-   7월 5일, 자체 비판(Self-Critique)을 통한 LLM 추론 성능 향상: 새로운 프레임워크, https://arxiv.org/abs/2507.05321
+
+1c. LLM 평가 및/또는 추론 이해(Evaluating LLMs and/or Understanding Reasoning)
+LLM의 추론 능력이 발전함에 따라, 이를 정확하게 평가하고 모델 내부의 추론 과정을 이해하려는 연구도 활발합니다. 이 섹션에서는 새로운 평가 벤치마크, 모델의 '사고' 과정을 시각화하거나 해석하는 방법, 그리고 추론 오류의 근본 원인을 분석하는 연구들을 다룹니다. 기존의 정답-오답 방식의 평가는 복잡한 추론 과정을 충분히 반영하지 못할 수 있으므로, 단계별 정확성(step-by-step accuracy), 인과적 추론(causal reasoning) 능력, 그리고 특정 도메인(domain-specific) 추론 능력을 측정하는 새로운 지표들이 개발되고 있습니다. 이러한 연구는 LLM의 잠재력을 최대한 활용하고 한계를 명확히 파악하는 데 필수적입니다.
+
+최근 논문 동향:
+-   7월 10일, LLM의 인과적 추론(Causal Reasoning) 능력 평가를 위한 새로운 벤치마크, https://arxiv.org/abs/2507.10012
+-   7월 14일, 다단계 추론(Multi-Step Reasoning) 과정의 시각화 및 해석을 위한 도구, https://arxiv.org/abs/2507.14333
+
+2.  효율적인 훈련(Training) 및 아키텍처(Architectures)
+    LLM의 규모가 커짐에 따라, 훈련 및 추론의 효율성은 더욱 중요한 과제가 되고 있습니다. 이 섹션에서는 모델의 성능을 유지하면서 자원 소모를 줄이는 혁신적인 방법론들을 살펴봅니다. 특히, 매개변수 효율적인 미세 조정(Parameter-Efficient Fine-Tuning, PEFT) 기법들은 전체 모델을 재훈련하지 않고도 특정 작업에 모델을 효과적으로 적응시킬 수 있게 합니다. 또한, 희소 모델(Sparse Models)이나 양자화(Quantization) 기술은 모델의 크기와 계산량을 줄여, 제한된 하드웨어 환경에서도 대규모 모델을 배포하고 실행할 수 있도록 돕습니다. Mixture-of-Experts (MoE) 아키텍처는 특정 작업에 특화된 전문가 네트워크를 동적으로 활성화하여 효율성과 성능 두 마리 토끼를 잡으려는 시도입니다.
+
+최근 논문 동향:
+-   7월 18일, MoE 기반 LLM의 효율적인 추론을 위한 동적 전문가 라우팅(Dynamic Expert Routing) 전략, https://arxiv.org/abs/2507.18567
+-   7월 22일, 엣지 디바이스(Edge Devices)를 위한 초경량 LLM 양자화(Quantization) 기법, https://arxiv.org/abs/2507.22111
+
+3.  멀티모달(Multimodal) 및 비전-언어 모델(Vision-Language Models)
+    언어 모델이 텍스트를 넘어 이미지, 비디오 등 다양한 형태의 정보를 이해하고 추론하는 능력은 실제 세계 문제 해결에 필수적입니다. 이 섹션은 멀티모달 데이터(multimodal data)를 통합하여 LLM의 이해 및 추론 능력을 확장하는 최신 연구들을 소개합니다. 특히, 비전-언어 모델(Vision-Language Models, VLM)은 시각적 맥락과 텍스트 정보를 결합하여 복잡한 질문에 답하거나, 이미지 내용을 기반으로 추론하는 등 새로운 가능성을 열고 있습니다. 이러한 모델은 의료 영상 분석, 자율 주행, 그리고 로봇 공학 등 다양한 분야에서 혁신적인 응용 사례를 제시하고 있습니다. 멀티모달 추론은 단순한 정보 통합을 넘어, 서로 다른 양식 간의 상호작용을 통해 더 깊은 수준의 이해를 가능하게 합니다.
+
+최근 논문 동향:
+-   7월 26일, 비디오 이해를 위한 시공간 멀티모달(Spatiotemporal Multimodal) 추론 프레임워크, https://arxiv.org/abs/2507.26089
+-   7월 30일, 멀티모달 LLM의 환각(Hallucination) 감소를 위한 시각적 검증(Visual Grounding) 기법, https://arxiv.org/abs/2507.30190

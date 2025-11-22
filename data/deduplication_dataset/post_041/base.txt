@@ -1,0 +1,807 @@
+# 대규모 언어 모델(LLM)을 위한 프록시멀 정책 최적화(PPO): 일반인을 위한 가이드
+
+Author: Cameron Wolfe
+URL: https://cameronrwolfe.substack.com/p/ppo-llm
+
+============================================================
+
+(from [4, 5, 8]) 지난 몇 년 동안, 강화 학습(RL)은 대규모 언어 모델(LLM) 연구에서 가장 영향력 있는 분야 중 하나였습니다. 초기 연구에서는 RL을 사용하여 LLM을 인간의 선호도에 맞추었으며, LLM에 RL을 적용한 이 초기 작업은 거의 전적으로 근접 정책 최적화(Proximal Policy Optimization, PPO) [1]에 의존했습니다. 이러한 선택으로 인해 PPO는 수년 동안 LLM 후처리 훈련에서 기본 RL 알고리즘이 되었습니다. 이는 LLM 연구의 빠른 속도를 고려할 때 긴 지배 기간입니다! 최근 LLM 추론 연구에서야 연구자들이 GRPO와 같은 대체 알고리즘을 사용하기 시작했습니다. 중요성에도 불구하고 PPO는 최고 연구실 외에서는 잘 이해되지 못하고 있습니다. 이러한 이해 부족에는 타당한 이유가 있습니다. PPO는 미묘한 구현 세부 사항으로 가득 찬 복잡한 알고리즘일 뿐만 아니라, 높은 컴퓨팅 및 메모리 오버헤드로 인해 광범위한 컴퓨팅 자원 없이는 실험이 어렵습니다. PPO를 성공적으로 활용하려면 알고리즘에 대한 깊은 이해와 상당한 도메인 지식 또는 실무 경험이 모두 필요합니다. 이 개요는 RL의 기본 개념부터 시작하여 PPO에 대한 자세한 이해를 단계별로 발전시킬 것입니다. 이 기반 위에서 PPO 및 그 다양한 구성 요소에 대한 의사 코드(pseudocode)를 포함하여 PPO 사용을 위한 주요 실용적 고려 사항을 설명할 것입니다. 마지막으로, LLM 도메인에서 PPO를 대중화시킨 몇 가지 중요한 연구들을 검토하여 이 모든 지식을 통합할 것입니다.
+
+AI 연구의 최신 정보를 얻기 위해 Deep (Learning) Focus를 사용하는 50,000명의 다른 사람들과 함께하세요. 구독하기
+
+### 강화 학습(RL) 예비 지식
+
+PPO에 대해 더 자세히 알아보기 전에, 우리는 RL 전반에 대해 배워야 합니다. 이 섹션에서는 RL의 기본적인 문제 설정과 용어를 다룰 것입니다. 또한, PPO의 기초를 형성하는 간단한 정책 경사(policy gradient) 표현을 도출할 것입니다.
+
+#### 문제 설정 및 용어
+
+RL 훈련을 실행할 때, 우리는 어떤 **환경(environment)** 내에서 **행동(action)**을 취하는 **에이전트(agent)**를 가집니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Basic problem setup for RL">
+
+**RL의 기본 문제 설정**
+
+이러한 행동들은 **정책(policy)**에 의해 예측됩니다. 정책은 에이전트의 두뇌라고 생각할 수 있으며, 일반적으로 매개변수화(parameterized)되어 있습니다. 예를 들어, LLM 훈련의 맥락에서 정책은 LLM 자체입니다. 우리의 정책 하에서 주어진 행동의 확률을 $\pi_\theta(a_t | s_t)$로 모델링할 수 있습니다. 정책이 행동을 출력하면, 환경의 **상태(state)**는 환경의 일부인 **전이 함수(transition function)**에 따라 업데이트됩니다. 우리는 전이 함수를 $P(s_{t+1} | a_t, s_t)$로 나타낼 것입니다. 그러나 전이 함수는 일반적으로 통과(pass-through) 방식이므로 LLM에는 덜 관련성이 있습니다; 즉, $x$가 프롬프트(prompt)일 때 $s_t = \{x, a_1, a_2, \dots, a_t\}$라고 가정합니다. 마지막으로, 에이전트가 방문하는 각 상태는 환경으로부터 양수, 음수 또는 0(즉, 보상 없음)일 수 있는 **보상(reward)**을 받습니다.
+
+이전 그림에서 보듯이, 우리의 에이전트는 반복적으로 행동하며 각 행동($a_t$), 보상($r_t$) 및 상태($s_t$)는 **시간 단계(time step)** $t$와 연관됩니다. 이러한 시간 단계를 함께 결합하면 **궤적(trajectory)**이 생성됩니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="A trajectory in RL">
+
+여기서 우리는 에이전트가 이 특정 궤적을 위해 환경에서 총 $T$ 단계를 수행한다고 가정합니다. 확률의 연쇄 법칙(chain rule)을 사용하여, 우리는 다음 확률들을 결합함으로써 전체 궤적의 확률을 계산할 수도 있습니다:
+*   우리의 정책 $\pi_\theta(a_t | s_t)$에 의해 주어진 각 행동 $a_t$.
+*   전이 함수 $P(s_{t+1} | a_t, s_t)$에 의해 주어진 각 상태 $s_{t+1}$.
+
+궤적의 확률에 대한 전체 표현은 아래에 제공됩니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Probability of a trajectory">
+
+**궤적의 확률 계산**
+
+**RL 목표(objective).** RL로 모델을 훈련할 때, 우리의 목표는 전체 궤적에 걸쳐 **누적 보상(cumulative reward)**을 최대화하는 것입니다 (즉, $r_t$의 합). 그러나 이 목표에는 일반적으로 나타나는 몇 가지 변형이 있습니다. 특히, 우리가 최대화하는 보상은 **할인(discounted)**되거나 **비할인(non-discounted)**될 수 있습니다 1; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Discounted vs. non-discounted cumulative reward">
+
+**할인된 보상 대 비할인된 보상**
+
+할인율(discount factor) $\gamma$를 통합함으로써, 우리는 나중보다 더 빨리 보상을 달성하는 것에 대해 정책에 보상을 줍니다. 다시 말해, *나중의 돈보다 지금의 돈이 더 좋습니다*.
+
+우리의 목표는 일반적으로 궤적에 대한 기댓값(expectation)이 취해지는 **기대 누적 보상(expected cumulative reward)**으로 표현됩니다. 이 기댓값을 확장하면 확률에 따라 가중치가 부여된 궤적들의 합이 나옵니다. 우리는 이를 연속적(continuous) 또는 이산적(discrete) 방식으로 공식화할 수 있습니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Expected cumulative reward">
+
+**기대 누적 보상**
+
+**상태, 가치 및 이점 함수(State, value, and advantage functions).** RL 목표와 관련하여, 우리는 다음 함수들을 정의할 수도 있습니다:
+*   **가치 함수(Value Function)** $V(s)$: 상태 $s$에서 시작하여 현재 정책 $\pi_\theta$에 따라 행동할 때의 기대 누적 보상.
+*   **행동-가치 함수(Action-Value Function)** $Q(s, a)$: 상태 $s$에서 시작하여 행동 $a$를 취한 다음 정책 $\pi_\theta$에 따라 행동할 때의 기대 누적 보상.
+*   **이점 함수(Advantage Function)** $A(s, a)$: 행동-가치 함수와 가치 함수의 차이; 즉, $A(s, a) = Q(s, a) - V(s)$.
+
+직관적으로, 이점 함수는 상태 $s$에서 행동 $a$를 취한 후의 기대 보상과 상태 $s$로부터의 일반적인 기대 보상 간의 차이를 취함으로써 어떤 행동 $a$가 얼마나 유용한지를 알려줍니다. 행동 $a$로부터의 보상이 기대치보다 높으면 이점은 양수가 되고, 그 반대도 마찬가지입니다. 이점 함수는 RL 연구에서 매우 중요한 역할을 합니다. 이들은 우리의 정책에 대한 경사(gradient)를 계산하는 데 사용됩니다.
+
+> "때때로 RL에서는 행동이 절대적으로 얼마나 좋은지 설명할 필요가 없고, 단지 평균적으로 다른 행동보다 얼마나 더 나은지만 알면 됩니다. 즉, 우리는 그 행동의 상대적 이점(relative advantage)을 알고 싶습니다. 우리는 이 개념을 이점 함수로 명확하게 만듭니다."
+>
+> — Spinning up in Deep RL
+
+#### LLM을 위한 RL 공식화
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="RL terminology mapping for LLMs">
+
+**LLM을 위한 RL 용어 매핑**
+
+이제 RL의 기본 사항을 이해했으므로, 우리가 배운 용어를 LLM 훈련 설정에 매핑해야 합니다. 우리는 다음과 같이 할 수 있습니다 (위에 표시됨):
+*   우리의 **정책**은 LLM 자체입니다.
+*   우리의 **초기 상태**는 프롬프트(prompt)입니다.
+*   LLM의 출력—각 **토큰(token)** 또는 전체 **완성(completion)**—은 **행동(action)**입니다.
+*   우리의 **상태**는 프롬프트와 LLM 출력의 조합입니다.
+*   LLM의 전체 완성은 **궤적(trajectory)**을 형성합니다.
+*   **보상(reward)**은 검증자(verifier) 또는 보상 모델(reward model)에서 나옵니다 (자세한 내용은 나중에 설명).
+
+특히, 이 설정에서는 전이 함수가 완전히 결정론적(deterministic)이므로 전이 함수가 없습니다. 만약 우리가 프롬프트 $x$로 시작하고 우리의 LLM이 이 프롬프트를 입력으로 받아 토큰 $t_1$과 $t_2$를 예측한다면, 우리의 업데이트된 상태는 단순히 $s_2 = \{x, t_1, t_2\}$가 됩니다. 다시 말해, 우리의 상태는 주어진 프롬프트 $x$에 대해 LLM이 생성하는 진행 중인 완성(running completion)일 뿐입니다.
+
+**MDP 공식화.** LLM의 경우, RL이 행동을 모델링하는 방식에 따라 두 가지 주요 방식으로 공식화될 수 있습니다:
+*   **밴딧 공식화(Bandit formulation)**: LLM의 전체 완성 또는 응답이 단일 행동으로 모델링됩니다.
+*   **마르코프 결정 과정(Markov Decision Process, MDP) 공식화**: LLM 출력 내의 각 토큰이 개별 행동으로 모델링됩니다.
+
+우리는 이전 개요에서 이 두 가지 공식화에 대한 세부 사항을 설명했습니다. 그러나 PPO는 MDP 공식화에 의존하므로, 여기서는 주로 MDP 공식화에 초점을 맞출 것입니다.
+
+우리가 기억해야 할 것은, LLM은 **다음 토큰 예측(next token prediction)**을 통해 출력을 생성한다는 것입니다. 즉, 출력 완성(output completion)의 각 토큰을 순차적으로 생성합니다. 이 자기회귀(autoregressive) 과정은 아래에 묘사되어 있습니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Autoregressive next token prediction with an LLM">
+
+**LLM을 사용한 자기회귀 다음 토큰 예측**
+
+다음 토큰 예측은 RL 설정에 쉽게 매핑됩니다—우리는 각 토큰을 행동으로 모델링할 수 있습니다! 이 설정은 **마르코프 결정 과정(MDP) 공식화**라고 불립니다. MDP는 상태, 행동, 전이 확률 및 보상을 포함하는 의사 결정 모델링을 위한 확률적 프레임워크입니다—이것이 바로 우리가 지금까지 RL에 대해 논의한 설정입니다! RL에 사용되는 MDP 공식화는 아래에 나와 있습니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="MDP formulation for RL">
+
+**RL을 위한 MDP 공식화**
+
+LLM을 위한 MDP로 RL을 모델링할 때, 우리의 초기 상태는 프롬프트이며 우리의 정책은 개별 토큰을 예측함으로써 행동합니다. 우리의 LLM은 토큰에 대한 확률 분포를 예측하는 (확률적) 정책을 형성합니다. 생성 과정에서, 이 분포에서 토큰을 선택함으로써 행동이 취해집니다—각 토큰은 그 자체로 행동입니다. 토큰이 예측된 후, 현재 상태에 추가되고 LLM에 의해 다음 토큰을 예측하는 데 사용됩니다—이것은 단지 자기회귀 다음 토큰 예측입니다! 결국, LLM은 정지 토큰(stop token, 예: `<|end_of_text|>` 또는 `<eos>`)을 예측하여 생성 과정을 완료하고, 이로써 완전한 궤적을 산출합니다.
+
+#### 정책 경사(Policy Gradient) 기본 사항
+
+RL 훈련 중에, 우리는 우리의 목표—누적 (가능하면 할인된) 보상—를 최대화하고자 합니다. 이를 달성하기 위해, 우리는 단순히 **경사 상승(gradient ascent)**을 사용할 수 있습니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Solving the RL objective with gradient ascent">
+
+**경사 상승으로 RL 목표 해결**
+
+이를 LLM의 맥락에 적용하면, RL 훈련은 아래에 표시된 단계들을 따릅니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Key steps in RL training for LLMs">
+
+**LLM을 위한 RL 훈련의 주요 단계**
+
+우리는 먼저 프롬프트 배치(batch)를 샘플링하고, 우리의 LLM 또는 정책으로 이 프롬프트들에 대한 완성(completion)을 생성합니다. 그런 다음, 이 완성들에 대한 보상을 계산하고 (자세한 내용은 나중에 이어지는 섹션에서 설명), 이 보상을 사용하여 정책 업데이트(policy update)를 도출합니다. 이 최종 정책 업데이트 단계에서 경사 상승이 사용됩니다.
+
+더 구체적으로 말하면, 우리는 완성(completion)과 보상(reward)을 사용하여 우리 정책의 매개변수에 대한 RL 훈련 목표의 경사(gradient)를 추정합니다—이를 "**정책 경사(policy gradient)**"라고 합니다. 이 경사를 계산할 수 있다면, 경사 상승을 사용하여 정책을 훈련할 수 있습니다. 하지만 질문은 이것입니다: 이 경사를 어떻게 계산할까요?
+
+> "강화 학습의 목표는 에이전트가 최적의 보상을 얻기 위한 최적의 행동 전략을 찾는 것입니다. 정책 경사 방법은 정책을 직접 모델링하고 최적화하는 것을 목표로 합니다."
+>
+> — Lilian Weng
+
+**정책 경사(Policy gradients).** LLM 훈련에 사용되는 거의 모든 RL 최적화기(optimizer) (예: PPO [1], GRPO, REINFORCE)는 **정책 경사 알고리즘(policy gradient algorithms)**이며, 이들은 i) 정책 경사를 추정하고 ii) 이 추정치를 사용하여 경사 상승을 수행함으로써 작동합니다. 이 알고리즘들은 정책 경사를 추정하기 위해 다른 접근 방식을 사용하지만, 그들 모두의 높은 수준의 아이디어는 상당히 유사합니다—우리는 사용되는 정확한 기술에 따라 작은 세부 사항들을 조정할 뿐입니다.
+
+정책 경사 알고리즘을 더 깊이 이해하기 위해, 우리는 먼저 정책 경사의 가장 간단한 형태를 도출할 것입니다. 그런 다음, 이 아이디어를 확장하여 신뢰 영역 정책 최적화(Trust Region Policy Optimization, TRPO) [6] 및 PPO [1]와 같은 더 복잡한 정책 경사 알고리즘을 복구할 것입니다.
+
+바닐라 정책 경사(Vanilla Policy Gradient, VPG)는 많은 온라인 자료에서 광범위하게 다루어졌습니다. VPG에 대한 다른 유용한 설명은 다음과 같습니다:
+*   OpenAI의 정책 최적화 소개 [링크](https://spinningup.openai.com/en/latest/spinningup/extra_pytorch_math.html)
+*   Nathan Lambert의 RLHF 책 [링크](https://rlhfbook.com/policy-optimization-algorithms)
+*   Lilian Weng의 정책 최적화 알고리즘 [링크](https://lilianweng.github.io/posts/2018-02-19-a-long-peek-into-reinforcement-learning/#policy-optimization-algorithms)
+*   이 블로그의 정책 경사 알고리즘 2 [링크](https://www.deeplearningfocus.com/blog/policy-gradient-algorithms)
+
+그러나 우리는 완전성을 위해 여기에서 정책 경사의 몇 가지 간단한 형태를 다시 도출할 것입니다. 이미 알고 있듯이, RL에서 우리의 목표는 누적 보상을 최대화하는 것입니다. 이 목표의 경사를 우리 정책 $\theta$의 매개변수에 대해 계산하려고 하면, 다음을 도출할 수 있습니다:
+
+$$
+\nabla_\theta J(\theta) = E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t | s_t) R(\tau) \right]
+$$
+
+(출처)
+
+이 도출은 RL 훈련 목표(누적 보상)의 경사에서 시작하여 정책 경사에 대한 기본 표현으로 끝납니다. 이 도출에 사용된 단계들은 위에 열거되어 있습니다. 여기서 유일하게 복잡한 단계는 로그 도함수 트릭(log-derivative trick)의 사용과 궤적의 확률에 대한 우리의 정의를 활용하는 마지막 단계입니다. 마지막 단계에서, 우리는 궤적의 확률에 대한 우리의 정의를 대입하고, 초기 상태 확률과 전이 함수의 정책 매개변수에 대한 경사는 항상 0이라는 것을 관찰합니다. 왜냐하면 둘 다 정책에 의존하지 않기 때문입니다; 아래를 참조하세요.
+
+$$
+\nabla_\theta P(\tau) = \nabla_\theta \left( P(s_0) \prod_{t=0}^{T-1} P(s_{t+1} | s_t, a_t) \pi_\theta(a_t | s_t) \right)
+$$
+
+(출처)
+
+**기본 정책 경사 구현.** 우리가 지금까지 도출한 기본 정책 경사 표현은 이론적입니다—이는 기댓값(expectation)을 포함합니다. 실제로 이 경사를 계산하려면, 우리는 이를 표본 평균(sample mean)으로 근사해야 합니다. 다시 말해, 우리는 고정된 수의 궤적—LLM의 경우 프롬프트와 완성(completion)—을 샘플링하고, 이 각 궤적에 대한 정책 경사 표현의 평균을 취합니다.
+
+기본 정책 경사 표현은 우리가 이미 계산 방법을 알고 있는 두 가지 핵심 양을 포함합니다:
+*   보상은 검증자(verifier) 또는 보상 모델(reward model)에서 직접 나옵니다.
+*   행동의 로그 확률(log probabilities)은 우리의 LLM으로 계산할 수 있습니다 (즉, 이는 LLM 출력의 토큰 확률입니다).
+
+기본 정책 경사 계산 과정을 더 구체적으로 만들기 위해, PyTorch 의사 코드(pseudocode)로 된 단계별 구현이 아래에 제공되었습니다.
+
+```python
+# basic policy gradient implementation
+# for each trajectory in the batch
+for trajectory in trajectories:
+    # compute the policy gradient for this trajectory
+    policy_gradient = 0
+    for t in range(len(trajectory)):
+        # get the log probability of the action at time t
+        log_prob_action_t = LLM.log_prob(trajectory.actions[t] | trajectory.states[t])
+
+        # get the cumulative reward for the trajectory
+        cumulative_reward = trajectory.rewards.sum()
+
+        # add to the policy gradient
+        policy_gradient += log_prob_action_t * cumulative_reward
+
+    # update the policy parameters with the policy gradient
+    optimizer.step(policy_gradient)
+```
+
+위 구현에서 주목해야 할 한 가지 핵심 세부 사항은 우리가 정책 경사를 직접 계산하지 않는다는 것입니다. 오히려, 경사가 정책 경사와 동일한 손실 함수(loss function)를 공식화한 다음, PyTorch의 자동 미분(autodiff)을 사용하여 정책 경사를 계산합니다—이는 `loss.backward()` 중에 발생합니다. 정책 경사를 계산하는 데 사용되는 정확한 손실 함수는 아래에 나와 있습니다.
+
+$$
+L(\theta) = - E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \log \pi_\theta(a_t | s_t) R(\tau) \right]
+$$
+
+**정책 경사를 위한 손실 함수 생성**
+
+PPO (및 TRPO!)를 정책 경사에 대한 직접적인 표현보다는 손실 함수를 통해 공식화할 것이기 때문에 이 구별을 이해하는 것이 중요합니다.
+
+**기본 정책 경사의 문제점.** 기본 정책 경사 표현은 간단하지만, 몇 가지 주목할 만한 문제점을 가지고 있습니다:
+*   **높은 분산(High Variance)**: 경사 추정치(gradient estimates)는 높은 분산을 가질 수 있어 훈련을 불안정하게 만듭니다.
+*   **불안정한 정책 업데이트(Unstable Policy Updates)**: 정책에 대한 크고 잠재적으로 불안정하게 만드는 업데이트를 방지할 메커니즘이 없습니다.
+
+높은 분산으로 인해, 정책 경사를 정확하게 추정하려면 종종 훈련 반복(iteration)당 많은 궤적을 샘플링해야 하며, 이는 계산 비용이 많이 듭니다. 우리는 LLM으로 많은 완성(completion)을 생성하고, 이 모든 완성에 대한 보상과 토큰 로그 확률을 계산해야 합니다. 또한, 이 높은 분산은 훈련 불안정성(training instability)의 위험을 증가시킵니다—크고 부정확한 업데이트는 우리의 정책에 상당한 해를 끼칠 수 있습니다.
+
+이러한 문제를 해결하기 위해, 대부분의 정책 경사 알고리즘은 정책 경사 추정치의 분산을 줄이고 정책 업데이트에 **신뢰 영역(trust region)**을 강제하는 데 (즉, 단일 업데이트에서 정책이 얼마나 변할 수 있는지 제한하는 것) 초점을 맞춥니다.
+
+> "이 경사로 한 걸음 나아가면, 각 행동의 로그 확률이 $R(\tau)$에 비례하여 증가합니다. $R(\tau)$는 지금까지 얻은 모든 보상의 합입니다."
+>
+> — Spinning up in Deep RL
+
+**리워드-투-고(Reward-to-go).** 예를 들어, 우리의 기본 정책 경사(참조를 위해 아래에 복사됨)에서 우리는 궤적의 누적 보상에 기반하여 주어진 행동의 확률을 증가시키고 있음을 알 수 있습니다. 따라서 우리는 행동이 발생하기도 전에 관찰된 보상 때문에 행동의 확률을 증가시킬 수 있습니다!
+
+$$
+\nabla_\theta J(\theta) = E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t | s_t) R(\tau) \right]
+$$
+
+**기본 정책 경사 표현**
+
+이 간단한 관찰은 "**리워드-투-고(reward-to-go)**" 정책 경사의 생성으로 이어졌습니다; 아래를 참조하세요.
+
+$$
+\nabla_\theta J(\theta) = E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t | s_t) \sum_{k=t}^T r_k \right]
+$$
+
+**리워드-투-고 정책 경사**
+
+이 수정된 정책 경사 표현은 단순히 누적 보상을 행동 후에 관찰된 보상의 합으로 대체합니다. EGLP 보조정리(lemma)를 사용하여, 이 리워드-투-고 공식화가 정책 경사의 편향 없는 추정량(unbiased estimator)임을 보일 수 있습니다. 또한, 리워드-투-고 정책 경사는 이전의 기본 정책 경사 표현에 비해 증명 가능한 낮은 분산을 가집니다.
+
+**기준선(Baselines).** 분산을 더욱 줄이기 위해, 우리는 정책 경사 표현에 **기준선(baseline)**을 추가할 수도 있습니다; 아래를 참조하세요.
+
+$$
+\nabla_\theta J(\theta) = E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t | s_t) (\sum_{k=t}^T r_k - b(s_t)) \right]
+$$
+
+**정책 경사 표현에 기준선 추가**
+
+리워드-투-고 정책 경사와 유사하게, 우리는 EGLP 보조정리를 사용하여 우리의 정책 경사의 기준선 버전이 편향이 없고 낮은 분산을 가짐을 보일 수 있습니다. EGLP 보조정리 때문에, 이 기준선은 현재 상태에만 의존해야 합니다 (즉, 그렇지 않으면 EGLP 보조정리의 가정이 위반되어 증명이 더 이상 유효하지 않습니다).
+
+이 표현은 리워드-투-고 정책 경사와 거의 동일합니다—우리는 단순히 리워드-투-고 항에서 추가 기준선을 뺍니다. 정책 경사 추정치에 사용될 수 있는 기준선에는 많은 가능한 선택지가 있습니다. 한 가지 일반적인 기준선은 가치 함수(value function)입니다. 가치 함수를 기준선으로 사용하면 기대치보다 높은 누적 보상을 달성하는 행동을 긍정적으로 강화합니다.
+
+> 바닐라 정책 경사 알고리즘의 일반적인 문제는 경사 업데이트의 높은 분산입니다… 이를 완화하기 위해 기준선이라고 불리는 다양한 기술이 가치 추정치를 정규화하는 데 사용됩니다. 기준선은 여러 가지 방식으로 이를 수행하며, 다운스트림 행동에 대한 상태의 가치로 효과적으로 정규화합니다 (예: Q 값과 가치의 차이인 이점(Advantage)의 경우). 가장 간단한 기준선은 보상 배치(batch)의 평균 또는 이동 평균입니다.
+>
+> — RLHF 책
+
+**일반 정책 경사.** [3]에서는 정책 경사를 계산하는 옵션이 더 일반적인 정책 경사 표현으로 요약되었습니다; 아래를 참조하세요.
+
+$$
+\nabla_\theta J(\theta) = E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t | s_t) \Psi_t \right]
+$$
+
+([3]에서)
+
+이 표현은 우리가 지금까지 본 표현들과 거의 동일합니다. 유일한 차이점은 우리의 보상 항 $R(\tau)$를 여러 다른 표현과 같게 설정할 수 있는 일반적인 $\Psi_t$ 항으로 변경했다는 것입니다. 예를 들어, 우리는 다음을 할 수 있습니다:
+*   $\Psi_t = R(\tau)$로 설정하여 기본 정책 경사 표현을 복구합니다.
+*   $\Psi_t$를 시간 $t$ 이후에 받은 보상과 같게 설정하여 정책 경사의 리워드-투-고 변형을 복구합니다.
+*   $\Psi_t$를 보상의 기준선 버전과 같게 설정합니다; 예: 누적 보상 $R(\tau)$와 가치 함수 $V(s_t)$의 차이.
+*   $\Psi_t$를 상태-행동($Q$) 또는 이점 함수($A$)와 같게 설정합니다.
+
+많은 가능한 공식화에도 불구하고, PPO—그리고 LLM 도메인에서 사용되는 거의 모든 RL 최적화기—는 $\Psi_t$를 이점 함수 $A(s_t, a_t)$와 같게 설정하는 데 초점을 맞춥니다. 이 설정은 **바닐라 정책 경사(VPG)**라고 불립니다; 아래를 참조하세요.
+
+$$
+\nabla_\theta J(\theta) = E_{\tau \sim \pi_\theta} \left[ \sum_{t=0}^T \nabla_\theta \log \pi_\theta(a_t | s_t) A(s_t, a_t) \right]
+$$
+
+**바닐라 정책 경사**
+
+이론적으로, VPG는 가장 낮은 분산의 경사 추정치를 산출합니다. VPG는 낮은 분산을 가지지만, 정책 업데이트에 신뢰 영역을 강제할 메커니즘이 여전히 없습니다—크고 파괴적인 정책 업데이트는 여전히 훈련 과정을 불안정하게 만들 수 있습니다. PPO는 이 문제에 대한 해결책으로 만들어졌습니다. 우리가 보게 되겠지만, PPO는 우리가 본 기본 정책 경사 표현과 유사하지만, 정책 업데이트에 신뢰 영역을 강제하기 위한 메커니즘이 추가되었습니다. 이제 PPO와 그 구현에 관련된 많은 실용적인 세부 사항에 대해 더 자세히 알아보겠습니다.
+
+### 근접 정책 최적화(Proximal Policy Optimization, PPO)
+
+이제 RL의 기본 사항을 이해했으므로, 다음 섹션에서는 근접 정책 최적화(Proximal Policy Optimization, PPO) [1]에 대해 배우는 데 시간을 할애할 것입니다. 이 설명은 지난 섹션에서 도출한 VPG 표현을 기반으로 하며, PPO의 전신인 신뢰 영역 정책 최적화(Trust Region Policy Optimization, TRPO) [6]부터 시작합니다. TRPO는 훈련을 안정화하는 데 효과적이지만, 상대적으로 복잡하기도 합니다. PPO는 유사한 이점을 가진 더 실용적인 대안으로 개발되었습니다. 이 섹션을 마무리하기 위해, PPO에서 이점 함수를 계산하는 가장 일반적인 접근 방식인 일반화된 이점 추정(Generalized Advantage Estimation, GAE) [3]도 다룰 것입니다.
+
+#### 신뢰 영역 정책 최적화(TRPO) [6]
+
+> "TRPO는 페널티(penalty) 대신 강력한 제약(hard constraint)을 사용합니다. 왜냐하면 다양한 문제—심지어 학습 과정에서 특성이 변하는 단일 문제 내에서도—에서 잘 작동하는 단일 $\beta$ 값을 선택하기 어렵기 때문입니다."
+>
+> — [1]에서
+
+PPO에 대해 배우기 전에, 우리는 그 전신인 신뢰 영역 정책 최적화(TRPO) [6]를 살펴볼 필요가 있습니다. TRPO의 핵심 동기는 데이터 효율적이고 과도한 하이퍼파라미터 튜닝을 요구하지 않는 알고리즘을 만드는 것입니다. 이를 위해, [6]의 저자들은 아래에 제약된 목표(constrained objective)를 제안하는데, 이는 우리의 정책을 단조롭게 개선(monotonically improve)할 것을 보장합니다. 이 목표는 정책 업데이트에 신뢰 영역을 강제하여, 훈련을 불안정하게 만들 수 있는 크고 파괴적인 정책 업데이트의 위험을 제거합니다.
+
+$$
+\max_\theta E_{s, a \sim \pi_{\theta_{old}}} \left[ \frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} A(s, a) \right] \quad \text{s.t.} \quad E_{s \sim \pi_{\theta_{old}}} \left[ D_{KL}(\pi_{\theta_{old}}(\cdot|s) || \pi_\theta(\cdot|s)) \right] \le \delta
+$$
+
+**TRPO를 위한 대리 목표(Surrogate objective)** ([1]에서)
+
+**대리 목표.** 위에 표시된 이 목표는 TRPO에서 **대리 목표(surrogate objective)**라고 불립니다. 이 명칭은 대리 목표가 표준 RL 훈련 목표와 다르다는 사실에서 비롯됩니다. RL에서 우리는 누적 보상을 최대화하는 것을 목표로 하지만—VPG 논의에서 보았듯이—RL의 이 "진정한" 목표를 직접 최대화하는 것은 훈련 불안정성으로 이어질 수 있습니다. TRPO는 진정한 목표 대신 최대화할 대리 목표를 공식화합니다.
+
+TRPO에 대한 위 표현과 VPG 사이에는 몇 가지 눈에 띄는 차이점이 있습니다:
+*   현재 정책의 행동 확률은 이전 정책(즉, 훈련 전 정책)에서 해당 행동의 확률로 정규화됩니다—이것이 **정책 비율(policy ratio)** (중요도 비율(importance ratio)이라고도 함)을 형성합니다. 우리는 또한 이 공식화에서 로그 확률 대신 확률을 사용합니다.
+*   새로운 정책과 이전 정책 간의 기대 KL 발산(KL divergence)이 임계값 $\delta$보다 작도록 목표에 제약이 가해집니다.
+
+그렇지 않으면, TRPO 손실 함수는 VPG와 유사한 구조를 공유합니다—이점 함수와 궤적 내 토큰 수준 확률의 합을 포함합니다.
+
+**정책 비율.** TRPO 손실 함수의 핵심은 아래에 표시된 대로 정의되는 정책 비율(policy ratio)입니다.
+
+$$
+r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}
+$$
+
+**정책 (또는 중요도) 비율**
+
+정책 비율은 훈련 과정이 시작되기 전의 해당 행동 확률에 비해 현재 정책에서 주어진 행동이 얼마나 더 가능성이 높은지를 알려줍니다—이는 "이전" 정책으로 표시됩니다. 이 양은 우리 궤적 내의 다른 행동들에 중요도를 할당하는 역할을 합니다. 새로운 정책이 이전 정책보다 어떤 행동에 더 높은 확률을 할당하면, 이 비율은 1보다 커져 목표에서 해당 행동의 이점의 영향력을 증가시킵니다. 반대로, 새로운 정책이 더 낮은 확률을 할당하면, 비율은 1보다 작아져 해당 행동의 영향력을 감소시킵니다. 정책 비율은 새로운 정책이 더 가능성 있게 만드는 행동—특히 이 행동들이 높은 이점을 가질 경우—을 정책 업데이트가 강조하도록 보장하며, 새로운 정책 하에서 덜 가능성 있게 되는 행동들은 억제합니다. 이를 통해 우리는 새로운 정책이 이전 정책과 어떻게 다른지에 따라 업데이트가 적절하게 가중치를 부여받도록 보장하여 안정적이고 효율적인 정책 개선을 가능하게 합니다.
+
+**대리 목표 해결.** 이 목표는 안정적인 정책 업데이트를 제공하지만, 이를 해결하는 것은 상당히 복잡할 수 있습니다. 우리의 목표에 명시적인 제약을 도입함으로써, 우리는 간단한 경사 상승 3으로 이 목표를 해결할 수 있는 능력을 제거합니다. 대신, 우리는 더 복잡한 공액 경사 알고리즘(conjugate gradient algorithm)을 통해 이 목표를 해결해야 합니다.
+
+대안적으로, 우리는 이 제약을 제거하고 대신 KL 발산을 손실 함수에 페널티(penalty)로 추가할 수 있습니다; 아래를 참조하세요.
+
+$$
+L(\theta) = E_{s, a \sim \pi_{\theta_{old}}} \left[ \frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} A(s, a) - \beta D_{KL}(\pi_{\theta_{old}}(\cdot|s) || \pi_\theta(\cdot|s)) \right]
+$$
+
+**TRPO를 위한 페널티 목표**
+
+이 제약 없는 손실은 더 간단하며 다시 기본 경사 상승으로 해결할 수 있습니다.
+
+**TRPO에서 PPO로.** TRPO의 제약을 페널티로 공식화하면 복잡한 최적화 기술을 피하고 기본 경사 상승에 의존할 수 있습니다. 그러나 최적화 과정에 새로운 하이퍼파라미터 $\beta$가 도입되어 튜닝이 어려워집니다. 이 목표가 잘 작동하려면 $\beta$ 값을 적절하게 설정하는 것이 필수적이며, 많은 도메인에 일반화되는 단일 $\beta$ 값을 찾는 것은 어렵습니다. 결과적으로, 위의 두 목표 모두 문제점을 가지고 있습니다:
+*   TRPO 대리 목표는 실제로 해결하기에는 너무 복잡합니다.
+*   재구성된 페널티 목표는 $\beta$ 설정에 민감합니다.
+
+우리는 TRPO의 이점—안정성, 데이터 효율성, 신뢰성—을 유지하면서도 그 복잡성을 피하는 알고리즘을 개발하고자 합니다. 이상적으로, 이 알고리즘은 광범위하게 적용 가능하고 기본 경사 상승을 사용하여 해결할 수 있어야 합니다. 이러한 목표들이 TRPO에서 크게 영감을 받은 PPO의 제안으로 이어졌습니다. PPO의 목표는 TRPO 대리 목표에서 영감을 받았지만, 강력한 KL 제약을 클리핑 메커니즘(clipping mechanism)으로 대체하여 더 간단한 방식으로 신뢰 영역을 강제합니다.
+
+#### 근접 정책 최적화 알고리즘 [1]
+
+> "우리는 RL을 위한 새로운 정책 경사 방법군을 제안합니다. 이 방법군은 환경과의 상호작용을 통해 데이터를 샘플링하고, 확률적 경사 상승(stochastic gradient ascent)을 사용하여 대리 목표 함수를 최적화하는 것을 번갈아 수행합니다."
+>
+> — [1]에서
+
+VPG는 실제로 계산하기는 간단하지만, 데이터 효율성이 낮고 (즉, 모델이 잘 작동하려면 많은 샘플에 대해 훈련되어야 함) 정책 업데이트에 높은 분산을 가집니다. 이러한 문제들은 TRPO에 의해 대부분 해결되지만, 상당한 복잡성 증가라는 대가를 치릅니다. PPO는 TRPO의 데이터 효율성 및 신뢰성 이점을 가지면서도 여전히 경사 상승으로 해결할 수 있는 알고리즘입니다. 이러한 점에서 PPO는 TRPO에 비해 더 간단한 알고리즘입니다. 그러나 우리가 보게 되겠지만, PPO는 여전히 자체적으로 많은 구현 복잡성을 가진 복잡한 알고리즘입니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Update procedure in PPO">
+
+**PPO의 업데이트 절차** ([1]에서)
+
+**훈련 과정.** TRPO와 유사하게, PPO는 대리 목표를 최적화하는 데 초점을 맞추지만, PPO의 목표는 제약이 없으며 약간 수정되었습니다. 위 알고리즘에 표시된 대로, PPO는 각 단계에서 단일 정책 업데이트 이상을 수행하며, 대신 다음을 번갈아 수행합니다:
+*   정책으로부터 새로운 데이터 또는 궤적을 샘플링합니다.
+*   샘플링된 데이터에 대해 여러 에포크(epoch)의 최적화를 수행합니다.
+
+PPO 대리 목표는 다시 현재 정책과 이전 모델 (즉, 훈련이 수행되기 전의 정책) 간의 정책 비율을 기반으로 합니다. [1]의 표기법과 일치시키기 위해, 우리는 정책 비율을 $r_t(\theta)$로 나타낼 것입니다. 이는 시간 단계 $t$에 대한 보상에 사용된 $r_t$ 표기법과 유사합니다. 그러나 정책 비율은 보상과 관련이 없습니다!
+
+PPO 목표를 얻기 위해, 우리는 KL 제약이 없는 TRPO에 의해 최대화되는 대리 목표에서 시작합니다; 아래를 참조하세요.
+
+$$
+L^{UNCLIPPED}(\theta) = E_{s, a \sim \pi_{\theta_{old}}} \left[ r_t(\theta) A(s, a) \right]
+$$
+
+**클리핑되지 않은 PPO 목표**
+
+우리는 이 공식화를 "**클리핑되지 않은(unclipped)**" 목표라고 부를 것입니다. 제약이 없기 때문에, 이 목표는 i) 이점(advantage)을 추정하고 ii) 정책 비율(policy ratio)을 계산함으로써 정책 경사를 도출하기 위해 쉽게 계산될 수 있습니다. 그러나 이 제약 없는 목표를 최대화하려고 하면, 훈련 과정을 불안정하게 만드는 크고 파괴적인 정책 경사 업데이트로 이어질 수 있습니다.
+
+이 문제를 해결하기 위해, PPO는 대리 목표에 새로운 **클리핑 메커니즘(clipping mechanism)**을 도입하여 신뢰 영역을 유지하는 데 도움을 줍니다; 아래를 참조하세요.
+
+$$
+L^{CLIP}(\theta) = E_{s, a \sim \pi_{\theta_{old}}} \left[ \min(r_t(\theta) A(s, a), \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) A(s, a)) \right]
+$$
+
+**PPO 대리 목표**
+
+목표의 주요 항은 변경되지 않았지만, 정책 비율의 클리핑된 버전이 추가된 항이 있습니다—정책 비율은 $[1 - \epsilon, 1 + \epsilon]$ 4 범위에 속해야 합니다. 클리핑 항은 RL 훈련 과정이 정책 비율을 1의 값에서 멀어지게 하는 것을 억제합니다. PPO 대리 목표는 클리핑된 목표와 클리핑되지 않은 목표 중 최소값을 취합니다. 이러한 방식으로, PPO 목표는 원래의 클리핑되지 않은 목표 5에 대한 비관적인 (하한) 경계입니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="PPO clipping mechanism">
+
+**PPO 클리핑 메커니즘** ([1]에서)
+
+이점(advantage)이 양수인지 음수인지에 따라 클리핑의 동작은 약간 다릅니다; 위를 참조하세요. 대리 목표에서 최소값을 사용하는 것은 클리핑이 한 방향으로만 적용되도록 합니다. 특히, 정책 비율을 1의 값에서 멀리 이동시킴으로써 대리 목표를 임의로 감소시킬 수 있지만, 클리핑은 정책 비율을 통해 목표를 임의로 증가시키는 것을 방지합니다. 이러한 방식으로 PPO는 큰 정책 비율을 억제하여 훈련 업데이트 후 우리의 정책이 이전 정책에서 너무 많이 벗어나지 않도록 합니다.
+
+> "이 방식에서는, 확률 비율의 변화가 목표를 개선할 때만 무시하고, 목표를 악화시킬 때는 포함합니다."
+>
+> — [1]에서
+
+PPO의 클리핑 로직을 더 깊이 이해하기 위해, 대리 목표를 최적화할 때 발생할 수 있는 네 가지 가능한 경우를 각각 고려할 수 있습니다:
+*   **경우 #1 [ $A > 0$, $r_t(\theta) \le 1 + \epsilon$ ]**: 이점(advantage)이 양수입니다—이것은 우리가 강화하고 싶은 행동입니다. 우리의 정책 비율은 $1 + \epsilon$보다 작거나 같으므로, 이 행동의 확률을 증가시키기 위해 일반적인 정책 경사 업데이트를 수행합니다.
+*   **경우 #2 [ $A > 0$, $r_t(\theta) > 1 + \epsilon$ ]**: 이점은 다시 양수이지만, 우리의 정책 비율은 $1 + \epsilon$보다 큽니다. 이는 이 행동이 이전 정책에 비해 새로운 정책에서 이미 더 가능성이 높다는 것을 의미합니다. 목표는 클리핑되고, 정책 비율의 추가 증가에 대한 경사는 0이 됩니다. 이는 정책이 이 행동을 더욱 가능성 있게 만드는 것을 방지합니다.
+*   **경우 #3 [ $A < 0$, $r_t(\theta) \ge 1 - \epsilon$ ]**: 이점은 음수입니다—이것은 우리가 부정적으로 강화하고 싶은 행동입니다 (즉, 확률을 감소시킵니다). 우리의 정책 비율은 $1 - \epsilon$보다 크거나 같으므로, 이 행동의 확률을 감소시키기 위해 일반적인 정책 경사 업데이트를 수행합니다.
+*   **경우 #4 [ $A < 0$, $r_t(\theta) < 1 - \epsilon$ ]**: 이점은 다시 음수이지만, 우리의 정책 비율은 $1 - \epsilon$보다 작습니다. 이는 이 행동이 이전 정책에 비해 새로운 정책에서 이미 덜 가능성이 높다는 것을 의미합니다. 목표는 클리핑되고, 정책 비율의 추가 감소에 대한 경사는 0이 됩니다. 이는 정책이 이 행동을 더욱 덜 가능성 있게 만드는 것을 방지합니다.
+
+정책 비율은 현재 정책과 이전 정책 사이에서 계산됩니다. PPO에서 새로운 데이터가 샘플링될 때마다 이전 정책은 현재 정책과 일치하도록 업데이트됩니다. LLM의 맥락에서는, 각 데이터 배치(batch)에 대해 2-4회 (또는 때로는 그 이상)의 경사 업데이트 [2]를 수행하므로, 이전 모델은 자주 업데이트됩니다. PPO의 클리핑 연산은 따라서 특정 데이터 배치에 대한 신뢰 영역을 유지합니다.
+
+**KL 발산(KL divergence).** PPO로 LLM을 훈련할 때, 우리는 일반적으로 현재 정책과 참조 정책(reference policy)—보통 RL 훈련이 시작되기 전의 어떤 정책(예: SFT 모델)—사이의 KL 발산을 훈련 과정에 통합합니다. 이 추가된 KL 발산 항은 정책이 참조 정책과 너무 달라지는 것을 페널티화하여, 정규화(regularizing) 효과를 가집니다. 우리는 시퀀스 내 각 토큰에 대해 두 LLM이 출력한 토큰 확률 분포를 비교하여 토큰당 KL 발산을 계산합니다. 실제로 KL 발산이 정확히 어떻게 계산되는지에 대한 자세한 내용은 [여기](https://www.deeplearningfocus.com/blog/rlhf-kl-divergence)에서 찾을 수 있습니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Incorporating KL divergence into the reward">
+
+**보상에 KL 발산 통합**
+
+PPO 훈련에 KL 발산을 추가하는 두 가지 일반적인 방법이 있습니다. 첫째, RL에서 보상에서 KL 발산을 직접 뺄 수 있습니다; 위를 참조하세요. 대안적으로, 아래에 표시된 대로 KL 발산을 RL 훈련 목표에 페널티 항으로 추가할 수 있습니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Incorporating a KL penalty into the RL training objective">
+
+**RL 훈련 목표에 KL 페널티 통합**
+
+두 경우 모두, 우리는 새로운 정책이 참조와 너무 달라지지 않으면서 보상을 최대화하고자 합니다. 이러한 KL 발산 항은 LLM을 위한 RL 훈련에서 거의 보편적으로 사용되지만, 정확한 구현은 다양합니다. 위에 설명된 두 가지 접근 방식 모두 성공적으로 사용되었습니다. 그러나 훈련 목표에서 페널티 항을 통해 KL 발산을 포착하는 것이 아마도 더 일반적이고 (조금 더 간단합니다).
+
+**비평가(critic).** 이점 함수는 상태-행동 가치 함수와 가치 함수의 차이로 정의된다는 것을 기억하십시오. PPO에서 우리는 궤적에 대해 관찰된 실제 보상을 사용하여 상태-행동 가치 함수—주어진 상태에서 특정 행동을 취했을 때의 기대 보상—를 추정합니다. 대조적으로, 가치 함수는 일반적으로 학습된 모델을 사용하여 추정됩니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Value function estimation with a critic">
+
+**비평가를 사용한 가치 함수 추정**
+
+예를 들어, 우리는 정책의 별도 복사본을 만들거나—더 나은 매개변수 효율성을 위해—정책과 가중치를 공유하는 전용 가치 헤드(value head)를 추가하여 가치 함수를 예측할 수 있습니다. 이 학습된 가치 함수는 종종 **가치 모델(value model)** 또는 **비평가(critic)**라고 불립니다. 부분 응답을 입력으로 받아, 비평가는 시퀀스 내의 모든 토큰 위치에 대한 기대 최종 보상을 예측합니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Critic predicting expected rewards">
+
+**비평가 대 보상 모델.** LLM의 맥락에서, 우리는 보상 모델(reward model)로 보상을 예측합니다. 또한, 대부분의 LLM은 결과 감독(outcome supervision)을 사용하여 훈련됩니다. 이는 모델이 완전한 응답을 생성한 후에만 (즉, `<eos>` 토큰이 출력된 후에만) 보상이 할당된다는 것을 의미합니다. 비평가와 보상 모델은 둘 다 학습된 모델—보통 우리의 LLM 정책의 또 다른 복사본—로서 보상을 예측한다는 점에서 유사합니다. 그러나 비평가는 부분 완성(partial completion)을 입력으로 받아 기대 보상을 예측하는 반면, 보상 모델은 일반적으로 전체 응답이 받은 보상을 예측합니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Value model versus reward model">
+
+**가치 모델 대 보상 모델**
+
+더 나아가, 보상 모델은 RL 훈련 내내 고정되는 반면, 비평가는 지속적으로 업데이트됩니다.
+
+**비평가 훈련.** 가치 함수는 온-정책(on-policy)입니다—이는 우리 정책의 현재 매개변수에 의존합니다. RL 훈련 시작 시 고정되는 보상 모델과 달리, 비평가는 각 정책 업데이트에서 LLM과 함께 훈련되어 예측이 온-정책으로 유지되도록 합니다—이를 액터-크리틱(actor-critic) 설정 6이라고 합니다. 이는 비평가가 예측한 보상과 실제 보상 사이의 추가적인 평균 제곱 오차(mean-squared error, MSE) 손실을 대리 손실에 추가함으로써 달성됩니다.
+
+**PPO 구현.** 이러한 각 아이디어를 더 완전하게 만들기 위해, 우리는 아래에 PyTorch 의사 코드(pseudocode)로 PPO를 구현했습니다. 이 구현에서 우리는 지금까지 논의한 몇 가지 핵심 아이디어를 볼 수 있습니다. 예를 들어:
+*   현재 정책과 참조 모델 간의 KL 발산을 계산한 다음, 이 KL 발산을 보상에서 직접 뺍니다.
+*   학습된 비평가를 사용하여 이점(advantage)을 계산하고 (정책 자체와 함께 MSE 손실을 통해 이 비평가를 훈련합니다).
+*   이전 모델에 대한 정책 비율을 계산합니다.
+
+아래 스크립트는 단일 정책 업데이트를 수행하지만, PPO는 일반적으로 각 데이터 배치에 대해 여러 번 (즉, LLM의 경우 2-4회 [2]) 정책 업데이트를 수행합니다. 정책 비율의 "이전" 모델은 배치에 대한 첫 번째 업데이트 전의 모델입니다. 전체 (클리핑된) PPO 손실을 계산합니다. PyTorch는 기본적으로 경사 하강(gradient descent)을 수행하므로 (상승이 아님) 이 손실의 음수 값을 취합니다. 시퀀스 배치에 걸쳐 토큰 수준 PPO 손실을 집계하거나 평균을 냅니다. 배치에서 손실을 집계하는 방법은 여러 가지가 있으며, 사용된 접근 방식은 결과에 상당한 영향을 미칠 수 있습니다 [2] 7.
+
+여기서 볼 수 있는 한 가지 흥미로운 세부 사항은—PPO 손실이 로그 확률이 아닌 토큰 확률을 사용함에도 불구하고—정책 비율을 계산할 때 원시 확률을 사용하는 대신 토큰 로그 확률로 작업하고 이를 지수화(exponentiate)한다는 것입니다. 이것은 일반적으로 사용되는 수치 안정성(numerical stability) 트릭입니다.
+
+```python
+import torch
+import torch.nn.functional as F
+
+# constants
+kl_beta = 0.1
+critic_weight = 0.5
+ppo_eps = 0.2
+
+# sample prompt completions and rewards
+with torch.no_grad():
+    completions = LLM.generate(prompts) # (B*G, L)
+    rewards = RM(completions) # (B*G, 1)
+
+# create a padding mask from lengths of completions in batch
+completion_mask = <... mask out padding tokens ...>
+
+# compute value function / critic output
+values = CRITIC(completions) # (B*G, L) - predicted reward per token!
+
+# get policy logprobs for each action
+llm_out = LLM(completions)
+per_token_logps = F.log_softmax(llm_out, dim=-1) # (B*G, L)
+
+# get reference logprobs for each action
+ref_out = REF(completions)
+ref_per_token_logps = F.log_softmax(ref_out, dim=-1) # (B*G, L)
+
+# compute KL divergence between policy and reference policy
+kl_div = per_token_logps - ref_per_token_logps # (B*G, L)
+
+# directly subtract KL divergence from rewards
+# NOTE: KL div is per token, so reward becomes per token and reward
+# for all tokens (besides last token) is just kl divergence.
+# Reward for last token is sum of outcome reward and KL div.
+rewards -= kl_beta * kl_div # (B*G, L)
+
+# compute the advantage - simple approach
+advantage = rewards - values.detach() # (B*G, L)
+
+# compute the policy ratio
+# NOTE: old_per_token_logps must be persisted during first policy
+# update for this batch of data and re-used in each subsequent update
+policy_ratio = torch.exp(
+    per_token_logps - old_per_token_logps,
+) # (B*G, L)
+
+clip_policy_ratio = torch.clamp(
+    policy_ratio,
+    min=1.0 - ppo_eps,
+    max=1.0 + ppo_eps,
+)
+
+# compute the ppo loss
+ppo_loss = torch.min(
+    advantage * policy_ratio,
+    advantage * clip_policy_ratio,
+) # (B*G, L)
+ppo_loss = -ppo_loss # PyTorch performs gradient descent (not ascent)
+
+# combine ppo loss and critic mse loss
+critic_loss = ((rewards - values) ** 2) # (B*G, L)
+loss = ppo_loss + critic_weight * critic_loss # (B*G, L)
+
+# aggregate the loss across tokens (many options exist here)
+loss = ((loss * completion_mask).sum(axis=-1) / completion_mask.sum(axis=-1)).mean()
+
+# perform policy gradient update
+optimizer.zero_grad()
+loss.backward()
+optimizer.step()
+```
+
+**실험.** PPO는 딥 RL(DeepRL)의 전성기—LLM의 확산 훨씬 이전—에 제안되었으므로, [1]에서는 LLM 설정이 고려되지 않았습니다. 그럼에도 불구하고 [1]의 실험 결과를 이해하는 것은 PPO의 메커니즘에 대한 직관을 얻는 데 유용합니다. 이 실험들에서 PPO는 다양한 로봇 공학 및 비디오 게임 작업에서 완전 연결 다층 퍼셉트론(MLP)을 처음부터 훈련하는 데 사용됩니다. 정책과 비평가는 분리되어 유지됩니다 (즉, 매개변수 공유 없음).
+
+먼저, 저자들은 OpenAI Gym의 여러 시뮬레이션 로봇 공학 작업을 사용하여 PPO에서 대리 손실의 다른 공식화를 테스트합니다:
+*   클리핑된 목표 (PPO의 표준).
+*   클리핑되지 않은 목표.
+*   (적응형 8) KL 발산을 포함한 클리핑되지 않은 목표.
+
+LLM을 위한 일반적인 RL 훈련 설정과 달리, 이 실험들은 현재 정책과 이전 모델 간의 KL 발산을 계산하여 이 접근 방식이 표준 PPO 클리핑 메커니즘보다 더 잘 작동하는지 테스트하는 것을 목표로 합니다. 일반적으로 PPO로 LLM을 훈련할 때, KL 발산은 현재 정책과 참조 모델(예: SFT 모델) 사이에서 계산되며, 이전 모델 9이 아닙니다. 그러나 이 실험들에서는 모델을 처음부터 훈련하기 때문에 KL 발산을 위한 참조 모델을 사용하는 것이 불가능합니다—참조 역할을 할 사전 훈련된 모델이 없습니다.
+
+이 다양한 목표들을 테스트한 결과는 아래에 요약되어 있습니다—PPO의 클리핑된 목표는 훈련을 안정화하고 다른 옵션들을 명확하게 능가합니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="PPO objective comparison">
+
+**PPO 목표 비교** ([1]에서)
+
+PPO는 또한 Atari 게임 플레이 도메인의 49개 게임에서 테스트되었으며 A2C 및 ACER과 같은 강력한 기준선 RL 알고리즘과 비교되었습니다. 성능은 두 가지 지표를 기반으로 측정됩니다:
+*   훈련 전반의 평균 보상 (더 빠른 학습에 유리).
+*   마지막 100단계 훈련 동안의 평균 보상 (최종 품질/보상에 유리).
+
+이 각 지표에 대해, 우리는 각 알고리즘이 모든 Atari 게임에서 최고 점수를 달성한 횟수를 포착하는 "승률(win rate)"을 계산합니다. 이 실험들의 결과는 아래에 나와 있으며, ACER과 같은 기준선 알고리즘이 PPO와 유사하거나 더 나은 성능을 보이지만 훨씬 느리게 학습한다는 것을 알 수 있습니다. PPO는 훈련을 안정화하고, 잘 수행하며, 샘플 복잡성(sample complexity) 10에서 개선을 가져옵니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="PPO performance vs. baselines">
+
+**PPO 성능 대 기준선** ([1]에서)
+
+#### 일반화된 이점 추정(GAE) [3]
+
+이점은 주어진 상태에서 평균 행동과 비교하여 주어진 행동이 얼마나 더 나은지를 알려줍니다: $A(s_t, a_t) = Q(s_t, a_t) - V(s_t)$. 이 공식화에서 가치 함수는 우리의 비평가에 의해 추정되지만, 이점 함수가 어떻게 계산될 수 있는지에 대해서는 아직 자세히 논의하지 않았습니다. PPO에서 이점 함수는 토큰별 (또는 행동별)로 추정됩니다.
+
+이점을 계산하는 데 사용될 수 있는 두 가지 주요 접근 방식이 있으며, 이 접근 방식들은 대부분의 다른 기술의 기초를 형성합니다.
+
+**(1) 몬테카를로(Monte Carlo, MC).** 이점의 MC 추정치는 전체 궤적에 대해 관찰된 실제 보상에 의존합니다. 즉, 이점은 전체 궤적에 대한 누적 보상 $R(s_t)$ 11과 비평가가 예측한 현재 상태 $V(s_t)$의 가치 함수 간의 차이로 계산됩니다. 지금까지 PPO에 대한 우리의 논의는 이점을 추정하기 위한 MC 접근 방식을 가정했습니다. MC 추정치는 궤적에 대해 관찰된 실제 보상(정확한 정보)에 의존하기 때문에 낮은 편향(bias)을 가지지만, MC 추정치는 또한 높은 분산(variance)을 가집니다. 따라서 정확한 이점 추정치를 얻기 위해서는 많은 샘플을 취하고 충분한 수의 관찰을 해야 합니다—이는 비용이 많이 들 수 있습니다.
+
+**(2) 시간차(Temporal Difference, TD).** TD 잔차(residual)는 비평가의 토큰별 가치 예측을 사용하여 이점의 1단계 추정치를 형성합니다; 아래를 참조하세요.
+
+$$
+\delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)
+$$
+
+**시간차(TD) 잔차**
+
+이 TD 잔차는 단일 토큰을 예측하고 해당 행동에 대한 실제 보상을 관찰한 후 기대 보상이 얼마나 변하는지 분석합니다 12. 우리는 현재 상태 $V(s_t)$의 값을 다음의 합에서 뺍니다:
+*   현재 상태 $r_t$에 대한 관찰된 보상.
+*   다음 상태 $V(s_{t+1})$의 (할인된) 값.
+
+$V(s_t)$와 유사하게, 이 두 항의 합은 상태 $s_t$에서의 기대 수익을 포착합니다. 그러나 현재 상태에 대한 보상은 비평가에 의해 추정되는 대신 실제 관찰된 보상 $r_t$를 통해 포착됩니다. 따라서 이 항들 간의 차이는 상태 $s_t$에서 관찰된 실제 보상이 기대치보다 얼마나 더 나은지를 포착합니다—이것이 바로 이점(advantage)입니다! 실제 보상 $r_t$를 사용함으로써, 우리는 우리의 이점 추정치에 일부 정확한 정보를 통합합니다—추정치의 항들은 부분적으로 우리의 비평가에서 오고 부분적으로 실제 보상에서 옵니다. 이러한 토큰 수준 보상을 사용하여 이점을 추정하면 정책 경사의 분산이 낮아집니다.
+
+만약 우리의 가치 함수가 정확하다면, TD 잔차 또한 편향 없는 이점 추정치를 형성할 것입니다. 불행히도, 우리는 실제 가치 함수에 접근할 수 없으므로, 가치 함수를 추정하기 위해 비평가 13를 훈련합니다. 부분 응답으로부터 최종 보상을 정확하게 예측하는 것이 어렵기 때문에, TD 잔차는 편향되어 있습니다.
+
+**N-단계 추정량(N-step estimators).** TD 잔차는 단일 단계에 대한 실제 보상과 기대 보상 간의 차이를 분석합니다. 그러나 우리는 이 아이디어를 일반화하여 어떤 수의 단계도 포착할 수 있습니다. 아래에 표시된 대로, N-단계 이점 추정량은 TD 잔차와 유사한 구조를 가지지만, N개의 상태에 대한 실제 보상을 통합하며, 여기서 N은 1보다 클 수 있습니다.
+
+$$
+A_t^{(N)} = \sum_{k=0}^{N-1} \gamma^k r_{t+k} + \gamma^N V(s_{t+N}) - V(s_t)
+$$
+
+**N-단계 이점 추정량**
+
+단일 단계 TD 잔차와 유사하게, N 값이 낮은 이점 추정량은 낮은 분산을 가지지만 높은 편향을 가집니다. 그러나 N 값을 증가시킬수록, 우리는 이점 추정치에 더 정확한 보상 정보를 통합하여 편향을 낮춥니다 (그리고 결과적으로 분산을 증가시킵니다). 이를 더 나아가, N을 궤적의 총 단계 수와 같게 설정함으로써 MC 추정치를 복구할 수도 있습니다! 이 N 설정은 단순히 누적 보상과 현재 상태 $V(s_t)$의 값 간의 차이를 산출합니다. 따라서 N의 다른 설정은 편향과 분산에서 다른 절충점(tradeoff)을 산출하며, 단일 단계 TD 잔차(높은 편향, 낮은 분산)부터 MC 추정치(높은 분산, 낮은 편향)까지 모든 범위를 포괄합니다.
+
+> "GAE는 편향-분산 절충(bias-variance tradeoff)을 더 잘 균형 잡는 정책 경사 알고리즘을 위한 이점을 계산하는 대체 방법입니다. 전통적인 단일 단계 이점 추정치는 너무 많은 편향을 도입할 수 있는 반면, 완전한 궤적을 사용하는 것은 종종 높은 분산으로 고통받습니다. GAE는 두 가지 아이디어—다단계 예측(multi-step prediction)과 가중 이동 평균(weighted running average) (또는 이들 중 하나만)—를 결합하여 작동합니다."
+>
+> — [2]에서
+
+PPO와 함께 이점을 추정하는 데 가장 일반적으로 사용되는 접근 방식인 **일반화된 이점 추정(Generalized Advantage Estimation, GAE)**은 N-단계 이점 추정치를 활용합니다. 그러나 GAE는 단일 N 값을 선택하는 대신, 다른 N 값을 가진 N-단계 이점 추정치의 평균을 취함으로써 모든 N 값을 사용합니다. 이는 아래 14에 표시된 대로 GAE를 위한 혼합 매개변수(mixing parameter) $\lambda$를 도입함으로써 수행됩니다.
+
+$$
+A_t^{GAE(\gamma, \lambda)} = \sum_{k=0}^{\infty} (\gamma \lambda)^k \delta_{t+k}
+$$
+
+**GAE 공식화**
+
+이 공식화에서 $\lambda = 0$으로 설정하면 합계에서 첫 번째 항만 0이 아닌 가중치를 받으므로 단일 단계 TD 잔차가 산출됩니다. 또한, $\lambda = 1$로 설정하면 MC 추정치를 복구합니다. 이를 확인하기 위해, 합계에서 각 TD 잔차의 정의를 확장하면 누적 할인 보상과 현재 상태 $V(s_t)$의 가치 함수 간의 차이가 산출됩니다; 아래를 참조하세요.
+
+$$
+A_t^{GAE(\gamma, 1)} = \sum_{k=0}^{\infty} \gamma^k r_{t+k} - V(s_t)
+$$
+
+**GAE 공식화 (λ=1)**
+
+GAE의 이점은 $\lambda \in [0, 1]$ 값이 편향-분산 절충을 제어한다는 것입니다. $\lambda$ 값을 증가시킬수록, 이점 추정치에 더 정확한 보상 정보가 사용되어 편향을 낮춥니다 (그러나 분산은 증가합니다). 유사하게, 우리는 더 낮은 $\lambda$ 값을 사용하여 더 높은 편향을 대가로 분산을 줄일 수 있습니다.
+
+**결과 보상(Outcome rewards).** LLM으로 작업할 때, 우리는 일반적으로 GAE를 단순화하는 결과 보상 설정을 사용합니다. 보상은 항상 0 15입니다. 궤적의 마지막 단계에 있지 않는 한 말이죠. 이 시나리오에서, 우리의 GAE 합계에 있는 대부분의 TD 잔차 항은 단순히 두 시간 단계 사이의 (할인된) 가치 함수 차이 $\gamma V(s_{t + 1}) - V(s_t)$입니다. 합계의 마지막 항은 궤적에 대해 관찰된 실제 결과 보상을 포함합니다.
+
+**GAE 구현.** GAE 개념을 더 구체적으로 만들기 위해, AI2의 OpenInstruct 라이브러리에서 발췌한 실제 예시를 살펴보겠습니다. [여기](https://github.com/allenai/OpenInstruct/blob/main/openinstruct/ppo_trainer.py)에서 이용 가능한 전체 PPO 훈련 스크립트는 프로덕션 수준의 훈련 설정에서 PPO의 세부 사항을 학습하기 위한 훌륭한 자료입니다. 이 스크립트의 GAE 구성 요소는 명확성을 위해 몇 가지 추가 주석과 함께 아래에 나와 있습니다. 우리는 시퀀스를 역순으로 반복함으로써 GAE 재귀를 효율적으로 계산할 수 있습니다.
+
+```python
+import torch
+
+# store advantages in reverse order while iterating thru sequence
+advantages_reversed = []
+
+# iterate backward to compute GAE recursion
+lastgaelam = 0
+gen_length = responses.shape[1]
+for t in reversed(range(gen_length)):
+    if t < gen_length - 1:
+        # get value model prediction for time t + 1
+        nextvalues = values[:, t + 1]
+    else:
+        # no values predicted beyond end of sequence
+        nextvalues = 0.0
+
+    # compute TD residual at time t
+    delta = rewards[:, t] + gamma * nextvalues - values[:, t]
+
+    # add to the discounted sum of TD residuals for GAE
+    lastgaelam = delta + gamma * lam * lastgaelam
+
+    # store the advantage for step t in our list
+    advantages_reversed.append(lastgaelam)
+
+# put the list of advantages in the correct order
+advantages = torch.stack(advantages_reversed[::-1], axis=1)
+```
+
+### LLM을 위한 PPO 사용
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Two types of RL training for LLMs">
+
+**LLM을 위한 두 가지 유형의 RL 훈련** ([7]에서)
+
+LLM을 훈련하는 데 일반적으로 사용되는 두 가지 유형의 RL 훈련이 있습니다 (위에 표시됨):
+*   **인간 피드백 기반 강화 학습(Reinforcement Learning from Human Feedback, RLHF)**은 인간 선호도 보상 모델(human preference reward model)에서 파생된 보상을 사용하여 RL로 LLM을 훈련합니다.
+*   **검증 가능한 보상 기반 강화 학습(Reinforcement Learning with Verifiable Rewards, RLVR)**은 규칙 기반 또는 결정론적 검증자에서 파생된 보상을 사용하여 RL로 LLM을 훈련합니다.
+
+이러한 RL 훈련 기술들은 주로 훈련을 위한 보상을 도출하는 방식에서 차이가 있지만, 알고리즘의 다른 세부 사항들은 대부분 유사합니다. 아래에 묘사된 대로, 이들은 모두 일련의 프롬프트에 대해 완성을 생성하고, 이 완성에 대한 보상을 계산하며, 보상을 사용하여 RL 최적화기(예: PPO)로 정책 업데이트—또는 LLM의 매개변수 업데이트—를 도출함으로써 작동합니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Visual walkthrough of RL training for LLMs">
+
+**LLM을 위한 RL 훈련 시각적 안내**
+
+RLHF는 ChatGPT의 전신인 InstructGPT [8]와 같은 LLM에 의해 탐구된 RL의 원래 형태였습니다. LLM을 위한 RLHF에 대한 초기 연구는 PPO를 기본 RL 최적화기로 사용했으며, 이는 궁극적으로 PPO를 RL로 LLM을 훈련하는 표준 선택으로 만들었습니다. RLVR은 더 최근에 도입되었으며, 이 분야의 대부분의 작업은 PPO 대신 GRPO를 기본 RL 최적화기로 사용합니다.
+
+> "PPO는 RLHF의 표준 방법으로 자리매김했습니다. 그러나 이는 높은 계산 비용과 민감한 하이퍼파라미터 튜닝을 모두 포함합니다."
+>
+> — [9]에서
+
+**PPO의 단점.** PPO는 RLHF의 기본 RL 최적화기로 빠르게 자리 잡았지만, 높은 컴퓨팅 및 메모리 오버헤드와 많은 저수준 구현 복잡성을 가진 복잡한 액터-크리틱(actor-critic) 알고리즘입니다. PPO의 메모리 오버헤드는 우리가 LLM의 네 가지 복사본을 메모리에 유지하기 때문에 높습니다:
+*   정책.
+*   참조 정책.
+*   비평가.
+*   보상 모델 (보상 모델을 사용하는 경우).
+
+또한, 우리는 정책 자체와 함께 비평가의 매개변수를 업데이트하고 이 모든 모델에 대해 동시에 추론을 실행하므로 높은 컴퓨팅 비용이 발생합니다.
+
+메모리 및 컴퓨팅 오버헤드 외에도, PPO 훈련 중에 신중하게 고려해야 할 많은 구현 세부 사항이 있습니다:
+*   비평가와 보상 모델을 어떻게 초기화해야 할까요?
+*   이 모델들에 대해 어떤 훈련 설정을 채택해야 할까요?
+*   PPO에서 클리핑을 위해 $\epsilon$ 값을 얼마로 사용해야 할까요?
+*   KL 발산을 위한 참조 모델로 어떤 모델을 사용해야 할까요?
+*   데이터 배치에 대해 몇 번의 정책 업데이트를 수행해야 할까요?
+*   KL 발산을 손실에 페널티로 추가해야 할까요, 아니면 보상 함수에 직접 통합해야 할까요?
+*   어떤 스케일링 계수(scaling factor) $\beta$를 사용해야 할까요?
+*   비평가의 손실을 주요 PPO 손실에 비해 어떻게 가중치를 부여해야 할까요?
+*   GAE를 사용해야 할까요? $\lambda$에 대해 어떤 설정을 사용해야 할까요?
+
+이 각 선택은 RL 훈련 결과에 영향을 미칠 수 있습니다! PPO는 불안정성에 취약한 민감한 알고리즘입니다—잘못된 하이퍼파라미터 설정으로 인해 궁극적으로 성능이 좋지 않은 모델을 훈련하는 데 많은 컴퓨팅 자원과 시간을 소비할 수 있습니다. 이러한 이유로, REINFORCE 및 GRPO와 같은 더 간단한 RL 알고리즘—또는 DPO와 같은 RL-프리 기술—이 PPO의 인기 있는 대안이 되었습니다.
+
+**LLM을 위한 PPO.** 이 마지막 섹션에서는 우리가 배운 것을 바탕으로 LLM 훈련의 맥락에서 PPO를 구체적으로 연구할 것입니다. 우리는 특히 LLM 훈련에 PPO를 처음 사용한 기초적인 연구 [5, 8]에 초점을 맞출 것입니다—이 연구는 곧 현대 LLM 붐의 토대를 마련했습니다. 이 논문들을 연구하면서, 우리는 작동하는 PPO 구현을 얻는 데 필요한 구현 세부 사항과 실용적인 교훈을 강조할 것입니다.
+
+#### 인간 피드백으로부터 요약 학습 [5]
+
+추상적 요약(Abstractive summarization)—또는 모델을 사용하여 텍스트 조각의 인간이 읽을 수 있는 간결한 요약을 생성하는 것—은 오랫동안 연구되어 왔습니다. LLM과 RLHF의 부상 이전에, 이 주제에 대한 대부분의 논문은 인간이 작성한 참조 요약을 사용하여 지도 학습(supervised learning) 접근 방식으로 언어 모델을 훈련하고 ROUGE 점수와 같은 전통적인 지표를 사용하여 이 모델들을 평가했습니다. 이러한 접근 방식은 잘 작동할 수 있지만, 지도 학습과 ROUGE는 모두 실제로 원하는 것—고품질 요약을 작성하는 모델—의 대리 지표(proxy)입니다. [5]에서 저자들은 지도 학습을 RLHF로 대체함으로써 이 문제를 해결합니다. 이러한 접근 방식은 모델 출력에 대한 인간 피드백을 훈련 신호로 직접 사용하여 언어 모델을 미세 조정(finetune)하여 더 나은 요약을 생성할 수 있도록 합니다.
+
+**요약을 위한 PPO.** [5]의 저자들은 LLM 미세 조정을 위한 최초의 RLHF 프레임워크를 제안한 것으로 일반적으로 인정받습니다. 제안된 접근 방식은 인간 주석자(annotator)가 평가한 응답의 품질을 기반으로 LLM을 최적화할 수 있도록 합니다. 사전 훈련된 LLM부터 시작하여, 우리는 반복적으로 다음을 수행할 수 있습니다:
+*   인간 선호도 데이터(human preference data)를 수집합니다.
+*   이 선호도 데이터에 대해 보상 모델을 훈련합니다.
+*   이 보상 모델을 사용하여 RL로 LLM을 미세 조정합니다.
+
+특히, [5]의 저자들은 PPO를 기본 RL 최적화기로 채택했으며, 이는 PPO가 후속 RLHF 연구에서 일반적인 선택이 되도록 이끌었습니다. 이 RL 훈련 전략을 통해, 우리는 인간 요약의 품질을 능가하고 지도 학습 접근 방식으로 훈련된 더 큰 LLM이 생성한 것보다도 더 나은 요약을 생성하도록 LLM을 훈련할 수 있습니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="RLHF summarization results">
+
+**RLHF 요약 결과** ([5]에서)
+
+**SFT 단계.** [5]에서 LLM은 먼저 인간 참조 요약에 대해 단일 에포크 동안 지도 미세 조정(supervised finetuning)을 사용하여 훈련되어, 나중에 RLHF를 통해 미세 조정될 지도 기준선(supervised baseline)을 생성합니다. [5]에서 제안된 RLHF 방법론—아래 그림에 표시된 대로—은 요약 작업에 맞춰져 있습니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="RLHF methodology for summarization">
+
+**요약을 위한 RLHF 방법론** ([5]에서)
+
+**선호도 및 보상 모델.** [5]에서 선호도 데이터셋은 다음을 통해 구축됩니다:
+*   요약할 텍스트 입력을 가져옵니다—이것이 우리의 프롬프트입니다.
+*   여러 다른 정책을 사용하여 입력에 대한 많은 요약을 생성합니다—이것들은 동일한 프롬프트에 대한 다른 응답들입니다.
+*   프롬프트에 대한 두 개의 요약 또는 응답을 샘플링합니다.
+*   인간 주석자에게 두 요약 중 더 나은 것을 식별하도록 요청합니다.
+
+[5]의 저자들은 이 선호도 데이터를 대규모 배치로 수집합니다. 새로운 선호도 데이터 배치를 수집한 후, 우리는 LLM이 생성한 요약이 주어졌을 때 인간 선호도 점수를 정확하게 예측하도록 데이터에 대해 보상 모델을 훈련합니다. 그런 다음, 이 보상 모델을 사용하여 PPO로 우리의 정책을 미세 조정합니다. [5]에서 PPO를 위해 KL 발산 항이 사용되어 SFT 모델로부터의 발산을 최소화합니다. 흥미롭게도, [5]의 저자들이 이 전략을 처음 사용한 것은 아니었습니다—실제로 이전 연구에서 채택되었습니다. KL 발산은 페널티 항으로 PPO 손실에 추가되는 대신 보상에서 직접 차감됩니다. [5]에서 우리는 RL 훈련에 KL 발산을 추가하는 것이 모델의 요약이 훈련 중에 본 것과 너무 달라지는 것을 방지하는 데 도움이 된다는 것을 알 수 있습니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="KL divergence effect on summarization">
+
+**요약에 대한 KL 발산 효과** ([5]에서)
+
+**실험.** [5]에서, GPT-3 스타일과 일치하는 13억에서 67억 매개변수를 가진 대규모 사전 훈련 모델이 TL;DR 데이터셋에 대해 미세 조정됩니다. 이 데이터셋은 작성자가 작성한 요약이 포함된 Reddit의 3백만 개 이상의 게시물을 포함하며, 12만 개의 고품질 예시로만 필터링됩니다; 위를 참조하세요. 모델은 먼저 SFT를 사용하여 훈련됩니다—이 지도 모델들은 실험 전반에 걸쳐 기준선으로도 사용됩니다—그리고 RLHF로 추가 미세 조정됩니다. 요약 길이가 결과 품질 점수에 영향을 미칠 수 있다는 점을 고려하여, [5]의 저자들은 생성된 요약을 48개 토큰으로 제한하고 모델을 그에 따라 미세 조정합니다.
+
+인간 피드백으로 언어 모델을 미세 조정하는 것은 다양한 강력한 영어 요약 기준선을 능가합니다. 특히, 13억 요약 모델은 SFT로 훈련된 10배 더 큰 모델을 능가하며, 67억 요약 모델은 13억 모델보다 훨씬 더 나은 성능을 보여 요약 품질이 모델 규모에 따라 향상됨을 나타냅니다. 더욱이, RLHF를 통해 훈련된 요약 모델이 새로운 도메인에 더 잘 일반화된다는 것을 알 수 있습니다. 특히, [5]의 모델들은 뉴스 기사 요약—훈련 데이터 외부의 도메인—에 적용되었으며, 추가 미세 조정 없이도 잘 작동하는 것으로 나타났습니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="RLHF summarization generalization">
+
+**RLHF 요약 일반화** ([5]에서)
+
+여기에서 요약 모델은 다음 측면에서 평가됩니다:
+*   **커버리지(Coverage)**: 요약이 원본 게시물의 모든 정보를 다룹니다.
+*   **정확성(Accuracy)**: 요약의 진술이 정확합니다.
+*   **일관성(Coherence)**: 요약이 자체적으로 읽기 쉽습니다.
+*   **품질(Quality)**: 요약의 전반적인 품질이 좋습니다.
+
+이러한 방식으로 평가했을 때, RLHF를 통해 훈련된 요약 모델은 커버리지 측면에서 가장 큰 이점을 얻는 반면, 일관성과 정확성은 지도 기준선 모델에 비해 약간만 개선된다는 것을 알 수 있습니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="RLHF summarization quality metrics">
+
+**RLHF 요약 품질 지표** ([5]에서)
+
+**요약을 넘어서.** [5]에서 RLHF가 요약의 맥락에서만 탐구되었지만, 이 논문의 저자들은 앞으로 일어날 일에 대해 엄청난 통찰력을 가지고 있었습니다. [5]에서 제안된 접근 방식은 나중에 LLM 후처리 훈련의 표준 부분이 되었으며, InstructGPT [8]에서 곧 보게 될 것입니다.
+
+> "이 논문에서 제시하는 방법들은 부분적으로 AI 시스템이 인간이 원하는 바와 불일치하는 것에 대한 장기적인 우려에서 동기 부여되었습니다. 불일치하는 요약 모델이 사실을 지어낼 때, 그들의 실수는 비교적 위험이 낮고 쉽게 발견됩니다. 그러나 AI 시스템이 더욱 강력해지고 점점 더 중요한 작업을 부여받음에 따라, 그들이 저지르는 실수는 더욱 미묘하고 안전에 중요해질 가능성이 높으며, 이는 추가 연구를 위한 중요한 영역이 됩니다."
+>
+> — [1]에서
+
+흥미롭게도, [5]의 저자들은 장기적으로 LLM을 인간의 욕구에 더 잘 맞추기 위해 제안된 방법론을 활용하려는 의도를 명시적으로 밝힙니다. 이 진술은 ChatGPT가 제안되기 2년도 더 전에 이루어졌습니다! [5]의 연구는 아직 오지 않은 AI의 주요 발전을 위한 빌딩 블록이었습니다.
+
+#### PPO를 사용한 RLHF의 N+ 구현 세부 사항 [4]
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="RLHF with PPO complexity">
+
+**PPO를 사용한 RLHF의 복잡성** ([4]에서)
+
+PPO 훈련에는 LLM의 여러 복사본 (즉, 정책, 참조, 비평가 및 보상 모델)과 안정적인 훈련을 보장하기 위해 신중하게 조정해야 하는 다양한 하이퍼파라미터 설정 등 많은 움직이는 부분이 있습니다. 이러한 이유—그리고 계산 비용 때문에—RL 훈련 결과를 재현하는 것은 어렵습니다.
+
+> "OpenAI의 RLHF 파이프라인을 재현하는 것은 여러 가지 이유로 도전적임이 입증되었습니다: 1) RL과 RLHF는 훈련 안정성에 상당한 영향을 미칠 수 있는 많은 미묘한 구현 세부 사항을 가지고 있으며, 2) 모델은 평가하기 어렵고… 3) 훈련하고 반복하는 데 오랜 시간이 걸립니다."
+>
+> — [4]에서
+
+RL 이해를 대중화하기 위한 출발점으로, [4]의 저자들은 간단한 설정—OpenAI의 요약 RLHF에 대한 이전 작업 [5]—에 초점을 맞춥니다. 원본 작업에 이미 많은 세부 사항이 제공되어 있지만, [4]의 저자들은 작동하는 PPO 구현에 도달하는 데 필요한 모든 구현 세부 사항을 열거하면서 이 결과를 완전히 재현합니다. TL;DR 요약 작업은 대부분의 현대 RLHF 파이프라인에 비해 간단합니다. 그러나 이 연구—10억, 28억, 68억 매개변수를 가진 Pythia 모델 [10]을 기반으로 함—는 PPO로 LLM을 훈련할 때의 주요 실용적 고려 사항에 대한 명확하고 포괄적인 시각을 제공합니다.
+
+**데이터셋 고려 사항.** [4]의 저자들은 PPO를 사용하여 작동하는 RLHF 파이프라인을 얻는 데 필요한 약 20가지 실용적인 세부 사항을 열거합니다. 이 세부 사항의 거의 절반은 PPO와 관련이 없습니다—그들은 훈련 데이터에 초점을 맞춥니다. LLM을 다뤄본 사람들에게는 이러한 데이터 강조가 놀랍지 않을 것입니다: 데이터 품질은 RL을 포함한 모든 형태의 LLM 훈련 성공의 핵심 결정 요인입니다. [4]의 모든 실험은 OpenAI의 TL;DR 요약 데이터셋을 사용하며, 이 데이터셋은 SFT 및 선호도 데이터셋을 모두 포함합니다.
+
+[4]에서 PPO에 사용된 데이터에 대한 몇 가지 주목할 만한 사항은 다음과 같습니다:
+*   TL;DR 데이터셋의 SFT 부분과 선호도 부분 사이에 완성 길이의 불일치가 있습니다—선호도 데이터는 더 긴 완성을 가지는 경향이 있습니다.
+*   데이터는 [4]에서 사용된 고정된 시퀀스 길이에 맞추기 위해 가끔 잘려야 하지만, 저자들은 최대 시퀀스 길이에서 강제적인 자르기(hard truncation)를 수행하는 대신 단락 경계—개행 문자(newline characters)로 결정됨—에서 자르기를 선택합니다.
+*   모든 완성은 `<EOS>` 토큰으로 끝납니다. [4]의 저자들은 이 `<EOS>` 토큰이 LLM이 사용하는 패딩 토큰(padding token)과 달라야 한다고 강조합니다. 그렇지 않으면, `<EOS>` 토큰에 대한 손실이 다른 패딩 토큰과 함께 마스킹되어 모델이 각 시퀀스를 `<EOS>` 토큰으로 적절하게 완성하는 것을 학습하지 못하게 됩니다.
+
+**보상 모델.** RLHF에서 보상 모델을 초기화하는 데는 여러 가지 선택지가 있습니다. [4]에서는 [5]에서 사용된 설정과 일치하도록 SFT 모델의 가중치로 초기화합니다. 보상을 예측하는 데 사용되는 무작위로 초기화된 선형 헤드(linear head)가 모델이 사용 가능한 선호도 데이터에 대해 단일 에포크 동안 훈련되기 전에 보상 모델의 아키텍처에 추가됩니다. [4]에서는 결과 보상 설정이 사용됩니다. 보상을 추출하기 위해, 전체 시퀀스에 대해 순방향 전달(forward pass)이 수행되며, 우리는 `<EOS>` 토큰에서만 보상 예측을 추출합니다. 정책이 합리적인 길이의 시퀀스를 해당 `<EOS>` 토큰과 함께 일관되게 출력하도록 가르치기 위해, `<EOS>` 토큰이 없는 모든 시퀀스에 -1의 보상을 할당하는 EOS 트릭이 사용됩니다.
+
+> "패딩 토큰이 존재하지 않으면, 추출된 보상은 시퀀스의 마지막 토큰에 해당하는 로짓(logits)이 됩니다. 만약 그 토큰이 EOS 토큰이 아니라면, 그 보상은 PPO 훈련에 사용되지 않을 것입니다."
+>
+> — [4]에서
+
+보상 모델이 훈련된 후, 저자들은 [5]의 권고에 따라 모델이 출력한 보상을 정규화합니다. 구체적으로, 보상 모델은 전체 SFT 데이터셋에 대한 보상을 예측하는 데 사용됩니다. 그런 다음, 이 데이터셋 전체의 평균 보상을 계산하고 이 평균을 사용하여 평균 보상을 중앙에 맞춥니다. 다시 말해, 이 평균은 보상 모델 출력에서 편향으로 차감되어, SFT 데이터셋에 대해 예측된 보상이 평균 0을 갖도록 보장합니다. 보상 모델 출력을 정규화하는 것은 PPO의 훈련 안정성에 이점을 줍니다.
+
+**비평가 설정.** 우리는 또한 비평가를 어떻게 초기화할지 선택해야 합니다. [4]에서 비평가는 PPO 훈련 시작 시 보상 모델의 가중치로 초기화됩니다. 결국, 가치 모델은 토큰별로 보상을 예측하는 효과적인 보상 모델입니다. [4]에서 저자들은 보상 모델의 예측이 `<EOS>` 토큰을 제외한 모든 토큰에 대해 일반적으로 음수임을 관찰합니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Critic value predictions">
+
+**비평가 가치 예측** ([4]에서)
+
+따라서 PPO 훈련 시작 시 비평가가 추정한 값은 거의 모든 토큰에 대해 음수입니다. 그러나 [4]에서 우리는 이러한 방식으로 비평가를 웜 스타팅(warm starting)하는 것이 훈련 중 경사의 초기 안정성을 향상시키는 데 도움이 된다는 것을 알 수 있습니다.
+
+**보상 및 이점 화이트닝(whitening).** 보상 모델 훈련 후 보상을 정규화하는 것 외에도, 많은 PPO 구현은 보상 및 이점 화이트닝을 수행합니다. 화이트닝 연산의 예시 구현은 아래에 나와 있으며, 여기서 값은 보상 또는 이점의 목록일 수 있습니다.
+
+```python
+def whiten(values, shift_mean=True):
+    mean = values.mean()
+    std = values.std()
+    if not shift_mean:
+        mean = 0
+    return (values - mean) / (std + 1e-8)
+```
+
+([4]에서)
+
+보상을 화이트닝할 때, 우리는 일반적으로 평균을 이동시키지 않습니다 (즉, 위 코드에서 `shift_mean = False`) 이는 보상의 크기와 부호를 유지하기 위함입니다. 그러나 이점을 화이트닝할 때는 일반적으로 평균이 이동됩니다. [4]의 결과에 따르면, 보상 및 이점 화이트닝은 결과 정책의 성능에 큰 긍정적 또는 부정적 영향을 미치지 않는 것으로 보입니다. 그러나 화이트닝은 PPO의 일반적인 구현 세부 사항입니다. 일반적으로 화이트닝은 데이터 배치 내의 보상 또는 이점 집합에 적용됩니다.
+
+> "정규화가 RM의 모든 값을 0과 1 사이로 제한하여 학습 안정성에 도움이 될 수 있는 반면, 보상 또는 이점 추정치를 화이트닝하는 것은… 안정성에 훨씬 더 강력한 향상을 제공할 수 있습니다."
+>
+> — [2]에서
+
+**드롭아웃(dropout) 주의.** PPO에서는 드롭아웃 사용을 피해야 합니다. 드롭아웃은 모델의 순방향 전달(forward pass)에 노이즈를 추가하여 정책 비율과 KL 발산 계산을 신뢰할 수 없게 만듭니다. 이 구현 세부 사항은 최적화 문제를 야기할 수 있으며 영향력이 큰 경향이 있습니다—드롭아웃은 PPO의 작지만 중요한 실용적 세부 사항의 완벽한 예시입니다. 예를 들어, OpenInstruct PPO 스크립트는 정책, 비평가, 참조 및 보상 모델에서 드롭아웃을 명시적으로 비활성화합니다.
+
+**최종 결과.** 다양한 실용적 선택과 하이퍼파라미터 설정을 열거한 후, [4]의 정책들은 [5]의 원본 결과를 성공적으로 재현합니다. PPO 모델은 SFT로 훈련된 모델보다 성능이 우수하며, SFT 모델, 보상 모델 및 최종 RL 정책에 대해 명확한 스케일링 추세(즉, 더 큰 모델이 더 나은 성능 지표를 달성함)가 관찰될 수 있습니다. 또한, GPT-3.5 기반 LLM 심사관이 예측한 인간 참조 요약에 대한 RL 정책의 선호도 비율은 모델 크기에 따라 예측 가능하게 확장됩니다; 아래를 참조하세요.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="RL policy preference rate">
+
+**RL 정책 선호도 비율** ([4]에서)
+
+#### 인간 피드백을 통해 지시를 따르도록 언어 모델 훈련 [8]
+
+요약 도메인을 넘어, [8]의 저자들은 인간 피드백으로부터 직접 학습함으로써 언어 모델 정렬(alignment)을 위한 RLHF 사용을 탐구합니다. 그 결과 모델인 InstructGPT는 ChatGPT의 자매 모델이자 전신입니다. 이 모델이 [8]에서 자세히 설명되어 있으므로, 이 작업은 OpenAI의 초기 LLM이 어떻게 훈련되었는지에 대한 중요한 통찰력을 제공합니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="InstructGPT alignment process">
+
+**InstructGPT 정렬 과정** ([8]에서)
+
+[5]와 유사한 접근 방식을 따라, 우리는 인간 주석자가 작성했거나 OpenAI의 API에서 수집된 프롬프트 세트로 시작합니다. 그런 다음 주석자들이 이 프롬프트에 대한 응답을 작성하게 하고, 사전 훈련된 LLM—특히 GPT-3—을 SFT를 사용하여 이 예시들에 대해 미세 조정할 수 있습니다. 이 모델을 사용하여, 우리는 인간에게 LLM에서 선호하는 출력을 선택하도록 요청함으로써 비교 데이터를 수집하고, 미세 조정을 위해 [5]에 설명된 동일한 RLHF 프로세스를 적용할 수 있습니다. 위에 표시된 대로, 결과 모델은 인간에게 크게 선호되며 프롬프트 내에 제공된 상세한 지시를 따르는 데 훨씬 더 능숙합니다.
+
+> "언어 모델을 더 크게 만든다고 해서 본질적으로 사용자의 의도를 더 잘 따르게 되는 것은 아닙니다."
+>
+> — [8]에서
+
+**정렬 과정(alignment process).** 사전 훈련된 LLM은 후처리 훈련 중에 우리가 고치고 싶은 여러 가지 바람직하지 않은 속성을 가지고 있습니다; 예: 환각(hallucinations) 또는 상세한 지시를 따르지 못하는 능력. 이러한 문제를 해결하기 위해, 우리는 [8]에서 LLM을 다음 기준에 따라 정렬합니다:
+*   **유용함(Helpful)**: 사용자의 지시를 따르고 소수샷 프롬프트(few-shot prompts) 또는 다른 패턴에서 의도를 추론합니다.
+*   **정직함(Honest)**: 세상에 대한 정확한 사실 진술을 합니다.
+*   **무해함(Harmless)**: 보호 계층을 비하하거나 성적/폭력적인 내용을 포함하는 것과 같은 유해한 출력을 피합니다.
+
+RLHF를 사용하여, 우리는 LLM이 출력 내에서 이러한 각 품질을 반영하도록 가르칠 수 있습니다. 구체적으로, 이는 이러한 기준에 대한 준수 여부에 따라 선호되는 응답이 선택되는 선호도 쌍(preference pairs)을 구성함으로써 이루어집니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="RLHF preference criteria">
+
+**RLHF 선호도 기준** ([8]에서)
+
+**RLHF에 대해 더 자세히.** [8]의 저자들은 LLM을 위한 선호도 데이터를 수집하기 위해 주석 품질을 판단하는 테스트를 통해 선별된 40명의 인간 주석자 팀을 구성합니다. [8]에서 사용된 RLHF 접근 방식은 [5]에서 사용된 접근 방식과 거의 완전히 일치합니다. 사전 훈련된 LLM과 미세 조정을 위한 프롬프트 세트를 사용하여, 정렬 과정은 다음 단계에 따라 진행됩니다:
+*   각 프롬프트에 대한 인간 응답 시연을 수집합니다.
+*   인간 시연에 대해 지도 방식으로 모델을 훈련합니다.
+*   선호도 데이터를 수집합니다.
+*   보상 모델을 훈련합니다.
+*   PPO로 기본 LLM 또는 정책을 최적화합니다.
+*   3-5단계를 반복합니다.
+
+[8]에서 미세 조정을 위해 사용된 프롬프트 분포는 아래 표에 요약되어 있습니다. SFT를 위해, 13,000개 이상의 프롬프트 및 응답 쌍으로 구성된 데이터셋이 구축됩니다. 보상 모델은 33,000개의 프롬프트에 대해 훈련되는 반면, PPO로 미세 조정을 위해 31,000개 크기의 데이터셋이 사용됩니다. [5]와 달리, 비교 데이터를 수집할 때 인간 주석자에게는 프롬프트에 대한 4-9개의 응답 (즉, 두 개 대신)이 표시되어, 응답을 빠르게 순위 매기고 더 많은 양의 비교 데이터를 더 효율적으로 생성할 수 있도록 합니다. 그러나 RLHF에 대한 후속 연구는 이 접근 방식을 이진 선호도(binary preferences)를 선호하여 대부분 포기했습니다. [8]에서 사용된 데이터셋은 또한 96%가 영어입니다.
+
+<img src="https://assets-global.website-files.com/654877712166645398246473/6571597813a30368146e2a22_Screenshot%202023-12-07%20at%2011.08.30%E2%80%AFAM.png" alt="Prompt distribution for InstructGPT">
+
+**InstructGPT를 위한 프롬프트 분포** ([8]에서)
+
+[5]와 유사하게, 정책과 SFT 모델 간의 KL 발산 항은 SFT 모델에서 너무 멀리 벗어나는 것을 방지하기 위해 보상에서 직접 차감됩니다. 또한, 추가적인 사전 훈련 업데이트가 RLHF 최적화 과정에 "혼합"되는데, 저자들은 이것이 다양한 벤치마크에서 모델의 성능을 유지하는 데 도움이 된다는 것을 발견했습니다. 지도 손실을 사용하는 이 사전 훈련 업데이트는

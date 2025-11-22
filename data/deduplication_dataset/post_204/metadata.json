@@ -1,0 +1,21 @@
+{
+  "post_id": "204",
+  "title": "**과잉 공급 + 수요 부진 = 거품. AI는 아직 거품이 아니다.**",
+  "base_word_count": 1341,
+  "exact_30_update_wc": 1266,
+  "exact_30_ground_truth_wc": 1804,
+  "exact_30_overlap_ratio": 0.634,
+  "paraphrase_25_update_wc": 1751,
+  "paraphrase_25_ground_truth_wc": 1730,
+  "paraphrase_25_overlap_ratio": 0.778,
+  "fragment_20_update_wc": 982,
+  "fragment_20_ground_truth_wc": 1677,
+  "fragment_20_overlap_ratio": 0.658,
+  "semantic_25_update_wc": 793,
+  "semantic_25_ground_truth_wc": 1612,
+  "semantic_25_overlap_ratio": 0.658,
+  "mixed_real_update_wc": 1137,
+  "mixed_real_ground_truth_wc": 1172,
+  "mixed_real_overlap_ratio": 1.149,
+  "status": "generated"
+}

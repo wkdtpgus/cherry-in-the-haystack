@@ -1,0 +1,21 @@
+{
+  "post_id": "189",
+  "title": "**당신이 알아야 할 9편의 논문**",
+  "base_word_count": 7009,
+  "exact_30_update_wc": 6142,
+  "exact_30_ground_truth_wc": 6230,
+  "exact_30_overlap_ratio": 1.127,
+  "paraphrase_25_update_wc": 6106,
+  "paraphrase_25_ground_truth_wc": 6097,
+  "paraphrase_25_overlap_ratio": 1.149,
+  "fragment_20_update_wc": 5612,
+  "fragment_20_ground_truth_wc": 11259,
+  "fragment_20_overlap_ratio": 0.243,
+  "semantic_25_update_wc": 6233,
+  "semantic_25_ground_truth_wc": 6233,
+  "semantic_25_overlap_ratio": 1.124,
+  "mixed_real_update_wc": 5940,
+  "mixed_real_ground_truth_wc": 6125,
+  "mixed_real_overlap_ratio": 1.149,
+  "status": "generated"
+}

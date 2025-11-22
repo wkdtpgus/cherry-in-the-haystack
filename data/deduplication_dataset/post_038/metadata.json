@@ -1,0 +1,21 @@
+{
+  "post_id": "038",
+  "title": "**지금 어떤 AI를 사용해야 할까: 업데이트된 주관적 가이드 (2/15 재업데이트됨)**",
+  "base_word_count": 2744,
+  "exact_30_update_wc": 2032,
+  "exact_30_ground_truth_wc": 2085,
+  "exact_30_overlap_ratio": 1.324,
+  "paraphrase_25_update_wc": 2964,
+  "paraphrase_25_ground_truth_wc": 2964,
+  "paraphrase_25_overlap_ratio": 0.926,
+  "fragment_20_update_wc": 1238,
+  "fragment_20_ground_truth_wc": 2664,
+  "fragment_20_overlap_ratio": 1.065,
+  "semantic_25_update_wc": 2540,
+  "semantic_25_ground_truth_wc": 2540,
+  "semantic_25_overlap_ratio": 1.08,
+  "mixed_real_update_wc": 2060,
+  "mixed_real_ground_truth_wc": 2060,
+  "mixed_real_overlap_ratio": 1.332,
+  "status": "generated"
+}

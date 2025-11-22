@@ -1,0 +1,21 @@
+{
+  "post_id": "067",
+  "title": "**🤖 AI 에이전트(AI Agents) 위클리: Claude Haiku 4.5, Deep Agents, SWE-grep, nanochat, Agent Skills, Veo 3.1 Fast, n8n AI Workflow Builder**",
+  "base_word_count": 294,
+  "exact_30_update_wc": 500,
+  "exact_30_ground_truth_wc": 500,
+  "exact_30_overlap_ratio": 0.588,
+  "paraphrase_25_update_wc": 261,
+  "paraphrase_25_ground_truth_wc": 316,
+  "paraphrase_25_overlap_ratio": 0.916,
+  "fragment_20_update_wc": 375,
+  "fragment_20_ground_truth_wc": 645,
+  "fragment_20_overlap_ratio": 0.064,
+  "semantic_25_update_wc": 424,
+  "semantic_25_ground_truth_wc": 396,
+  "semantic_25_overlap_ratio": 0.759,
+  "mixed_real_update_wc": 332,
+  "mixed_real_ground_truth_wc": 332,
+  "mixed_real_overlap_ratio": 0.886,
+  "status": "generated"
+}

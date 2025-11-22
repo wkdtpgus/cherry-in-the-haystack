@@ -1,0 +1,21 @@
+{
+  "post_id": "211",
+  "title": "**Lovable이 AI 도구(AI tools)에 대해 우리에게 가르쳐주는 것**",
+  "base_word_count": 1433,
+  "exact_30_update_wc": 1131,
+  "exact_30_ground_truth_wc": 1786,
+  "exact_30_overlap_ratio": 0.688,
+  "paraphrase_25_update_wc": 1462,
+  "paraphrase_25_ground_truth_wc": 1461,
+  "paraphrase_25_overlap_ratio": 0.981,
+  "fragment_20_update_wc": 1133,
+  "fragment_20_ground_truth_wc": 1337,
+  "fragment_20_overlap_ratio": 1.085,
+  "semantic_25_update_wc": 1523,
+  "semantic_25_ground_truth_wc": 1523,
+  "semantic_25_overlap_ratio": 0.941,
+  "mixed_real_update_wc": 1064,
+  "mixed_real_ground_truth_wc": 1113,
+  "mixed_real_overlap_ratio": 1.301,
+  "status": "generated"
+}

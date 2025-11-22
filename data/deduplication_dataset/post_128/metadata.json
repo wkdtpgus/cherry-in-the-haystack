@@ -1,0 +1,21 @@
+{
+  "post_id": "128",
+  "title": "지난주 AI 소식 #322 - 로보택시(robotaxi) 진행 상황, OpenAI 비즈니스, 크롬(Chrome)의 제미니(Gemini)",
+  "base_word_count": 153,
+  "exact_30_update_wc": 188,
+  "exact_30_ground_truth_wc": 269,
+  "exact_30_overlap_ratio": 0.383,
+  "paraphrase_25_update_wc": 408,
+  "paraphrase_25_ground_truth_wc": 408,
+  "paraphrase_25_overlap_ratio": 0.375,
+  "fragment_20_update_wc": 123,
+  "fragment_20_ground_truth_wc": 199,
+  "fragment_20_overlap_ratio": 0.626,
+  "semantic_25_update_wc": 176,
+  "semantic_25_ground_truth_wc": 176,
+  "semantic_25_overlap_ratio": 0.869,
+  "mixed_real_update_wc": 131,
+  "mixed_real_ground_truth_wc": 134,
+  "mixed_real_overlap_ratio": 1.145,
+  "status": "generated"
+}

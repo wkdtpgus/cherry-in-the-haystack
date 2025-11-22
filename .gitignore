@@ -35,3 +35,9 @@ logs/
 
 # venv
 .venv
+venv/
+
+# Experiment outputs
+experiments/**/chunks.json
+experiments/**/dedup_results.json
+experiments/**/*.pyc

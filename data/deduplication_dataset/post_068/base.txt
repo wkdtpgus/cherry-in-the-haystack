@@ -1,0 +1,30 @@
+# **심층 에이전트(Deep Agents)**
+
+Author: Elvis Saravia
+URL: https://nlp.elvissaravia.com/p/deep-agents
+
+============================================================
+
+오늘날 대부분의 에이전트는 피상적입니다. 이들은 길고 여러 단계로 이루어진 문제(예: 심층 연구 또는 에이전트 기반 코딩(agentic coding))에서 쉽게 무너집니다. 하지만 이는 빠르게 변화하고 있습니다! 우리는 매우 복잡한 문제를 해결하기 위해 전략적으로 계획하고, 기억하며, 지능적으로 위임하는 AI 시스템인 "딥 에이전트(Deep Agents)"의 시대에 진입하고 있습니다. DAIR.AI Academy는 LangChain, Claude Code, 그리고 최근에는 Philipp Schmid와 같은 개인들과 함께 이 아이디어를 문서화해왔습니다. 다음은 딥 에이전트의 핵심 아이디어입니다(저의 생각과 다른 사람들에게서 얻은 메모를 바탕으로).
+
+딥 에이전트의 아이디어를 더 잘 설명하기 위해, DAIR.AI Academy의 고객 지원 시스템을 구동하도록 구축된 최소한의 딥 에이전트의 예시를 소개합니다. 이 시스템은 학생들이 저희 과정에 대해 질문할 수 있도록 고안되었습니다.
+
+**계획(Planning)**
+단일 컨텍스트(context) 창 내에서 즉흥적으로 추론하는 대신, 딥 에이전트는 업데이트하고, 재시도하며, 복구할 수 있는 구조화된 작업 계획을 유지합니다. 이를 에이전트를 장기 목표로 이끄는 살아있는 할 일 목록이라고 생각해보세요. 이를 경험하려면 Claude Code나 Codex를 사용하여 계획을 세워보세요. 어떤 작업을 실행하기 전에 이 기능을 활성화하면 결과가 훨씬 더 좋습니다. 저희는 최근 Claude Code를 이용한 장기 브레인스토밍(brainstorming)의 힘에 대해서도 글을 썼는데, 이는 계획, 전문가 컨텍스트(expert context), 그리고 인간 개입(human-in-the-loop)(딥 에이전트와 작업할 때 여러분의 전문 지식은 중요한 우위를 제공합니다)의 힘을 보여줍니다. 계획은 또한 장기적인 문제(다음으로 다룰 과학적 발견을 위한 에이전트를 생각해보세요)에도 중요할 것입니다.
+
+**오케스트레이터(Orchestrator) 및 서브 에이전트(Sub-agent) 아키텍처(Architecture)**
+하나의 큰 에이전트(일반적으로 매우 긴 컨텍스트(context)를 가짐)만으로는 더 이상 충분하지 않습니다. 저는 다중 에이전트(multi-agent) 시스템에 반대하고 모놀리식(monolithic) 시스템을 선호하는 주장을 보았지만, 이에 대해 회의적입니다. 오케스트레이터-서브 에이전트 아키텍처는 오늘날 상상할 수 있는 모든 도메인(domain)에 활용할 수 있는 가장 강력한 LLM 기반 에이전트 아키텍처 중 하나입니다. 오케스트레이터는 검색 에이전트(search agents), 코더(coders), KB 검색기(KB retrievers), 분석가(analysts), 검증자(verifiers), 작가(writers)와 같은 전문 서브 에이전트를 관리하며, 각 서브 에이전트는 자체적인 깨끗한 컨텍스트와 도메인(domain) 초점을 가집니다. 오케스트레이터는 지능적으로 위임하고, 서브 에이전트는 효율적으로 실행합니다. 오케스트레이터는 이들의 출력을 일관된 결과로 통합합니다. Claude Code는 코딩 및 서브 에이전트에 이 접근 방식을 대중화했으며, 이는 컨텍스트를 효율적으로 관리하는 데(관심사 분리(separation of concerns)를 통해) 특히 유용하다는 것이 밝혀졌습니다. 저는 오케스트레이터와 서브 에이전트 사용의 힘에 대한 몇 가지 메모를 [여기](https://dair.ai/blog/orchestrator-subagents)와 [여기](https://dair.ai/blog/orchestrator-subagents-2)에 작성했습니다.
+
+**컨텍스트 검색(Context Retrieval) 및 에이전트 기반 검색(Agentic Search)**
+딥 에이전트는 대화 기록에만 의존하지 않습니다. 이들은 파일, 메모, 벡터(vectors) 또는 데이터베이스(databases)와 같은 외부 메모리에 중간 작업을 저장하여, 모델의 컨텍스트를 과부하하지 않고 중요한 것을 참조할 수 있도록 합니다. 고품질의 구조화된 메모리는 아름다운 것입니다. 메모리 구축 및 검색을 더 잘 최적화하는 방법에 대한 정말 멋진 아이디어를 얻으려면 ReasoningBank 및 Agentic Context Engineering과 같은 최근 연구들을 살펴보세요. 오케스트레이터-서브 에이전트 아키텍처로 구축한다는 것은 하이브리드 메모리 기술(예: 에이전트 기반 검색(agentic search) + 의미론적 검색(semantic search))을 활용할 수 있으며, 에이전트가 어떤 전략을 사용할지 결정하도록 할 수 있다는 것을 의미합니다.
+
+**컨텍스트 엔지니어링(Context Engineering)**
+이러한 유형의 에이전트와 상호 작용할 때 할 수 있는 최악의 일 중 하나는 불충분하게 명시된 지침/프롬프트(prompts)를 제공하는 것입니다. 프롬프트 엔지니어링(prompt engineering)은 중요했고 지금도 중요하지만, 에이전트를 위한 컨텍스트 구축의 중요성을 강조하기 위해 새로운 용어인 컨텍스트 엔지니어링을 사용할 것입니다. 지침은 언제 계획할지, 언제 서브 에이전트를 사용할지, 파일 이름을 어떻게 지정할지, 그리고 인간과 어떻게 협력할지를 정의하기 위해 더 명시적이고, 상세하며, 의도적이어야 합니다. 컨텍스트 엔지니어링의 일부는 또한 구조화된 출력(structured outputs), 시스템 프롬프트 최적화(system prompt optimization), 컨텍스트 압축(compacting context), 컨텍스트 효율성 평가(evaluating context effectiveness), 그리고 도구 정의 최적화(optimizing tool definitions)와 관련된 노력을 포함합니다. 더 자세히 알아보려면 컨텍스트 엔지니어링에 대한 저희의 이전 가이드를 읽어보세요: [컨텍스트 엔지니어링 심층 분석(Context Engineering Deep Dive)](https://dair.ai/blog/context-engineering-deep-dive)
+
+**검증(Verification)**
+컨텍스트 엔지니어링 다음으로, 검증은 에이전트 시스템의 가장 중요한 구성 요소 중 하나입니다(비록 덜 자주 논의되지만). 검증은 출력(outputs)을 검증하는 것으로 귀결되며, 이는 자동화되거나(LLM-as-a-Judge) 인간에 의해 수행될 수 있습니다. 현대 LLM이 텍스트를 생성하는 데(수학 및 코딩과 같은 도메인에서) 효과적이기 때문에, 이들이 여전히 환각(hallucination), 아첨(sycophancy), 프롬프트 주입(prompt injection) 및 기타 여러 문제로 고통받는다는 사실을 잊기 쉽습니다. 검증은 에이전트를 더 신뢰할 수 있고 프로덕션(production) 준비가 된 상태로 만드는 데 도움이 됩니다. 체계적인 평가 파이프라인(evaluation pipelines)을 활용하여 좋은 검증자를 구축할 수 있습니다.
+
+**마지막 말**
+이는 AI 에이전트를 구축하는 방식에 있어 거대한 변화입니다. 딥 에이전트는 또한 다음 단계인 우리를 대신하여 행동할 수 있는 개인화된 능동적 에이전트(proactive agents)를 위한 중요한 구성 요소처럼 느껴집니다. 저는 미래 게시물에서 능동적 에이전트에 대해 더 많이 쓸 것입니다. AI 에이전트를 효과적으로 구축하는 방법에 대한 다가오는 게시물을 놓치고 싶지 않다면, 유료 등급으로 업그레이드하는 것을 고려해보세요: [구독(Subscribe)](https://dair.ai/subscribe)
+
+저는 지난 몇 달 동안 에이전트 개발자들에게 이러한 아이디어를 가르쳐왔습니다. 딥 에이전트를 구축하는 방법에 대한 더 많은 실습 경험에 관심이 있다면, 저희 아카데미의 새로운 과정을 확인해보세요: [https://dair-ai.thinkific.com/courses/agents-with-n8n](https://dair-ai.thinkific.com/courses/agents-with-n8n) 이 게시물에서 볼 수 있는 그림들은 학생들이 과정 최종 프로젝트를 위해 구축해야 하는 에이전트 기반 RAG(Retrieval-Augmented Generation) 시스템을 설명합니다. 이 게시물은 딥 에이전트를 설계하고 구현하기 위한 포괄적인 통찰력, 다운로드 가능한 템플릿(templates), 프롬프트, 그리고 고급 팁을 제공하는 저희의 새로운 과정 “ [n8n으로 효과적인 AI 에이전트 구축하기(Building Effective AI Agents with n8n)](https://dair-ai.thinkific.com/courses/agents-with-n8n) ”를 기반으로 합니다. [지금 등록하기(Enroll Now)](https://dair-ai.thinkific.com/courses/agents-with-n8n)

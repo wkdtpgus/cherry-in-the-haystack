@@ -1,0 +1,21 @@
+{
+  "post_id": "117",
+  "title": "**AI에게 집안일을 맡기고 싶지 않은 이유**",
+  "base_word_count": 1057,
+  "exact_30_update_wc": 1163,
+  "exact_30_ground_truth_wc": 1165,
+  "exact_30_overlap_ratio": 0.907,
+  "paraphrase_25_update_wc": 1075,
+  "paraphrase_25_ground_truth_wc": 1075,
+  "paraphrase_25_overlap_ratio": 0.983,
+  "fragment_20_update_wc": 827,
+  "fragment_20_ground_truth_wc": 953,
+  "fragment_20_overlap_ratio": 1.126,
+  "semantic_25_update_wc": 959,
+  "semantic_25_ground_truth_wc": 956,
+  "semantic_25_overlap_ratio": 1.105,
+  "mixed_real_update_wc": 842,
+  "mixed_real_ground_truth_wc": 842,
+  "mixed_real_overlap_ratio": 1.255,
+  "status": "generated"
+}

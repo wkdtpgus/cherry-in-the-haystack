@@ -1,0 +1,21 @@
+{
+  "post_id": "054",
+  "title": "대규모 언어 모델(LLMs)의 스케일링 법칙(Scaling Laws): GPT-3부터 o3까지",
+  "base_word_count": 9629,
+  "exact_30_update_wc": 7792,
+  "exact_30_ground_truth_wc": 7864,
+  "exact_30_overlap_ratio": 1.227,
+  "paraphrase_25_update_wc": 9437,
+  "paraphrase_25_ground_truth_wc": 9437,
+  "paraphrase_25_overlap_ratio": 1.02,
+  "fragment_20_update_wc": 3690,
+  "fragment_20_ground_truth_wc": 10072,
+  "fragment_20_overlap_ratio": 0.88,
+  "semantic_25_update_wc": 0,
+  "semantic_25_ground_truth_wc": 0,
+  "semantic_25_overlap_ratio": 0.0,
+  "mixed_real_update_wc": 8031,
+  "mixed_real_ground_truth_wc": 8031,
+  "mixed_real_overlap_ratio": 1.199,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "027",
+  "title": "**\"뇌 손상\"에 맞서**",
+  "base_word_count": 2633,
+  "exact_30_update_wc": 1292,
+  "exact_30_ground_truth_wc": 2268,
+  "exact_30_overlap_ratio": 1.283,
+  "paraphrase_25_update_wc": 2461,
+  "paraphrase_25_ground_truth_wc": 2461,
+  "paraphrase_25_overlap_ratio": 1.07,
+  "fragment_20_update_wc": 2369,
+  "fragment_20_ground_truth_wc": 3190,
+  "fragment_20_overlap_ratio": 0.765,
+  "semantic_25_update_wc": 2353,
+  "semantic_25_ground_truth_wc": 2353,
+  "semantic_25_overlap_ratio": 1.119,
+  "mixed_real_update_wc": 2197,
+  "mixed_real_ground_truth_wc": 2197,
+  "mixed_real_overlap_ratio": 1.198,
+  "status": "generated"
+}

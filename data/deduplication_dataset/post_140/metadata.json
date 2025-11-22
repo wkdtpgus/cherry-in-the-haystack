@@ -1,0 +1,21 @@
+{
+  "post_id": "140",
+  "title": "**형태, 대칭성, 그리고 구조: 기계 학습(machine learning) 연구에서 수학의 변화하는 역할**",
+  "base_word_count": 109,
+  "exact_30_update_wc": 113,
+  "exact_30_ground_truth_wc": 113,
+  "exact_30_overlap_ratio": 0.965,
+  "paraphrase_25_update_wc": 77,
+  "paraphrase_25_ground_truth_wc": 77,
+  "paraphrase_25_overlap_ratio": 1.416,
+  "fragment_20_update_wc": 130,
+  "fragment_20_ground_truth_wc": 170,
+  "fragment_20_overlap_ratio": 0.531,
+  "semantic_25_update_wc": 507,
+  "semantic_25_ground_truth_wc": 507,
+  "semantic_25_overlap_ratio": 0.215,
+  "mixed_real_update_wc": 115,
+  "mixed_real_ground_truth_wc": 120,
+  "mixed_real_overlap_ratio": 0.904,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "172",
+  "title": "**LLM 토크나이저(tokenizer), 시맨틱 검색(semantic search) 강좌, 그리고 도서 업데이트 #2**",
+  "base_word_count": 855,
+  "exact_30_update_wc": 1034,
+  "exact_30_ground_truth_wc": 1187,
+  "exact_30_overlap_ratio": 0.679,
+  "paraphrase_25_update_wc": 1098,
+  "paraphrase_25_ground_truth_wc": 1098,
+  "paraphrase_25_overlap_ratio": 0.779,
+  "fragment_20_update_wc": 723,
+  "fragment_20_ground_truth_wc": 1373,
+  "fragment_20_overlap_ratio": 0.284,
+  "semantic_25_update_wc": 1198,
+  "semantic_25_ground_truth_wc": 1198,
+  "semantic_25_overlap_ratio": 0.714,
+  "mixed_real_update_wc": 845,
+  "mixed_real_ground_truth_wc": 845,
+  "mixed_real_overlap_ratio": 1.012,
+  "status": "generated"
+}

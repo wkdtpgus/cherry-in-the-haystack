@@ -1,0 +1,21 @@
+{
+  "post_id": "087",
+  "title": "**코딩 에이전트가 스스로 개선할 수 있을까?**",
+  "base_word_count": 3382,
+  "exact_30_update_wc": 2346,
+  "exact_30_ground_truth_wc": 3339,
+  "exact_30_overlap_ratio": 1.018,
+  "paraphrase_25_update_wc": 3141,
+  "paraphrase_25_ground_truth_wc": 3141,
+  "paraphrase_25_overlap_ratio": 1.077,
+  "fragment_20_update_wc": 896,
+  "fragment_20_ground_truth_wc": 2896,
+  "fragment_20_overlap_ratio": 1.542,
+  "semantic_25_update_wc": 3869,
+  "semantic_25_ground_truth_wc": 3710,
+  "semantic_25_overlap_ratio": 0.915,
+  "mixed_real_update_wc": 2850,
+  "mixed_real_ground_truth_wc": 2850,
+  "mixed_real_overlap_ratio": 1.187,
+  "status": "generated"
+}

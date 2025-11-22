@@ -1,0 +1,21 @@
+{
+  "post_id": "007",
+  "title": "**LLM(Large Language Model)의 KV 캐시(KV Cache)를 처음부터 이해하고 코딩하기**",
+  "base_word_count": 3258,
+  "exact_30_update_wc": 2207,
+  "exact_30_ground_truth_wc": 3637,
+  "exact_30_overlap_ratio": 0.828,
+  "paraphrase_25_update_wc": 3281,
+  "paraphrase_25_ground_truth_wc": 3339,
+  "paraphrase_25_overlap_ratio": 0.975,
+  "fragment_20_update_wc": 1334,
+  "fragment_20_ground_truth_wc": 3669,
+  "fragment_20_overlap_ratio": 0.692,
+  "semantic_25_update_wc": 3446,
+  "semantic_25_ground_truth_wc": 3443,
+  "semantic_25_overlap_ratio": 0.946,
+  "mixed_real_update_wc": 2683,
+  "mixed_real_ground_truth_wc": 2683,
+  "mixed_real_overlap_ratio": 1.214,
+  "status": "generated"
+}

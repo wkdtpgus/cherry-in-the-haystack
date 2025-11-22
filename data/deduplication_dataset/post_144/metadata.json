@@ -1,0 +1,21 @@
+{
+  "post_id": "144",
+  "title": "**업데이트 #83: AI 음악 사기 (AI Music Fraud) 및 플랜서치 (PlanSearch)**",
+  "base_word_count": 2542,
+  "exact_30_update_wc": 1557,
+  "exact_30_ground_truth_wc": 2973,
+  "exact_30_overlap_ratio": 0.723,
+  "paraphrase_25_update_wc": 1871,
+  "paraphrase_25_ground_truth_wc": 2581,
+  "paraphrase_25_overlap_ratio": 0.979,
+  "fragment_20_update_wc": 1406,
+  "fragment_20_ground_truth_wc": 3254,
+  "fragment_20_overlap_ratio": 0.494,
+  "semantic_25_update_wc": 1945,
+  "semantic_25_ground_truth_wc": 2383,
+  "semantic_25_overlap_ratio": 1.082,
+  "mixed_real_update_wc": 2240,
+  "mixed_real_ground_truth_wc": 2239,
+  "mixed_real_overlap_ratio": 1.135,
+  "status": "generated"
+}

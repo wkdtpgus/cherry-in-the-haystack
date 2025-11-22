@@ -1,0 +1,20 @@
+# **🤖 AI 에이전트 주간: DeepSeek-OCR, 웹에서 클로드 코드, ChatGPT 아틀라스 브라우저,...**
+
+Author: Elvis Saravia
+URL: https://nlp.elvissaravia.com/p/ai-agents-weekly-deepseek-ocr-claude
+
+============================================================
+
+오늘 호에서는: DeepSeek, DeepSeek-OCR 출시: 웹상의 Claude 코드 OpenAI, ChatGPT Atlas 출시 Apple, 컴퓨터 사용 에이전트(agent)를 위한 파운데이션 모델(foundation model) 소개 도구를 학습하는 Anthropic 샌드박스 런타임 웹 에이전트(agent) 스탠포드 CME 295: 포괄적인 LLM(Large Language Model) 강좌 주요 AI 논문, 제품 업데이트 등.
+
+**주요 소식**
+**DeepSeek-OCR**
+DeepSeek이 DeepSeek-OCR을 출시했습니다. 이는 LLM(Large Language Model) 중심 관점에서 비전 인코더(vision encoder)의 역할을 탐구하는 문맥적 광학 압축(contextual optical compression)에 중점을 둔 오픈소스 광학 문자 인식(optical character recognition) 모델입니다. MIT 라이선스(license) 하에 제공되며, 상업 및 연구 애플리케이션(application) 모두에서 고급 시각적 이해(visual understanding) 기능을 통해 효율적인 문서 및 이미지 텍스트 추출을 가능하게 합니다. 주요 기능은 다음과 같습니다:
+
+*   다양한 기본 해상도(resolution) 모드 (Tiny: 512×512, Small: 640×640, Base: 1024×1024, Large: 1280×1280)와 여러 해상도를 결합하는 "건담(Gundam)" 모드를 통한 동적 해상도 지원
+*   문서-마크다운(markdown) 변환, 자유 OCR(optical character recognition) 및 텍스트 추출, 그림 구문 분석(parsing), 이미지 설명, 그리고 그라운딩(grounding) 기능을 통한 요소 위치 파악을 포함하는 포괄적인 작업 지원
+*   vLLM을 통해 PDF를 처리할 때 A100-40G GPU에서 초당 약 2500 토큰(token)의 동시성(concurrency)을 달성하는 고성능 추론(inference)
+*   배치 처리(batch processing)를 위한 네이티브(native) vLLM 지원 (v0.11.1+) 및 유연한 구현을 위한 HuggingFace 트랜스포머(Transformers) 호환성
+*   CUDA 11.8 + PyTorch 2.6.0 기반으로 구축되었으며, 플래시 어텐션 2(Flash Attention 2) 지원 및 bfloat16 정밀도(precision)를 제공합니다.
+
+개발자는 고처리량(high-throughput) 배치 처리(batch processing)를 위해 vLLM을 통해 DeepSeek-OCR을 통합하거나, 사용자 정의 구현을 위해 트랜스포머(Transformers)를 통해 통합할 수 있습니다. 이 모델은 작업별 지침으로 사용자 정의할 수 있는 간단한 <image> 토큰(token) 프롬프트(prompt)를 사용하며, 다양한 문서 이해 및 시각적 텍스트 추출 워크플로우(workflow)에 접근 가능하게 합니다. GitHub

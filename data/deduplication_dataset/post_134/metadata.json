@@ -1,0 +1,21 @@
+{
+  "post_id": "134",
+  "title": "지난주 AI 소식 #318 - OpenAI 오픈소스 모델(OSS models), Opus 4.1, Gemini 2.5 심층 사고(Deep Think)",
+  "base_word_count": 100,
+  "exact_30_update_wc": 456,
+  "exact_30_ground_truth_wc": 456,
+  "exact_30_overlap_ratio": 0.219,
+  "paraphrase_25_update_wc": 329,
+  "paraphrase_25_ground_truth_wc": 329,
+  "paraphrase_25_overlap_ratio": 0.304,
+  "fragment_20_update_wc": 81,
+  "fragment_20_ground_truth_wc": 134,
+  "fragment_20_overlap_ratio": 0.58,
+  "semantic_25_update_wc": 490,
+  "semantic_25_ground_truth_wc": 490,
+  "semantic_25_overlap_ratio": 0.204,
+  "mixed_real_update_wc": 416,
+  "mixed_real_ground_truth_wc": 416,
+  "mixed_real_overlap_ratio": 0.24,
+  "status": "generated"
+}

@@ -1,0 +1,21 @@
+{
+  "post_id": "085",
+  "title": "**생성형 미디어(generative media)의 기술사 — Fal.ai의 Gorkem 및 Batuhan과 함께**",
+  "base_word_count": 14626,
+  "exact_30_update_wc": 2165,
+  "exact_30_ground_truth_wc": 10776,
+  "exact_30_overlap_ratio": 2.778,
+  "paraphrase_25_update_wc": 3730,
+  "paraphrase_25_ground_truth_wc": 3548,
+  "paraphrase_25_overlap_ratio": 3.97,
+  "fragment_20_update_wc": 9507,
+  "fragment_20_ground_truth_wc": 9524,
+  "fragment_20_overlap_ratio": 1.537,
+  "semantic_25_update_wc": 9726,
+  "semantic_25_ground_truth_wc": 9734,
+  "semantic_25_overlap_ratio": 1.503,
+  "mixed_real_update_wc": 9685,
+  "mixed_real_ground_truth_wc": 9685,
+  "mixed_real_overlap_ratio": 1.51,
+  "status": "generated"
+}

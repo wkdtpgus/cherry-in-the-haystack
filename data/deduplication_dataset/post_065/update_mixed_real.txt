@@ -1,0 +1,14 @@
+2025년 최신 AI 트렌드 업데이트: DeepSeek-OCR의 진화와 활용 사례, OpenAI의 에이전트 전략 확장, Apple의 온디바이스 AI 비전, 웹 에이전트(agent) 기술 발전, Anthropic 샌드박스 런타임, 스탠포드 LLM 강좌 최신 커리큘럼, 그리고 주요 AI 논문 및 제품 소식.
+
+**주요 소식**
+**DeepSeek-OCR**
+DeepSeek이 DeepSeek-OCR을 출시했습니다. 이는 LLM(Large Language Model) 중심 관점에서 비전 인코더(vision encoder)의 역할을 탐구하는 문맥적 광학 압축(contextual optical compression)에 중점을 둔 오픈소스 광학 문자 인식(optical character recognition) 모델로, 출시 이후 꾸준히 주목받고 있습니다. MIT 라이선스(license) 하에 제공되며, 상업 및 연구 애플리케이션(application) 모두에서 고급 시각적 이해(visual understanding) 기능을 통해 효율적인 문서 및 이미지 텍스트 추출을 가능하게 합니다. 최근 업데이트를 통해 DeepSeek-OCR은 더욱 강화된 정확도와 처리 속도를 선보이며, 복잡한 문서 구조 분석 및 다양한 언어 지원에서 뛰어난 성능을 입증하고 있습니다. 주요 기능은 다음과 같습니다:
+
+*   다양한 기본 해상도(Tiny: 512×512 ~ Large: 1280×1280) 및 '건담(Gundam)' 모드를 통한 동적 해상도 지원으로 최적의 시각적 분석 가능.
+*   문서-마크다운(markdown) 변환, 자유 OCR(optical character recognition) 및 텍스트 추출, 그림 구문 분석(parsing), 이미지 설명, 그라운딩(grounding) 기능을 통한 요소 위치 파악 등 포괄적인 작업 지원.
+*   vLLM을 통해 PDF를 처리할 때 A100-40G GPU에서 초당 약 2500 토큰(token)의 동시성(concurrency)을 달성하는 고성능 추론(inference).
+*   배치 처리(batch processing)를 위한 네이티브(native) vLLM 지원 (v0.11.1+) 및 유연한 HuggingFace 트랜스포머(Transformers) 호환성.
+*   CUDA 11.8 + PyTorch 2.6.0 기반으로 구축되었으며, 플래시 어텐션 2(Flash Attention 2) 지원 및 bfloat16 정밀도(precision)를 제공합니다.
+*   모델 경량화 및 온디바이스(on-device) 환경 추론 성능 향상을 위한 지속적인 연구는 모바일 및 엣지 디바이스(edge device) 활용 가능성을 높입니다.
+
+개발자들은 고처리량 배치 처리 시 vLLM을 통해 DeepSeek-OCR을 통합하거나, 유연한 사용자 정의 구현을 위해 HuggingFace 트랜스포머 라이브러리를 통해 손쉽게 통합 가능합니다. 이 모델은 작업별 지침으로 사용자 정의할 수 있는 간단한 <image> 토큰(token) 프롬프트(prompt)를 사용하며, 다양한 문서 이해 및 시각적 텍스트 추출 워크플로우(workflow)에 효과적으로 적용됩니다. 활발한 커뮤니티 지원과 정기적인 공식 문서 업데이트로 새로운 기능 학습 및 문제 해결 리소스가 풍부합니다. GitHub

@@ -1,0 +1,21 @@
+{
+  "post_id": "089",
+  "title": "**GPT-5의 라우터(Router): 작동 방식과 프론티어 랩스(Frontier Labs)가 현재 파레토 프론티어(Pareto Frontier)를 목표로 삼는 이유**",
+  "base_word_count": 618,
+  "exact_30_update_wc": 355,
+  "exact_30_ground_truth_wc": 651,
+  "exact_30_overlap_ratio": 0.907,
+  "paraphrase_25_update_wc": 870,
+  "paraphrase_25_ground_truth_wc": 870,
+  "paraphrase_25_overlap_ratio": 0.71,
+  "fragment_20_update_wc": 509,
+  "fragment_20_ground_truth_wc": 588,
+  "fragment_20_overlap_ratio": 1.059,
+  "semantic_25_update_wc": 1207,
+  "semantic_25_ground_truth_wc": 1212,
+  "semantic_25_overlap_ratio": 0.508,
+  "mixed_real_update_wc": 540,
+  "mixed_real_ground_truth_wc": 540,
+  "mixed_real_overlap_ratio": 1.144,
+  "status": "generated"
+}

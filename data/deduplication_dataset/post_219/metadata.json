@@ -1,0 +1,21 @@
+{
+  "post_id": "219",
+  "title": "**부당 청구에 맞서 싸우기 위해 인공지능(AI)을 활용하는 최초의 가이드를 만들었습니다: 당신의 주도권을 되찾을 10가지 원칙 + 7가지 프롬프트(prompt)**",
+  "base_word_count": 827,
+  "exact_30_update_wc": 702,
+  "exact_30_ground_truth_wc": 1156,
+  "exact_30_overlap_ratio": 0.531,
+  "paraphrase_25_update_wc": 1097,
+  "paraphrase_25_ground_truth_wc": 1097,
+  "paraphrase_25_overlap_ratio": 0.754,
+  "fragment_20_update_wc": 780,
+  "fragment_20_ground_truth_wc": 1147,
+  "fragment_20_overlap_ratio": 0.59,
+  "semantic_25_update_wc": 1076,
+  "semantic_25_ground_truth_wc": 1074,
+  "semantic_25_overlap_ratio": 0.77,
+  "mixed_real_update_wc": 922,
+  "mixed_real_ground_truth_wc": 922,
+  "mixed_real_overlap_ratio": 0.897,
+  "status": "generated"
+}

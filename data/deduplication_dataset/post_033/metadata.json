@@ -1,0 +1,21 @@
+{
+  "post_id": "033",
+  "title": "더 이상 코끼리는 없다: 이미지 생성(image generation) 분야의 혁신",
+  "base_word_count": 1527,
+  "exact_30_update_wc": 1025,
+  "exact_30_ground_truth_wc": 1584,
+  "exact_30_overlap_ratio": 0.944,
+  "paraphrase_25_update_wc": 1576,
+  "paraphrase_25_ground_truth_wc": 1576,
+  "paraphrase_25_overlap_ratio": 0.969,
+  "fragment_20_update_wc": 1195,
+  "fragment_20_ground_truth_wc": 1701,
+  "fragment_20_overlap_ratio": 0.854,
+  "semantic_25_update_wc": 1356,
+  "semantic_25_ground_truth_wc": 1356,
+  "semantic_25_overlap_ratio": 1.126,
+  "mixed_real_update_wc": 1176,
+  "mixed_real_ground_truth_wc": 1210,
+  "mixed_real_overlap_ratio": 1.27,
+  "status": "generated"
+}

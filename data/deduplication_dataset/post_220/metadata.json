@@ -1,0 +1,21 @@
+{
+  "post_id": "220",
+  "title": "**임원 브리핑**: 헤드라인이 엇갈릴 때, AI 네이티브 기업(AI-Native Companies)이 조직 AI 유창성(Institutional AI Fluency)을 구축하는 3가지 핵심 방법 (+ 시작을 위한 프롬프트)",
+  "base_word_count": 569,
+  "exact_30_update_wc": 812,
+  "exact_30_ground_truth_wc": 930,
+  "exact_30_overlap_ratio": 0.555,
+  "paraphrase_25_update_wc": 712,
+  "paraphrase_25_ground_truth_wc": 712,
+  "paraphrase_25_overlap_ratio": 0.799,
+  "fragment_20_update_wc": 445,
+  "fragment_20_ground_truth_wc": 602,
+  "fragment_20_overlap_ratio": 0.926,
+  "semantic_25_update_wc": 707,
+  "semantic_25_ground_truth_wc": 706,
+  "semantic_25_overlap_ratio": 0.806,
+  "mixed_real_update_wc": 500,
+  "mixed_real_ground_truth_wc": 500,
+  "mixed_real_overlap_ratio": 1.138,
+  "status": "generated"
+}

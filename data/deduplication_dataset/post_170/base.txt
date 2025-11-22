@@ -1,0 +1,10 @@
+# **SWE-Bench 저자들이 Neurips 2024에서 LLM 에이전트(LLM agents)의 현황에 대해 성찰하다**
+
+Author: Jay Alammar
+URL: https://newsletter.languagemodels.co/p/swe-bench-authors-reflect-on-the
+
+============================================================
+
+**SWE-Bench 저자들이 Neurips 2024에서 LLM 에이전트(LLM agents)의 현황에 대해 고찰하다**
+Jay Alammar 2025년 1월 14일 5 1 공유
+SWE-bench 작업은 GitHub 이슈(GitHub issue) 수준에서 소프트웨어 엔지니어링 작업에 대한 AI 에이전트(AI agents)를 측정합니다. 이는 2024년에 소프트웨어 엔지니어링 작업을 다루는 에이전트(agents)의 진행 상황을 측정하는 가장 중요한 작업 중 하나였습니다. 우리는 그 작업의 두 명의 창시자인 Ofir Press와 Carlos E. Jimenez를 만나 LLM 기반 에이전트(LLM-backed agents)의 현황에 대한 그들의 생각을 공유했습니다. 5 1 공유

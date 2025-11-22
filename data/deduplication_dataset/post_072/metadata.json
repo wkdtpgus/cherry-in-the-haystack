@@ -1,0 +1,21 @@
+{
+  "post_id": "072",
+  "title": "**🤖 AI 에이전트 위클리: 클로드 에이전트 SDK(Claude Agent SDK), 소라 2(Sora 2), 클로드 소네트 4.5(Claude Sonnet 4.5), 마이크로소프트 에이전트 프레임워크(Microsoft Agent Framework), GLM-4.6(GLM-4.6), 에이전틱 커머스 프로토콜(Agentic Commerce Protocol)**",
+  "base_word_count": 290,
+  "exact_30_update_wc": 367,
+  "exact_30_ground_truth_wc": 403,
+  "exact_30_overlap_ratio": 0.692,
+  "paraphrase_25_update_wc": 786,
+  "paraphrase_25_ground_truth_wc": 786,
+  "paraphrase_25_overlap_ratio": 0.369,
+  "fragment_20_update_wc": 410,
+  "fragment_20_ground_truth_wc": 553,
+  "fragment_20_overlap_ratio": 0.359,
+  "semantic_25_update_wc": 731,
+  "semantic_25_ground_truth_wc": 731,
+  "semantic_25_overlap_ratio": 0.397,
+  "mixed_real_update_wc": 456,
+  "mixed_real_ground_truth_wc": 456,
+  "mixed_real_overlap_ratio": 0.636,
+  "status": "generated"
+}

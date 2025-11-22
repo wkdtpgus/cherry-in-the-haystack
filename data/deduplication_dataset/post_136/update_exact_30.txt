@@ -1,0 +1,12 @@
+알리나 프린글(Alina Pringle) 삽화 (https://alinapringle.format.com)
+"언어를 사고의 모델로 되돌려 놓을 때, 우리는 지능을 뒷받침하는 암묵적 체화된 이해를 간과하게 된다." –테리 위노그라드(Terry Winograd)
+
+최근 인공지능 분야는 대규모 언어 모델(LLMs)과 이미지 생성 모델 등 생성형 AI의 성공으로 전례 없는 주목을 받고 있습니다.
+
+최근 생성형 AI 모델(generative AI models)의 성공은 일부 사람들에게 AGI(인공 일반 지능)가 임박했다고 확신시켰다.
+
+이 모델들은 방대한 패턴 학습에도 불구하고 인간의 상식, 추론, 상황 판단과는 거리가 멀다. 단순히 규모를 키우는 것만으로는 지능 본질을 해결할 수 없다는 비판이 제기된다. 최신 다중 모달 AI(multimodal AI) 역시 개별 모달리티(modality)의 피상적 연결일 뿐, 실제 세계 이해나 행동 계획을 수반하지 못한다. 이러한 한계를 극복하려면 지능 관점을 재정립해야 한다. 지능은 기호 처리나 패턴 인식을 넘어, 물리적 세계 안에서 몸을 가지고 상호작용하며 발전한다. 환경과의 피드백 루프를 통한 세계 이해가 핵심이다.
+
+모달리티들을 땜질식 AGI로 엮으려 하기보다, 우리는 체화(embodiment)와 환경과의 상호작용(interaction with the environment)을 주요하게 다루고 모달리티 중심 처리(modality-centered processing)를 창발적 현상(emergent phenomena)으로 보는 지능 접근 방식을 추구해야 한다.
+
+체화된 지능(embodied intelligence)은 AI가 추상적 정보를 넘어, 직접 몸을 움직이고 감각을 통해 세계를 경험함으로써 언어 의미를 '접지(grounding)'하고 복잡한 추론 능력을 구축해야 한다는 원칙입니다. 로봇 공학(robotics)과 발달 심리학(developmental psychology)에서 강조하듯, AI는 가상 또는 실제 환경 내에서 능동적인 탐색과 학습으로 진정한 이해를 발전시켜야 합니다. 이는 인간 수준의 감각 운동 추론(sensorimotor reasoning), 동작 계획(motion planning), 사회적 조정(social coordination)이 가능한 AGI로 가는 더 견고한 길을 제시합니다.

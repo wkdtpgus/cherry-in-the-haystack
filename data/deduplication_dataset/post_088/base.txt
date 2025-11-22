@@ -1,0 +1,29 @@
+# **GPT-5의 시각 점검: 선구적인 VLM(Vision-Language Model)이지만, 새로운 SOTA(State-Of-The-Art)는 아니다**
+
+Author: Latent Space
+URL: https://www.latent.space/p/gpt5-vision
+
+============================================================
+
+편집자 주: Roboflow의 Matvei 님을 Latent Space 객원 저자 팀에 환영합니다! GPT-5-Mini의 시각 점수가 GPT-5의 시각 점수와 동일하다는 점에 주목하십시오. 이는 매우 훌륭한 모델 라우터(model router)가 작동하고 있음을 보여주는 예상된 결과입니다. 오늘 OpenAI의 발표에서 크게 주목받지 못한 부분은 GPT-5의 시각 및 시각적 추론(visual reasoning) 능력입니다. LLM(대규모 언어 모델)에 시각적 이해를 추가하는 것은 어려운 일로 입증되었으며, 대부분의 모델은 사진 속 동전 4개를 정확히 세거나 이미지 내 특정 항목의 위치를 파악하지 못했습니다. LLM이 주변 세상을 실시간으로 이해할 수 있게 되는 것은 자율 로봇(autonomous robotics) 또는 컴퓨터 사용 혁명을 가능하게 하고 개인 초지능(personal superintelligence) 시대를 열기 위해 사람들이 찾고 있는 돌파구입니다.
+
+**LLM과 시각적 이해의 현재 상태**
+추론(reasoning) 및 시각적 능력의 조합은 OpenAI GPT 및 o 시리즈 모델, Google의 Gemini 모델, Anthropic의 Claude 모델, Meta의 Llama 모델과 같은 여러 모델에서 나타났습니다. 모델은 작업 유형에 따라 특정 강점과 약점을 가집니다. 텍스트 읽기, 표지판, 영수증, CAPTCHA, 색상 이해와 같은 작업은 일반적으로 모든 모델에서 해결됩니다. 그러나 카운팅(counting), 공간 이해(spatial understanding), 객체 감지(object detection), 문서 이해와 같은 더 어려운 작업은 성능 가변성(performance variability)이 높으며, 특히 대부분의 인터넷 규모 사전 학습(pretrain) 데이터에서 부족한 것으로 알려진 경우 더욱 그렇습니다.
+
+RF100VL에서
+작업 유형 전반의 편차(variance)는 일반적인 비교를 어렵게 만들지만, 이것이 바로 Vision Checkup과 같은 리더보드(leaderboard)가 최근 출시된 이유입니다. Vision Checkup은 당사의 오픈 소스(open source) 시각 모델 평가 리더보드이며, 어려운 작업의 최전선 성능에 대한 통찰력을 제공합니다. 보시다시피 OpenAI는 시각 능력에서 지배적이며, GPT-5의 출시는 또 다른 모델을 상위 5위권에 추가합니다.
+
+미니 버전이 메인 버전과 동일하게 작동한다는 점에 주목하세요! 훌륭한 라우터입니다.
+리더보드는 명확하게 보여줍니다. 상위 모델은 모두 추론 모델입니다. 추론이 일반적인 시각 작업에서 OpenAI의 지배력을 이끌고 있습니다. Vision Checkup 리더보드의 상위 모델은 추론 능력을 갖춘 모델의 구성입니다. 우리는 이 모델들의 좋은 결과가 사전 학습(pretraining) 및 테스트 시점의 추론 능력에 더 많이 기인한다고 추정합니다. 이는 다중 모달(multi-modal) 대규모 언어 모델(LLM)의 중요한 발전의 연속을 의미합니다. 즉, 텍스트와 시각 양쪽 모달리티(modality)에 대해 추론할 수 있는 능력입니다. 그렇기는 하지만, 점수는 업데이트마다 크게 다르며, 이는 여러 가지 이유로 설명할 수 있습니다. 가장 큰 이유는 OpenAI 모델의 추론 모드(reasoning mode)의 비결정성(nondeterminism)입니다. 추론 모델에 동일한 질문을 두 번 프롬프트(prompt)하면 올바른 답변과 잘못된 답변이 모두 나올 수 있습니다. 실제 사용에 있어서, 이미지에 대한 추론은 현재 유용하기에는 너무 많은 시간이 걸리며, 답변의 가변성(variability) 때문에 신뢰하기 어렵습니다. 대부분의 개발자에게 이미지를 이해하는 데 10초 이상이 걸리는 것은 실시간 사용 사례를 가능하게 하지 못할 것입니다. 속도와 능력 사이에는 절충점(trade-off)이 있습니다. 작업에 따라, 더 좁은 범위의 지식을 가진 더 빠른 모델이 최선의 결정일 수 있습니다.
+
+**시각 바이브 체크(Vision Vibe Checks)를 넘어서**
+우리는 자율 로봇(autonomous robotics)이 주변 세상과 실시간으로 상호작용할 수 있는 세상과는 아직 거리가 뭅니다. 카운팅(counting), 공간 이해(spatial understanding), 객체 위치 파악(object localization)과 같은 간단한 작업은 로봇이 통제된 환경 밖에서 일반적인 작업을 수행하는 데 핵심입니다. 가벼운 바이브 체크(vibe checks)가 있는 리더보드를 넘어설 수 있도록, 우리는 광범위한 도메인(domain)에 걸쳐 LLM을 테스트하고 그 진행 상황을 추적해야 합니다. 우리는 올해 CVPR 컨퍼런스에서 더 어려운 시각적 이해 및 그라운딩(grounding) 벤치마크(benchmark) 세트를 제공하기 위해 새로운 벤치마크인 RF100-VL을 발표했습니다. 이 벤치마크는 "당신의 LLM은 실제 세상을 얼마나 잘 이해하는가?"를 묻습니다. RF100-VL은 Roboflow Universe 커뮤니티의 100개 오픈 소스 데이터셋(dataset)으로 구성되어 있으며, 객체 감지 바운딩 박스(object detection bounding boxes)와 시각적 예시 및 풍부한 텍스트 설명을 포함하는 다중 모달(multimodal) 소수샷(few-shot) 지침을 새로운 이미지 도메인(domain) 전반에 걸쳐 제공합니다. 상위 LLM들은 실제 환경에서 새로운 객체를 식별하는 데 10 mAP50:95 미만의 점수를 기록했습니다. 모든 LLM 중 현재 SOTA(State-Of-The-Art)는 Gemini 2.5 Pro로, 제로샷(zero-shot) mAP50:95에서 13.3을 달성했습니다. 객체 감지(object detection) 작업에 있어서 OpenAI 모델과 Gemini 또는 Qwen과 같은 모델의 주요 차이점은 OpenAI 모델이 사전 학습(pretraining)에 객체 감지 데이터를 포함하지 않는다는 점이라고 추정합니다. RF100-VL에서 GPT-5를 실행한 결과, mAP50:95는 1.5를 기록했습니다. 이는 Gemini 2.5 Pro의 현재 SOTA인 13.3보다 현저히 낮은 수치입니다. 우리는 이러한 단점이 GPT-5의 객체 감지 사전 학습(pre-training) 부족에 기인한다고 크게 생각합니다. 점수가 왜 그렇게 낮은지에 대한 더 많은 직관을 얻기 위해 아래에서 몇 가지 결과를 살펴보겠습니다.
+
+**예시: 위치 파악(Localization)**
+이것은 배구 데이터셋(dataset)의 예시로, 낮은 점수의 주요 원인을 보여줍니다. 모델이 이미지 내 객체를 잘 이해하고 있음을 관찰할 수 있습니다. 공, 두 명의 블로커(blocker), 그리고 몇 명의 수비수가 존재한다는 것을 정확히 이해하고 있습니다. 하지만 모델은 객체들의 위치를 파악하지 못하며, 모든 박스(box)가 객체의 위치 및 크기와 일치하지 않습니다. 모델은 이미지를 이해하는 데는 능숙하지만, 이미지 내 특정 객체를 그라운딩(grounding)하는 데는 능숙하지 않은 것으로 보이며, 이는 다시 사전 학습(pre-training)에서 객체 감지(object detection) 작업이 부족했기 때문이라고 생각합니다. 아래 양 데이터셋(dataset)에서도 비슷한 상황을 볼 수 있습니다.
+
+**예시: UI 요소(UI Elements)**
+도구 사용(tool use) 및 시각 기반 에이전트 워크플로우(vision-powered agentic workflows)를 위한 LLM의 최근 발전에 따라, GPT-5의 해당 성능을 살펴보겠습니다. UI 요소 데이터셋(dataset)에서도 품질 향상은 보이지 않습니다. 다음으로, GPT-5가 이전 OpenAI 모델들과 비교하여 더 나은지 살펴보겠습니다. GPT-5는 o3보다 약간 더 나아졌습니다. 그리고 두 경우 모두 상세한 지침과 같은 추가 정보를 제공하는 것이 모델에 도움이 됩니다. 흥미롭게도, 추론 노력(reasoning effort)을 높게 설정해도 RF100-VL의 점수는 향상되지 않습니다. 따라서 RF100-VL의 경우 추론의 이점이 그렇게 명확하지 않으며, 이는 사전 학습(pretraining)에서 객체 감지(object detection) 작업이 부족하여 객체 감지 능력이 부족하기 때문이라고 추정합니다.
+
+**GPT-5는 간단한 시각 작업에서 약간의 개선을 보입니다.**
+GPT-5의 향상된 추론(reasoning)은 Vision Checkup 리더보드에서 높은 순위를 차지하게 하며, 다단계 사고(multi-step thinking)가 모델이 픽셀(pixel)에서 더 많은 정보를 추출할 수 있도록 한다는 것을 증명합니다. 사람들이 ChatGPT에 의존하여 해결하는 일상적인 사용 사례에 있어 훌륭한 결과입니다. RF100-VL은 이해(comprehension)가 위치 파악(localization)과 같지 않다는 점을 강조하는 데 도움이 됩니다. 객체 감지 사전 지식(object-detection priors) 없이는 감지(detection)가 여전히 목표를 벗어납니다. 그럼에도 불구하고, GPT-5의 시각 추론(vision-reasoning) 능력 향상은 더 잘 볼 뿐만 아니라 보고 있는 것에 대해 더 깊이 생각하는 모델이라는 명확한 발전 방향을 제시합니다. 비전 AI 엔지니어(Vision AI Engineers)는 그들의 블로그에서 더 심층적인 게시물을 확인할 수 있습니다.

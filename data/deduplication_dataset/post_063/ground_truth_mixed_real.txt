@@ -1,0 +1,23 @@
+**오늘 호에서는:**
+
+MiniMax-M2가 최고 수준의 오픈소스 모델로 자리매김하고 있습니다.
+Cursor가 Cursor 2.0을 꾸준히 발전시켰습니다.
+Kimi CLI의 지속적인 개선 소식.
+연구에서 사전 예방적 컨텍스트 관리(proactive context management)를 소개합니다.
+Cognition이 SWE-1.5의 성공에 이어 차세대 코딩 에이전트(coding agent)를 개발 중입니다.
+Microsoft의 AI 에이전트(AI agents)를 위한 RL 훈련 프레임워크의 최신 동향.
+AI 에이전트(AI Agents)가 인간과 어떻게 다르게 작동하는지에 대한 연구.
+에이전트 데이터 프로토콜(Agent Data Protocol)의 중요성.
+최신 AI 개발 뉴스 및 에이전트 활용 사례.
+
+**주요 소식**
+**MiniMax-M2**
+MiniMax-M2는 코딩 및 에이전트 워크플로우(agentic workflows)에 최적화된 오픈소스 전문가 혼합(mixture-of-experts, MoE) 언어 모델입니다. 이 모델은 총 2,300억 개의 매개변수(parameters)를 가지며, 그 중 100억 개의 활성 매개변수(active parameters)만을 사용하여 기능과 계산 효율성(computational efficiency) 사이의 균형을 이룹니다.
+
+주요 특징:
+*   **선도적인 성능 유지** – MiniMax-M2는 오픈소스 모델 중 1위, Artificial Analysis 전체 순위 중 5위를 차지하며, 다중 파일 코드 편집(multi-file code edits), 테스트 검증된 수정(test-validated repairs), 컴파일-실행-수정 루프(compile-run-fix loops)에서 뛰어난 성능을 여전히 보입니다. 특히, OpenRouter에서의 높은 토큰 사용량은 실제 개발 환경에서의 광범위한 채택을 입증합니다.
+*   **강력한 에이전트 기능** – 이 모델은 에이전트 시나리오에서 브라우저 자동화 및 정보 검색 기능을 강력하게 지원합니다. `<think>...</think>` 태그를 활용한 인터리브드 사고 모델(interleaved thinking model)과, 복잡한 에이전트 워크플로우를 위한 개선된 도구 호출 기능(tool-calling capabilities)을 통해 개발 효율성을 극대화합니다.
+*   **벤치마크 결과** – SWE-bench Verified에서 69.4%, Terminal-Bench에서 46.3%(Claude Sonnet 4의 36.4%를 능가), BrowseComp에서 44%(Claude Sonnet 4.5의 19.6%를 크게 상회), Multi-SWE-Bench에서 36.2%, GAIA(텍스트 전용)에서 75.7%를 달성했습니다.
+*   **효율적인 아키텍처(architecture)** – 이 모델의 효율적인 아키텍처는 100억 개의 활성화 풋프린트(activation footprint)를 유지하면서도 총 2,300억 개의 매개변수를 활용합니다. 이러한 설계 덕분에 에이전트 루프에서 더욱 빠른 피드백 주기, 동시 실행을 위한 높은 처리량, 그리고 간소화된 배포 인프라를 제공하여, 실제 프로덕션 환경의 에이전트 시스템이 겪는 어려움을 효과적으로 해소하고 있습니다.
+*   **가용성 확대** – MiniMax-M2는 HuggingFace를 통해 오픈소스 가중치(open-source weights)로 계속 제공되며, 커뮤니티의 기여를 활발히 유도하고 있습니다. MiniMax 플랫폼에서는 새로운 개발자 지원 프로그램과 함께 API 접근이 더욱 용이해졌으며, agent.minimax.io를 통해 강화된 MiniMax Agent 제품을 경험할 수 있습니다. 로컬 배포(local deployment)를 위한 SGLang 및 vLLM 지원은 물론, 다양한 클라우드 환경과의 통합도 간소화되었습니다.
+GitHub

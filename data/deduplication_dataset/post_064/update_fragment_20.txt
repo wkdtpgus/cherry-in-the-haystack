@@ -1,0 +1,61 @@
+## AI 연구 동향: 진화하는 모델과 새로운 패러다임
+
+최근 인공지능 연구는 전례 없는 속도로 발전하며 다양한 분야에 혁신을 가져오고 있습니다. 효율적인 모델 아키텍처부터 복잡한 추론 능력, 그리고 실용적인 응용에 이르기까지, 최신 연구들은 AI의 잠재력을 한층 더 확장하고 있습니다.
+
+### 1. 시각 정보 압축의 새로운 지평: DeepSeek-OCR의 DeepEncoder
+
+**DeepSeek-OCR**은 새로운 시각 인코더 아키텍처(vision encoder architecture, DeepEncoder)를 도입하여 이미지 분석의 지평을 넓혔습니다. 이 기술은 긴 텍스트 컨텍스트를 시각적 표현으로 압축하는 방법을 탐구하며, AI 모델의 효율성을 획기적으로 개선하며 10-20배의 압축률을 달성합니다. 기존 OCR 시스템의 한계를 뛰어넘어, DeepEncoder 아키텍처는 다양한 모달리티를 통합하는 방향으로 발전하고 있습니다. 특히, 복잡한 연산에서도 낮은 활성화 메모리(activation memory)를 유지하며 고해상도 이미지 처리 능력을 보여줍니다. 이는 모바일 기기나 엣지 컴퓨팅 환경에서의 AI 배포에 중요한 의미를 가집니다.
+
+단일 모델이 다양한 조건에서 유연하게 작동하여 압축-품질 절충(compression-quality trade-offs)을 최적화합니다. 상용화 준비 성능은 실제 환경에서 모델의 적용 가능성을 높이는 핵심 요소입니다. 최근 연구들은 다양한 벤치마크에서 SOTA(State-Of-The-Art)를 달성합니다. 확장된 기능은 모델의 활용 범위를 넓히는 데 기여하며, 순수 OCR을 넘어 차트-HTML 테이블 변환, 화학식-SMILES 변환 등 심층 파싱(deep parsing) 작업을 수행할 수 있습니다. 이는 AI가 단순한 인식 단계를 넘어 실제 세계의 복잡한 정보를 이해하고 구조화하는 능력으로 진화하고 있음을 보여줍니다.
+
+### 2. 지속 학습의 도전: 희소 메모리 미세 조정
+
+최근 연구들은 희소 메모리 미세 조정(sparse memory finetuning)을 통해 모델의 효율성을 극대화합니다. Meta AI 연구원들은 언어 모델의 고질적인 문제인 치명적 망각(catastrophic forgetting)을 해결하기 위한 혁신적인 접근 방식을 제시했습니다. 새로운 지식에 의해 활성화된 특정 부분만 업데이트하여 성능 저하를 최소화하며, 이는 표준 미세 조정 방식에 비해 훨씬 적은 망각을 유도합니다. 핵심 문제는 모델이 지속적으로 새로운 정보를 학습할 때 발생하는 안정성과 유연성 사이의 균형을 맞추는 것입니다.
+
+특히, 고비용 데이터 재생 전략(expensive data replay strategies) 없이도 효율적인 지속 학습이 가능합니다. 메모리 계층 아키텍처는 모델의 지식 저장 방식을 혁신하고 있습니다. 피드포워드 계층을 희소 매개변수 메모리 풀(sparse parametric memory pools)로 대체하여, 복잡한 데이터에서도 정보 저장에 대한 세분화된 제어(granular control)를 제공합니다. 희소성을 위한 TF-IDF 순위(TF-IDF ranking for sparsity)는 텍스트 데이터의 핵심 특징을 파악하는 데 유용하며, 새 입력에 특정한 메모리 슬롯을 식별하여 모델 간의 간섭 최소화(minimizing interference)를 달성합니다. 경험적 검증은 새로운 학습 방법론의 효과를 입증하는 데 필수적이며, 이를 통해 모델이 시간이 지남에 따라 지식을 축적(accumulate knowledge)할 수 있도록 돕습니다. 이러한 접근 방식은 AI 시스템이 끊임없이 변화하는 현실 세계에 적응하고 진화하는 데 필수적인 기반을 제공합니다.
+
+### 3. 모델 내부의 기하학: 매니폴드 조작의 이해
+
+최근 연구들은 특정 모델이 복잡한 패턴을 예측하는 방법을 조사하여 새로운 통찰을 제공합니다. Anthropic 연구원들은 Claude 3.5 Haiku가 고정 폭 텍스트(fixed-width text)에서 줄 바꿈(line break)을 예측하는 과정을 분석하며, 생물학적 뇌 구조와 유사한 기하학적 표현(geometric representations)이 모델 내부에서 발견되었음을 밝혔습니다. 텍스트 공간에서의 지각 작업은 언어 모델에게 중요한 도전 과제이며, 명시적 위치 정보(explicit position information) 없이도 모델이 시각/공간 추론(visual/spatial reasoning)을 학습할 수 있습니다.
+
+표현의 이중 해석(Dual interpretation of representations)은 모델 내부의 복잡한 작동 방식을 이해하는 데 중요하며, 잔차 스트림(residual stream)에 대한 기하학적 변환(geometric transformations)을 통해 데이터가 처리됩니다. 생물학적 유사점(Biological parallels)은 인공지능 연구에 영감을 주는 중요한 요소입니다. 포유류의 장소 세포(place cells)나 경계 세포(boundary cells)처럼, AI 모델도 환경 내 위치를 인코딩하거나 공간적 경계를 감지하는 학습된 표현을 형성하는 것으로 보입니다. 어텐션 헤드(attention heads)를 통해 복잡한 패턴을 감지하고 예측을 수행하며 문자 계수를 구현합니다. 모델의 시각적 착시(Visual illusions in models)는 인간의 인지적 한계와 유사한 현상을 보여주며, 인공지능이 복잡한 공간 추론 작업을 수행하는 방식을 이해하는 데 기여합니다. 이러한 연구는 AI 모델의 "블랙박스" 내부를 들여다보고, 그들이 어떻게 세계를 인코딩하고 추론하는지 이해하는 데 중요한 진전을 이룹니다.
+
+### 4. 데이터 기여도 분석의 혁신: 헤세 행렬 없는 베이즈 영향 함수
+
+고전적인 영향 함수(Classical influence functions)는 복잡한 시스템에서 한계를 드러내고 있습니다. 심층 신경망(deep neural networks)의 비가역 헤세 행렬(non-invertible Hessians)과 고차원 매개변수 공간(high-dimensional parameter spaces)으로 인해 발생하는 문제점을 해결하기 위해, 새로운 베이즈 영향 함수(Bayesian Influence Functions, BIF)가 소개되었습니다. 이 방법은 기존의 복잡한 계산을 대체하는 새로운 베이즈 영향 함수를 소개합니다. 핵심 혁신은 전통적인 계산 방식의 한계를 극복하는 데 있으며, BIF는 헤세 행렬 역행렬(Hessian inverse)을 직접 계산하는 대신 지역 사후 분포(local posterior distribution)에 대한 공분산 추정(covariance estimation)을 사용합니다. 특정 조건에서 고전적인 영향 함수와 유사한 결과를 보여줍니다.
+
+SGLD 기반 추정(SGLD-based estimation)은 복잡한 확률 분포를 다루는 데 효과적이며, 확률적 경사 랑주뱅 동역학(stochastic gradient Langevin dynamics)을 구현하여 베이즈 사후 분포에서 샘플링합니다. 아키텍처 불가지론적(architecture-agnostic) 접근 방식은 다양한 모델에 적용 가능하며, 수십억 개의 매개변수로 확장됩니다. 계산상의 절충(Computational trade-offs)은 특정 방법론을 선택할 때 중요한 고려 사항입니다. 이 방법은 많은 쿼리를 처리할 때 높은 설정 비용을 상각할 수 있습니다. 실험적 검증은 새로운 방법론의 유효성을 확립하는 데 중요하며, 기존 방식 대비 2배 빠른 평가 속도를 보여줍니다. 해석 가능한 토큰별 분석(Interpretable per-token analysis)은 언어 모델의 내부 작동을 이해하는 데 도움을 주며, 복잡한 데이터에서 계층적 구조(hierarchical structure)를 밝혀냅니다. 이러한 기여도 분석은 AI 모델의 투명성과 신뢰성을 높이는 데 필수적입니다.
+
+### 5. 샘플링을 통한 추론: LLM의 잠재력 극대화
+
+**기본 언어 모델**은 새로운 기법을 사용하여 추론 성능(Reasoning performance)을 크게 향상시킬 수 있습니다. 특히, 훈련 데이터셋이나 검증자(verifiers) 없이 MCMC 기법(MCMC techniques)을 활용한 추론 시간 전력 분포 샘플링(inference-time power distribution sampling)은 RL 사후 훈련(RL-posttraining)과 같거나 그 이상의 성능을 달성합니다. 이는 생성된 결과의 다양성을 유지하면서 고확률 시퀀스에 더 높은 가중치를 부여합니다. 전력 샘플링(Power sampling)은 기존의 저온 샘플링 방식(low-temperature sampling)과 중요한 차이를 보이며, 미래 경로의 가능도를 고려하여 특정 토큰에 더 높은 가중치를 부여한다는 것을 의미합니다.
+
+MCMC 구현(MCMC implementation)은 복잡한 확률적 모델링에 필수적인 요소이며, 자기회귀 알고리즘(Autoregressive algorithm)과 메트로폴리스-해스팅스(Metropolis-Hastings)를 사용하여 중간 분포를 점진적으로 샘플링합니다. 일부 경우 추론 비용(inference cost)은 기존 방법보다 증가할 수 있지만, 얻는 이점은 상당합니다. 경험적 결과는 모델이 특정 도메인 외 작업(out-of-domain tasks)에서 뛰어난 성능을 보일 수 있음을 시사하며, 모델은 생성 다양성(generation diversity)을 효과적으로 유지합니다. 훈련 없는 이점(Training-free advantage)은 모델 개발 과정의 복잡성을 크게 줄여주며, 하이퍼파라미터 탐색(hyperparameter sweeps)이나 선별된 데이터셋, 보상 검증자(reward verifiers)가 필요 없습니다. 이는 기본 모델에 상당한 잠재적 추론 능력(latent reasoning capabilities)이 존재함을 시사합니다.
+
+### 6. LLM 라우팅의 진화: 미리 보기 라우팅
+
+**미리 보기 라우팅(Lookahead Routing)**은 모델의 잠재적 출력을 예측하여 효율적인 의사결정을 지원합니다. 이 응답 인식 LLM 라우팅 프레임워크(response-aware LLM routing framework)는 전체 추론(full inference) 없이 더 정보에 입각한 라우팅 결정(informed routing decisions)을 가능하게 하며, 새로운 응답 인식 LLM 라우팅 프레임워크가 등장했습니다. 쿼리 전용 라우팅의 핵심 한계(Core limitation of query-only routing)는 입력 정보에만 의존한다는 점이며, 이는 종종 최적이 아닌 라우팅(suboptimal routing)으로 이어집니다.
+
+이중 구현 아키텍처(Dual implementation architecture)는 유연성을 제공하며, 다양한 모델을 활용할 수 있습니다. 시퀀스 수준 변형(Sequence-level variant)과 토큰 수준 변형(Token-level variant)을 통해 복잡한 데이터에서 정보를 효율적으로 집계합니다. 커리큘럼 마스킹 전략(Curriculum masking strategy)은 모델 훈련의 효율성을 높이는 데 기여하며, 이는 모델의 더 나은 일반화(better generalization)를 가능하게 합니다. 공동 훈련 목표(Joint training objective)는 여러 학습 목표를 동시에 달성하는 데 중점을 두며, 이러한 접근 방식은 더 풍부한 의미론적 정보(richer semantic information)를 포착합니다. 성능은 다양한 벤치마크에서 지속적으로 향상되고 있으며, 이는 모델의 강력한 전문화 인식(strong specialization awareness)을 보여줍니다. 이러한 동적 라우팅은 LLM이 특정 작업에 최적화된 모델을 선택하여 효율성과 정확도를 극대화할 수 있도록 돕습니다.
+
+### 7. 1조 개 매개변수 시대: Ring-1T의 도약
+
+**Ring-1T**는 대규모 매개변수를 가진 최초의 오픈 소스 모델로서, AI 커뮤니티에 큰 영향을 미치고 있습니다. 1조 개의 매개변수(토큰당 약 500억 개 활성(active per token))를 가진 이 "사고 모델(thinking model)"은 조 단위 RL 훈련(trillion-scale RL training)을 통해 다양한 분야에서 획기적인 결과(breakthrough results)를 달성합니다. 벤치마크 성능은 모델의 실제 역량을 측정하는 중요한 지표이며, AIME-2025, HMMT-2025, CodeForces 등에서 최고 점수를 기록했습니다. IcePop 기술은 훈련-추론 불일치(training-inference misalignment)를 해결하며, 복잡한 시스템에서도 안정성 유지는 매우 중요합니다.
+
+C3PO++는 모델의 롤아웃(rollouts) 속도를 향상시켜 효율성을 극대화하며, 이는 전반적인 시스템의 엔드투엔드 속도 향상을 제공합니다. ASystem 인프라(ASystem infrastructure)는 고성능 AI 모델을 위한 견고한 기반을 제공합니다. 하이브리드 런타임(Hybrid Runtime), GPU 메모리 관리(AMem), 가중치 동기화(AState), 그리고 ASandbox를 통해 이는 데이터 흐름 병목 현상(data flow bottlenecks)을 효과적으로 방지합니다. 훈련 파이프라인(Training pipeline)은 다양한 데이터 소스와 학습 전략을 통합하여 모델의 능력을 강화하며, 다중 도메인 데이터(multi-domain data), 검증 가능한 보상을 통한 추론 RL(Reasoning RL), 그리고 정렬 및 안전을 위한 일반 RL(General RL)을 포함합니다. Ring-1T는 대규모 AI 모델의 설계 및 훈련 방식에 대한 새로운 기준을 제시합니다.
+
+### 8. 모바일 OS 에이전트의 미래: ColorAgent
+
+**ColorAgent**는 단계별 RL(step-wise RL)과 자체 진화 훈련(self-evolving training)을 결합하여 새로운 형태의 에이전트를 제시합니다. 다중 에이전트 프레임워크(multi-agent framework)를 통해 개인화된 사용자 참여(personalized user engagement)를 제공하는 이 모바일 OS 에이전트(mobile OS agent)는 AndroidWorld와 AndroidLab 벤치마크에서 뛰어난 성공률을 보였습니다. 이는 미래의 모바일 OS 에이전트가 나아갈 방향을 제시합니다. 특히, 개인화된 의도 정렬(personalized intent alignment)과 신뢰성(trustworthiness)을 확보하는 것이 중요하며, MobileIAR 및 VeriOS-Bench에서 높은 점수를 기록했습니다. ColorAgent는 사용자의 복잡한 요구사항을 이해하고 예측하여, 모바일 경험을 혁신할 잠재력을 가지고 있습니다.
+
+### 9. 프롬프트 엔지니어링의 자동화: Prompt-MII
+
+CMU 연구원들은 대규모 데이터셋에서 지시 유도(instruction induction)를 메타 학습(meta-learns)하는 새로운 프레임워크를 제안합니다. **Prompt-MII**는 3,000개 이상의 HuggingFace 데이터셋에서 RL 프레임워크(RL framework)를 사용하여, 90개의 보지 못한 작업(unseen tasks)에서 F1 점수를 크게 개선했습니다. 이 프레임워크는 기존 방법보다 훨씬 적은 토큰을 필요로 하며, 인컨텍스트 학습(in-context learning) 대비 3-13배의 효율성을 보여줍니다. 단일 순방향 전달(single forward pass)로 간결한 지시(compact instructions)를 생성하며 테스트 시 훈련이 불필요합니다. Prompt-MII는 수동 프롬프트 엔지니어링의 어려움을 해결하고, LLM의 활용성을 높이는 데 기여합니다.
+
+### 10. 기업 심층 연구의 혁신: EDR 프레임워크
+
+Salesforce AI 연구원들은 할 일 기반 작업 관리(todo-driven task management)와 컨텍스트 엔지니어링(steerable context engineering)을 결합한 새로운 프레임워크를 제시합니다. **EDR(Enterprise Deep Research)**은 휴먼 인 더 루프(human-in-the-loop) 조종을 통해 기업 심층 연구를 위한 투명한 다중 에이전트 프레임워크(multi-agent framework)를 제공합니다. DeepResearch Bench, DeepConsult, ResearchQA와 같은 벤치마크에서 SOTA 성능을 달성했으며, 기존 솔루션 대비 훨씬 적은 토큰을 소비합니다. 특히, LangChain의 오픈 심층 연구(open deep research)보다 4배 적은 토큰으로 동일한 결과를 도출합니다. EDR은 기업 환경에서 복잡한 연구 및 분석 작업을 효율적으로 수행하는 데 필요한 강력한 도구입니다.
+
+---
+
+이처럼 AI 연구는 끊임없이 새로운 방법론과 아키텍처를 제시하며, 모델의 효율성, 추론 능력, 그리고 실제 적용 가능성을 증대시키고 있습니다. 앞으로도 이러한 발전이 우리 삶과 산업에 어떤 변화를 가져올지 기대됩니다.

@@ -1,0 +1,21 @@
+{
+  "post_id": "151",
+  "title": "**AI를 일반 기술로 이해하기 위한 가이드**",
+  "base_word_count": 6233,
+  "exact_30_update_wc": 3099,
+  "exact_30_ground_truth_wc": 3286,
+  "exact_30_overlap_ratio": 1.951,
+  "paraphrase_25_update_wc": 4980,
+  "paraphrase_25_ground_truth_wc": 4979,
+  "paraphrase_25_overlap_ratio": 1.252,
+  "fragment_20_update_wc": 3271,
+  "fragment_20_ground_truth_wc": 5431,
+  "fragment_20_overlap_ratio": 1.245,
+  "semantic_25_update_wc": 6774,
+  "semantic_25_ground_truth_wc": 6851,
+  "semantic_25_overlap_ratio": 0.909,
+  "mixed_real_update_wc": 4754,
+  "mixed_real_ground_truth_wc": 4753,
+  "mixed_real_overlap_ratio": 1.311,
+  "status": "generated"
+}

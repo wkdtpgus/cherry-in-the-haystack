@@ -1,0 +1,21 @@
+{
+  "post_id": "218",
+  "title": "**AI와 일자리에 관해 수백 개 기업과 대화했습니다: 아무도 작성하지 않는 일자리 가이드 (+ 프롬프트)**",
+  "base_word_count": 876,
+  "exact_30_update_wc": 938,
+  "exact_30_ground_truth_wc": 1000,
+  "exact_30_overlap_ratio": 0.868,
+  "paraphrase_25_update_wc": 1015,
+  "paraphrase_25_ground_truth_wc": 1015,
+  "paraphrase_25_overlap_ratio": 0.863,
+  "fragment_20_update_wc": 1001,
+  "fragment_20_ground_truth_wc": 1668,
+  "fragment_20_overlap_ratio": 0.209,
+  "semantic_25_update_wc": 1521,
+  "semantic_25_ground_truth_wc": 1521,
+  "semantic_25_overlap_ratio": 0.576,
+  "mixed_real_update_wc": 879,
+  "mixed_real_ground_truth_wc": 879,
+  "mixed_real_overlap_ratio": 0.997,
+  "status": "generated"
+}

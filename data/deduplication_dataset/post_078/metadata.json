@@ -1,0 +1,21 @@
+{
+  "post_id": "078",
+  "title": "AI 에이전트 위클리: 에이전트 3, ChatGPT 개발자 모드(Developer Mode), MCP 레지스트리(Registry), 에이전트용 효과적인 도구 작성, Qodo Aware",
+  "base_word_count": 256,
+  "exact_30_update_wc": 345,
+  "exact_30_ground_truth_wc": 444,
+  "exact_30_overlap_ratio": 0.455,
+  "paraphrase_25_update_wc": 296,
+  "paraphrase_25_ground_truth_wc": 311,
+  "paraphrase_25_overlap_ratio": 0.814,
+  "fragment_20_update_wc": 241,
+  "fragment_20_ground_truth_wc": 401,
+  "fragment_20_overlap_ratio": 0.398,
+  "semantic_25_update_wc": 324,
+  "semantic_25_ground_truth_wc": 449,
+  "semantic_25_overlap_ratio": 0.404,
+  "mixed_real_update_wc": 514,
+  "mixed_real_ground_truth_wc": 525,
+  "mixed_real_overlap_ratio": 0.477,
+  "status": "generated"
+}

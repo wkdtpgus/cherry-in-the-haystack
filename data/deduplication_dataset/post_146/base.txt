@@ -1,0 +1,10 @@
+# **대규모 언어 모델(LLM) 챗봇에 부족한 것: 목적 의식**
+
+Author: The Gradient
+URL: https://thegradientpub.substack.com/p/whats-missing-from-llm-chatbots-a
+
+============================================================
+
+제 친한 친구 중 한 명인 Kenneth Li가 이 글을 발표하게 되어 정말 기쁩니다. Kenneth는 하버드에서 머신러닝(machine learning) 박사 과정을 밟고 있으며, LLM(Large Language Model)과 AI의 미래에 대한 많은 훌륭한 토론을 이끌어왔습니다.
+
+**기사 미리보기**: LLM 기반 챗봇의 역량은 매달 발전해왔습니다. 이러한 개선 사항들은 주로 MMLU, HumanEval, MATH와 같은 벤치마크(benchmark)를 통해 측정됩니다 (예: sonnet 3.5, gpt-4o). 하지만 이러한 측정 지표들이 점점 더 포화됨에 따라, 사용자 경험(user experience)은 이러한 점수에 비례하여 증가하고 있을까요? 만약 우리가 AI가 인간을 대체하는 것이 아닌 인간-AI 협업의 미래를 상상한다면, 대화 시스템(dialogue system)을 측정하는 현재 방식은 상호작용적이지 않은 방식으로 측정하기 때문에 불충분할 수 있습니다. 더 읽어보기

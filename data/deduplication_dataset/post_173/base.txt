@@ -1,0 +1,8 @@
+# **저희가 책을 쓰고 있습니다! "실전 거대 언어 모델(Hands-On Large Language Models)"**
+
+Author: Jay Alammar
+URL: https://newsletter.languagemodels.co/p/were-writing-a-book-hands-on-large
+
+============================================================
+
+**저는 Maarten Grootendorst와 함께 O'Reilly Media에서 출판될 "Hands-On Large Language Models"를 공동 집필하게 되어 매우 기쁩니다!** 저희는 언어 모델(language models)을 텍스트 이해 및 생성에 활용하는 핵심적인 직관을 많은 시각 자료와 함께 담아내는 것을 목표로 합니다. Language Models and Machine Learning을 읽어주셔서 감사합니다! 새 게시물을 받아보고 제 작업을 지원하시려면 무료로 구독해주세요. 구독하기 저희는 집필 과정에 대한 업데이트를 소셜 미디어(social media)와 이 뉴스레터(newsletter)를 통해 게시할 예정입니다. 저희가 다루었으면 하는 내용에 대한 여러분의 의견과 제안을 듣고 싶습니다! 저희의 개요는 개발자들이 필요로 하는 실제 적용 사례(분류(classification), 의미 검색(semantic search), 토픽 모델링(topic modeling), 텍스트 생성(text generation), 프롬프트 엔지니어링(prompt engineering))를 다룹니다. 이어서 기반 모델과 훈련 방법 자체를 설명하는 여러 장이 이어질 것입니다. Language Models and Machine Learning을 읽어주셔서 감사합니다! 새 게시물을 받아보고 제 작업을 지원하시려면 무료로 구독해주세요. 구독하기

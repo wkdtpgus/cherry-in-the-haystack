@@ -1,0 +1,21 @@
+{
+  "post_id": "110",
+  "title": "**건강한 자기애가 부족하기 때문에 ChatGPT에 의존한다**",
+  "base_word_count": 1539,
+  "exact_30_update_wc": 1049,
+  "exact_30_ground_truth_wc": 1562,
+  "exact_30_overlap_ratio": 0.978,
+  "paraphrase_25_update_wc": 1836,
+  "paraphrase_25_ground_truth_wc": 1836,
+  "paraphrase_25_overlap_ratio": 0.838,
+  "fragment_20_update_wc": 1219,
+  "fragment_20_ground_truth_wc": 1232,
+  "fragment_20_overlap_ratio": 1.252,
+  "semantic_25_update_wc": 1263,
+  "semantic_25_ground_truth_wc": 1263,
+  "semantic_25_overlap_ratio": 1.219,
+  "mixed_real_update_wc": 1195,
+  "mixed_real_ground_truth_wc": 1195,
+  "mixed_real_overlap_ratio": 1.288,
+  "status": "generated"
+}

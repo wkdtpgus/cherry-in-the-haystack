@@ -1,0 +1,21 @@
+{
+  "post_id": "142",
+  "title": "**에반 래틀리프: 음성 에이전트(voice agent)와 함께하는 우리의 미래**",
+  "base_word_count": 357,
+  "exact_30_update_wc": 338,
+  "exact_30_ground_truth_wc": 422,
+  "exact_30_overlap_ratio": 0.808,
+  "paraphrase_25_update_wc": 947,
+  "paraphrase_25_ground_truth_wc": 947,
+  "paraphrase_25_overlap_ratio": 0.377,
+  "fragment_20_update_wc": 359,
+  "fragment_20_ground_truth_wc": 484,
+  "fragment_20_overlap_ratio": 0.646,
+  "semantic_25_update_wc": 569,
+  "semantic_25_ground_truth_wc": 569,
+  "semantic_25_overlap_ratio": 0.627,
+  "mixed_real_update_wc": 404,
+  "mixed_real_ground_truth_wc": 404,
+  "mixed_real_overlap_ratio": 0.884,
+  "status": "generated"
+}

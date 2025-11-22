@@ -1,0 +1,21 @@
+{
+  "post_id": "035",
+  "title": "말이 현실을 만들다",
+  "base_word_count": 1946,
+  "exact_30_update_wc": 1305,
+  "exact_30_ground_truth_wc": 2375,
+  "exact_30_overlap_ratio": 0.671,
+  "paraphrase_25_update_wc": 2080,
+  "paraphrase_25_ground_truth_wc": 2080,
+  "paraphrase_25_overlap_ratio": 0.936,
+  "fragment_20_update_wc": 1443,
+  "fragment_20_ground_truth_wc": 2011,
+  "fragment_20_overlap_ratio": 0.955,
+  "semantic_25_update_wc": 2305,
+  "semantic_25_ground_truth_wc": 2290,
+  "semantic_25_overlap_ratio": 0.851,
+  "mixed_real_update_wc": 1587,
+  "mixed_real_ground_truth_wc": 1587,
+  "mixed_real_overlap_ratio": 1.226,
+  "status": "generated"
+}

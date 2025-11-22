@@ -1,0 +1,21 @@
+{
+  "post_id": "207",
+  "title": "**AI 주권(AI Sovereignty): 벌거벗은 임금님**",
+  "base_word_count": 1533,
+  "exact_30_update_wc": 1268,
+  "exact_30_ground_truth_wc": 1881,
+  "exact_30_overlap_ratio": 0.726,
+  "paraphrase_25_update_wc": 1440,
+  "paraphrase_25_ground_truth_wc": 1440,
+  "paraphrase_25_overlap_ratio": 1.065,
+  "fragment_20_update_wc": 1361,
+  "fragment_20_ground_truth_wc": 1481,
+  "fragment_20_overlap_ratio": 1.038,
+  "semantic_25_update_wc": 1415,
+  "semantic_25_ground_truth_wc": 1416,
+  "semantic_25_overlap_ratio": 1.083,
+  "mixed_real_update_wc": 1546,
+  "mixed_real_ground_truth_wc": 1545,
+  "mixed_real_overlap_ratio": 0.992,
+  "status": "generated"
+}

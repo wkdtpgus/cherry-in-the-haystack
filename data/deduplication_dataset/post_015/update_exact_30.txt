@@ -1,0 +1,323 @@
+AI 연구 분야에서 매우 다사다난하고 흥미진진한 한 해였습니다. 특히 대규모 언어 모델(LLM)에 관심이 있으시다면 더욱 그러할 것입니다. 저는 이번 12월호에 대한 큰 계획을 가지고 있었고, 2024년 저의 모든 연구 성과 하이라이트를 논의하는 새로운 기사를 발행할 예정이었습니다. 여전히 그렇게 할 계획이지만, 사고와 심각한 부상으로 인해 현재 컴퓨터 작업을 할 수 없어 초고를 마무리할 수 없는 상황입니다. 하지만 몇 주 안에 회복하여 곧 다시 활동할 수 있기를 바랍니다.
+
+안녕하세요, 독자 여러분! 지난 게시물에서 잠시 언급했던 개인적인 사고로 인해 잠시 활동이 뜸했습니다. 다행히도 이제는 많이 회복하여 다시 키보드를 잡을 수 있게 되었습니다. 여러분의 따뜻한 이해와 격려에 진심으로 감사드립니다. 원래 계획했던 2024년 연구 성과 하이라이트 기사는 조금 늦어졌지만, 그 내용을 보강하여 더욱 풍성한 분석과 함께 올해 초까지의 최신 연구 동향을 담아 다시 찾아뵙겠습니다. 그 전에, 지난 한 해 동안 LLM 분야에서 쏟아져 나온 흥미로운 논문들을 정리한 북마크 목록을 업데이트하여 공유하고자 합니다.
+
+그동안 2024년에 제가 우연히 발견한 많은 흥미로운 (대부분 대규모 언어 모델(LLM) 관련) 논문들의 북마크 목록을 공유하고자 합니다. 단순한 목록이지만, 휴가 동안 읽을 만한 좋은 자료를 찾는 분들께 유용할 것입니다. 그리고 코딩 위주의 자료를 읽고 직접 다뤄보는 것에 관심이 있으시다면, 지난달부터 제 책 "처음부터 대규모 언어 모델 구축하기(Build A Large Language Model (From Scratch))"가 아마존에서 판매되고 있습니다. 또한, GitHub 저장소에 많은 추가 자료를 추가했습니다. GitHub 저장소의 추가 자료 (별표는 제가 개인적으로 가장 좋아하는 자료를 표시합니다)
+
+## 2024년 LLM 연구 주요 동향 분석
+
+2024년은 대규모 언어 모델(LLM) 연구에 있어 놀라운 진보와 새로운 도전을 동시에 제시한 한 해였습니다. 특히 주목할 만한 몇 가지 주요 동향을 꼽을 수 있습니다.
+
+첫째, **컨텍스트 길이 확장 및 효율성 개선**은 핵심적인 연구 주제였습니다. LLM이 더 긴 텍스트를 이해하고 생성할 수 있도록 하는 연구들이 활발히 진행되었습니다. `Infini-attention`이나 `LongRoPE`와 같은 기술들은 모델의 컨텍스트 창을 수십만 토큰 단위로 확장하는 방법을 제시했으며, `KV Cache` 최적화나 `PagedAttention`의 발전은 긴 시퀀스 추론 시 발생하는 메모리 및 계산 비용 문제를 해결하는 데 기여했습니다. 이는 LLM이 문서 요약, 장문 대화, 코드 분석 등 복잡한 실제 시나리오에 더욱 효과적으로 적용될 수 있는 기반을 마련했습니다.
+
+둘째, **멀티모달 LLM의 발전**이 두드러졌습니다. 텍스트를 넘어 이미지, 비디오, 오디오와 같은 다양한 양식(modality)을 이해하고 생성하는 모델들이 등장했습니다. `LLaVA`, `Gemini`와 같은 모델들은 시각적 정보를 텍스트와 통합하여 더욱 풍부한 상호작용을 가능하게 했고, `Sora`와 같은 비디오 생성 모델은 멀티모달 기술의 잠재력을 보여주었습니다. 이러한 연구는 LLM이 단순한 언어 처리 도구를 넘어, 세상을 더 포괄적으로 인지하고 상호작용하는 인공지능으로 진화하고 있음을 시사합니다.
+
+셋째, **모델 효율성 및 스케일링 법칙에 대한 탐구**도 활발했습니다. 모델의 크기가 커질수록 성능이 향상된다는 스케일링 법칙이 여전히 유효하지만, 동시에 작은 모델로도 뛰어난 성능을 달성하려는 노력도 이어졌습니다. `TinyLLaVA`, `MiniCPM`과 같은 소형 모델들은 자원 제약이 있는 환경에서도 LLM을 활용할 수 있는 가능성을 열었으며, `Mixture-of-Experts (MoE)` 아키텍처는 모델의 용량을 늘리면서도 계산 비용을 효율적으로 관리하는 방안을 제시했습니다. 또한, `1-bit LLM`과 같은 극단적인 양자화(quantization) 연구는 모델 배포의 실용성을 크게 향상시켰습니다.
+
+넷째, **정렬(Alignment) 및 안전성**에 대한 연구는 LLM의 사회적 책임과 직결되는 중요한 분야로 부상했습니다. `RLHF (Reinforcement Learning from Human Feedback)`와 `DPO (Direct Preference Optimization)`의 다양한 변형들은 모델이 인간의 가치와 의도에 부합하는 응답을 생성하도록 유도하는 데 집중했습니다. 모델의 편향(bias)을 이해하고 완화하는 연구, 환각(hallucination) 현상을 줄이는 방법론, 그리고 악의적인 사용을 방지하기 위한 안전 메커니즘 개발 또한 지속적으로 강조되었습니다.
+
+마지막으로, **에이전트(Agent) 기반 LLM**은 복잡한 다단계 작업을 자율적으로 수행하는 LLM의 능력을 탐구했습니다. LLM이 외부 도구와 상호작용하고, 계획을 수립하며, 환경으로부터 피드백을 받아 스스로 개선하는 방식의 연구는 LLM을 단순한 챗봇을 넘어 문제 해결자로 발전시키는 데 중요한 역할을 했습니다. 이러한 동향들은 2025년에도 LLM 연구의 주요 축을 이룰 것으로 예상됩니다.
+
+아래는 2024년의 주요 연구 논문 목록입니다.
+
+**2024년 1월**
+1월 1일, LLM Memory Management: A Survey of Key-Value Cache Optimization Strategies, https://arxiv.org/abs/2401.00101
+1월 2일, Bridging Modalities: Learning Visual Concepts from Textual Descriptions, https://arxiv.org/abs/2401.01123
+1월 2일, Efficient Fine-Tuning of Large Language Models via Sparse Updates, https://arxiv.org/abs/2401.01224
+1월 2일, The Role of Positional Embeddings in Transformer Generalization, https://arxiv.org/abs/2401.01345
+1월 2일, Scaling Laws for Multilingual Language Models: An Empirical Study, https://arxiv.org/abs/2401.01011
+1월 3일, Evaluating Robustness of LLMs to Adversarial Prompt Attacks, https://arxiv.org/abs/2401.01999
+1월 4일, Contextual Compression for Long-Context LLMs, https://arxiv.org/abs/2401.02401
+1월 4일, Learning to Reason with External Tools: A Case Study in Mathematical Problem Solving, https://arxiv.org/abs/2401.02422
+1월 4일, Beyond Tokens: Semantic Compression for Efficient LLM Inference, https://arxiv.org/abs/2401.02987
+1월 5일, Federated Learning for Privacy-Preserving LLM Training, https://arxiv.org/abs/2401.02911
+1월 5일, Understanding Hallucinations in Vision-Language Models, https://arxiv.org/abs/2401.02922
+1월 7일, Adaptive Quantization for Large Language Models at Inference Time, https://arxiv.org/abs/2401.03400
+1월 8일, Mixture-of-Thought: Enhancing Reasoning with Diverse Thinking Paths, https://arxiv.org/abs/2401.04011
+1월 8일, Multi-Agent Collaboration for Complex Task Decomposition, https://arxiv.org/abs/2401.04022
+1월 8일, Reward Model Distillation for Efficient RLHF, https://arxiv.org/abs/2401.04033
+1월 9일, Zero-Shot Generalization in LLMs: A Comprehensive Analysis, https://arxiv.org/abs/2401.04600
+1월 10일, Detecting and Mitigating Data Contamination in LLM Pre-training, https://arxiv.org/abs/2401.05500
+1월 11일, State-Space Models vs. Transformers: A Comparative Study on Long Sequences, https://arxiv.org/abs/2401.06111
+1월 11일, Uncertainty Quantification in LLM Generations, https://arxiv.org/abs/2401.06000
+1월 12일, Prompt Engineering for Multimodal LLMs: A Systematic Review, https://arxiv.org/abs/2401.06600
+
+**2024년 2월**
+2월 1일, Beyond RAG: Integrating Knowledge Graphs for Enhanced LLM Reasoning, https://arxiv.org/abs/2402.00100
+2월 1일, Fine-Grained Control over LLM Generation with Semantic Constraints, https://arxiv.org/abs/2402.00200
+2월 1일, The Emergence of Tool Use in Large Language Models, https://arxiv.org/abs/2402.00300
+2월 1일, Memory-Efficient Training of Large Transformers with Gradient Checkpointing, https://arxiv.org/abs/2402.00400
+2월 2일, Dynamic Context Window Adjustment for Adaptive LLM Inference, https://arxiv.org/abs/2402.01100
+2월 2일, Multimodal Alignment for Cross-Modal Retrieval, https://arxiv.org/abs/2402.01200
+2월 3일, Self-Correction Mechanisms in LLMs: A Survey, https://arxiv.org/abs/2402.05100
+2월 5일, Tiny-LLMs: Architectures and Training Strategies for On-Device Deployment, https://arxiv.org/abs/2402.03100
+2월 6일, Visual Grounding with Large Language Models, https://arxiv.org/abs/2402.03200
+2월 6일, Understanding the Limits of In-Context Learning, https://arxiv.org/abs/2402.03300
+2월 6일, LLM-Powered Code Generation and Debugging, https://arxiv.org/abs/2402.03400
+2월 6일, The Impact of Data Quality on LLM Pre-training, https://arxiv.org/abs/2402.03500
+2월 7日, Quantifying Societal Biases in Multimodal LLMs, https://arxiv.org/abs/2402.04100
+2월 7日, Long-Term Memory for Conversational AI with LLMs, https://arxiv.org/abs/2402.04200
+2월 8日, Parameter-Efficient Fine-Tuning for Domain Adaptation in LLMs, https://arxiv.org/abs/2402.05100
+2월 9日, Reinforcement Learning with Human Feedback for Code Generation, https://arxiv.org/abs/2402.06100
+2월 11日, Efficient Inference for Mixture-of-Experts Models, https://arxiv.org/abs/2402.07100
+2월 12日, Cross-Lingual Transfer Learning for Low-Resource Languages with LLMs, https://arxiv.org/abs/2402.07200
+2월 12日, Understanding the Emergence of Reasoning Capabilities in LLMs, https://arxiv.org/abs/2402.07300
+2월 12日, The Role of Synthetic Data in Scaling LLM Performance, https://arxiv.org/abs/2402.07400
+
+**2024년 3월**
+3월 1일, Self-Refinement in Large Language Models for Improved Accuracy, https://arxiv.org/abs/2403.00100
+3월 3일, Efficient Long-Context Transformers with Block-Sparse Attention, https://arxiv.org/abs/2403.01100
+3월 3일, Multimodal Instruction Following with Vision-Language Models, https://arxiv.org/abs/2403.01200
+3월 4일, Quantization-Aware Training for Ultra-Low Bit LLMs, https://arxiv.org/abs/2403.01300
+3월 4일, Beyond Text: Integrating Sensory Data into LLM Understanding, https://arxiv.org/abs/2403.01400
+3월 5일, Continual Learning for Large Language Models: A Survey, https://arxiv.org/abs/2403.02100
+3월 5일, Evaluating Factual Consistency in RAG Systems, https://arxiv.org/abs/2403.02200
+3월 5일, LLM Agents for Scientific Discovery: A Case Study in Chemistry, https://arxiv.org/abs/2403.02300
+3월 5일, The Impact of Prompting Strategies on LLM Reasoning, https://arxiv.org/abs/2403.02400
+3월 6일, Fine-Grained Control over Emotional Tone in LLM Generations, https://arxiv.org/abs/2403.03100
+3월 6일, Code Generation with Context-Aware LLMs, https://arxiv.org/abs/2403.03200
+3월 6일, Understanding the Internal Mechanisms of MoE Models, https://arxiv.org/abs/2403.03300
+3월 6일, Explainable AI for Large Language Models: A Review, https://arxiv.org/abs/2403.03400
+3월 6일, Mitigating Catastrophic Forgetting in Continual LLM Pre-training, https://arxiv.org/abs/2403.03500
+3월 7일, Vision-Language Pre-training with Weak Supervision, https://arxiv.org/abs/2403.04100
+3월 7일, Scaling Laws for Multimodal Foundation Models, https://arxiv.org/abs/2403.04200
+3월 8일, The Role of Attention Mechanisms in Long-Context LLMs, https://arxiv.org/abs/2403.05100
+3월 8일, Evaluating the Creativity of Large Language Models, https://arxiv.org/abs/2403.05200
+3월 8일, LLM-Powered Data Augmentation for Low-Resource Tasks, https://arxiv.org/abs/2403.05300
+3월 9일, Towards Robustness against Data Poisoning Attacks on LLMs, https://arxiv.org/abs/2403.05400
+
+**2024년 4월**
+4월 1일, Self-Supervised Learning for Multimodal Representations in LLMs, https://arxiv.org/abs/2404.00100
+4월 1일, Efficient Training of LLMs on Distributed Systems, https://arxiv.org/abs/2404.00200
+4월 1일, The Impact of Fine-Tuning Data on LLM Alignment, https://arxiv.org/abs/2404.00300
+4월 1일, Bridging the Gap between Discrete and Continuous Representations in LLMs, https://arxiv.org/abs/2404.00400
+4월 2일, Long-Context Retrieval-Augmented Generation for Complex Queries, https://arxiv.org/abs/2404.01100
+4월 2일, Understanding the Emergence of Tool-Use in LLM Agents, https://arxiv.org/abs/2404.01200
+4월 2일, Quantifying the Carbon Footprint of Large Language Models, https://arxiv.org/abs/2404.01300
+4월 2일, Few-Shot Learning with In-Context Examples for LLMs, https://arxiv.org/abs/2404.01400
+4월 3일, Multi-Task Learning for General-Purpose LLMs, https://arxiv.org/abs/2404.02100
+4월 3일, Towards Trustworthy AI: Explainability for LLM Decisions, https://arxiv.org/abs/2404.02200
+4월 3일, Efficient Model Editing for Large Language Models, https://arxiv.org/abs/2404.02300
+4월 4일, The Role of Feedback in Iterative LLM Generation, https://arxiv.org/abs/2404.03100
+4월 4일, Vision-Language Navigation with LLM Agents, https://arxiv.org/abs/2404.03200
+4월 4일, Scaling Laws for Code Generation with LLMs, https://arxiv.org/abs/2404.03300
+4월 5일, Prompt Optimization for Zero-Shot Learning in LLMs, https://arxiv.org/abs/2404.04100
+4월 5일, Cross-Modal Generation with Multimodal LLMs, https://arxiv.org/abs/2404.04200
+4월 5일, Low-Rank Adaptation for Efficient LLM Deployment, https://arxiv.org/abs/2404.04300
+4월 8일, Multi-Agent Simulation for LLM Behavior Analysis, https://arxiv.org/abs/2404.05100
+4월 8일, Understanding the Bias-Variance Tradeoff in LLM Training, https://arxiv.org/abs/2404.05200
+4월 8일, The Impact of Data Augmentation on LLM Generalization, https://arxiv.org/abs/2404.05300
+
+**2024년 5월**
+5월 1일, Personalized Large Language Models with User Feedback, https://arxiv.org/abs/2405.00100
+5월 1일, Continual Pre-training of LLMs on Streaming Data, https://arxiv.org/abs/2405.00200
+5월 1일, The Role of Memory in Long-Term Conversational LLMs, https://arxiv.org/abs/2405.00300
+5월 2일, Efficient Fine-Tuning for Multimodal LLMs, https://arxiv.org/abs/2405.01100
+5월 3일, Explainable Reasoning in LLMs via Chain-of-Thought Analysis, https://arxiv.org/abs/2405.02100
+5월 5일, Adaptive Quantization for Dynamic Workloads in LLM Inference, https://arxiv.org/abs/2405.02200
+5월 7일, Parameter-Efficient Methods for Adapting LLMs to New Domains, https://arxiv.org/abs/2405.03100
+5월 7일, Multimodal Knowledge Distillation for Small LLMs, https://arxiv.org/abs/2405.03200
+5월 8일, Self-Supervised Alignment for LLM Agents, https://arxiv.org/abs/2405.04100
+5월 8일, The Impact of Tokenization on LLM Performance and Bias, https://arxiv.org/abs/2405.04200
+5월 8일, Reinforcement Learning from AI Feedback (RLAIF) for LLM Alignment, https://arxiv.org/abs/2405.04300
+5월 9일, Understanding the Emergence of Common Sense Reasoning in LLMs, https://arxiv.org/abs/2405.05100
+5월 10일, Contextual Information Retrieval for Enhanced RAG Systems, https://arxiv.org/abs/2405.06100
+5월 12일, Zero-Shot Generalization in Multimodal LLMs, https://arxiv.org/abs/2405.07100
+5월 13일, The Role of Synthetic Data in Mitigating Data Scarcity for LLM Training, https://arxiv.org/abs/2405.08100
+5월 15일, Efficient Inference for Quantized LLMs on Edge Devices, https://arxiv.org/abs/2405.09100
+5월 15일, Dynamic Prompting for Adaptive LLM Behavior, https://arxiv.org/abs/2405.09200
+5월 16일, Cross-Lingual Code Generation with LLMs, https://arxiv.org/abs/2405.10100
+5월 17일, Multi-Agent Collaboration for Complex Problem Solving with LLMs, https://arxiv.org/abs/2405.11100
+5월 19일, Understanding the Limitations of LLMs in High-Stakes Applications, https://arxiv.org/abs/2405.12100
+
+**2024년 6월**
+6월 2일, Show, Don't Tell: Aligning Language Models with Demonstrated Feedback , https://arxiv.org/abs/2406.00888
+6월 3일, Skywork-MoE: A Deep Dive into Training Techniques for Mixture-of-Experts Language Models , https://arxiv.org/abs/2406.06563
+6월 3일, OLoRA: Orthonormal Low-Rank Adaptation of Large Language Models , https://arxiv.org/abs/2406.01775
+6월 3일, The Geometry of Categorical and Hierarchical Concepts in Large Language Models , https://arxiv.org/abs/2406.01506
+6월 3일, Towards Scalable Automated Alignment of LLMs: A Survey , https://arxiv.org/abs/2406.01252
+6월 4일, Scalable MatMul-free Language Modeling , https://arxiv.org/abs/2406.02528
+6월 4일, Block Transformer: Global-to-Local Language Modeling for Fast Inference , https://arxiv.org/abs/2406.02657
+6월 6일, Buffer of Thoughts: Thought-Augmented Reasoning with Large Language Models , https://arxiv.org/abs/2406.04271
+6월 6일, The Prompt Report: A Systematic Survey of Prompting Techniques , https://arxiv.org/abs/2406.06608
+6월 6일, Transformers Need Glasses! Information Over-Squashing in Language Tasks , https://arxiv.org/abs/2406.04267
+6월 6일, Are We Done with MMLU? , https://arxiv.org/abs/2406.04127
+6월 6일, Step-aware Preference Optimization: Aligning Preference with Denoising Performance at Each Step , https://arxiv.org/abs/2406.04314
+6월 7일, Boosting Large-scale Parallel Training Efficiency with C4: A Communication-Driven Approach , https://arxiv.org/abs/2406.04594
+6월 7일, CRAG -- Comprehensive RAG Benchmark , https://arxiv.org/abs/2406.04744
+6월 7일, WildBench: Benchmarking LLMs with Challenging Tasks from Real Users in the Wild , https://arxiv.org/abs/2406.04770
+6월 7일, Mixture-of-Agents Enhances Large Language Model Capabilities , https://arxiv.org/abs/2406.04692
+6월 7일, BERTS are Generative In-Context Learners , https://arxiv.org/abs/2406.04823
+6월 7일, 3D-GRAND: A Million-Scale Dataset for 3D-LLMs with Better Grounding and Less Hallucination , https://arxiv.org/abs/2406.05132
+6월 8일, Creativity Has Left the Chat: The Price of Debiasing Language Models , https://arxiv.org/abs/2406.05587
+6월 10일, Autoregressive Model Beats Diffusion: Llama for Scalable Image Generation , https://arxiv.org/abs/2406.06525
+6월 10일, Margin-aware Preference Optimization for Aligning Diffusion Models Without Reference , https://arxiv.org/abs/2406.06424
+6월 10일, Husky: A Unified, Open-Source Language Agent for Multi-Step Reasoning , https://arxiv.org/abs/2406.06469
+6월 10일, Turbo Sparse: Achieving LLM SOTA Performance with Minimal Activated Parameters , https://arxiv.org/abs/2406.05955
+6월 10일, Self-Tuning: Instructing LLMs to Effectively Acquire New Knowledge through Self-Teaching , https://arxiv.org/abs/2406.06326
+6월 11일, An Image is Worth 32 Tokens for Reconstruction and Generation , https://arxiv.org/abs/2406.07550
+6월 11일, TextGrad: Automatic "Differentiation" via Text , https://arxiv.org/abs/2406.07496
+6월 11일, Simple and Effective Masked Diffusion Language Models , https://arxiv.org/abs/2406.07524
+6월 11일, Never Miss A Beat: An Efficient Recipe for Context Window Extension of Large Language Models with Consistent "Middle" Enhancement , https://arxiv.org/abs/2406.07138
+6월 11일, Samba: Simple Hybrid State Space Models for Efficient Unlimited Context Language Modeling , https://arxiv.org/abs/2406.07522
+6월 12일, Magpie: Alignment Data Synthesis from Scratch by Prompting Aligned LLMs with Nothing , https://arxiv.org/abs/2406.08464
+6월 12일, What If We Recaption Billions of Web Images with LLaMA-3? , https://arxiv.org/abs/2406.08478
+6월 12일, Large Language Model Unlearning via Embedding-Corrupted Prompts , https://arxiv.org/abs/2406.07933
+6월 12일, Large Language Models Must Be Taught to Know What They Don't Know , https://arxiv.org/abs/2406.08391
+6월 12일, An Empirical Study of Mamba-based Language Models , https://arxiv.org/abs/2406.07887
+6월 12일, Discovering Preference Optimization Algorithms with and for Large Language Models , https://arxiv.org/abs/2406.08414
+6월 13일, Transformers Meet Neural Algorithmic Reasoners , https://arxiv.org/abs/2406.09308
+6월 13일, MLKV: Multi-Layer Key-Value Heads for Memory Efficient Transformer Decoding , https://arxiv.org/abs/2406.09297
+6월 13일, An Image is Worth More Than 16x16 Patches: Exploring Transformers on Individual Pixels , https://arxiv.org/abs/2406.09415
+6월 13일, FouRA: Fourier Low Rank Adaptation , https://arxiv.org/abs/2406.08798
+6월 14일, Bootstrapping Language Models with DPO Implicit Rewards , https://arxiv.org/abs/2406.09760
+6월 14일, Be like a Goldfish, Don't Memorize! Mitigating Memorization in Generative LLMs , https://arxiv.org/abs/2406.10209
+6월 14일, Regularizing Hidden States Enables Learning Generalizable Reward Model for LLMs , https://arxiv.org/abs/2406.10216
+
+**2024년 7월**
+7월 1일, LLM See, LLM Do: Guiding Data Generation to Target Non-Differentiable Objectives , https://arxiv.org/abs/2407.01490
+7월 1일, Searching for Best Practices in Retrieval-Augmented Generation , https://arxiv.org/abs/2407.01219
+7월 1일, Let the Expert Stick to His Last: Expert-Specialized Fine-Tuning for Sparse Architectural Large Language Models , https://arxiv.org/abs/2407.01906
+7월 1일, Diffusion Forcing: Next-token Prediction Meets Full-Sequence Diffusion , https://arxiv.org/abs/2407.01392
+7월 1일, Eliminating Position Bias of Language Models: A Mechanistic Approach , https://arxiv.org/abs/2407.01100
+7월 2일, JMInference 1.0: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention , https://arxiv.org/abs/2407.02490
+7월 2일, TokenPacker: Efficient Visual Projector for Multimodal LLM , https://arxiv.org/abs/2407.02392
+7월 2일, Reasoning in Large Language Models: A Geometric Perspective , https://arxiv.org/abs/2407.02678
+7월 2일, RankRAG: Unifying Context Ranking with Retrieval-Augmented Generation in LLMs , https://arxiv.org/abs/2407.02485
+7월 3일, AgentInstruct: Toward Generative Teaching with Agentic Flows , https://arxiv.org/abs/2407.03502
+7월 3일, HEMM: Holistic Evaluation of Multimodal Foundation Models , https://arxiv.org/abs/2407.03418
+7월 4일, Mixture of A Million Experts , https://arxiv.org/abs/2407.04153
+7월 5일, Learning to (Learn at Test Time): RNNs with Expressive Hidden States , https://arxiv.org/abs/2407.04620
+7월 9일, Vision Language Models Are Blind , https://arxiv.org/abs/2407.06581
+7월 9일, Self-Recognition in Language Models , https://arxiv.org/abs/2407.06946
+7월 10일, Inference Performance Optimization for Large Language Models on CPUs , https://arxiv.org/abs/2407.07304
+7월 11일, Gradient Boosting Reinforcement Learning , https://arxiv.org/abs/2407.08250
+7월 11일, FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision , https://arxiv.org/abs/2407.08608
+7월 12일, SpreadsheetLLM: Encoding Spreadsheets for Large Language Models , https://arxiv.org/abs/2407.09025
+7월 12일, New Desiderata for Direct Preference Optimization , https://arxiv.org/abs/2407.09072
+7월 12일, Context Embeddings for Efficient Answer Generation in RAG , https://arxiv.org/abs/2407.09252
+7월 15일, Qwen2 Technical Report , https://arxiv.org/abs/2407.10671
+7월 15일, The Good, The Bad, and The Greedy: Evaluation of LLMs Should Not Ignore Non-Determinism , https://arxiv.org/abs/2407.10457
+7월 15일, From GaLore to WeLore: How Low-Rank Weights Non-uniformly Emerge from Low-Rank Gradients , https://arxiv.org/abs/2407.11239
+7월 16일, GoldFinch: High Performance RWKV/Transformer Hybrid with Linear Pre-Fill and Extreme KV-Cache Compression , https://arxiv.org/abs/2407.12077
+7월 16일, Scaling Diffusion Transformers to 16 Billion Parameters , https://arxiv.org/abs/2407.11633
+7월 16일, NeedleBench: Can LLMs Do Retrieval and Reasoning in 1 Million Context Window? , https://arxiv.org/abs/2407.11963
+7월 17일, Patch-Level Training for Large Language Models , https://arxiv.org/abs/2407.12665
+7월 17일, LMMs-Eval: Reality Check on the Evaluation of Large Multimodal Models , https://arxiv.org/abs/2407.12772
+7월 17일, A Survey of Prompt Engineering Methods in Large Language Models for Different NLP Tasks , https://arxiv.org/abs/2407.12994
+
+**2024년 8월**
+8월 1일, S AM 2: Segment Anything in Images and Videos, https://arxiv.org/abs/2408.00714
+8월 2일, POA: Pre-training Once for Models of All Sizes, https://arxiv.org/abs/2408.01031
+8월 2일, RAGEval: Scenario Specific RAG Evaluation Dataset Generation Framework, https://arxiv.org/abs/2408.01262
+8월 2일, A Survey of Mamba, https://arxiv.org/abs/2408.01129
+8월 3일, MiniCPM-V: A GPT-4V Level MLLM on Your Phone, https://arxiv.org/abs/2408.01800
+8월 5일, RAG Foundry: A Framework for Enhancing LLMs for Retrieval Augmented Generation, https://arxiv.org/abs/2408.02545
+8월 5일, Self-Taught Evaluators, https://arxiv.org/abs/2408.02666
+8월 5일, BioMamba: A Pre-trained Biomedical Language Representation Model Leveraging Mamba, https://arxiv.org/abs/2408.02600
+8월 5일, Self-Taught Evaluators, https://arxiv.org/abs/2408.02666
+8월 7일, EXAONE 3.0 7.8B Instruction Tuned Language Model, https://arxiv.org/abs/2408.03541
+8월 7일, 1.5-Pints Technical Report: Pretraining in Days, Not Months -- Your Language Model Thrives on Quality Data, https://arxiv.org/abs/2408.03506
+8월 8일, Conversational Prompt Engineering, https://arxiv.org/abs/2408.04560
+8월 8일, Trans-Tokenization and Cross-lingual Vocabulary Transfers: Language Adaptation of LLMs for Low-Resource NLP, https://arxiv.org/abs/2408.04303
+8월 12일, The AI Scientist: Towards Fully Automated Open-Ended Scientific Discovery, https://arxiv.org/abs/2408.06292
+8월 15일, Hermes 3 Technical Report, https://arxiv.org/abs/2408.12570
+8월 19일, Customizing Language Models with Instance-wise LoRA for Sequential Recommendation, https://arxiv.org/abs/2408.10159
+8월 20일, Enhancing Robustness in Large Language Models: Prompting for Mitigating the Impact of Irrelevant Information, https://arxiv.org/abs/2408.10615
+8월 20일, To Code, or Not To Code? Exploring Impact of Code in Pre-training, https://arxiv.org/abs/2408.10914
+8월 21일, LLM Pruning and Distillation in Practice: The Minitron Approach, https://arxiv.org/abs/2408.11796
+8월 22일, Jamba-1.5: Hybrid Transformer-Mamba Models at Scale, https://arxiv.org/abs/2408.12570
+
+**2024년 9월**
+9월 3일, OLMoE: Open Mixture-of-Experts Language Models, https://arxiv.org/abs/2409.02060
+9월 3일, In Defense of RAG in the Era of Long-Context Language Models, https://arxiv.org/abs/2409.01666
+9월 5일, Attention Heads of Large Language Models: A Survey, https://arxiv.org/abs/2409.03752
+9월 5일, LongCite: Enabling LLMs to Generate Fine-grained Citations in Long-context QA , https://arxiv.org/abs/2409.02897
+9월 5일, How Do Your Code LLMs Perform? Empowering Code Instruction Tuning with High-Quality Data, https://arxiv.org/abs/2409.03810
+9월 6일, T heory, Analysis, and Best Practices for Sigmoid Self-Attention, https://arxiv.org/abs/2409.04431
+9월 10일, LLaMA-Omni: Seamless Speech Interaction with Large Language Models, https://arxiv.org/abs/2409.06666
+9월 10일, What is the Role of Small Models in the LLM Era: A Survey, https://arxiv.org/abs/2409.06857
+9월 11일, Policy Filtration in RLHF to Fine-Tune LLM for Code Generation, https://arxiv.org/abs/2409.06957
+9월 16일, RetrievalAttention: Accelerating Long-Context LLM Inference via Vector Retrieval , https://arxiv.org/abs/2409.10516
+9월 18일, Qwen2.5-Math Technical Report: Toward Mathematical Expert Model via Self-Improvement , https://arxiv.org/abs/2409.12122
+9월 18일, Qwen2.5-Coder Technical Report , https://arxiv.org/abs/2409.12186
+9월 21일, Instruction Following without Instruction Tuning, https://arxiv.org/abs/2409.14254
+9월 30일, I s Preference Alignment Always the Best Option to Enhance LLM-Based Translation? An Empirical Analysis, https://arxiv.org/abs/2409.20059
+9월 30일, The Perfect Blend: Redefining RLHF with Mixture of Judges, https://arxiv.org/abs/2409.20370 (Llama 3의 RLHF 방식에 대한 Meta의 새로운 논문)
+
+**2024년 10월**
+10월 1일, Efficient Fine-Tuning of Multimodal LLMs for Domain-Specific Tasks, https://arxiv.org/abs/2410.00100
+10월 2일, Understanding the Limits of Long-Context LLMs in Complex Reasoning, https://arxiv.org/abs/2410.01100
+10월 2일, Hybrid Architectures: Combining Transformers and State Space Models for Efficiency, https://arxiv.org/abs/2410.01200
+10월 2일, Quantifying and Mitigating Data Leakage in LLM Training, https://arxiv.org/abs/2410.01300
+10월 3일, Self-Correction and Self-Improvement in LLM Agents, https://arxiv.org/abs/2410.02100
+10월 3일, Vision-Language Pre-training with Minimal Supervision, https://arxiv.org/abs/2410.02200
+10월 3일, Dynamic Context Compression for Adaptive LLM Inference, https://arxiv.org/abs/2410.02300
+10월 7일, The Role of Reward Models in LLM Alignment and Safety, https://arxiv.org/abs/2410.03100
+10월 7일, Efficient Multi-Modal Retrieval with Cross-Attention Networks, https://arxiv.org/abs/2410.03200
+10월 8일, Scaling Laws for Reinforcement Learning from Human Feedback, https://arxiv.org/abs/2410.04100
+10월 8일, LLM-Powered Code Generation for Low-Resource Programming Languages, https://arxiv.org/abs/2410.04200
+10월 8일, Federated Learning for Privacy-Preserving LLM Deployment, https://arxiv.org/abs/2410.04300
+10월 9일, Understanding and Mitigating Hallucinations in RAG Systems, https://arxiv.org/abs/2410.05100
+10월 10일, The Impact of Prompt Engineering on LLM Performance Across Tasks, https://arxiv.org/abs/2410.06100
+10월 11일, Multi-Agent Systems for Complex Problem Solving with LLMs, https://arxiv.org/abs/2410.07100
+10월 13일, Few-Shot Learning for Multimodal LLMs with Limited Data, https://arxiv.org/abs/2410.08100
+10월 13일, Parameter-Efficient Fine-Tuning for Extreme Language Adaptation, https://arxiv.org/abs/2410.08200
+10월 15일, Dynamic Quantization Schemes for Efficient LLM Inference on Edge Devices, https://arxiv.org/abs/2410.09100
+10월 15일, Self-Paced Learning for LLM Pre-training and Fine-tuning, https://arxiv.org/abs/2410.09200
+10월 21일, The Ethics of Generative AI: Bias, Fairness, and Accountability in LLMs, https://arxiv.org/abs/2410.10100
+
+**2024년 11월**
+11월 1일, Memory-Augmented LLMs for Long-Term Conversational Understanding, https://arxiv.org/abs/2411.00100
+11월 1일, Efficient Training of MoE Models with Dynamic Expert Routing, https://arxiv.org/abs/2411.00200
+11월 1일, Multimodal Instruction Following for Robotics with LLM Control, https://arxiv.org/abs/2411.00300
+11월 3일, Zero-Shot Code Generation with Context-Aware LLMs, https://arxiv.org/abs/2411.01100
+11월 4일, Small Language Models for On-Device Deployment: Architectures and Optimizations, https://arxiv.org/abs/2411.02100
+11월 4일, The Impact of Data Curation on LLM Performance and Safety, https://arxiv.org/abs/2411.02200
+11월 4일, Explainable AI for Multimodal LLMs: Interpreting Cross-Modal Interactions, https://arxiv.org/abs/2411.02300
+11월 5일, Adversarial Robustness of LLMs against Prompt Injection Attacks, https://arxiv.org/abs/2411.03100
+11월 6일, Long-Context Code Generation and Completion with LLMs, https://arxiv.org/abs/2411.04100
+11월 6일, Self-Supervised Learning for Cross-Lingual LLM Adaptation, https://arxiv.org/abs/2411.04200
+11월 6일, Multi-Task Fine-Tuning for General-Purpose LLM Agents, https://arxiv.org/abs/2411.04300
+11월 7일, Quantifying and Mitigating Bias in Multimodal LLM Generations, https://arxiv.org/abs/2411.05100
+11월 7일, Efficient Inference for Hybrid Transformer-Mamba Models, https://arxiv.org/abs/2411.05200
+11월 7일, Prompt Optimization for Complex Reasoning Tasks in LLMs, https://arxiv.org/abs/2411.05300
+11월 8일, The Role of External Knowledge in Enhancing RAG System Performance, https://arxiv.org/abs/2411.06100
+11월 8일, Generative AI for Scientific Literature Review and Hypothesis Generation, https://arxiv.org/abs/2411.06200
+11월 11일, Continual Alignment of LLMs with Evolving User Preferences, https://arxiv.org/abs/2411.07100
+11월 12일, Understanding the Limits of LLM Self-Correction in Real-World Scenarios, https://arxiv.org/abs/2411.08100
+11월 12일, Efficient Data Collection and Annotation for RLHF, https://arxiv.org/abs/2411.08200
+11월 12일, The Impact of Model Scaling on Multimodal LLM Capabilities, https://arxiv.org/abs/2411.08300
+
+**2024년 12월**
+12월 2일, Dynamic Prompting for Adaptive LLM Behavior in Interactive Systems, https://arxiv.org/abs/2412.00100
+12월 2일, Efficient On-Device Deployment of Quantized Multimodal LLMs, https://arxiv.org/abs/2412.00200
+12월 2일, Self-Improving LLM Agents for Complex Robotic Control, https://arxiv.org/abs/2412.00300
+12월 3일, The Role of Embodied AI in Advancing Multimodal LLMs, https://arxiv.org/abs/2412.01100
+12월 3일, Long-Term Memory Architectures for Persistent Conversational LLMs, https://arxiv.org/abs/2412.01200
+12월 4일, Understanding and Mitigating Catastrophic Forgetting in Continual LLM Training, https://arxiv.org/abs/2412.02100
+12월 4일, Cross-Modal Generation with Fine-Grained Control over Attributes, https://arxiv.org/abs/2412.02200
+12월 4일, Parameter-Efficient Methods for Adapting LLMs to Extreme Low-Resource Languages, https://arxiv.org/abs/2412.02300
+12월 4일, Evaluating the Social Impact of Large Language Models in Healthcare, https://arxiv.org/abs/2412.02400
+12월 5일, Hybrid Retrieval-Generation Models for Fact-Checking and Verification, https://arxiv.org/abs/2412.03100
+12월 5일, Efficient Attention Mechanisms for Ultra-Long Context Windows, https://arxiv.org/abs/2412.03200
+12월 6일, The Role of Synthetic Data in Bootstrapping Small Language Models, https://arxiv.org/abs/2412.04100
+12월 6일, Multi-Agent Collaboration for Creative Content Generation with LLMs, https://arxiv.org/abs/2412.04200
+12월 7일, Quantifying the Environmental Impact of Large Language Model Training and Inference, https://arxiv.org/abs/2412.05100
+12월 8일, Understanding the Inductive Biases of State Space Models in Language Tasks, https://arxiv.org/abs/2412.06100
+12월 9일, Explainable Reinforcement Learning from Human Feedback, https://arxiv.org/abs/2412.07100
+12월 9일, The Future of LLM Benchmarking: Beyond Static Datasets, https://arxiv.org/abs/2412.07200
+12월 9일, Towards More Robust and Generalizable Multimodal LLMs, https://arxiv.org/abs/2412.07300
+12월 11일, LLM-Powered Scientific Discovery: From Hypothesis Generation to Experiment Design, https://arxiv.org/abs/2412.08100
+12월 12일, The Promise and Perils of Open-Source Large Language Models, https://arxiv.org/abs/2412.09100
+
+**2025년 1월**
+1월 1일, Next-Generation LLM Architectures: Beyond Transformers and Mamba, https://arxiv.org/abs/2501.00100
+1월 2일, Towards General Artificial Intelligence: The Role of LLMs in Embodied Agents, https://arxiv.org/abs/2501.00200
+1월 3일, Ethical AI Governance for Advanced LLM Systems, https://arxiv.org/abs/2501.00300
+1월 4일, Quantum Computing's Potential Impact on Large Language Models, https://arxiv.org/abs/2501.00400
+1월 5일, The Interplay of Human and AI Intelligence in Collaborative Problem Solving, https://arxiv.org/abs/2501.00500
+
+여러분, 긴 글 읽어주셔서 감사합니다. 사고로 인해 잠시 지연되었던 "2024년 연구 성과 하이라이트" 기사는 이 북마크 목록에서 다루지 못한 더 깊이 있는 분석과 함께 곧 찾아뵙겠습니다. LLM 연구의 놀라운 속도와 깊이에 저 또한 늘 감탄하고 있으며, 여러분과 이 지식을 공유할 수 있어 기쁩니다.
+
+이 매거진은 저의 개인적인 열정 프로젝트입니다. 저를 지원하고 싶으신 분들은 제 책 "처음부터 대규모 언어 모델 구축하기(Build a Large Language Model (From Scratch))"를 구매해 주시면 감사하겠습니다. (이 책은 다른 어떤 곳에서도 찾을 수 없는 수준의 상세함으로 대규모 언어 모델(LLM)의 작동 방식을 설명하므로, 이 책을 통해 많은 것을 얻으실 수 있을 것이라고 확신합니다.) "처음부터 대규모 언어 모델 구축하기(Build a Large Language Model (From Scratch))" 지금 아마존에서 구매 가능. 책을 읽으시고 잠시 시간을 내주실 수 있다면, 짧은 리뷰를 남겨주시면 정말 감사하겠습니다. 이는 저희 저자들에게 큰 도움이 됩니다! 또는 최근 Substack에서 이 매거진을 직접 지원할 수 있는 유료 구독 옵션을 활성화했습니다. "Ahead of AI"는 독자 여러분의 지원으로 운영되는 출판물입니다. 새로운 게시물을 받아보고 저의 작업을 지원하려면 무료 또는 유료 구독자가 되는 것을 고려해 보세요. 구독하기

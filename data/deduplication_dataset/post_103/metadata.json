@@ -1,0 +1,21 @@
+{
+  "post_id": "103",
+  "title": "**AI 괴짜들은 왜 못생긴 AI 생성 예술을 칭찬하는가?**",
+  "base_word_count": 460,
+  "exact_30_update_wc": 373,
+  "exact_30_ground_truth_wc": 594,
+  "exact_30_overlap_ratio": 0.641,
+  "paraphrase_25_update_wc": 400,
+  "paraphrase_25_ground_truth_wc": 415,
+  "paraphrase_25_overlap_ratio": 1.113,
+  "fragment_20_update_wc": 321,
+  "fragment_20_ground_truth_wc": 582,
+  "fragment_20_overlap_ratio": 0.62,
+  "semantic_25_update_wc": 396,
+  "semantic_25_ground_truth_wc": 487,
+  "semantic_25_overlap_ratio": 0.932,
+  "mixed_real_update_wc": 380,
+  "mixed_real_ground_truth_wc": 380,
+  "mixed_real_overlap_ratio": 1.211,
+  "status": "generated"
+}

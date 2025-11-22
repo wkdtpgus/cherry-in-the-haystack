@@ -1,0 +1,21 @@
+{
+  "post_id": "175",
+  "title": "**언어 모델(Language Models)에게 정말 대단한 시기**",
+  "base_word_count": 557,
+  "exact_30_update_wc": 597,
+  "exact_30_ground_truth_wc": 761,
+  "exact_30_overlap_ratio": 0.658,
+  "paraphrase_25_update_wc": 549,
+  "paraphrase_25_ground_truth_wc": 549,
+  "paraphrase_25_overlap_ratio": 1.015,
+  "fragment_20_update_wc": 502,
+  "fragment_20_ground_truth_wc": 506,
+  "fragment_20_overlap_ratio": 1.102,
+  "semantic_25_update_wc": 534,
+  "semantic_25_ground_truth_wc": 536,
+  "semantic_25_overlap_ratio": 1.039,
+  "mixed_real_update_wc": 512,
+  "mixed_real_ground_truth_wc": 512,
+  "mixed_real_overlap_ratio": 1.088,
+  "status": "generated"
+}

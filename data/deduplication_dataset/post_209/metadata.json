@@ -1,0 +1,21 @@
+{
+  "post_id": "209",
+  "title": "**에이전트형 AI (Agentic AI): AI 모델이 언론 및 규제 기관에 연락해야 하는가?**",
+  "base_word_count": 1777,
+  "exact_30_update_wc": 1122,
+  "exact_30_ground_truth_wc": 1950,
+  "exact_30_overlap_ratio": 0.846,
+  "paraphrase_25_update_wc": 2008,
+  "paraphrase_25_ground_truth_wc": 2012,
+  "paraphrase_25_overlap_ratio": 0.883,
+  "fragment_20_update_wc": 1222,
+  "fragment_20_ground_truth_wc": 1726,
+  "fragment_20_overlap_ratio": 1.042,
+  "semantic_25_update_wc": 1822,
+  "semantic_25_ground_truth_wc": 1822,
+  "semantic_25_overlap_ratio": 0.975,
+  "mixed_real_update_wc": 1528,
+  "mixed_real_ground_truth_wc": 1528,
+  "mixed_real_overlap_ratio": 1.163,
+  "status": "generated"
+}

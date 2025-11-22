@@ -1,0 +1,21 @@
+{
+  "post_id": "063",
+  "title": "🤖 **AI 에이전트(AI Agents) 위클리**: MiniMax-M2, Cursor 2.0, SWE-1.5, Agent Data Protocol, Kimi CLI",
+  "base_word_count": 300,
+  "exact_30_update_wc": 285,
+  "exact_30_ground_truth_wc": 409,
+  "exact_30_overlap_ratio": 0.618,
+  "paraphrase_25_update_wc": 315,
+  "paraphrase_25_ground_truth_wc": 430,
+  "paraphrase_25_overlap_ratio": 0.587,
+  "fragment_20_update_wc": 491,
+  "fragment_20_ground_truth_wc": 533,
+  "fragment_20_overlap_ratio": 0.525,
+  "semantic_25_update_wc": 1008,
+  "semantic_25_ground_truth_wc": 1008,
+  "semantic_25_overlap_ratio": 0.298,
+  "mixed_real_update_wc": 319,
+  "mixed_real_ground_truth_wc": 319,
+  "mixed_real_overlap_ratio": 0.94,
+  "status": "generated"
+}

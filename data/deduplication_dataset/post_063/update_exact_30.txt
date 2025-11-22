@@ -1,0 +1,27 @@
+**오늘 호에서는:**
+
+MiniMax-M2: 오픈소스 에이전트 모델의 새로운 지평.
+Cursor 2.0: AI 기반 코드 편집기의 혁신.
+AI 에이전트 기술 동향: RL 훈련과 컨텍스트 관리.
+Kimi CLI, SWE-1.5, 에이전트 데이터 프로토콜.
+주요 AI 개발 뉴스, 도구 업데이트 등.
+
+**주요 소식**
+
+**MiniMax-M2: 오픈소스 에이전트 모델의 새로운 지평**
+
+MiniMax-M2는 코딩 및 에이전트 워크플로우(agentic workflows)에 최적화된 오픈소스 전문가 혼합(mixture-of-experts, MoE) 언어 모델입니다. 이 모델은 총 2,300억 개의 매개변수(parameters)를 가지며, 그 중 100억 개의 활성 매개변수(active parameters)만을 사용하여 기능과 계산 효율성(computational efficiency) 사이의 균형을 이룹니다.
+
+*   **선도적인 성능** – MiniMax-M2는 오픈소스 모델 중 1위, Artificial Analysis 전체 순위 중 5위를 차지하며, 다중 파일 코드 편집(multi-file code edits), 테스트 검증된 수정(test-validated repairs), 컴파일-실행-수정 루프(compile-run-fix loops)에서 뛰어난 성능을 보입니다. 또한 OpenRouter에서 오픈소스 모델 중 토큰 사용량 1위를 달성했습니다.
+
+MiniMax-M2는 100억 개의 활성 매개변수를 사용하는 MoE 아키텍처로 효율성과 성능을 확보했습니다. 에이전트 워크플로우에 최적화된 강력한 브라우저 자동화, 정보 검색, 추론 유지 및 도구 호출 기능을 갖추고 있습니다. SWE-bench Verified 69.4%, Terminal-Bench 46.3% 등 주요 벤치마크에서 Claude Sonnet 4를 능가했으며, HuggingFace, MiniMax 플랫폼 API, 로컬 배포를 통해 폭넓게 활용될 수 있습니다.
+
+**Cursor 2.0과 AI 에이전트 기술 최신 동향**
+
+Cursor는 Cursor 2.0을 선보이며 AI 기반 코드 편집 기능을 대폭 강화하여 개발 생산성을 혁신합니다. 코드 자동 완성, AI 기반 디버깅, 지능형 코드 리팩토링 등 강력한 기능으로 개발자 경험을 향상시켰습니다. 한편, Microsoft는 AI 에이전트 강화를 위한 새로운 강화 학습(RL) 훈련 프레임워크를 공개했습니다. 또한, 에이전트 효율성을 높이는 사전 예방적 컨텍스트 관리(proactive context management)의 중요성이 강조되며, 인간과 AI 에이전트 작동 방식 연구가 인지 모델 이해를 심화합니다.
+
+**기타 주요 업데이트**
+
+Kimi는 개발 워크플로우에 AI 기능을 통합하는 Kimi CLI를 출시하여 터미널 환경에서 효율적인 작업을 지원합니다. Cognition의 SWE-1.5는 빠르고 최첨단 코딩 에이전트로 코딩 자동화를 이끌고 있습니다. 에이전트 데이터 프로토콜(Agent Data Protocol)은 AI 에이전트 간의 데이터 교환 및 상호 운용성을 표준화하여 생태계 성장을 돕습니다.
+
+**GitHub**

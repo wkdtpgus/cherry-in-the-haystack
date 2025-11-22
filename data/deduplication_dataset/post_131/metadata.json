@@ -1,0 +1,21 @@
+{
+  "post_id": "131",
+  "title": "**AI 주간 소식 #320 - Gemini 2.5 Flash 이미지, 소송 합의, 크롬용 Claude**",
+  "base_word_count": 149,
+  "exact_30_update_wc": 143,
+  "exact_30_ground_truth_wc": 227,
+  "exact_30_overlap_ratio": 0.455,
+  "paraphrase_25_update_wc": 420,
+  "paraphrase_25_ground_truth_wc": 420,
+  "paraphrase_25_overlap_ratio": 0.355,
+  "fragment_20_update_wc": 168,
+  "fragment_20_ground_truth_wc": 221,
+  "fragment_20_overlap_ratio": 0.571,
+  "semantic_25_update_wc": 903,
+  "semantic_25_ground_truth_wc": 902,
+  "semantic_25_overlap_ratio": 0.166,
+  "mixed_real_update_wc": 388,
+  "mixed_real_ground_truth_wc": 388,
+  "mixed_real_overlap_ratio": 0.384,
+  "status": "generated"
+}

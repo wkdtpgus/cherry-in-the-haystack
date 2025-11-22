@@ -1,0 +1,21 @@
+{
+  "post_id": "003",
+  "title": "**처음부터 Qwen3 이해 및 구현하기**",
+  "base_word_count": 405,
+  "exact_30_update_wc": 397,
+  "exact_30_ground_truth_wc": 397,
+  "exact_30_overlap_ratio": 1.02,
+  "paraphrase_25_update_wc": 433,
+  "paraphrase_25_ground_truth_wc": 433,
+  "paraphrase_25_overlap_ratio": 0.935,
+  "fragment_20_update_wc": 354,
+  "fragment_20_ground_truth_wc": 459,
+  "fragment_20_overlap_ratio": 0.847,
+  "semantic_25_update_wc": 428,
+  "semantic_25_ground_truth_wc": 473,
+  "semantic_25_overlap_ratio": 0.841,
+  "mixed_real_update_wc": 316,
+  "mixed_real_ground_truth_wc": 342,
+  "mixed_real_overlap_ratio": 1.199,
+  "status": "generated"
+}

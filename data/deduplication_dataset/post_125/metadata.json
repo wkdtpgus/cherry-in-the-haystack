@@ -1,0 +1,21 @@
+{
+  "post_id": "125",
+  "title": "**LWiAI 팟캐스트 #222 - Sora 2, Sonnet 4.5, 바이브스, 생각하는 기계들**",
+  "base_word_count": 548,
+  "exact_30_update_wc": 646,
+  "exact_30_ground_truth_wc": 643,
+  "exact_30_overlap_ratio": 0.853,
+  "paraphrase_25_update_wc": 624,
+  "paraphrase_25_ground_truth_wc": 624,
+  "paraphrase_25_overlap_ratio": 0.878,
+  "fragment_20_update_wc": 678,
+  "fragment_20_ground_truth_wc": 844,
+  "fragment_20_overlap_ratio": 0.563,
+  "semantic_25_update_wc": 448,
+  "semantic_25_ground_truth_wc": 573,
+  "semantic_25_overlap_ratio": 0.944,
+  "mixed_real_update_wc": 600,
+  "mixed_real_ground_truth_wc": 600,
+  "mixed_real_overlap_ratio": 0.913,
+  "status": "generated"
+}

@@ -1,0 +1,109 @@
+# **10월 27일부터 11월 1일까지의 주요 거대 언어 모델(LLM) 논문**
+
+Author: Youssef Hosni
+URL: https://youssefh.substack.com/p/important-llm-papers-for-the-week-f21
+
+============================================================
+
+1년 동안 50% 할인
+최근 몇 년간 대규모 언어 모델(LLM)은 빠르게 발전했습니다. 새로운 세대의 모델이 개발됨에 따라 연구자와 엔지니어는 최신 진행 상황에 대해 계속해서 정보를 얻어야 합니다. 이 글은 2025년 10월 마지막 주에 발표된 가장 중요한 LLM 논문 중 일부를 요약합니다. 이 논문들은 모델 최적화 및 스케일링, 추론, 벤치마킹, 성능 향상을 포함하여 차세대 언어 모델을 형성하는 다양한 주제를 다룹니다. 이러한 분야에 걸친 새로운 LLM 연구를 지속적으로 파악하는 것은 더 유능하고, 견고하며, 인간의 가치와 부합하는 모델을 향한 지속적인 발전을 이끄는 데 도움이 될 것입니다.
+
+목차:
+LLM 발전 및 기술 보고서
+비전 언어 모델
+LLM 추론
+후처리 학습 및 RL
+내 모든 책을 40% 할인된 가격으로 구매하세요
+내 모든 책을 버튼 하나로 40% 할인된 가격으로 구매하세요
+유세프 호스니 · 6월 17일
+제 책과 로드맵을 묶음으로 만들었으니, 버튼 하나로 모든 것을 원가보다 40% 저렴하게 구매하실 수 있습니다. 이 번들에는 다음을 포함한 8개의 전자책이 포함되어 있습니다: 전체 이야기 읽기
+
+### 1. LLM 발전 및 기술 보고서
+#### 1.1. 수동 디코딩의 종말: 진정한 종단 간(End-to-End) 언어 모델을 향하여
+내 모든 책을 40% 할인된 가격으로 구매하세요
+
+이 논문은 LLM에 일반적으로 적용되는 "종단 간(end-to-end)"이라는 명칭에 이의를 제기하며, 온도(temperature) 및 top-p와 같이 수동으로 조정되는 정적 디코딩 매개변수(parameter)에 대한 의존이 중요한 병목 현상이라고 주장합니다. 이 수동 프로세스는 번거롭고 작업에 따라 달라질 뿐만 아니라, 단일 생성 내에서 토큰(token)마다 창의성 대 정확성의 이상적인 수준이 극적으로 변할 수 있으므로 근본적으로 최적화되지 않습니다. 이 논문은 LLM이 토큰(token)별로 자체 디코딩 전략을 학습하고 제어할 수 있도록 함으로써 진정한 종단 간(end-to-end) 시스템을 최종적으로 가능하게 하는 새롭고 가벼운 아키텍처인 **AutoDeco**를 소개합니다.
+
+**핵심 아이디어: 모델에게 무엇을 생성할지 뿐만 아니라 어떻게 생성할지를 가르치기**
+핵심 문제는 온도(temperature)와 top-p에 대한 단일의 정적 설정이 전체 시퀀스(sequence)에 최적일 수 없다는 것입니다. 모델은 이야기를 시작하기 위해 높은 창의성(높은 온도)이 필요할 수 있지만, 최종적이고 사실적인 답변을 제시하기 위해서는 높은 정확성(낮은 온도)이 필요할 수 있습니다. 현재 LLM은 이러한 점을 인지하지 못하고, 동적인 문제에 대해 만능 전략을 강요합니다. AutoDeco의 핵심 아이디어는 디코딩 전략을 모델 자체의 학습된 동적 부분으로 만드는 것입니다. 트랜스포머(transformer)에 가벼운 "예측 헤드(prediction heads)"를 추가함으로써, 모델은 컨텍스트(context)를 기반으로 생성하려는 각 특정 토큰(token)에 대한 최적의 온도(temperature) 및 top-p 값을 예측하는 방법을 학습합니다. 이는 디코딩을 정적이고 수동적인 휴리스틱(heuristic)에서 모델의 순방향 전달(forward pass)에 직접 통합되는 동적이고 자체 조절적인 매개변수(parametric) 프로세스로 전환합니다.
+
+**주요 방법론: 미분 가능한 디코딩 및 종단 간(End-to-End) 학습**
+내 모든 책을 40% 할인된 가격으로 구매하세요
+
+AutoDeco 학습의 핵심 과제는 각 단계에서 최적의 온도(temperature) 또는 top-p에 대한 "정답(ground-truth)" 레이블(label)이 부족하다는 것입니다. 이 논문은 새롭고 완전히 미분 가능한 학습 파이프라인(pipeline)으로 이 문제를 극복합니다.
+
+1년 동안 50% 할인
+**AutoDeco 아키텍처(Architecture):** 표준 트랜스포머(transformer)는 최종 언어 모델링 헤드(head)와 함께 위치하는 두 개의 간단하고 가벼운 헤드(head)로 보강됩니다. 각 생성 단계에서 하나의 헤드(head)는 컨텍스트(context)별 온도(temperature)를 예측하고, 두 번째 헤드(head)는 컨텍스트(context)와 예측된 온도(temperature)를 모두 사용하여 최적의 top-p 값을 예측합니다.
+
+**미분 가능한 소프트 Top-p(Differentiable Soft Top-p):** 표준 top-p 샘플링 알고리즘(sampling algorithm)은 "하드 컷오프(hard cutoff)" 방식이며, 이는 미분 불가능하고 기울기(gradient)의 흐름을 방해합니다. 이를 해결하기 위해 저자들은 "소프트 top-p(soft top-p)" 메커니즘(mechanism)을 도입합니다. 이 방법은 핵(nucleus) 외부 토큰(token)의 확률을 0으로 만드는 대신, 확률을 점진적으로 감소시키는 부드럽고 미분 가능한 마스크(mask)를 적용합니다.
+
+**종단 간(End-to-End) 최적화:** 매개변수(parameter) 예측부터 최종 토큰(token) 확률까지 완전히 미분 가능한 파이프라인(pipeline)을 통해, AutoDeco 헤드(head)는 텍스트 생성 작업의 표준 교차 엔트로피 손실(cross-entropy loss)을 사용하여 직접 학습될 수 있습니다. 이를 통해 모델은 디코딩 매개변수(parameter) 자체에 대한 명시적인 레이블(label) 없이도 올바른 다음 토큰(token)을 생성하는 데 미치는 영향을 직접 최적화하여 디코딩 전략을 학습할 수 있습니다.
+
+이는 AutoDeco의 동적, 토큰(token)별 매개변수(parameter) 예측(상단)과 수동 디코딩의 정적, 단일 설정 방식(하단)을 명확하게 대비시키는 핵심 아키텍처(architectural) 다이어그램(diagram)입니다. 이 그림은 종단 간(end-to-end) 학습을 가능하게 하는 핵심인 새로운 "미분 가능한 소프트 top-p 마스크(differentiable soft top-p mask)"를 시각적으로 설명하므로 방법론을 이해하는 데 중요합니다.
+
+**가장 중요한 발견**
+내 모든 책을 40% 할인된 가격으로 구매하세요
+
+결과는 AutoDeco가 성능을 향상시킬 뿐만 아니라, 무시할 수 있는 계산 비용으로 조종 가능하고 상호작용적인 생성의 새로운 패러다임(paradigm)을 열었음을 보여줍니다.
+
+*   **우수한 성능:** 8개의 다양한 벤치마크(benchmark)와 여러 모델 계열(Llama, Qwen, GPT 변형 포함)에서 AutoDeco는 탐욕적 탐색(greedy search) 및 기본 샘플링(default sampling)과 같은 표준 디코딩 기준선(baseline)보다 지속적으로 그리고 현저하게 뛰어난 성능을 보였습니다.
+*   **“오라클 튜닝(Oracle-Tuned)” 기준선(baseline)과 일치:** AutoDeco의 성능은 정적 하이퍼파라미터(hyperparameter)가 테스트 세트(test set)에서 철저한 탐색을 통해 세심하게 조정된 "전문가 안내(expert-guided)" 기준선(baseline)과 동등하며, 때로는 이를 능가하기도 합니다. 이는 실제 애플리케이션(application)에서는 불가능한 과정입니다. 이는 모든 정적 방법론에 대한 실질적인 우수성을 증명합니다.
+*   **무시할 수 있는 오버헤드(Overhead):** AutoDeco 헤드(head)는 매우 가벼워서 생성 프로세스(process)에 1-2%의 지연 시간(latency)만 추가하고 메모리 사용량(memory footprint)도 무시할 수 있는 수준이므로, 기존 디코딩 로직(logic)에 대한 매우 실용적인 드롭인 교체(drop-in replacement)가 가능합니다.
+*   **자연어 제어의 발현 능력:** 이것이 가장 놀라운 발견입니다. 모델은 명시적으로 훈련되지 않았음에도 불구하고, 프롬프트(prompt)의 자연어 명령을 해석하여 자체 생성 스타일을 조종하는 방법을 학습합니다. 예를 들어, "더 혁신적이고 다양하게"를 추가하면 모델이 예측된 온도(temperature) 및 top-p 값을 자발적으로 증가시키고, "가능한 한 확실하게"를 추가하면 이를 낮춥니다. 표적화된 훈련을 통해 이러한 행동은 놀랍도록 일관적입니다(95% 이상).
+
+이 표들은 AutoDeco가 도메인 내(수학) 및 도메인 외(일반 QA, 코드 등) 작업 모두에서 우수한 성능을 보여주는 주요 정량적 증거를 제공합니다.
+
+1년 동안 50% 할인
+이 그림은 발현 능력에 대한 강력한 시각화 자료로, 프롬프트(prompt)의 자연어 명령에 반응하여 모델의 내부, 토큰(token) 수준 온도(temperature) 및 top-p 예측이 실시간으로 어떻게 변하는지 보여줍니다.
+
+**중요 자료:**
+ArXiv 페이지
+PDF
+GitHub 페이지
+
+#### 1.2. Kimi Linear: 표현력이 풍부하고 효율적인 어텐션(Attention) 아키텍처(Architecture)
+내 모든 책을 40% 할인된 가격으로 구매하세요
+
+이 논문은 Kimi Linear라는 획기적인 하이브리드 어텐션(attention) 아키텍처(architecture)를 소개합니다. 이 아키텍처는 광범위한 시나리오(scenario)에서 성능과 효율성 면에서 기존의 완전 소프트맥스 어텐션(full softmax attention)을 처음으로 확실하게 능가합니다. 표준 LLM 어텐션 메커니즘(attention mechanism)은 주요 병목 현상이며, 매우 긴 시퀀스(sequence) 처리를 느리고 메모리 집약적으로 만드는 이차 복잡도(quadratic complexity)로 인해 어려움을 겪습니다. “선형 어텐션(linear attention)”이 해결책으로 제안되었지만, 역사적으로 완전 어텐션(full attention)의 성능에 필적하는 데 어려움을 겪었습니다. Kimi Linear는 새롭고 표현력이 뛰어난 선형 어텐션 모듈(linear attention module)과 주기적인 완전 어텐션(full attention) 레이어(layer)를 결합하여 이러한 한계를 극복합니다. 이는 파레토 최적(Pareto-optimal) 시스템을 생성하여 훨씬 뛰어난 속도와 극적으로 작은 메모리 사용량(memory footprint)으로 최첨단 성능을 제공합니다.
+
+**핵심 아이디어: 두 가지 장점 모두 활용**
+1년 동안 50% 할인
+
+어텐션(attention) 아키텍처(architecture)의 핵심 과제는 표현력과 효율성 사이의 절충점입니다. 완전 어텐션(full attention)은 모든 토큰(token)이 다른 모든 토큰(token)을 볼 수 있기 때문에 강력하지만, 계산 비용이 많이 듭니다. 선형 어텐션(linear attention)은 빠르고 고정된 메모리 상태를 가지지만, 이러한 압축은 정보 손실과 성능 저하로 이어질 수 있습니다. Kimi Linear의 핵심 아이디어는 두 가지 장점을 지능적으로 결합한 하이브리드 시스템(hybrid system)을 만드는 것입니다. 대부분의 레이어(layer)에 새롭고 강력한 선형 어텐션 메커니즘(linear attention mechanism)인 **Kimi 델타 어텐션(Kimi Delta Attention, KDA)**을 사용합니다. 이는 엄청난 효율성과 속도를 제공합니다. 장거리에서 발생할 수 있는 정보 손실을 상쇄하기 위해, 3개의 KDA 레이어(layer)마다 하나의 완전 어텐션(full attention) 레이어(layer)를 전략적으로 교차 배치합니다. 이러한 설계는 효율적인 KDA 레이어(layer)가 대부분의 처리를 담당하고 로컬 컨텍스트(local context)를 관리하도록 하는 동시에, 희소한 완전 어텐션(full attention) 레이어(layer)가 "글로벌 정보 허브(global information hubs)" 역할을 하여 중요한 장거리 의존성(long-range dependencies)이 보존되도록 합니다. 그 결과는 선형 어텐션(linear attention)의 속도 이점을 달성하면서 완전 어텐션(full attention)의 품질을 능가하는 아키텍처(architecture)입니다.
+
+**주요 방법론: 세분화된 선형 어텐션(Linear Attention)과 완전 어텐션(Full Attention)의 하이브리드(Hybrid)**
+내 모든 책을 40% 할인된 가격으로 구매하세요
+
+이 아키텍처(architecture)의 성공은 두 가지 주요 구성 요소, 즉 새로운 선형 어텐션 메커니즘(linear attention mechanism)과 이를 하이브리드(hybrid) 구조에 전략적으로 통합하는 것에 기반합니다.
+
+*   **Kimi 델타 어텐션(Kimi Delta Attention, KDA):** 이것이 핵심 혁신입니다. 이는 어텐션(attention)을 지속적인 메모리 수정 프로세스(process)로 취급하는 "델타 규칙(delta rule)"에 기반한 고급 선형 어텐션 모듈(linear attention module)입니다. KDA는 Gated DeltaNet과 같은 이전 방법들을 **세분화된 게이팅 메커니즘(gating mechanism)**을 도입하여 개선합니다. 정보의 전체 블록(block)에 단일 "망각 게이트(forget gate)"를 사용하는 대신, KDA는 채널별 게이트(channel-wise gate)를 사용하여 각 특징 차원(feature dimension)이 자체적인 독립적인 메모리 감쇠율(memory decay)을 갖도록 합니다. 이를 통해 모델의 유한 상태 메모리(finite-state memory)에서 어떤 정보를 유지하거나 버릴지에 대해 훨씬 더 정밀한 제어가 가능해집니다. 결정적으로, KDA는 유사한 방법들과 비교하여 계산량을 크게 줄이는 맞춤형 하드웨어 효율적 알고리즘(hardware-efficient algorithm)으로 구현됩니다.
+*   **하이브리드 레이어(Hybrid Layer) 아키텍처(Architecture):** Kimi Linear는 순수한 선형 모델(linear model)이 아닙니다. 이는 KDA 레이어(layer)와 완전 어텐션(full attention) 레이어(layer)(특히 다중 헤드 잠재 어텐션(Multi-Head Latent Attention, MLA))를 번갈아 사용하는 하이브리드 아키텍처(hybrid architecture)입니다. 절제 연구(ablation study)에 따르면, 3:1의 균일한 비율(MLA 완전 레이어(layer) 하나당 KDA 레이어(layer) 세 개)이 성능과 효율성 사이의 최적의 절충점을 제공했습니다. 이러한 설계는 메모리 집약적인 KV 캐시(KV cache)를 최대 75%까지 줄이고, 위치 정보(positional information) 처리에 대한 책임을 KDA 레이어(layer)에 위임하여 완전 어텐션(full attention) 레이어(layer)가 위치 인코딩(positional encodings, NoPE) 없이 더 효율적으로 작동하도록 합니다.
+
+이것은 KDA와 MLA 블록(block)을 3:1 비율로 쌓는 하이브리드 모델(hybrid model)을 명확하게 보여주는 주요 아키텍처(architectural) 다이어그램(diagram)입니다.
+
+**가장 중요한 발견**
+1년 동안 50% 할인
+
+엄격하고 대규모 실험을 통해 이 논문은 Kimi Linear가 완전 어텐션(full attention)에 대한 우수한 드롭인 교체(drop-in replacement)이며, 엄청난 효율성 향상과 함께 최첨단 성능을 달성함을 입증합니다.
+
+*   **완전 어텐션(Full Attention) 능가:** 공정하고 규모가 일치하는 사전 훈련(pre-training)(1.4조 토큰(token))에서 Kimi Linear는 일반 지식, 추론, 수학, 코드 벤치마크(benchmark) 전반에 걸쳐 표준 완전 어텐션(full-attention) 기준선(baseline)(MLA)과 또 다른 하이브리드 기준선(hybrid baseline)(GDN-H)을 모두 지속적으로 능가합니다.
+*   **최첨단 장문 컨텍스트(Long-Context) 성능:** Kimi Linear는 RULER 및 RepoQA와 같은 작업에서 기준선(baseline)을 크게 능가하며, 일련의 장문 컨텍스트(long-context) 벤치마크(benchmark)에서 최고 점수를 달성합니다.
+*   **엄청난 처리량(Throughput) 향상:** 이 아키텍처(architecture)는 긴 시퀀스(sequence)에 대해 극적인 속도 향상을 제공합니다. 100만 토큰(token) 컨텍스트(context) 길이에서 Kimi Linear는 표준 완전 어텐션(full attention) 기준선(baseline)보다 최대 6.3배 더 높은 디코딩 처리량(decoding throughput)을 제공합니다. 이는 출력 토큰(token)당 시간이 낮고 일정하게 유지되는 반면, 완전 어텐션(full attention)의 비용은 엄청나게 증가하기 때문입니다.
+*   **우수한 RL 수렴:** 복잡한 수학 작업에 대한 강화 학습(reinforcement learning)에 사용될 때, Kimi Linear는 완전 어텐션(full-attention) 기준선(baseline)보다 훨씬 빠르고 더 나은 수렴을 보여주며, 이는 그 아키텍처(architecture)가 추론 집약적인 생성에 더 적합함을 나타냅니다.
+
+이것은 (a) Kimi Linear의 파레토 최적(Pareto-optimal) 성능 대 가속 곡선(acceleration curve)과 (b) 경쟁사 대비 대규모 시퀀스(sequence) 길이에서의 평탄하고 낮은 지연 시간(latency) 디코딩 시간(decoding time)을 보여주는 핵심 요약 그림입니다.
+
+이 표들은 사전 훈련(pre-training), 지시 튜닝(instruction-tuning) 및 장문 컨텍스트(long-context) 벤치마크(benchmark) 전반에 걸쳐 Kimi Linear의 우수한 성능을 입증하는 상세한 정량적 결과를 제공합니다.
+
+**중요 자료:**
+ArXiv 페이지
+PDF
+GitHub 페이지
+
+#### 1.3. 통이 딥리서치(Tongyi DeepResearch) 기술 보고서
+내 모든 책을 40% 할인된 가격으로 구매하세요
+
+이 기술 보고서는 자율적이고 장기적이며 복잡한 정보 탐색 작업을 위해 특별히 설계된 강력한 오픈 소스 에이전트형(agentic) 대규모 언어 모델인 **통이 딥리서치(Tongyi DeepResearch)**를 소개합니다. 이 연구는 새로운 "에이전트형(agentic) 중간 훈련(mid-training)" 단계와 정교한 "에이전트형(agentic) 후처리 훈련(post-training)" 단계를 결합하여 이 고급 에이전트(agent)를 성공적으로 훈련시키는 완전한 종단 간(end-to-end) 프레임워크(framework)를 제시합니다. 이 프레임워크(framework)의 초석은 값비싼 인간 주석(human annotation)에 의존하지 않고 모든 훈련 단계를 지원하는 완전 자동화되고 고도로 확장 가능한 데이터 합성 파이프라인(data synthesis pipeline)입니다. 그 결과 모델은 토큰(token)당 33억 개의 활성화된 매개변수(parameter)만으로도 일련의 심층 연구 벤치마크(benchmark) 전반에서 최첨단 성능을 달성하며, 더 크고 독점적인 많은 시스템(system)을 능가합니다.
+
+**핵심 아이디어: AI 연구자를 위한 확장 가능하고 오픈 소스(Open-Source) 청사진**
+1년 동안 50% 할인

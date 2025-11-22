@@ -1,0 +1,21 @@
+{
+  "post_id": "040",
+  "title": "**방금 무슨 일이 있었나요?**",
+  "base_word_count": 2025,
+  "exact_30_update_wc": 1272,
+  "exact_30_ground_truth_wc": 2337,
+  "exact_30_overlap_ratio": 0.755,
+  "paraphrase_25_update_wc": 2086,
+  "paraphrase_25_ground_truth_wc": 2086,
+  "paraphrase_25_overlap_ratio": 0.971,
+  "fragment_20_update_wc": 811,
+  "fragment_20_ground_truth_wc": 2139,
+  "fragment_20_overlap_ratio": 0.859,
+  "semantic_25_update_wc": 1684,
+  "semantic_25_ground_truth_wc": 1684,
+  "semantic_25_overlap_ratio": 1.202,
+  "mixed_real_update_wc": 1539,
+  "mixed_real_ground_truth_wc": 1556,
+  "mixed_real_overlap_ratio": 1.305,
+  "status": "generated"
+}

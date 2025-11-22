@@ -1,0 +1,21 @@
+{
+  "post_id": "195",
+  "title": "**저희는 프로덕션(production) 환경에서 AI 에이전트(AI agents)를 운영하는 데 47,000달러를 들였습니다. A2A와 MCP에 대해 아무도 알려주지 않는 점들이 여기에 있습니다.**",
+  "base_word_count": 540,
+  "exact_30_update_wc": 899,
+  "exact_30_ground_truth_wc": 899,
+  "exact_30_overlap_ratio": 0.601,
+  "paraphrase_25_update_wc": 1054,
+  "paraphrase_25_ground_truth_wc": 1024,
+  "paraphrase_25_overlap_ratio": 0.541,
+  "fragment_20_update_wc": 544,
+  "fragment_20_ground_truth_wc": 959,
+  "fragment_20_overlap_ratio": 0.23,
+  "semantic_25_update_wc": 1239,
+  "semantic_25_ground_truth_wc": 1239,
+  "semantic_25_overlap_ratio": 0.436,
+  "mixed_real_update_wc": 671,
+  "mixed_real_ground_truth_wc": 671,
+  "mixed_real_overlap_ratio": 0.805,
+  "status": "generated"
+}

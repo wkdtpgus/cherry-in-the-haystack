@@ -1,0 +1,21 @@
+{
+  "post_id": "205",
+  "title": "**AI 주권은 스위치가 아니라 스펙트럼이다**",
+  "base_word_count": 1005,
+  "exact_30_update_wc": 688,
+  "exact_30_ground_truth_wc": 907,
+  "exact_30_overlap_ratio": 1.142,
+  "paraphrase_25_update_wc": 1213,
+  "paraphrase_25_ground_truth_wc": 1213,
+  "paraphrase_25_overlap_ratio": 0.829,
+  "fragment_20_update_wc": 731,
+  "fragment_20_ground_truth_wc": 1109,
+  "fragment_20_overlap_ratio": 0.858,
+  "semantic_25_update_wc": 1009,
+  "semantic_25_ground_truth_wc": 1135,
+  "semantic_25_overlap_ratio": 0.871,
+  "mixed_real_update_wc": 1164,
+  "mixed_real_ground_truth_wc": 1164,
+  "mixed_real_overlap_ratio": 0.863,
+  "status": "generated"
+}

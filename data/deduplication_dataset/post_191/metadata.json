@@ -1,0 +1,21 @@
+{
+  "post_id": "191",
+  "title": "**알아두면 좋을 7가지 논문**",
+  "base_word_count": 2517,
+  "exact_30_update_wc": 3105,
+  "exact_30_ground_truth_wc": 3151,
+  "exact_30_overlap_ratio": 0.796,
+  "paraphrase_25_update_wc": 2876,
+  "paraphrase_25_ground_truth_wc": 2876,
+  "paraphrase_25_overlap_ratio": 0.875,
+  "fragment_20_update_wc": 2194,
+  "fragment_20_ground_truth_wc": 2292,
+  "fragment_20_overlap_ratio": 1.103,
+  "semantic_25_update_wc": 2625,
+  "semantic_25_ground_truth_wc": 2625,
+  "semantic_25_overlap_ratio": 0.959,
+  "mixed_real_update_wc": 2889,
+  "mixed_real_ground_truth_wc": 2773,
+  "mixed_real_overlap_ratio": 0.911,
+  "status": "generated"
+}

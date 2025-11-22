@@ -1,0 +1,74 @@
+# **메러디스 링겔 모리스: 생성형 AI (Generative AI)의 HCI (Human-Computer Interaction) 순간**
+
+Author: The Gradient
+URL: https://thegradientpub.substack.com/p/meredith-morris-generative-ai-hci
+
+============================================================
+
+**에피소드 138**
+
+저는 메러디스 모리스(Meredith Morris)와 다음 주제에 대해 이야기했습니다.
+
+*   AI와 HCI(Human-Computer Interaction)의 교차점, 그리고 AI와 인접 분야 간에 더 많은 교차 협력(cross-pollination)이 필요한 이유
+*   장애 연구(Disability studies)와 AI
+*   생성형 유령(Generative ghosts)과 기술 결정론(technological determinism)
+*   유용한 AGI(Artificial General Intelligence) 정의 개발
+
+제가 아파서 이번 에피소드의 서론을 녹음하지 못했습니다. 즐겁게 들어주세요!
+
+메러디스는 구글 딥마인드(Google DeepMind)의 인간-AI 상호작용 연구(Human-AI Interaction Research) 디렉터이며, 워싱턴 대학교(University of Washington)의 폴 G. 앨런 컴퓨터 과학 및 공학 대학(The Paul G. Allen School of Computer Science & Engineering)과 정보 대학(The Information School)의 겸임 교수(Affiliate Professor)입니다. 그곳에서 그녀는 dub 연구 컨소시엄(research consortium)에 참여하고 있습니다. 그녀의 연구는 인간-컴퓨터 상호작용(human-computer interaction, HCI), 인간 중심 AI(human-centered AI), 인간-AI 상호작용(human-AI interaction), 컴퓨터 지원 협업 작업(computer-supported cooperative work, CSCW), 소셜 컴퓨팅(social computing) 및 접근성(accessibility) 분야를 아우릅니다. 그녀는 HCI에 대한 공헌으로 ACM 펠로우(ACM Fellow) 및 ACM SIGCHI 아카데미 회원(ACM SIGCHI Academy member)으로 인정받았습니다.
+
+새로운 에피소드 업데이트를 위해 트위터(Twitter)에서 저를 찾아주시고, 피드백, 아이디어, 게스트 제안을 위해 editor@thegradient.pub으로 연락 주세요.
+
+The Gradient 팟캐스트 구독: 애플 팟캐스트(Apple Podcasts) | 스포티파이(Spotify) | 포켓 캐스트(Pocket Casts) | RSS
+트위터에서 The Gradient 팔로우 구독
+
+**목차:**
+(00:00) 메러디스의 영향과 초기 작업
+(03:00) AI와 HCI의 차이점
+(05:56) 분야의 성숙도와 학제 간 연구(cross-disciplinary work)
+(09:03) 기술과 목적
+(10:37) 메러디스 연구 방향의 독특한 측면
+(12:55) 학제 간 연구(interdisciplinary work)에서의 지식 생산 형태
+(14:08) 장애, 편향(Bias), 그리고 AI
+(18:32) LaMPost와 글쓰기를 위한 LM(Language Models) 활용
+(20:12) 난독증(dyslexia)을 위한 접근성(Accessibility) 접근 방식
+(22:15) AI에 대한 인식과 자율성(autonomy)에 대한 인지
+(24:43) 인격(personhood)의 소프트웨어 모델(software model)
+(28:07) 지능의 개념, 규범적 비전(normative visions) 및 장애 연구(disability studies)
+(32:41) 장애 범주와 학습 시스템(learning systems)
+(37:24) 컴퓨터 과학(CS) 연구에 더 많은 관점 도입 및 CS 연구로 간주되는 것 재정의
+(39:36) 학제 간 연구자(interdisciplinary researchers) 양성, 학계와 산업계의 경계 허물기
+(43:25) 생성형 에이전트(Generative Agents)와 대중의 상상력
+(45:13) ML(Machine Learning) 컨퍼런스의 현황, 더 많은 교차 협력(cross-pollination)의 필요성
+(46:42) 컨퍼런스의 명성, 더 많은 학제 간 연구(cross-disciplinary work)로의 전환
+(48:52) 준 박(Joon Park) 감사
+(49:51) 학제 간 연구자(interdisciplinary researchers) 양성
+(53:20) 생성형 유령(Generative Ghosts)과 기술 결정론(technological determinism)
+(57:06) 생성형 유령(generative ghosts) 및 클론(clones)의 예시, 에이전트 시스템(agentic systems)과의 관계
+(1:00:39) 생성형 유령(generative ghosts)을 원하는 이유
+(1:02:25) 생성형 클론(generative clones) 및 유령(ghosts)에 대한 동의 문제
+(1:05:01) 생성형 유령(generative ghosts) 유지에 필요한 노동, 심리적 대가
+(1:06:25) 생성형 시스템(generative systems)의 잠재적 종교적 및 영적 의미
+(1:10:19) 의인화(Anthropomorphization)
+(1:12:14) 사용자 경험(User experience)과 인지 편향(cognitive biases)
+(1:15:24) AGI(Artificial General Intelligence)의 수준
+(1:16:13) AGI(Artificial General Intelligence) 정의
+(1:23:20) 세계 모델(World models)과 AGI(Artificial General Intelligence)
+(1:26:16) AGI(Artificial General Intelligence)의 메타인지 능력(Metacognitive abilities)
+(1:30:06) 양방향 인간-AI 정렬(Bidirectional Human-AI Alignment)을 향하여
+(1:30:55) 다원적 가치 정렬(Pluralistic value alignment)
+(1:32:43) AI 시스템(AI systems) 배포에 대한 메러디스의 관점
+(1:36:09) 젊은 학제 간 연구자(interdisciplinary researchers)를 위한 메러디스의 조언
+
+**링크:**
+메러디스의 홈페이지, 트위터(Twitter), 구글 스칼라(Google Scholar)
+
+**논문:**
+테이블탑 인터페이스 디자인(Tabletop Interface Design)을 통한 그룹 역학 중재
+SearchTogether: 협업 웹 검색(Collaborative Web Search)을 위한 인터페이스
+AI와 접근성(Accessibility): 윤리적 고려 사항(Ethical Considerations)에 대한 논의
+장애, 편향(Bias), 그리고 AI
+LaMPost: 난독증(Dyslexia) 성인을 위한 AI 지원 이메일 작성 프로토타입(Prototype) 설계 및 평가
+생성형 유령(Generative Ghosts)
+AGI(Artificial General Intelligence)의 수준

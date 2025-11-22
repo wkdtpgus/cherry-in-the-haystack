@@ -1,0 +1,8 @@
+# **금주의 AI 에이전트**
+
+Author: Pascal Biese
+URL: https://www.llmwatch.com/p/ai-agents-of-the-week-025
+
+============================================================
+
+**자율 AI 에이전트(autonomous AI agents)의 빠르게 변화하는 세계에 발맞추고자 하는 연구자와 실무자를 위해 준비되었습니다.** 이번 호에서는 최신 논문과 산업 업데이트를 심층적으로 다루며, 새로운 역량, 당면 과제, 그리고 미래 방향을 강조합니다. AI 에이전트(AI agents)에게 정말 대단한 한 주였습니다! 연구자들은 언어 모델(language models)이 강화 학습(reinforcement learning)을 통해 도구를 사용하고, 지연 시간(latency)과 비용을 줄이기 위해 계획을 최적화하며, 구조화된 자기 성찰(self reflection)을 통해 실수로부터 배우도록 가르치는 프레임워크(frameworks)를 선보였습니다. 평가 플랫폼(evaluation platforms)은 에이전트(agents)가 비동기적이고 동적인 세계에서 작동하거나 실제 직업적 작업을 수행하도록 요구하며 더욱 현실적으로 발전했습니다. 도메인별 에이전트(domain specific agents)는 건강 정보학(health informatics) 및 기타 수직 산업(verticals)에서 전체 연구 파이프라인(research pipelines)을 자동화했으며, 다중 에이전트 아키텍처(multi agent architectures)는 토큰 사용량(token usage)을 급증시키지 않으면서 추론 품질을 향상시켰습니다. 학계를 넘어, 최고의 연구소와 기업들은 성숙해가는 생태계(ecosystem)를 알리는 오픈 소스 프레임워크(open source frameworks), 메모리 도구(memory tools) 및 통합(integrations)을 출시했습니다. 이러한 발전의 핵심은 명확합니다. 이 분야는 통제된 벤치마크(benchmarks)에서 실제 배포(deployments)로 이동하고 있으며, 신뢰성, 효율성, 적응성에 중점을 두고 있습니다. 아래에서는 가장 영향력 있는 연구 논문과 최신 업데이트를 살펴보고, 핵심 혁신, 그것들이 왜 중요한지, 그리고 에이전트형 AI(agentic AI)의 더 넓은 궤적에 어떻게 부합하는지 설명합니다. 참고: 이번 호는 평소보다 훨씬 더 많은 콘텐츠를 담은 XXL호입니다. 더 많은 최첨단 연구, 더 많은 실제 시나리오, 더 많은 도메인별 애플리케이션(applications) — 모든 것이 더 많습니다.

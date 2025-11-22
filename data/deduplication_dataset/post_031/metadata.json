@@ -1,0 +1,21 @@
+{
+  "post_id": "031",
+  "title": "성격과 설득",
+  "base_word_count": 1612,
+  "exact_30_update_wc": 1597,
+  "exact_30_ground_truth_wc": 1667,
+  "exact_30_overlap_ratio": 0.966,
+  "paraphrase_25_update_wc": 2166,
+  "paraphrase_25_ground_truth_wc": 2166,
+  "paraphrase_25_overlap_ratio": 0.744,
+  "fragment_20_update_wc": 1222,
+  "fragment_20_ground_truth_wc": 1379,
+  "fragment_20_overlap_ratio": 1.191,
+  "semantic_25_update_wc": 1402,
+  "semantic_25_ground_truth_wc": 1428,
+  "semantic_25_overlap_ratio": 1.131,
+  "mixed_real_update_wc": 1310,
+  "mixed_real_ground_truth_wc": 1320,
+  "mixed_real_overlap_ratio": 1.223,
+  "status": "generated"
+}

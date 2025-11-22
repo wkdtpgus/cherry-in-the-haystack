@@ -1,0 +1,21 @@
+{
+  "post_id": "178",
+  "title": "**금주의 AI 에이전트: 알아두어야 할 논문들**",
+  "base_word_count": 291,
+  "exact_30_update_wc": 664,
+  "exact_30_ground_truth_wc": 790,
+  "exact_30_overlap_ratio": 0.248,
+  "paraphrase_25_update_wc": 615,
+  "paraphrase_25_ground_truth_wc": 615,
+  "paraphrase_25_overlap_ratio": 0.473,
+  "fragment_20_update_wc": 290,
+  "fragment_20_ground_truth_wc": 408,
+  "fragment_20_overlap_ratio": 0.597,
+  "semantic_25_update_wc": 487,
+  "semantic_25_ground_truth_wc": 457,
+  "semantic_25_overlap_ratio": 0.659,
+  "mixed_real_update_wc": 439,
+  "mixed_real_ground_truth_wc": 439,
+  "mixed_real_overlap_ratio": 0.663,
+  "status": "generated"
+}

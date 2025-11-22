@@ -1,0 +1,676 @@
+대규모 언어 모델(LLM)을 실제로 어떻게 평가해야 할까요? 이 질문은 간단해 보이지만, 실제로는 훨씬 더 심층적인 논의를 필요로 합니다. 제가 프로젝트 자문이나 협력 시 가장 자주 듣는 질문 중 하나는 다양한 모델 중 최적의 것을 선택하는 방법과 외부 평가 결과를 어떻게 해석해야 하는지에 대한 것입니다. (물론, 자체 모델을 미세 조정(fine-tuning)하거나 개발할 때 진행 상황을 측정하는 방식도 포함됩니다.) 이러한 질문이 빈번하게 제기되므로, LLM을 비교하는 데 사용되는 주요 평가 방식에 대한 개괄적인 설명을 공유하는 것이 유익할 것이라고 생각했습니다. LLM 평가는 단일 자료로 모든 것을 다루기에는 매우 광범위한 주제이지만, 핵심적인 접근 방식에 대한 명확한 개념 지도를 갖추면 벤치마크(benchmark), 리더보드(leaderboard) 및 연구 논문을 이해하는 데 훨씬 도움이 될 것입니다. 원래 이 평가 기술들을 곧 출간될 저의 책 『Build a Reasoning Model (From Scratch)』에 포함할 계획이었지만, 이는 책의 주요 내용에서 다소 벗어나는 부분이었습니다. (책 자체는 검증기 기반 평가(verifier-based evaluation)에 더 초점을 맞춥니다.) 그래서 이 내용을 처음부터 작성된 코드 예제와 함께 더 긴 글로 공유하는 것이 좋겠다고 판단했습니다. 『Build A Reasoning Model (From Scratch)』에서는 추론 LLM(reasoning LLM)을 밑바닥부터 구축하는 실용적인 접근 방식을 취합니다. 만약 『Build A Large Language Model (From Scratch)』을 흥미롭게 읽으셨다면, 이 책 역시 순수 파이토치(PyTorch)로 모든 것을 처음부터 구현하는 유사한 스타일로 구성되어 있습니다. 추론(Reasoning)은 LLM 성능 향상에 있어 가장 주목할 만하고 중요한 최신 발전 중 하나이지만, 단순히 용어만 듣거나 이론적으로만 접하면 가장 오해하기 쉬운 개념이기도 합니다. 따라서 이 책에서는 추론 LLM(reasoning LLM)을 처음부터 구축하는 실습 위주의 접근 방식을 통해 그 본질을 파고듭니다. 이 책은 현재 얼리 액세스(early-access) 중이며, 이미 100페이지 이상이 온라인에 공개되어 있고, 레이아웃 팀에서 현재 추가하고 있는 30페이지를 막 마쳤습니다. 얼리 액세스 프로그램에 참여하셨다면(성원에 깊이 감사드립니다!), 해당 내용이 공개될 때 이메일을 받으실 것입니다. 추신: 현재 LLM 연구 분야는 매우 역동적입니다. 저는 북마크해 둔 논문 목록을 따라잡기 위해 노력하고 있으며, 다음 글에서 가장 흥미로운 몇 가지를 소개할 예정입니다. 하지만 이제, 네 가지 주요 LLM 평가 방법과 그 장단점을 더 잘 이해하기 위한 처음부터 작성된 코드 구현에 대해 논의해 보겠습니다.
+
+### LLM 평가 기법의 핵심 이해하기
+
+실제 운영 환경에 배포된 LLM을 평가하는 네 가지 주요 방식은 아래 그림 1에 제시된 바와 같이 **객관식(multiple choice)**, **검증기(verifier)**, **리더보드(leaderboard)**, 그리고 **LLM 심사위원(LLM judges)**입니다. 연구 논문, 마케팅 자료, 기술 보고서 및 모델 카드(LLM 관련 기술 보고서)에는 종종 이 범주 중 둘 이상의 평가 결과가 포함됩니다.
+
+**그림 1**: 이 글에서 다루는 4가지 평가 모델에 대한 개요.
+
+또한, 여기서 소개하는 네 가지 범주는 위 그림에 나타난 대로 **벤치마크 기반 평가(benchmark-based evaluation)**와 **판단 기반 평가(judgment-based evaluation)**의 두 가지 그룹으로 분류됩니다. (훈련 손실(training loss), 퍼플렉시티(perplexity) 및 보상(reward)과 같은 다른 측정 방법들도 존재하지만, 이는 주로 모델 개발 과정에서 내부적으로 활용됩니다.) 다음 하위 섹션들에서는 각 네 가지 방식에 대한 간략한 개요와 예시를 제공합니다.
+
+### 방법 1: 선택형 답변 정확도 평가하기
+
+벤치마크 기반 방식 중 하나인 객관식 질문 답변부터 살펴보겠습니다. 역사적으로 가장 널리 활용되는 평가 기법 중 하나는 MMLU(Massive Multitask Language Understanding의 약자, https://huggingface.co/datasets/cais/mmlu)와 같은 객관식 벤치마크(multiple-choice benchmark)입니다. 이 접근법을 설명하기 위해 그림 2는 MMLU 데이터셋(dataset)의 전형적인 과제를 보여줍니다.
+
+**그림 2**: LLM의 객관식 예측을 데이터셋의 정답과 비교하여 MMLU에서 LLM을 평가하는 모습.
+
+그림 2는 MMLU 데이터셋의 한 가지 예를 보여줍니다. 전체 MMLU 데이터셋은 고등학교 수학부터 생물학까지 57개 과목에 걸쳐 총 약 16,000개의 객관식 문항으로 구성되어 있으며, 성능은 정확도(accuracy)(정답을 맞춘 문항의 비율)로 측정됩니다. 예를 들어, 16,000개의 문항 중 14,000개를 맞추면 87.5%가 됩니다. MMLU 외에도, 모델의 상식 추론 능력을 평가하는 HellaSwag, 지식 기반 추론을 측정하는 ARC, 그리고 상식적인 추론을 위한 Winograd Schema Challenge의 변형인 WinoGrande와 같은 다양한 객관식 벤치마크들이 존재합니다.
+
+MMLU와 같은 객관식 벤치마크는 표준화된 시험, 많은 학교 시험 또는 이론 운전 시험과 유사하게 LLM의 지식 회상 능력을 직관적이고 정량적인 방식으로 테스트합니다. 그림 2는 모델의 예측된 답변 문자가 정답과 직접 비교되는 객관식 평가의 단순화된 버전을 보여줍니다. 실제로는 **로그 확률 점수 매기기(log-probability scoring)**를 포함하는 두 가지 다른 인기 있는 방법이 있습니다. 이러한 방식은 단순히 최종 문자 일치 여부를 넘어, 모델이 각 선택지에 부여하는 확률 분포를 통해 더 미묘한 이해도를 측정합니다. 저는 이들을 [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch02/01_mmlu_evaluation/02_mmlu_log_probability_scoring.ipynb)에 구현했습니다. (이것은 여기서 설명된 개념을 기반으로 하므로, 이 글을 완료한 후 확인해 보시는 것을 권장합니다.) 다음 하위 섹션에서는 그림 2에 표시된 MMLU 점수 매기기를 코드로 구현하는 방법을 설명합니다.
+
+#### 1.2 모델 로드하기
+
+먼저, MMLU에서 평가하기 전에 사전 학습 모델(pre-trained model)을 로드해야 합니다. 여기서는 순수 파이토치(PyTorch)로 Qwen3 0.6B를 처음부터 구현한 것을 사용할 것이며, 이는 약 1.5GB의 램(RAM)만 필요합니다. Qwen3 모델 구현 세부 사항은 여기서는 중요하지 않습니다. 우리는 단순히 이를 평가하려는 LLM으로 취급합니다. 하지만 궁금하시다면, 저의 이전 기사인 [Understanding and Implementing Qwen3 From Scratch](https://magazine.sebastianraschka.com/p/understanding-and-implementing-qwen3)에서 처음부터 구현하는 과정을 찾아볼 수 있으며, 소스 코드(source code)는 [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/tree/main/reasoning_from_scratch/qwen3)에서도 확인할 수 있습니다.
+
+수많은 Qwen3 소스 코드(source code)를 복사하여 붙여넣는 대신, `pip install reasoning_from_scratch` 또는 `uv add reasoning_from_scratch`를 통해 설치할 수 있는 저의 `reasoning_from_scratch` 파이썬 라이브러리(Python library)에서 이를 가져옵니다.
+
+**코드 블록 1**: 사전 학습 모델 로드하기
+
+```python
+from pathlib import Path
+import torch
+from reasoning_from_scratch.ch02 import get_device
+from reasoning_from_scratch.qwen3 import (
+    download_qwen3_small,
+    Qwen3Tokenizer,
+    Qwen3Model,
+    QWEN_CONFIG_06_B
+)
+
+device = get_device()
+
+# Set matmul precision to "high" to
+# enable Tensor Cores on compatible GPUs
+torch.set_float32_matmul_precision("high")
+
+# Uncomment the following line
+# if you encounter device compatibility issues
+# device = "cpu"
+
+# Use the base model by default
+WHICH_MODEL = "base"
+
+if WHICH_MODEL == "base":
+    download_qwen3_small(
+        kind="base", tokenizer_only=False, out_dir="qwen3"
+    )
+    tokenizer_path = Path("qwen3") / "tokenizer-base.json"
+    model_path = Path("qwen3") / "qwen3-0.6B-base.pth"
+    tokenizer = Qwen3Tokenizer(tokenizer_file_path=tokenizer_path)
+
+elif WHICH_MODEL == "reasoning":
+    download_qwen3_small(
+        kind="reasoning", tokenizer_only=False, out_dir="qwen3"
+    )
+    tokenizer_path = Path("qwen3") / "tokenizer-reasoning.json"
+    model_path = Path("qwen3") / "qwen3-0.6B-reasoning.pth"
+    tokenizer = Qwen3Tokenizer(
+        tokenizer_file_path=tokenizer_path,
+        apply_chat_template=True,
+        add_generation_prompt=True,
+        add_thinking=True,
+    )
+else:
+    raise ValueError(f"Invalid choice: WHICH_MODEL={WHICH_MODEL}")
+
+model = Qwen3Model(QWEN_CONFIG_06_B)
+model.load_state_dict(torch.load(model_path))
+model.to(device)
+
+# Optionally enable model compilation for potential performance gains
+USE_COMPILE = False
+if USE_COMPILE:
+    torch._dynamo.config.allow_unspec_int_on_nn_module = True
+    model = torch.compile(model)
+```
+
+#### 1.3 생성된 답변 문자 확인하기
+
+이 섹션에서는 가장 간단하고 아마도 가장 직관적인 MMLU 점수 매기기 방법을 구현합니다. 이 방법은 생성된 객관식 답변 문자가 정답과 일치하는지 확인하는 데 의존합니다. 이는 편의를 위해 아래에 다시 표시된 그림 2에서 이전에 설명된 것과 유사합니다.
+
+**그림 3**: LLM의 객관식 예측을 데이터셋의 정답과 비교하여 MMLU에서 LLM을 평가하는 모습.
+
+이를 위해 MMLU 데이터셋의 예시를 사용하겠습니다.
+
+```python
+example = {
+    "question": (
+        "How many ways are there to put 4 distinguishable"
+        " balls into 2 indistinguishable boxes?"
+    ),
+    "choices": ["7", "11", "16", "8"],
+    "answer": "D",
+}
+```
+
+다음으로, LLM 프롬프트(prompt) 형식을 지정하는 함수를 정의합니다.
+
+**코드 블록 2**: 사전 학습 모델 로드하기
+
+```python
+def format_prompt(example):
+    return (
+        f"{example['question']}\n"
+        f"A. {example['choices'][0]}\n"
+        f"B. {example['choices'][1]}\n"
+        f"C. {example['choices'][2]}\n"
+        f"D. {example['choices'][3]}\n"
+        "Answer: "
+    )
+# Trailing space in "Answer: " encourages a single-letter next token
+```
+
+형식화된 LLM 입력이 어떻게 보이는지 확인하기 위해 MMLU 예시에서 함수를 실행해 보겠습니다.
+
+```python
+prompt = format_prompt(example)
+print(prompt)
+```
+
+출력은 다음과 같습니다.
+
+```
+How many ways are there to put 4 distinguishable balls into 2 indistinguishable boxes?
+A. 7
+B. 11
+C. 16
+D. 8
+Answer:
+```
+
+위에 표시된 모델 프롬프트(prompt)는 모델에 다양한 답변 선택지 목록을 제공하고 "Answer: " 텍스트로 끝나 모델이 정답을 생성하도록 유도합니다. 엄격하게 필요하지는 않지만, 모델이 작업을 어떻게 해결해야 하는지 관찰할 수 있도록 정답과 함께 추가 질문을 입력으로 제공하는 것이 때로는 도움이 될 수 있습니다. (예를 들어, 5개의 예시가 제공되는 경우는 5-샷 MMLU(5-shot MMLU)라고도 알려져 있습니다.) 그러나 기본 모델조차도 상당히 유능한 현재 세대의 LLM에서는 이것이 필요하지 않습니다. 제로샷(zero-shot) 평가는 모델이 이전에 본 적 없는 작업에 대해 일반화하는 능력을 측정하며, 퓨샷(few-shot) 평가는 몇 가지 예시를 통해 모델의 맥락 내 학습(in-context learning) 능력을 보여줍니다.
+
+#### 다른 MMLU 샘플 로드하기
+
+`datasets` 라이브러리( `pip install datasets` 또는 `uv add datasets`를 통해 설치 가능)를 통해 MMLU 데이터셋에서 직접 예시를 로드할 수 있습니다.
+
+```python
+from datasets import load_dataset, get_dataset_config_names
+
+configs = get_dataset_config_names("cais/mmlu")
+dataset = load_dataset("cais/mmlu", "high_school_mathematics")
+
+# Inspect the first example from the test set:
+example = dataset["test"][0]
+print(example)
+```
+
+위에서는 "high_school_mathematics" 하위 집합을 사용했습니다. 다른 하위 집합 목록을 얻으려면 다음 코드를 사용하십시오.
+
+```python
+from datasets import get_dataset_config_names
+
+subsets = get_dataset_config_names("cais/mmlu")
+print(subsets)
+```
+
+다음으로, 프롬프트(prompt)를 토큰화(tokenize)하고 LLM의 입력으로 파이토치 텐서 객체(PyTorch tensor object)로 래핑합니다.
+
+```python
+prompt_ids = tokenizer.encode(prompt)
+prompt_fmt = torch.tensor(prompt_ids, device=device)
+
+# Add batch dimension:
+prompt_fmt = prompt_fmt.unsqueeze(0)
+```
+
+그런 다음, 모든 설정이 완료되면 아래에 주요 점수 매기기 함수를 정의합니다. 이 함수는 몇 개의 토큰(token)(여기서는 기본적으로 8개 토큰)을 생성하고 모델이 출력하는 문자 A/B/C/D의 첫 번째 인스턴스를 추출합니다.
+
+**코드 블록 3**: 생성된 문자 추출하기
+
+```python
+from reasoning_from_scratch.ch02_ex import (
+    generate_text_basic_stream_cache
+)
+
+def predict_choice(
+    model, tokenizer, prompt_fmt, max_new_tokens=8
+):
+    pred = None
+    for t in generate_text_basic_stream_cache(
+        model=model,
+        token_ids=prompt_fmt,
+        max_new_tokens=max_new_tokens,
+        eos_token_id=tokenizer.eos_token_id,
+    ):
+        answer = tokenizer.decode(t.squeeze(0).tolist())
+        for letter in answer:
+            letter = letter.upper()
+            # stop as soon as a letter appears
+            if letter in "ABCD":
+                pred = letter
+                break
+        if pred:
+            break
+    return pred
+```
+
+그런 다음 위 코드 블록의 함수를 사용하여 생성된 문자를 다음과 같이 확인할 수 있습니다.
+
+```python
+pred1 = predict_choice(model, tokenizer, prompt_fmt)
+print(
+    f"Generated letter: {pred1}\n"
+    f"Correct? {pred1 == example['answer']}"
+)
+```
+
+결과는 다음과 같습니다.
+
+```
+Generated letter: C
+Correct? False
+```
+
+보시다시피, 이 경우 생성된 답변은 부정확합니다(`False`). 이것은 MMLU의 `high_school_mathematics` 하위 집합에 있는 270개 예시 중 하나일 뿐입니다. 아래 스크린샷(그림 4)은 전체 하위 집합에서 실행했을 때 기본 모델과 추론 변형의 성능을 보여줍니다. 이 코드는 [여기 GitHub](https://github.com/rasbt/reasoning-from_scratch/blob/main/ch02/01_mmlu_evaluation/01_mmlu_answer_letter_scoring.ipynb)에서 확인할 수 있습니다.
+
+**그림 4**: MMLU `high_school_mathematics` 하위 집합에 대한 기본 및 추론 모델 성능
+
+질문들이 동일한 답변 확률을 가진다고 가정할 때, 무작위 추측기(random guesser)(A, B, C 또는 D를 균일한 확률로 선택)는 25%의 확률을 달성할 것으로 예상됩니다. 따라서 기본 모델과 추론 모델 모두 그다지 좋지 않습니다.
+
+#### 객관식 답변 형식
+
+이 섹션에서는 모델의 예측된 답변 문자가 정답과 직접 비교되는 객관식 평가의 단순화된 버전을 설명 목적으로 구현했습니다. 실제로는 모델이 최종 문자 선택만 확인하는 대신 각 후보 답변을 얼마나 가능성 있게 고려하는지 측정하는 로그 확률 점수 매기기(log-probability scoring)와 같이 더 널리 사용되는 변형이 존재합니다. (확률 기반 점수 매기기는 4장에서 논의합니다.) 추론 모델의 경우, 평가는 정답이 입력으로 제공될 때 정답을 생성할 가능성을 평가하는 것을 포함할 수도 있습니다.
+
+**그림 5**: 다른 MMLU 점수 매기기 방법은 [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch02/01_mmlu_evaluation/02_mmlu_log_probability_scoring.ipynb)에 설명되어 있고 공유되어 있습니다.
+
+그러나 어떤 MMLU 점수 매기기 변형을 사용하든, 평가는 모델이 미리 정의된 답변 옵션 중에서 선택하는지 여부를 확인하는 것으로 귀결됩니다. MMLU와 같은 객관식 벤치마크의 한계는 미리 정의된 옵션 중에서 선택하는 LLM의 능력만을 측정하므로, 모델이 기본 모델에 비해 얼마나 많은 지식을 잊었는지 확인하는 것 외에는 추론 능력(reasoning capabilities)을 평가하는 데 그다지 유용하지 않다는 것입니다. 이는 자유 형식 작성 능력(free-form writing ability)이나 실제 유용성을 포착하지 못합니다. 그럼에도 불구하고, 객관식 벤치마크는 여전히 간단하고 유용한 진단 도구입니다. 예를 들어, 높은 MMLU 점수가 반드시 모델이 실제 사용에서 강력하다는 것을 의미하지는 않지만, 낮은 점수는 잠재적인 지식 격차를 강조할 수 있습니다.
+
+### 방법 2: 검증기(verifier)를 활용한 답변 확인
+
+이전 섹션에서 논의된 객관식 질문 답변 방식과 유사하게, 검증 기반 접근 방식은 LLM의 역량을 정확도 지표(accuracy metric)를 통해 정량화합니다. 그러나 객관식 벤치마크와는 달리, 검증 방법은 LLM이 자유 형식 답변(free-form answer)을 생성하도록 허용합니다. 그런 다음 관련 답변 부분을 추출하고, 아래 그림 6에 설명된 바와 같이 소위 검증기(verifier)를 사용하여 답변 부분을 데이터셋에 제공된 정답과 비교합니다.
+
+**그림 6**: 자유 형식 질문 답변에서 검증 기반 방법으로 LLM을 평가하는 모습. 모델은 자유 형식 답변(여러 단계를 포함할 수 있음)과 최종 박스형 답변을 생성하며, 이는 추출되어 데이터셋의 정답과 비교됩니다.
+
+위 그림에 표시된 바와 같이 추출된 답변을 제공된 답변과 비교할 때, 코드 인터프리터(code interpreter) 또는 계산기형 도구/소프트웨어(calculator-like tools/software)와 같은 외부 도구를 사용할 수 있습니다. 이러한 외부 도구를 사용하는 것은 복잡한 계산이나 논리적 추론이 필요한 문제에 대해 LLM의 답변을 객관적으로 검증하는 데 필수적입니다. 단점은 이 방법이 수학 및 코드와 같이 쉽게(그리고 이상적으로는 결정론적으로) 검증될 수 있는 도메인에만 적용될 수 있다는 것입니다. 예를 들어, 법률 문서 요약이나 창의적 글쓰기 같은 주관적인 영역에서는 검증기를 구축하기가 훨씬 어렵습니다. 또한, 이 접근 방식은 추가적인 복잡성과 의존성을 도입할 수 있으며, 평가 부담의 일부를 모델 자체에서 외부 도구로 옮길 수 있습니다. 그러나 무제한의 수학 문제 변형을 프로그래밍 방식으로 생성할 수 있고 단계별 추론(step-by-step reasoning)의 이점을 얻을 수 있기 때문에, 이는 추론 모델 평가 및 개발의 초석이 되었습니다.
+
+저는 저의 책 『Build a Reasoning Model (From Scratch)』에서 이 주제에 대해 35페이지에 걸쳐 포괄적으로 다루었으므로, 여기서는 코드 구현을 건너뛰겠습니다. (지난주에 해당 챕터를 제출했습니다. 얼리 액세스(early access) 버전을 가지고 계시다면, 해당 내용이 공개될 때 이메일을 받으실 것이며 그때 읽을 수 있을 것입니다. 그동안 단계별 코드는 [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch02/02_verifier_evaluation/01_verifier_evaluation.ipynb)에서 찾을 수 있습니다.)
+
+**그림 7**: [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch02/02_verifier_evaluation/01_verifier_evaluation.ipynb)에서 제공되는 검증 기반 평가 접근 방식의 발췌본
+
+### 방법 3: 선호도 및 리더보드(leaderboard)를 통한 모델 비교
+
+지금까지 모델 정확도(accuracy)와 같은 쉽게 정량화할 수 있는 지표를 제공하는 두 가지 방법을 살펴보았습니다. 그러나 앞서 언급된 방법 중 어느 것도 응답의 스타일을 판단하는 것을 포함하여 LLM을 보다 전체적인 방식으로 평가하지는 않습니다. 이 섹션에서는 아래 그림 8에 설명된 바와 같이 판단 기반 방법인 LLM 리더보드(leaderboard)에 대해 논의합니다.
+
+**그림 8**: 이 부록에서 다루는 판단 기반 및 벤치마크 기반 평가 방법에 초점을 맞춘 이 책에서 다루는 주제의 개념 모델.
+
+이전 섹션에서 벤치마크 기반 접근 방식(객관식, 검증기)을 이미 다루었으므로, 이제 LLM 성능을 측정하기 위한 판단 기반 접근 방식을 소개하며, 이 하위 섹션에서는 리더보드(leaderboard)에 중점을 둡니다.
+
+여기서 설명하는 리더보드(leaderboard) 방법은 모델이 정확도 값이나 다른 고정된 벤치마크 점수가 아니라 사용자(또는 다른 LLM)의 출력에 대한 선호도에 따라 순위가 매겨지는 판단 기반 접근 방식입니다. 인기 있는 리더보드(leaderboard)는 LM 아레나(LM Arena, 이전 Chatbot Arena)로, 그림 9에 표시된 바와 같이 사용자가 두 개의 사용자 선택 또는 익명 모델의 응답을 비교하고 선호하는 모델에 투표합니다. 이러한 플랫폼은 모델 개발자가 새로운 모델을 출시했을 때 대중의 반응을 빠르게 측정하고, 어떤 종류의 프롬프트(prompt)에서 모델이 강점을 보이는지 약점을 보이는지 파악하는 데 유용합니다.
+
+**그림 9**: 판단 기반 리더보드(leaderboard) 인터페이스(LM 아레나)의 예시. 두 LLM에 동일한 프롬프트(prompt)가 주어지고, 그들의 응답이 나란히 표시되며, 사용자는 선호하는 답변에 투표합니다.
+
+위 그림에 표시된 바와 같이 수집된 이러한 선호도 투표는 모든 사용자를 대상으로 집계되어 사용자 선호도에 따라 다양한 모델의 순위를 매기는 리더보드(leaderboard)를 형성합니다. LM 아레나 리더보드(leaderboard)의 현재 스냅샷(2025년 10월 3일 접근)은 아래 그림 10에 나와 있습니다.
+
+**그림 10**: 텍스트 작업에 대한 사용자 선호도를 기반으로 현재 선두 LLM을 보여주는 LM 아레나 리더보드(leaderboard) 스크린샷
+
+이 섹션의 나머지 부분에서는 리더보드(leaderboard)의 간단한 예시를 구현할 것입니다. 구체적인 예시를 만들기 위해, 그림 9와 유사한 설정에서 사용자가 다양한 LLM에 프롬프트(prompt)를 제공하는 상황을 고려해 봅시다. 아래 목록은 첫 번째 모델이 승자인 쌍별 투표(pairwise votes)를 나타냅니다.
+
+```python
+votes = [
+    ("GPT-5", "Claude-3"),
+    ("GPT-5", "Llama-4"),
+    ("Claude-3", "Llama-3"),
+    ("Llama-4", "Llama-3"),
+    ("Claude-3", "Llama-3"),
+    ("GPT-5", "Llama-3"),
+]
+```
+
+위 목록에서 `votes` 목록의 각 튜플은 두 모델 간의 쌍별 선호도(pairwise preference)를 `(승자, 패자)` 형식으로 나타냅니다. 따라서 `("GPT-5", "Claude-3")`는 사용자가 Claude-3 모델 답변보다 GPT-5를 선호했음을 의미합니다. 이 섹션의 나머지 부분에서는 `votes` 목록을 리더보드(leaderboard)로 변환할 것입니다. 이를 위해 원래 체스 플레이어의 순위를 매기기 위해 개발된 인기 있는 엘로 레이팅 시스템(Elo rating system)을 사용할 것입니다. 구체적인 코드 구현을 살펴보기 전에, 간략하게 작동 방식은 다음과 같습니다. 각 모델은 기준 점수(baseline score)로 시작합니다. 그런 다음 각 비교 및 선호도 투표 후에 모델의 레이팅(rating)이 업데이트됩니다. (엘로(Elo)에서는 업데이트 크기가 결과의 놀라움 정도에 따라 달라집니다.) 특히, 사용자가 높은 순위의 모델보다 현재 모델을 선호하면, 현재 모델은 상대적으로 큰 순위 업데이트를 받고 리더보드(leaderboard)에서 더 높은 순위를 차지합니다. 반대로, 낮은 순위의 상대방에게 이기면 업데이트는 더 작습니다. (그리고 현재 모델이 지면, 비슷한 방식으로 업데이트되지만, 순위 점수가 추가되는 대신 차감됩니다.)
+
+이러한 쌍별 순위를 리더보드(leaderboard)로 변환하는 코드는 아래 코드 블록에 나와 있습니다.
+
+**코드 블록 4**: 리더보드(leaderboard) 구성하기
+
+```python
+def elo_ratings(vote_pairs, k_factor=32, initial_rating=1000):
+    # Initialize all models with the same base rating
+    ratings = {model: initial_rating for pair in vote_pairs for model in pair}
+
+    # Update ratings after each match
+    for winner, loser in vote_pairs:
+        # Expected score for the current winner
+        expected_winner = 1.0 / (
+            1.0 + 10 ** ((ratings[loser] - ratings[winner]) / 400.0)
+        )
+
+        # k_factor determines sensitivity of updates
+        ratings[winner] = (
+            ratings[winner] + k_factor * (1 - expected_winner)
+        )
+        ratings[loser] = (
+            ratings[loser] + k_factor * (0 - (1 - expected_winner))
+        )
+    return ratings
+```
+
+위에 정의된 `elo_ratings` 함수는 `votes`를 입력으로 받아 다음과 같이 리더보드(leaderboard)로 변환합니다.
+
+```python
+ratings = elo_ratings(votes, k_factor=32, initial_rating=1000)
+for model in sorted(ratings, key=ratings.get, reverse=True):
+    print(f"{model:8s} : {ratings[model]:.1f}")
+```
+
+그 결과는 다음과 같은 리더보드(leaderboard) 순위이며, 점수가 높을수록 좋습니다.
+
+```
+GPT-5    : 1043.7
+Claude-3 : 1015.2
+Llama-4  : 1000.7
+Llama-3  : 940.4
+```
+
+그렇다면 이것은 어떻게 작동할까요? 각 쌍에 대해 다음 공식을 사용하여 승자의 예상 점수(expected score)를 계산합니다.
+
+`expected_winner = 1 / (1 + 10 ** ((rating_loser - rating_winner) / 400))`
+
+이 `expected_winner` 값은 현재 레이팅(rating)을 기반으로 무승부가 없는 상황에서 모델이 이길 것으로 예상되는 확률입니다. 이는 레이팅(rating) 업데이트의 크기를 결정합니다.
+
+먼저, 각 모델은 `initial_rating = 1000`으로 시작합니다. 두 레이팅(rating)(승자와 패자)이 같으면 `expected_winner = 0.5`가 되며, 이는 동등한 경기를 나타냅니다. 이 경우 업데이트는 다음과 같습니다.
+
+`rating_winner + k_factor * (1 - 0.5) = rating_winner + 16`
+`rating_loser + k_factor * (0 - (1 - 0.5)) = rating_loser - 16`
+
+이제, 강력한 우승 후보(높은 레이팅(rating)을 가진 모델)가 이기면 `expected_winner ≈ 1`이 됩니다. 우승 후보는 소량만 얻고 패자는 소량만 잃습니다.
+
+`rating_winner + 32 * (1 - 0.99) = rating_winner + 0.32`
+`rating_loser + 32 * (0 - (1 - 0.99)) = rating_loser - 0.32`
+
+그러나 약자(낮은 레이팅(rating)을 가진 모델)가 이기면 `expected_winner ≈ 0`이 되며, 승자는 거의 전체 `k_factor` 점수를 얻고 패자는 거의 동일한 크기를 잃습니다.
+
+`rating_winner + 32 * (1 - 0.01) = rating_winner + 31.68`
+`rating_loser + 32 * (0 - (1 - 0.01)) = rating_loser - 31.68`
+
+#### 순서의 중요성
+
+엘로(Elo) 접근 방식은 각 경기(모델 비교) 후에 레이팅(rating)을 업데이트하므로, 나중의 결과는 이미 업데이트된 레이팅(rating)을 기반으로 합니다. 이는 동일한 결과 집합이라도 다른 순서로 제시되면 최종 점수가 약간 다를 수 있음을 의미합니다. 이러한 효과는 일반적으로 미미하지만, 특히 이변이 일찍 발생했는지 늦게 발생했는지에 따라 발생할 수 있습니다. 이러한 순서 효과를 줄이기 위해, 투표 쌍을 섞고 `elo_ratings` 함수를 여러 번 실행하여 레이팅(rating)을 평균화할 수 있습니다.
+
+위에 설명된 것과 같은 리더보드(leaderboard) 접근 방식은 정적 벤치마크 점수보다 모델 품질에 대한 더 동적인 시각을 제공합니다. 그러나 결과는 사용자 인구 통계, 프롬프트(prompt) 선택 및 투표 편향에 의해 영향을 받을 수 있습니다. 벤치마크(benchmark)와 리더보드(leaderboard)는 조작될 수도 있으며, 사용자는 정확성보다는 스타일에 따라 응답을 선택할 수 있습니다. 마지막으로, 자동화된 벤치마크 하네스(automated benchmark harnesses)와 비교할 때, 리더보드(leaderboard)는 새로 개발된 변형에 대한 즉각적인 피드백을 제공하지 않으므로 활발한 모델 개발 중에 사용하기 어렵습니다.
+
+#### 다른 순위 매기기 방법
+
+LM 아레나(LM Arena)는 원래 이 섹션에서 설명된 엘로(Elo) 방법을 사용했지만, 최근 브래들리-테리 모델(Bradley–Terry model)을 기반으로 하는 통계적 접근 방식으로 전환했습니다. 브래들리-테리 모델(Bradley–Terry model)의 주요 장점은 통계적으로 근거가 있기 때문에 순위의 불확실성을 표현하기 위한 신뢰 구간(confidence intervals)을 구성할 수 있다는 것입니다. 또한, 엘로 레이팅(Elo ratings)과 달리 브래들리-테리 모델(Bradley–Terry model)은 전체 데이터셋(dataset)에 대한 통계적 적합(statistical fit)을 사용하여 모든 레이팅(rating)을 공동으로 추정하므로 순서 효과에 영향을 받지 않습니다. 보고된 점수를 익숙한 범위로 유지하기 위해 브래들리-테리 모델(Bradley–Terry model)은 엘로(Elo)와 유사한 값을 생성하도록 적합됩니다. 리더보드(leaderboard)가 더 이상 공식적으로 엘로 레이팅(Elo ratings)을 사용하지 않더라도, "엘로(Elo)"라는 용어는 모델을 비교할 때 LLM 연구자와 실무자들 사이에서 널리 사용되고 있습니다. 엘로 레이팅(Elo rating)을 보여주는 코드 예시는 [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch02/03_leaderboard_evaluation/01_elo_ratings.ipynb)에서 확인할 수 있습니다.
+
+**그림 11**: 엘로(Elo) 및 브래들리-테리(Bradley-Terry) 순위 비교; 소스 코드(source code)는 [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch02/03_leaderboard_evaluation/02_bradley_terry_ratings.ipynb)에서 확인할 수 있습니다.
+
+### 방법 4: 다른 LLM으로 응답 평가하기
+
+초기에는 LLM이 BLEU라는 측정값을 포함한 통계적 및 휴리스틱 기반 방법으로 평가되었습니다. BLEU는 생성된 텍스트가 참조 텍스트와 얼마나 잘 일치하는지를 측정하는 대략적인 지표입니다. 이러한 지표의 문제는 정확한 단어 일치를 요구하며 동의어(synonyms), 단어 변경 등을 고려하지 않는다는 것입니다.
+
+이 문제에 대한 한 가지 해결책은, 작성된 답변 텍스트를 전체적으로 판단하고 싶다면, 이전 섹션에서 논의된 상대적 순위 및 리더보드(leaderboard) 기반 접근 방식을 사용하는 것입니다. 그러나 리더보드(leaderboard)의 단점은 인간의 피드백(및 이 피드백을 수집하는 데 따르는 어려움)을 포함하므로 선호도 기반 비교의 주관적인 특성입니다.
+
+관련된 방법은 미리 정의된 채점 기준표(grading rubric)(즉, 평가 가이드)를 가진 다른 LLM을 사용하여 LLM의 응답을 참조 응답과 비교하고, 그림 12에 설명된 바와 같이 미리 정의된 기준표에 따라 응답 품질을 판단하는 것입니다. 이 방식은 "LLM 심사위원(LLM-as-a-judge)"으로 불리며, 사람이 직접 평가하는 것보다 훨씬 빠르고 확장 가능하게 대규모 평가를 수행할 수 있다는 장점이 있습니다.
+
+**그림 F12**: LLM 심사위원(LLM-judge) 평가의 예시. 평가할 모델이 답변을 생성하면, 별도의 심사위원 LLM이 기준표와 제공된 참조 답변에 따라 점수를 매깁니다.
+
+실제로 그림 12에 표시된 심사위원 기반 접근 방식은 심사위원 LLM이 강력할 때 잘 작동합니다. 일반적인 설정은 API(예: GPT-5 API)를 통해 선도적인 독점 LLM(proprietary LLMs)을 사용하지만, 전문 심사 모델(specialized judge models)도 존재합니다. (예를 들어, 많은 예시 중 하나는 Phudge입니다. 궁극적으로 이러한 전문 모델의 대부분은 독점 GPT 모델과 유사한 점수 매기기 동작을 갖도록 미세 조정(fine-tuned)된 더 작은 모델일 뿐입니다.) 심사위원이 잘 작동하는 이유 중 하나는 답변을 평가하는 것이 종종 답변을 생성하는 것보다 쉽기 때문입니다. 또한, 심사위원 LLM에 대해 CoT(Chain-of-Thought) 프롬프팅을 사용하여 평가 과정을 명시적으로 설명하도록 지시하면, 평가의 투명성과 신뢰성을 더욱 높일 수 있습니다.
+
+그림 12에 표시된 심사위원 기반 모델 평가를 파이썬(Python)으로 프로그래밍 방식으로 구현하려면, 파이토치(PyTorch)에서 더 큰 Qwen3 모델 중 하나를 로드하고 채점 기준표(grading rubric)와 평가하려는 모델 답변으로 프롬프트(prompt)를 제공할 수 있습니다. 또는 ChatGPT 또는 Ollama API와 같은 다른 LLM을 API를 통해 사용할 수 있습니다. Qwen3 모델을 파이토치(PyTorch)로 로드하는 방법을 이미 알고 있으므로, 더 흥미롭게 만들기 위해 이 섹션의 나머지 부분에서는 파이썬(Python)의 Ollama API를 사용하여 그림 12에 표시된 심사위원 기반 평가를 구현할 것입니다. 특히, 기능과 효율성 사이의 좋은 균형을 제공하는 OpenAI의 200억 매개변수 gpt-oss 오픈 웨이트 모델(gpt-oss open-weight model)을 사용할 것입니다. gpt-oss에 대한 자세한 내용은 저의 [From GPT-2 to gpt-oss: Analyzing the Architectural Advances](https://magazine.sebastianraschka.com/p/from-gpt-2-to-gpt-oss-analyzing) 기사를 참조하십시오.
+
+**From GPT-2 to gpt-oss: Analyzing the Architectural Advances**
+Sebastian Raschka, PhD · 8월 9일
+전체 기사 읽기
+
+#### 4.1 Ollama에서 LLM-as-a-judge 접근 방식 구현하기
+
+Ollama는 노트북에서 LLM을 실행하기 위한 효율적인 오픈 소스 애플리케이션입니다. 이는 효율성을 극대화하기 위해 순수 C/C++로 LLM을 구현하는 오픈 소스 llama.cpp 라이브러리(llama.cpp library)의 래퍼(wrapper) 역할을 합니다. 그러나 Ollama는 LLM을 사용하여 텍스트를 생성(추론(inference))하는 도구일 뿐이며 LLM 훈련 또는 미세 조정(training or fine-tuning)을 지원하지 않습니다.
+
+다음 코드를 실행하려면, [https://ollama.com](https://ollama.com)의 공식 웹사이트를 방문하여 운영 체제에 제공된 지침에 따라 Ollama를 설치하십시오.
+
+*   macOS 및 Windows 사용자: 다운로드한 Ollama 애플리케이션을 엽니다. 명령줄 사용(command-line usage)을 설치하라는 메시지가 표시되면 "예"를 선택합니다.
+*   Linux 사용자: Ollama 웹사이트에서 제공되는 설치 명령을 사용합니다.
+
+모델 평가 코드를 구현하기 전에, 먼저 gpt-oss 모델을 다운로드하고 명령줄 터미널(command-line terminal)에서 Ollama가 올바르게 작동하는지 확인해 보겠습니다. 다음 명령을 명령줄(파이썬 세션 아님)에서 실행하여 200억 매개변수 gpt-oss 모델을 사용해 보십시오.
+
+`ollama run gpt-oss:20b`
+
+이 명령을 처음 실행하면 14GB의 저장 공간(storage space)을 차지하는 200억 매개변수 gpt-oss 모델이 자동으로 다운로드됩니다. 출력은 다음과 같습니다.
+
+```
+$ ollama run gpt-oss:20b
+pulling manifest
+pulling b112e727c6f1: 100% ???????????????????????? 13 GB
+pulling fa6710a93d78: 100% ???????????????????????? 7.2 KB
+pulling f60356777647: 100% ???????????????????????? 11 KB
+pulling d8ba2f9a17b3: 100% ???????????????????????? 18 B
+pulling 55c108d8e936: 100% ???????????????????????? 489 B
+verifying sha256 digest
+writing manifest
+removing unused layers
+success
+```
+
+#### 대체 Ollama 모델
+
+`ollama run gpt-oss:20b` 명령의 `gpt-oss:20b`는 200억 매개변수 gpt-oss 모델을 나타냅니다. `gpt-oss:20b` 모델과 함께 Ollama를 사용하려면 약 13GB의 램(RAM)이 필요합니다. 컴퓨터에 충분한 램(RAM)이 없다면, `ollama run qwen3:4b`를 통해 약 4GB의 램(RAM)만 필요한 40억 매개변수 `qwen3:4b` 모델과 같은 더 작은 모델을 사용해 볼 수 있습니다. 더 강력한 컴퓨터의 경우, `gpt-oss:20b`를 `gpt-oss:120b`로 교체하여 더 큰 1200억 매개변수 gpt-oss 모델을 사용할 수도 있습니다. 그러나 이 모델은 훨씬 더 많은 컴퓨팅 자원(computational resources)을 필요로 한다는 점을 명심하십시오.
+
+모델 다운로드가 완료되면, 모델과 상호 작용할 수 있는 명령줄 인터페이스(command-line interface)가 나타납니다. 예를 들어, 모델에 "1+2는 무엇인가요?"라고 물어보십시오.
+
+```
+>>> What is 1+2?
+Thinking...
+User asks: “What is 1+2?” This is simple: answer 3. Provide explanation? Possibly ask for simple arithmetic. Provide answer: 3. ...done thinking.
+1 + 2 = **3**
+```
+
+`/bye`를 입력하여 이 `ollama run gpt-oss:20b` 세션을 종료할 수 있습니다.
+
+이 섹션의 나머지 부분에서는 Ollama API를 사용할 것입니다. 이 접근 방식은 Ollama가 백그라운드(background)에서 실행되고 있어야 합니다. 이를 달성하는 세 가지 다른 옵션이 있습니다.
+
+1.  터미널에서 `ollama serve` 명령을 실행합니다(권장). 이는 Ollama 백엔드(backend)를 서버로 실행하며, 일반적으로 `http://localhost:11434`에서 실행됩니다. API를 통해 호출될 때까지(이 섹션의 나중에) 모델을 로드하지 않는다는 점에 유의하십시오.
+2.  이전과 유사하게 `ollama run gpt-oss:20b` 명령을 실행하되, 열어두고 `/bye`를 통해 세션을 종료하지 마십시오. 앞에서 논의했듯이, 이는 로컬 Ollama 서버 주변에 최소한의 편의 래퍼(wrapper)를 엽니다. 내부적으로는 `ollama serve`와 동일한 서버 API를 사용합니다.
+3.  Ollama 데스크톱 앱. 데스크톱 앱을 열면 동일한 백엔드(backend)가 자동으로 실행되고, 앞서 그림 12에 표시된 바와 같이 그 위에 그래픽 인터페이스가 제공됩니다.
+
+**그림 13**: 파이썬(Python)에서 Ollama API를 통해 사용할 수 있도록 Ollama 서버(애플리케이션)를 실행 상태로 유지하는 두 가지 다른 옵션.
+
+#### Ollama 서버 IP 주소
+
+Ollama는 로컬 서버와 같은 프로세스를 시작하여 우리 컴퓨터에서 로컬로 실행됩니다. 위에서 설명한 대로 터미널에서 `ollama serve`를 실행할 때, `Error: listen tcp 127.0.0.1:11434: bind: address already in use`와 같은 오류 메시지가 발생할 수 있습니다. 이 경우, `OLLAMA_HOST=127.0.0.1:11435 ollama serve` 명령을 사용해 보십시오(그리고 이 주소도 사용 중이라면, 사용 중이 아닌 주소를 찾을 때까지 숫자를 1씩 늘려 보십시오).
+
+다음 코드는 이전 섹션에서 생성된 테스트 세트 응답을 평가하기 위해 Ollama를 사용하기 전에 Ollama 세션이 제대로 실행되고 있는지 확인합니다.
+
+**코드 블록 5**: Ollama가 실행 중인지 확인하기
+
+```python
+import psutil
+
+def check_if_running(process_name):
+    running = False
+    for proc in psutil.process_iter(["name"]):
+        if process_name in proc.info["name"]:
+            running = True
+            break
+    return running
+
+ollama_running = check_if_running("ollama")
+if not ollama_running:
+    raise RuntimeError(
+        "Ollama not running. "
+        "Launch ollama before proceeding."
+    )
+print("Ollama running:", check_if_running("ollama"))
+```
+
+이전 코드를 실행한 결과가 `Ollama running: True`를 표시하는지 확인하십시오. `False`를 표시하면, `ollama serve` 명령 또는 Ollama 애플리케이션이 활발하게 실행 중인지 확인하십시오(그림 13 참조).
+
+이 기사의 나머지 부분에서는 파이썬(Python)을 사용하여 Ollama REST API를 통해 우리 컴퓨터에서 실행되는 로컬 gpt-oss 모델과 상호 작용할 것입니다. 다음 `query_model` 함수는 API를 사용하는 방법을 보여줍니다.
+
+**코드 블록 6**: 로컬 Ollama 모델 쿼리하기
+
+```python
+import json
+import urllib.request
+
+def query_model(
+    prompt,
+    model="gpt-oss:20b",
+    # If you used
+    # OLLAMA_HOST=127.0.0.1:11435 ollama serve
+    # update the address below
+    url="http://localhost:11434/api/chat"
+):
+    # Create the data payload as a dictionary:
+    data = {
+        "model": model,
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        # Settings required for deterministic responses:
+        "options": {
+            "seed": 123,
+            "temperature": 0,
+            "num_ctx": 2048
+        }
+    }
+
+    # Convert the dictionary to JSON and encode it to bytes
+    payload = json.dumps(data).encode("utf-8")
+
+    # Create a POST request and add headers
+    request = urllib.request.Request(
+        url,
+        data=payload,
+        method="POST"
+    )
+    request.add_header("Content-Type", "application/json")
+
+    response_data = ""
+    # Send the request and capture the streaming response
+    with urllib.request.urlopen(request) as response:
+        while True:
+            line = response.readline().decode("utf-8")
+            if not line:
+                break
+            # Parse each line into JSON
+            response_json = json.loads(line)
+            response_data += response_json["message"]["content"]
+    return response_data
+```
+
+방금 구현한 `query_model` 함수를 사용하는 예시는 다음과 같습니다.
+
+```python
+ollama_model = "gpt-oss:20b"
+result = query_model("What is 1+2?", ollama_model)
+print(result)
+```
+
+결과 응답은 "3"입니다. (기본 설정(default settings)이 다르기 때문에 Ollama `run` 또는 Ollama 애플리케이션을 실행했을 때 얻는 것과 다릅니다.)
+
+`query_model` 함수를 사용하여, gpt-oss 모델이 참조로서의 정답을 기반으로 우리 목표 모델의 응답을 1에서 5까지의 척도로 평가하도록 요청하는 채점 기준표(grading rubric)를 포함하는 프롬프트(prompt)로 모델이 생성한 응답을 평가할 수 있습니다. 이를 위해 사용하는 프롬프트(prompt)는 아래에 나와 있습니다.
+
+**코드 블록 7**: 채점 기준표(grading rubric)를 포함한 프롬프트 템플릿 설정하기
+
+```python
+def rubric_prompt(instruction, reference_answer, model_answer):
+    rubric = (
+        "You are a fair judge assistant. You will be "
+        "given an instruction, a reference answer, and "
+        "a candidate answer to evaluate, according to "
+        "the following rubric:\n\n"
+        "1: The response fails to address the "
+        "instruction, providing irrelevant, incorrect, "
+        "or excessively verbose content.\n"
+        "2: The response partially addresses the "
+        "instruction but contains major errors, "
+        "omissions, or irrelevant details.\n"
+        "3: The response addresses the instruction to "
+        "some degree but is incomplete, partially "
+        "correct, or unclear in places.\n"
+        "4: The response mostly adheres to the "
+        "instruction, with only minor errors, "
+        "omissions, or lack of clarity.\n"
+        "5: The response fully adheres to the "
+        "instruction, providing a clear, accurate, and "
+        "relevant answer in a concise and efficient "
+        "manner.\n\n"
+        "Now here is the instruction, the reference "
+        "answer, and the response.\n"
+    )
+    prompt = (
+        f"{rubric}\n"
+        f"Instruction:\n{instruction}\n\n"
+        f"Reference Answer:\n{reference_answer}\n\n"
+        f"Answer:\n{model_answer}\n\n"
+        f"Evaluation: "
+    )
+    return prompt
+```
+
+`rubric_prompt`의 `model_answer`는 실제로 우리 모델이 생성한 응답을 나타내기 위한 것입니다. 설명 목적으로, 여기서는 동적으로 생성하는 대신 그럴듯한 모델 답변(model answer)을 하드코딩합니다. (그러나 이 기사 초반에 로드한 Qwen3 모델을 사용하여 실제 `model_answer`를 생성해도 좋습니다.)
+
+다음으로, Ollama 모델을 위한 렌더링된 프롬프트(rendered prompt)를 생성해 보겠습니다.
+
+```python
+rendered_prompt = rubric_prompt(
+    instruction=(
+        "If all birds can fly, and a penguin is a bird, "
+        "can a penguin fly?"
+    ),
+    reference_answer=(
+        "Yes, according to the premise that all birds can fly, "
+        "a penguin can fly."
+    ),
+    model_answer=(
+        "Yes – under those premises a penguin would be able to fly."
+    )
+)
+print(rendered_prompt)
+```
+
+출력은 다음과 같습니다.
+
+```
+You are a fair judge assistant. You will be given an instruction, a reference answer, and a candidate answer to evaluate, according to the following rubric:
+
+1: The response fails to address the instruction, providing irrelevant, incorrect, or excessively verbose content.
+2: The response partially addresses the instruction but contains major errors, omissions, or irrelevant details.
+3: The response addresses the instruction to some degree but is incomplete, partially correct, or unclear in places.
+4: The response mostly adheres to the instruction, with only minor errors, omissions, or lack of clarity.
+5: The response fully adheres to the instruction, providing a clear, accurate, and relevant answer in a concise and efficient manner.
+
+Now here is the instruction, the reference answer, and the response.
+
+Instruction:
+If all birds can fly, and a penguin is a bird, can a penguin fly?
+
+Reference Answer:
+Yes, according to the premise that all birds can fly, a penguin can fly.
+
+Answer:
+Yes – under those premises a penguin would be able to fly.
+
+Evaluation:
+```
+
+프롬프트(prompt)를 "Evaluation: "으로 끝내는 것은 모델이 답변을 생성하도록 유도합니다. gpt-oss:20b 모델이 응답을 어떻게 판단하는지 살펴보겠습니다.
+
+```python
+result = query_model(rendered_prompt, ollama_model)
+print(result)
+```
+
+응답은 다음과 같습니다.
+
+```
+**Score: 5**
+The candidate answer directly addresses the question, correctly applies the given premises, and concisely states that a penguin would be able to fly. It is accurate, relevant, and clear.
+```
+
+보시다시피, 답변은 최고 점수를 받았습니다. 이는 실제로 정확하기 때문에 합리적입니다. 이것은 과정을 수동으로 진행하는 간단한 예시였지만, 이 아이디어를 더 발전시켜 평가 데이터셋(evaluation dataset)의 질문으로 모델(예: 이전에 로드한 Qwen3 모델)을 반복적으로 쿼리하고 gpt-oss를 통해 평가하며 평균 점수를 계산하는 for-루프(for-loop)를 구현할 수 있습니다. MATH-500 데이터셋(MATH-500 dataset)에서 Qwen3 모델을 평가하는 이러한 스크립트의 구현은 [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch02/04_llm_as_judge_evaluation/01_llm_as_judge_evaluation.ipynb)에서 찾을 수 있습니다.
+
+**그림 14**: 심사위원(judge)으로서 gpt-oss:20b가 평가한 MATH-500의 첫 10개 예시에 대한 Qwen3 0.6 기본 및 추론 변형의 비교. 코드는 [여기 GitHub](https://github.com/rasbt/reasoning-from-scratch/blob/main/ch02/04_llm_as_judge_evaluation/01_llm_as_judge_evaluation.ipynb)에서 찾을 수 있습니다.
+
+#### 프로세스 보상 모델(process reward models)로 중간 추론 단계 점수 매기기
+
+기호 검증기(symbolic verifier) 및 LLM 심사위원(LLM judges)과 관련하여, 프로세스 보상 모델(process reward models, PRMs)이라는 학습된 모델(learned models) 부류가 있습니다. 심사위원(judge)과 마찬가지로, PRM은 최종 답변을 넘어 추론 경로(reasoning traces)를 평가할 수 있지만, 일반적인 심사위원(judge)과 달리 추론의 중간 단계에 특별히 초점을 맞춥니다. 그리고 정확성을 기호적으로(symbolically) 그리고 일반적으로 결과 수준에서만 확인하는 검증기(verifier)와 달리, PRM은 강화 학습(reinforcement learning) 훈련 중에 단계별 보상 신호(step-by-step reward signals)를 제공합니다. PRM은 주로 훈련용으로 개발된 "단계별 심사위원(step-level judges)"으로 분류할 수 있으며, 순수한 평가용은 아닙니다. (실제로 PRM은 대규모로 안정적으로 훈련하기 어렵습니다. 예를 들어, DeepSeek R1은 PRM을 채택하지 않고 대신 추론 훈련을 위해 검증기(verifier)를 결합했습니다.)
+
+심사위원 기반 평가는 대규모 인간 투표자 풀에 의존하지 않으므로 확장성 및 일관성을 포함하여 선호도 기반 리더보드(leaderboard)에 비해 장점을 제공합니다. (기술적으로는 리더보드(leaderboard) 뒤의 선호도 기반 평가를 LLM 심사위원(LLM judges)에게도 아웃소싱할 수 있습니다.) 그러나 LLM 심사위원(LLM judges)도 인간 투표자와 유사한 약점을 공유합니다. 결과는 모델 선호도, 프롬프트(prompt) 디자인 및 답변 스타일에 의해 편향될 수 있습니다. 심사위원 LLM이 특정 응답 스타일이나 논리 구조를 선호하도록 훈련되었다면, 이는 다른 스타일의 올바른 답변을 불이익하게 평가할 수 있습니다. 또한, 심사위원 모델 및 기준표(rubric) 선택에 대한 강한 의존성이 있으며, 고정된 벤치마크(benchmark)의 재현성이 부족합니다.
+
+### 결론
+
+이 글에서는 객관식, 검증기(verifier), 리더보드(leaderboard) 및 LLM 심사위원(LLM judges)의 네 가지 주요 평가 접근 방식을 다루었습니다. 이 글이 길었지만, LLM이 어떻게 평가되는지에 대한 개요를 얻는 데 유용했기를 바랍니다. 이와 같은 처음부터 시작하는 접근 방식은 장황할 수 있지만, 이러한 방법이 내부적으로 어떻게 작동하는지 이해하는 좋은 방법이며, 이는 약점과 개선 영역을 식별하는 데 도움이 됩니다.
+
+그렇다면 "LLM을 평가하는 가장 좋은 방법은 무엇일까요?"라고 궁금해하실 것입니다. 불행히도, 우리가 보았듯이 각각 다른 장단점을 가지고 있기 때문에 단 하나의 최선의 방법은 없습니다. 요약하자면:
+
+*   **객관식(Multiple-choice)**
+    *   (+) 대규모로 실행하기에 비교적 빠르고 저렴합니다.
+    *   (+) 논문(또는 모델 카드) 전반에 걸쳐 표준화되고 재현 가능합니다.
+    *   (-) 기본적인 지식 회상 능력을 측정합니다.
+    *   (-) LLM이 실제 세계에서 사용되는 방식을 반영하지 않습니다.
+*   **검증기(Verifiers)**
+    *   (+) 정답이 있는 도메인에 대한 표준화되고 객관적인 채점입니다.
+    *   (+) 자유 형식 답변(free-form answers)을 허용합니다(최종 답변 형식에 일부 제약이 있음).
+    *   (+) 프로세스 검증기(process verifiers) 또는 프로세스 보상 모델(process reward models)을 사용하는 경우 중간 단계도 점수 매길 수 있습니다.
+    *   (-) 검증 가능한 도메인(예: 수학 또는 코드)이 필요하며, 좋은 검증기를 구축하는 것이 까다로울 수 있습니다.
+    *   (-) 결과 전용 검증기(outcome-only verifiers)는 추론 품질이 아닌 최종 답변만 평가합니다.
+*   **아레나 스타일 리더보드(Arena-style leaderboards) (인간 쌍별 선호도)**
+    *   (+) 실제 프롬프트(prompt)에 대해 "어떤 모델을 사람들이 선호하는가?"에 직접적으로 답변합니다.
+    *   (+) 자유 형식 답변(free-form answers)을 허용하고 스타일, 유용성 및 안전성을 암묵적으로 고려합니다.
+    *   (-) 인간에게 비용이 많이 들고 시간이 많이 소요됩니다.
+    *   (-) 정확성을 측정하지 않고 선호도만 측정합니다.
+    *   (-) 비정상 모집단(nonstationary populations)이 안정성에 영향을 미칠 수 있습니다.
+*   **LLM 심사위원(LLM-as-a-judge)**
+    *   (+) 많은 작업에 걸쳐 확장 가능합니다.
+    *   (+) 자유 형식 답변(free-form answers)을 허용합니다.
+    *   (-) 심사위원의 능력에 따라 달라집니다(앙상블(ensemble)은 이를 더 견고하게 만들 수 있습니다).
+    *   (-) 기준표(rubric) 선택에 따라 달라집니다.
+
+저는 일반적으로 레이더 차트(radar chart)를 그다지 좋아하지 않지만, 아래에 표시된 바와 같이 LLM을 평가할 때 강점과 약점을 식별하기 위해 다양한 영역에 주의를 기울이는 것이 이상적이라는 개념을 시각화하는 데 도움이 될 수 있습니다.
+
+**그림 15**: LLM을 평가할 때 강점과 약점을 식별하기 위해 이상적으로는 다양한 영역에 주의를 기울여야 한다는 개념을 보여주는 레이더 차트(radar chart).
+
+예를 들어, 높은 객관식 점수는 모델이 견고한 일반 지식을 가지고 있음을 시사합니다. 여기에 강력한 검증기 점수를 결합하면 모델이 기술적인 질문에도 올바르게 답변할 가능성이 높습니다. 그러나 모델이 LLM-as-a-judge 및 리더보드(leaderboard) 평가에서 저조한 성능을 보인다면, 응답을 효과적으로 작성하거나 명확하게 표현하는 데 어려움을 겪을 수 있으며 일부 RLHF의 이점을 얻을 수 있습니다.
+
+따라서 최상의 평가는 여러 영역을 결합합니다. 하지만 이상적으로는 목표나 비즈니스 문제와 직접적으로 일치하는 데이터도 사용합니다. 예를 들어, 법률 또는 법률 관련 작업을 지원하기 위해 LLM을 구현한다고 가정해 봅시다. 빠른 건전성 검사(sanity check)로 MMLU와 같은 표준 벤치마크(benchmark)에서 모델을 실행하는 것이 합리적이지만, 궁극적으로는 법률과 같은 목표 도메인에 맞게 평가를 조정해야 할 것입니다. 온라인에서 좋은 시작점이 될 수 있는 공개 벤치마크(benchmark)를 찾을 수 있지만, 결국에는 자체 독점 데이터(proprietary data)로 테스트해야 할 것입니다. 그래야만 모델이 훈련 중에 테스트 데이터를 이미 보지 않았다고 합리적으로 확신할 수 있습니다.
+
+어떤 경우든, 모델 평가는 매우 크고 중요한 주제입니다. 이 글이 주요 접근 방식이 어떻게 작동하는지 설명하는 데 유용했으며, 다음번에 모델 평가를 보거나 직접 실행할 때 몇 가지 유용한 통찰력을 얻으셨기를 바랍니다. 언제나처럼, 즐거운 실험 되세요!
+
+이 잡지는 개인적인 열정 프로젝트이며, 여러분의 지원은 이 프로젝트를 유지하는 데 도움이 됩니다. 제 작업을 지원하고 싶으시다면, 저의 『Build a Large Language Model (From Scratch)』 책 또는 그 후속작인 『Build a Reasoning Model (From Scratch)』을 고려해 주십시오. (이 책들이 LLM이 어떻게 작동하는지 다른 곳에서는 찾을 수 없는 깊이로 설명하므로 많은 것을 얻으실 것이라고 확신합니다.) 읽어주셔서 감사하며, 독립적인 연구를 지원해 주셔서 감사합니다!
+
+『Build a Large Language Model (From Scratch)』은 [현재 Amazon에서 구매 가능합니다](https://www.amazon.com/Build-Large-Language-Model-Scratch/dp/1617299518).
+『Build a Reasoning Model (From Scratch)』은 [Manning에서 얼리 액세스(Early Access) 중입니다](https://www.manning.com/books/build-a-reasoning-model-from-scratch).
+책을 읽으셨고 잠시 시간을 내주실 수 있다면, [간단한 리뷰](https://www.manning.com/books/build-a-reasoning-model-from-scratch#reviews)를 남겨주시면 정말 감사하겠습니다. 이는 저자들에게 큰 도움이 됩니다!
+여러분의 지원은 큰 의미가 있습니다! 감사합니다!

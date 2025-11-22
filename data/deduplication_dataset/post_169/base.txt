@@ -1,0 +1,143 @@
+# **그림으로 보는 DeepSeek-R1**
+
+Author: Jay Alammar
+URL: https://newsletter.languagemodels.co/p/the-illustrated-deepseek-r1
+
+============================================================
+
+**DeepSeek-R1은 AI 발전의 꾸준한 북소리 속에서 가장 최근의 울림 있는 박동입니다.** ML R&D 커뮤니티에게 DeepSeek-R1은 다음과 같은 이유로 중요한 발표입니다:
+
+Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요.
+구독
+
+이는 더 작고 정제된 버전들을 포함하는 오픈 웨이트(open weights) 모델이며, OpenAI O1과 같은 추론 모델을 재현하기 위한 훈련 방법을 공유하고 반영합니다. 이 게시물에서는 DeepSeek-R1이 어떻게 구축되었는지 살펴보겠습니다.
+
+번역: 중국어, 한국어, 튀르키예어 (자유롭게 게시물을 귀하의 언어로 번역하여 여기에 추가할 링크를 보내주세요)
+
+**목차:**
+*   요약: LLM은 어떻게 훈련되는가
+*   DeepSeek-R1 훈련 레시피
+    *   1- 긴 사고의 연쇄(chain of thought) SFT 데이터
+    *   2- 중간 고품질 추론 LLM (단, 비추론 작업에서는 성능이 떨어짐)
+    *   3- 대규모 강화 학습(reinforcement learning, RL)을 통한 추론 모델 생성
+        *   3.1- 대규모 추론 지향 강화 학습(Large-Scale Reasoning-Oriented Reinforcement Learning, R1-Zero)
+        *   3.2- 중간 추론 모델을 이용한 SFT 추론 데이터 생성
+        *   3.3- 일반 RL 훈련 단계
+*   아키텍처(Architecture)
+
+이러한 모델이 어떻게 작동하는지 이해하는 데 필요한 대부분의 기초 지식은 저희 책인 Hands-On Large Language Models에서 찾아볼 수 있습니다.
+책의 공식 웹사이트.
+Amazon에서 책을 주문할 수 있습니다.
+모든 코드는 GitHub에 업로드되어 있습니다.
+
+**요약: LLM은 어떻게 훈련되는가**
+
+대부분의 기존 LLM과 마찬가지로 DeepSeek-R1은 한 번에 하나의 토큰(token)을 생성하지만, 사고의 연쇄(chain of thought)를 설명하는 사고 토큰(thinking tokens)을 생성하는 과정을 통해 문제를 처리하는 데 더 많은 시간을 할애할 수 있기 때문에 수학 및 추론 문제 해결에 탁월합니다.
+
+저희 책 12장에 있는 다음 그림은 고품질 LLM을 생성하는 일반적인 세 단계 과정을 보여줍니다.
+
+1) 방대한 양의 웹 데이터를 사용하여 다음 단어를 예측하도록 모델을 훈련하는 언어 모델링(language modeling) 단계입니다. 이 단계는 기본 모델(base model)을 생성합니다.
+2) 모델이 지시를 따르고 질문에 답변하는 데 더 유용하도록 만드는 지도 미세 조정(supervised fine-tuning) 단계입니다. 이 단계는 지시 조정 모델(instruction tuned model) 또는 지도 미세 조정(SFT) 모델을 생성합니다.
+3) 그리고 마지막으로 행동을 더욱 다듬고 인간의 선호도에 맞춰 조정하는 선호도 조정(preference tuning) 단계로, 여러분이 플레이그라운드(playground)나 앱에서 상호작용하는 최종 선호도 조정 LLM을 만듭니다.
+
+**DeepSeek-R1 훈련 레시피**
+
+DeepSeek-R1은 이 일반적인 과정을 따릅니다. 첫 번째 단계의 세부 사항은 DeepSeek-V3 모델에 대한 이전 논문에서 가져왔습니다. R1은 해당 이전 논문의 기본 모델(최종 DeepSeek-v3 모델이 아님)을 사용하며, 여전히 SFT 및 선호도 조정 단계를 거치지만, 이를 수행하는 방식의 세부 사항이 다릅니다.
+
+R1 생성 과정에서 강조할 세 가지 특별한 점이 있습니다.
+
+**1- 긴 사고의 연쇄(chain of thought) SFT 데이터**
+
+이는 방대한 양의 긴 사고의 연쇄(chain-of-thought) 추론 예시(60만 개)입니다. 이러한 예시는 구하기 매우 어렵고, 이 규모에서 사람이 라벨링(labeling)하는 데 매우 많은 비용이 듭니다. 그렇기 때문에 이를 생성하는 과정이 강조할 두 번째 특별한 점입니다.
+
+**2- 중간 고품질 추론 LLM (단, 비추론 작업에서는 성능이 떨어짐)**
+
+이 데이터는 R1의 전신인, 추론에 특화된 이름 없는 자매 모델에 의해 생성됩니다. 이 자매 모델은 R1-Zero라고 불리는 세 번째 모델(곧 논의할 예정)에서 영감을 받았습니다. 이것이 중요한 이유는 사용하기 좋은 LLM이기 때문이 아니라, 대규모 강화 학습(reinforcement learning, RL)과 함께 매우 적은 양의 라벨링된(labeled) 데이터만으로도 추론 문제 해결에 탁월한 모델을 만들 수 있었기 때문입니다. 이 이름 없는 전문 추론 모델의 출력은 사용자들이 LLM에 기대하는 수준으로 다른 비추론 작업도 수행할 수 있는 더 일반적인 모델을 훈련하는 데 사용될 수 있습니다.
+
+**3- 대규모 강화 학습(RL)을 통한 추론 모델 생성**
+
+이것은 두 단계로 이루어집니다.
+
+**3.1- 대규모 추론 지향 강화 학습(Large-Scale Reasoning-Oriented Reinforcement Learning, R1-Zero)**
+
+여기서 RL은 중간 추론 모델을 생성하는 데 사용됩니다. 이 모델은 SFT 추론 예시를 생성하는 데 사용됩니다. 하지만 이 모델 생성을 가능하게 한 것은 DeepSeek-R1-Zero라고 불리는 이전 모델을 생성한 초기 실험입니다.
+
+R1-Zero는 라벨링된 SFT 훈련 세트 없이도 추론 작업에 탁월하다는 점에서 특별합니다. 그 훈련은 사전 훈련된(pre-trained) 기본 모델에서 RL 훈련 과정을 통해 직접 이루어집니다(SFT 단계 없음). 이것은 o1과 경쟁할 정도로 매우 잘 수행됩니다. 데이터가 항상 ML 모델 능력의 연료였기 때문에 이것은 중요합니다. 이 모델은 어떻게 그 역사에서 벗어날 수 있었을까요?
+
+이것은 두 가지를 시사합니다.
+
+1- 현대의 기본 모델은 특정 품질 및 능력 임계값(threshold)을 넘어섰습니다(이 기본 모델은 14.8조 개의 고품질 토큰으로 훈련되었습니다).
+2- 일반적인 채팅이나 글쓰기 요청과 달리 추론 문제는 자동으로 검증되거나 라벨링될 수 있습니다.
+
+예시를 통해 이를 보여드리겠습니다.
+
+**예시: 추론 문제의 자동 검증**
+
+이것은 이 RL 훈련 단계의 일부인 프롬프트(prompt)/질문이 될 수 있습니다.
+
+숫자 목록을 받아 정렬된 순서로 반환하되, 시작 부분에 42를 추가하는 파이썬(Python) 코드를 작성하세요.
+
+이러한 질문은 여러 가지 자동 검증(automatic verification) 방식에 적합합니다. 훈련 중인 모델에 이를 제시하고, 모델이 완성(completion)을 생성한다고 가정해 봅시다.
+
+*   소프트웨어 린터(linter)는 완성된 코드가 적절한 파이썬 코드인지 아닌지 확인할 수 있습니다.
+*   파이썬 코드를 실행하여 작동하는지 확인할 수 있습니다.
+*   다른 현대적인 코딩 LLM은 원하는 동작을 검증하기 위한 단위 테스트(unit tests)를 생성할 수 있습니다(스스로 추론 전문가가 아니더라도).
+*   심지어 한 단계 더 나아가 실행 시간을 측정하고, 문제가 해결되는 올바른 파이썬 프로그램이라 할지라도, 훈련 과정이 다른 해결책보다 더 성능이 좋은 해결책을 선호하도록 만들 수 있습니다.
+
+훈련 단계에서 모델에 이와 같은 질문을 제시하고, 여러 가지 가능한 해결책을 생성할 수 있습니다. 우리는 (인간의 개입 없이) 자동으로 확인하여 첫 번째 완성은 코드가 아님을 알 수 있습니다. 두 번째는 코드이지만 파이썬 코드가 아닙니다. 세 번째는 가능한 해결책이지만 단위 테스트에 실패하고, 네 번째는 올바른 해결책입니다.
+
+이것들은 모두 모델을 개선하는 데 직접 사용될 수 있는 신호입니다. 물론 이것은 많은 예시(미니 배치(mini-batches) 단위)와 연속적인 훈련 단계를 거쳐 수행됩니다. 이러한 보상 신호(reward signals)와 모델 업데이트(model updates)는 논문의 그림 2에서 볼 수 있듯이 RL 훈련 과정에서 모델이 작업을 계속 개선하는 방식입니다. 이 능력의 개선에 상응하는 것은 생성된 응답의 길이인데, 모델은 문제를 처리하기 위해 더 많은 사고 토큰을 생성합니다.
+
+이 과정은 유용하지만, R1-Zero 모델은 이러한 추론 문제에서 높은 점수를 받았음에도 불구하고, 원하는 것보다 사용성이 떨어지게 만드는 다른 문제들에 직면합니다.
+
+DeepSeek-R1-Zero는 강력한 추론 능력을 보여주고 예상치 못한 강력한 추론 행동을 자율적으로 개발하지만, 가독성(readability) 저하 및 언어 혼합(language mixing)과 같은 여러 문제에 직면합니다.
+
+R1은 더 사용 가능한 모델이 되도록 의도되었습니다. 따라서 RL 과정에 전적으로 의존하는 대신, 이 섹션에서 앞서 언급했듯이 두 가지 방식으로 사용됩니다.
+
+1- SFT 데이터 포인트(data points)를 생성하기 위한 중간 추론 모델 생성
+2- 추론 및 비추론 문제 개선을 위한 R1 모델 훈련 (다른 유형의 검증자(verifiers) 사용)
+
+**3.2- 중간 추론 모델을 이용한 SFT 추론 데이터 생성**
+
+중간 추론 모델을 더 유용하게 만들기 위해, 수천 개의 추론 문제 예시(일부는 R1-Zero에서 생성 및 필터링됨)에 대해 지도 미세 조정(SFT) 훈련 단계를 거칩니다. 논문에서는 이를 "콜드 스타트(cold start) 데이터"라고 언급합니다.
+
+2.3.1. 콜드 스타트
+
+DeepSeek-R1-Zero와 달리, 기본 모델로부터 RL 훈련의 초기 불안정한 콜드 스타트 단계를 방지하기 위해, DeepSeek-R1의 경우 초기 RL 액터(actor)로서 모델을 미세 조정하기 위해 소량의 긴 CoT(Chain-of-Thought) 데이터를 구축하고 수집합니다. 이러한 데이터를 수집하기 위해 우리는 여러 접근 방식을 탐색했습니다. 긴 CoT를 예시로 사용하는 퓨샷 프롬프팅(few-shot prompting), 모델이 반성(reflection) 및 검증(verification)을 통해 상세한 답변을 직접 생성하도록 프롬프트(prompt)하는 것, DeepSeek-R1-Zero 출력을 읽기 쉬운 형식으로 수집하는 것, 그리고 인간 주석자(human annotators)의 후처리(post-processing)를 통해 결과를 정제하는 것입니다.
+
+하지만 잠시만요, 이 데이터가 있다면 왜 RL 과정에 의존하는 걸까요? 그것은 데이터의 규모 때문입니다. 이 데이터셋은 5,000개의 예시일 수 있지만(이는 확보 가능), R1을 훈련시키려면 600,000개의 예시가 필요했습니다. 이 중간 모델은 그 격차를 메우고 매우 귀중한 데이터를 인공적으로 생성할 수 있도록 합니다.
+
+지도 미세 조정(SFT) 개념이 처음이라면, 이는 프롬프트(prompt)와 올바른 완성(correct completion) 형태로 모델에 훈련 예시를 제시하는 과정입니다. 12장의 이 그림은 몇 가지 SFT 훈련 예시를 보여줍니다.
+
+**3.3- 일반 RL 훈련 단계**
+
+이것은 R1이 추론뿐만 아니라 다른 비추론 작업에서도 탁월하도록 만듭니다. 이 과정은 이전에 보았던 RL 과정과 유사합니다. 그러나 비추론 애플리케이션(application)으로 확장되므로, 이러한 애플리케이션에 속하는 프롬프트에 대해 유용성(helpfulness) 및 안전성(safety) 보상 모델(Llama 모델과 다르지 않음)을 활용합니다.
+
+**아키텍처(Architecture)**
+
+GPT2와 GPT3 시대의 이전 모델들처럼, DeepSeek-R1은 트랜스포머 디코더 블록(Transformer decoder blocks)의 스택(stack)입니다. 총 61개의 블록으로 구성되어 있습니다. 처음 세 개는 덴스(dense) 레이어이지만, 나머지는 전문가 혼합(mixture-of-experts, MoE) 레이어입니다 (저의 공동 저자 Maarten의 놀라운 소개 가이드를 여기에서 확인하세요: A Visual Guide to Mixture of Experts (MoE) ).
+
+모델 차원 크기(model dimension size) 및 기타 하이퍼파라미터(hyperparameters) 측면에서 다음과 같습니다.
+
+모델 아키텍처(architecture)에 대한 더 자세한 내용은 그들의 두 가지 이전 논문에 제시되어 있습니다.
+DeepSeek-V3 Technical Report
+DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models
+
+**결론**
+
+이로써 DeepSeek-R1 모델을 이해하는 데 필요한 주요 직관을 얻으셨을 것입니다. 이 게시물을 이해하는 데 좀 더 기본적인 정보가 필요하다고 느끼셨다면, Hands-On Large Language Models 책을 구매하시거나 O’Reilly에서 온라인으로 읽어보시고 GitHub에서 확인해 보시길 권합니다.
+
+다른 추천 자료는 다음과 같습니다.
+
+*   Maarten Grootendorst의 A Visual Guide to Reasoning LLMs
+*   Nathan Lambert의 DeepSeek R1's recipe to replicate o1 and the future of reasoning LMs
+*   Maarten Grootendorst의 A Visual Guide to Mixture of Experts (MoE)
+*   Sasha Rush의 YouTube 비디오 Speculations on Test-Time Scaling (o1)
+*   Yannis Kilcher의 DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models (Paper Explained)
+*   Open R1은 DeepSeek-R1을 공개적으로 재현하기 위한 HuggingFace 프로젝트입니다.
+*   Putting RL back in RLHF
+
+이 논문을 읽는 동안 2022년의 Galactica 논문이 떠올랐습니다. 이 논문에는 전용 사고 토큰(thinking token)을 포함한 많은 훌륭한 아이디어가 있었습니다.
+
+Language Models & Co.를 읽어주셔서 감사합니다! 새로운 게시물을 무료로 받아보고 제 작업을 지원하려면 구독하세요.
+구독

@@ -1,0 +1,4 @@
+SWE-Bench 개발자들이 NeurIPS 2024 이후, 2025년 LLM 에이전트의 발전과 미래를 조망하다
+Jay Alammar 2026년 3월 10일 12 3 공유
+
+SWE-bench 작업은 GitHub 이슈(GitHub issue) 수준에서 소프트웨어 엔지니어링 작업에 대한 AI 에이전트(AI agents)를 측정합니다. 이 벤치마크는 2024년뿐만 아니라 2025년에도 에이전트의 발전을 평가하는 핵심 기준이었습니다. SWE-bench 창시자 Ofir Press와 Carlos E. Jimenez는 LLM 기반 에이전트(LLM-backed agents)의 현황에 대한 견해를 공유했습니다. 최근 LLM 에이전트의 도구 사용(tool use) 능력과 자율 학습이 크게 향상되었으며, 이는 실제 개발 환경 적용 가능성을 높입니다.

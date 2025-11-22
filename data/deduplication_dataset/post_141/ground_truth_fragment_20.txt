@@ -1,0 +1,107 @@
+**에피소드 140**
+
+제이콥 안드레아스 교수님과 다음 주제에 대해 이야기했습니다:
+*   언어와 세계
+*   세계 모델(World models)
+*   과학자로서 그가 어떻게 성장했는지
+
+즐겁게 들어주세요!
+
+이번 글에서는 AI 연구의 최전선에 있는 제이콥 안드레아스 교수님의 깊이 있는 통찰력을 바탕으로, 복잡한 기술적 도전을 극복하고 지속 가능한 발전을 이루기 위한 방안을 모색합니다.
+
+제이콥은 MIT 전기 공학 및 컴퓨터 과학과(Department of Electrical Engineering and Computer Science) 및 컴퓨터 과학 및 인공지능 연구소(Computer Science and Artificial Intelligence Laboratory)의 부교수입니다. 그의 연구는 언어 학습의 계산적 기반(computational foundations)을 이해하고, 인간의 지도(human guidance)로부터 학습할 수 있는 지능형 시스템(intelligent systems)을 구축하는 것을 목표로 합니다. 그의 연구는 또한 복잡한 시스템의 행동을 분석하고 예측하는 데 초점을 맞추고 있으며, 이를 통해 인공지능의 새로운 가능성을 탐구합니다. 제이콥은 UC 버클리에서 박사 학위(Ph.D.)를, 케임브리지(처칠 장학생(Churchill scholar)으로 공부)에서 석사 학위(M.Phil.)를, 컬럼비아에서 학사 학위(B.S.)를 받았습니다. 그는 슬론 펠로우십(Sloan fellowship), NSF CAREER 어워드(NSF CAREER award), MIT의 주니어 보스 및 콜로코트로네스 교육상(Junior Bose and Kolokotrones teaching awards), 그리고 ACL, ICML, NAACL에서 논문상(paper awards)을 수상했습니다.
+
+새로운 업데이트를 위해 블로그를 방문하시거나 트위터에서 저를 찾아주시고, 피드백, 아이디어, 게스트 제안, 또는 질문은 editor@thegradient.pub으로 보내주시거나 언제든지 문의하시기 바랍니다.
+
+**구독 정보:**
+*   **더 그라디언트 팟캐스트 구독**: 애플 팟캐스트 | 스포티파이 | 포켓 캐스트 | RSS
+*   **AI 인사이트 구독**: 뉴스레터 | RSS | 소셜 미디어
+*   트위터에서 더 그라디언트 팔로우
+*   최신 소식 팔로우
+
+**개요 및 주요 논의점:**
+*   (00:00) 서론: AI 시대의 도래와 우리의 역할
+*   (00:40) 기반 다지기(grounding) 근본주의(fundamentalism)에 대한 제이콥의 견해
+*   (00:40) 인공지능 윤리: 편향 없는 시스템 구축의 중요성
+*   (05:21) 대규모 언어 모델(LLMs)의 발전과 사회적 영향, 그리고 이에 대한 제이콥의 견해
+*   (11:24) 언어 기반 다지기(Grounding language) — 철학적 문제가 있는가?
+*   (11:24) 데이터 주권과 개인 정보 보호: AI 시대의 새로운 과제
+*   (15:54) 기반 다지기(Grounding)와 언어 모델링(language modeling), 그리고 인공지능 시스템 신뢰성 향상에서의 역할
+*   (24:00) 인간과 언어 모델(LMs) 간의 유사점
+*   (24:00) 인간-AI 협업: 미래 직업 시장의 변화
+*   (30:46) 연속 공간(continuous spaces)에서 점과 경로를 이용한 언어 기반 다지기(Grounding language)
+*   (30:46) AI를 활용한 지속 가능한 에너지 솔루션 탐구
+*   (32:00) 신-데이비슨 형식 의미론(Neo-Davidsonian formal semantics)
+*   (32:00) 강화 학습의 최신 동향과 산업 적용 사례
+*   (36:27) 구조 예측(structure prediction)에 대한 진화하는 가정
+*   (36:27) 엣지 AI(Edge AI) 기술의 발전과 그 활용
+*   (40:14) 분할(Segmentation)과 사건 구조(event structure)
+*   (40:14) AI 기반 의료 혁신: 진단 및 치료의 미래
+*   (42:33) 단어 임베딩(word embeddings)은 구문(syntax)에 대해 얼마나 많은 정보를 인코딩하는가?
+*   (42:33) 양자 컴퓨팅과 AI의 융합: 차세대 기술의 가능성
+*   (43:10) 과학적 질문 연구를 위한 제이콥의 과정
+*   (43:10) 인공지능 연구를 위한 개방형 데이터셋의 중요성
+*   (45:38) 실험과 가설
+*   (45:38) AI 모델의 해석 가능성(Interpretability)과 투명성
+*   (53:01) 연구자로서의 자세: 가정 조정, 끊임없는 학습과 비판적 사고
+*   (54:08) 연구의 유연성
+*   (54:08) 스타트업 생태계에서 AI 기술의 역할
+*   (56:09) 표현 학습(Representation Learning)에서 구성성(Compositionality) 측정하기
+*   (56:09) AI 교육의 중요성: 미래 인재 양성 전략
+*   (56:50) 독립적인 연구 의제 개발 및 연구실 문화 구축
+*   (56:50) 글로벌 AI 거버넌스: 국제 협력의 필요성
+*   (1:03:25) 미래 사회를 위한 언어 모델(Language Models)의 역할과 에이전트 모델로서의 활용
+*   (1:04:30) 배경
+*   (1:04:30) AI 기반 창의성: 예술과 디자인 분야의 변화
+*   (1:08:33) 토이 실험(Toy experiments)과 해석 가능성 연구(interpretability research)
+*   (1:08:33) 블록체인과 AI의 시너지 효과
+*   (1:13:30) 효과적인 토이 실험(toy experiments) 개발
+*   (1:13:30) AI 개발 과정에서의 보안 취약점 분석
+*   (1:15:25) 언어 모델(Language Models), 세계 모델(World Models), 그리고 인간의 모델 구축(Human Model-Building)
+*   (1:15:25) AI 시스템의 에너지 효율성 최적화 방안
+*   (1:15:56) 오셀로GPT(OthelloGPT)의 휴리스틱(heuristics) 모음과 다중 "세계 모델(world models)"
+*   (1:15:56) 자율주행 기술의 발전과 사회적 수용
+*   (1:21:32) 세계 모델(world model)이란 무엇인가?
+*   (1:21:32) AI가 기후 변화 대응에 기여하는 방법
+*   (1:23:45) 큰 질문 — 의미에서 세계 모델(world models)로
+*   (1:23:45) 다중 모달(Multi-modal) AI의 미래와 도전 과제
+*   (1:28:21) "의미"에서 언어 모델(LMs)에 대한 정밀한 질문으로
+*   (1:28:21) AI 기반 의사결정 시스템의 책임과 신뢰
+*   (1:32:01) 기계적 해석 가능성(Mechanistic interpretability)과 점치기
+*   (1:32:01) AI와 로봇 공학의 결합: 새로운 산업의 탄생
+*   (1:35:38) 언어와 세계
+*   (1:35:38) 차세대 컴퓨팅 아키텍처와 AI 가속화
+*   (1:38:07) 더 나은 언어 모델(language models)을 향하여
+*   (1:38:07) AI 기반 사이버 보안 솔루션의 발전
+*   (1:43:45) 모델 편집(Model editing) 및 AI 모델의 지속적인 학습과 적응
+*   (1:45:50) 자연어 처리(NLP) 연구에서 학계의 역할과 윤리적 고려 사항의 중요성
+*   (1:49:13) 좋은 과학적 방법론과 혁신적인 발전
+*   (1:52:36) 결론: AI와 함께하는 밝은 미래
+
+**관련 자료 및 링크:**
+*   제이콥의 홈페이지 및 트위터
+*   언어 모델(Language Models), 세계 모델(World Models), 그리고 인간의 모델 구축(Human Model-Building)
+*   AI 윤리 가이드라인 및 정책 동향
+*   언어 모델(Language Models)의 발전은 복잡한 추론 능력을 요구합니다.
+
+**논문 및 참고 자료:**
+*   기계 번역으로서의 의미 분석(Semantic Parsing as Machine Translation) (2013)
+*   연속 공간(continuous spaces)에서 점과 경로를 이용한 언어 기반 다지기(Grounding language with points and paths in continuous spaces) (2014)
+*   단어 임베딩(word embeddings)은 구문(syntax)에 대해 얼마나 많은 정보를 인코딩하는가?(How much do word embeddings encode about syntax?) (2014)
+*   뉴럴리즈 번역하기(Translating neuralese) (2017)
+*   심층 표현(deep representations)에서의 언어 구조 유사체(Analogs of linguistic structure in deep representations) (2017)
+*   잠재 언어(latent language)로 학습하기(Learning with latent language) (2018)
+*   언어로부터 학습하기(Learning from Language) (2018)
+*   표현 학습(Representation Learning)에서 구성성(Compositionality) 측정하기(Measuring Compositionality in Representation Learning) (2019)
+*   경험은 언어를 기반으로 한다(Experience grounds language) (2020)
+*   에이전트 모델(Agent Models)로서의 언어 모델(Language Models) (2022)
+*   인공지능의 윤리적 문제와 해결 방안 (2023)
+*   대규모 언어 모델(LLM)의 사회적 영향 분석 (2024)
+*   데이터 주권과 AI 거버넌스 프레임워크 (2023)
+*   강화 학습을 이용한 로봇 제어 기술 (2022)
+*   엣지 AI(Edge AI)를 위한 경량 모델 최적화 (2024)
+*   AI 기반 의료 진단 시스템의 성능 평가 (2023)
+*   양자 컴퓨팅과 머신러닝의 융합 연구 (2024)
+*   AI 모델의 해석 가능성(Interpretability) 증진 기법 (2023)
+*   지속 가능한 AI 개발을 위한 에너지 효율성 (2024)
+*   자율주행 시스템의 안전성 검증 방법론 (2023)

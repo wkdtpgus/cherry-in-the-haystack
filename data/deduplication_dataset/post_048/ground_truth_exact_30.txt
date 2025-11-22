@@ -1,0 +1,697 @@
+# LLM 훈련의 성공을 위한 데이터 중심 전략: 디버깅 및 최적화 업데이트
+
+(출처 [2]) LLM 훈련에 대한 대부분의 논의는 모델과 알고리즘에 집중되어 있습니다. 우리는 GRPO와 같은 새로운 프레임워크를 실험하는 것을 즐기며, Gemma-3 및 Qwen-3과 같은 차세대 모델의 출시를 기대하고 있습니다. 그러나 LLM 훈련에서 성공과 실패를 가르는 주요 요인은 훈련 데이터셋의 품질입니다. 안타깝게도 이 주제는 다른 인기 있는 연구 분야에 비해 훨씬 적은 관심을 받고 있습니다. 이 개요에서는 LLM 훈련 디버깅 및 최적화를 위한 데이터 중심 가이드를 제공하며, 데이터를 반복적으로 개선하고 더 강력한 LLM을 개발하는 데 사용할 수 있는 실용적인 전략을 강조할 것입니다.
+
+최근 LLM의 발전은 데이터 파이프라인의 복잡성을 급증시켰으며, 이는 고품질 데이터를 선별하고 관리하는 능력이 그 어느 때보다 중요해졌음을 의미합니다. 단순한 데이터 양을 넘어, 데이터의 다양성, 청결성, 그리고 모델의 특정 목표에 대한 관련성이 핵심 성공 요인이 되고 있습니다.
+
+## LLM 개발 수명 주기(Lifecycle)
+
+### LLM 개발의 주요 단계
+
+LLM을 훈련할 때, 우리는 두 가지 주요 단계(위에 표시됨)로 구성된 반복적이고 경험 중심적인 프로세스를 따릅니다:
+*   LLM 훈련.
+*   LLM 평가.
+
+LLM을 개발하기 위해 우리는 이 단계를 단순히 반복하여, 결국 우리가 관심 있는 애플리케이션(application)과 관련된 평가에서 잘 수행되는 LLM을 얻게 됩니다. 이 반복적인 접근 방식은 모델이 새로운 데이터와 사용 사례에 지속적으로 적응하고 개선될 수 있도록 합니다.
+
+### LLM 평가
+
+이 주제는 매우 복잡하므로 LLM 평가에 대해 자세히 논의하지는 않을 것입니다. 그러나 높은 수준에서 우리는 LLM을 두 가지 방식으로 평가합니다. 수동으로(즉, 사람을 통해) 또는 자동으로.
+
+인간 평가(human evaluation)는 여러 가지 방식으로 설정될 수 있습니다. 예를 들어, 두 모델 응답 중 더 나은 것을 선택하거나 여러 품질 차원에 따라 모델 응답에 점수를 매기는 방식 등이 있습니다. 아래를 참조하십시오. 다른 데이터 주석(data annotation) 프로젝트와 마찬가지로, 이러한 인간 평가가 고품질이며 우리가 측정하려는 것과 일치하는지 확인하기 위해 노력을 기울여야 합니다.
+
+(출처 [5, 12]) LLM을 개발할 때, 인간 평가(human evaluation)는 품질을 측정하는 황금 표준입니다. 우리는 LLM이 개선되고 있는지 여부에 대한 명확한 신호를 제공하기 위해 항상 인간 평가에 의존해야 합니다. 그러나 인간 평가는 시간 집약적입니다(즉, 며칠 또는 몇 주가 소요됩니다)! 반복 속도를 늦추지 않기 위해, 우리는 모델 품질의 더 효율적인 대리 측정(proxy measure)을 제공할 자동 평가 지표(automatic evaluation metrics)를 개발해야 합니다. 이러한 자동 지표를 사용하여, 각 인간 평가 시도 사이에 훨씬 더 많은 모델 반복을 수행할 수 있으며, 이를 통해 모델 품질을 더 빠르게 개선할 수 있습니다.
+
+자동 평가 측면에서 일반적으로 사용되는 두 가지 주요 기술은 벤치마크 스타일 평가(benchmark-style evaluation)와 LLM 심사위원(LLM judges)입니다. 아래를 참조하십시오. 이 두 전략은 각각 폐쇄형(closed-ended) 및 개방형(open-ended) 작업에서 모델의 성능을 테스트합니다. 최근에는 LLM 심사위원의 편향을 줄이고 일관성을 높이기 위한 다양한 방법론이 연구되고 있으며, GPT-4와 같은 강력한 모델을 활용한 모델 등급 평가(model-graded evaluation)는 인간 평가와 유사한 결과를 제공하면서도 훨씬 빠른 피드백 루프를 가능하게 합니다.
+
+(source) 벤치마크 스타일 평가(예: 객관식 질문 또는 질문-답변 쌍)는 NLP 연구 역사 전반에 걸쳐 사용되어 왔습니다. LLM을 위한 이러한 벤치마크의 현대적인 예로는 MMLU 또는 GPQA Diamond가 있습니다. 이러한 벤치마크는 폐쇄형 솔루션을 가지고 있지만, LLM은 평가하기 어려울 수 있는 개방형 출력을 생성합니다. 개방형 평가를 위한 가장 인기 있는 기술은 LLM-as-a-Judge 또는 기타 관련 기술(예: 보상 모델(reward models), 미세 조정된 심사위원(finetuned judges) 또는 검증자(verifiers))입니다. 자세한 내용은 아래 기사를 참조하십시오.
+
+**자동 평가 지표의 발전**
+최근 연구에서는 LLM의 복잡한 추론 능력이나 창의성을 평가하기 위한 새로운 자동 지표 개발에 집중하고 있습니다. 특히, 생성형 AI 모델의 평가를 위해 고안된 '참신성(novelty)', '다양성(diversity)', '일관성(consistency)'과 같은 지표들이 도입되고 있으며, 이는 단순히 정답 여부를 넘어 모델의 잠재력을 측정하는 데 기여합니다.
+
+### 데이터 조정
+
+평가 설정이 완료되면, 새로운 모델을 훈련하고 성능을 측정하기 시작할 수 있습니다. 각 새로운 모델에 대해, 우리는 LLM의 성능에 (바라건대) 도움이 될 어떤 개입(intervention)을 수행합니다. 전통적으로 AI 연구자들은 알고리즘과 아키텍처 1에 매우 관심이 많으며, 때로는 이러한 세부 사항을 조정하기도 합니다! 예를 들어, Llama 4는 후처리 훈련 파이프라인(post-training pipeline) 2에 상당한 변화를 주었으며, 많은 LLM은 추론 능력(reasoning capabilities)을 개선하기 위해 RLVR과 같은 새로운 알고리즘을 훈련 파이프라인에 통합하고 있습니다.
+
+그러나 이러한 최근의 발전에도 불구하고, 대부분의 개입은 데이터와 관련되어 있습니다. 우리는 훈련 데이터를 조정하고, 다른 모든 것은 고정한 채로 모델을 재훈련(또는 계속 훈련)하며, 새로운 데이터가 모델의 성능을 향상시키는지 확인합니다. 데이터 개입은 단순히 더 많은 데이터를 수집하는 것을 넘어 데이터 증강(data augmentation), 합성 데이터 생성(synthetic data generation), 그리고 능동 학습(active learning)과 같은 보다 정교한 전략을 포함합니다. 이러한 방법들은 데이터의 양뿐만 아니라 질적 측면에서도 모델 성능을 향상시키는 데 중요한 역할을 합니다.
+
+(출처 [2]) 개념적으로 가장 간단한 데이터 개입은 단순히 더 많은 훈련 데이터를 수집하는 것입니다. LLM이 개발됨에 따라 더 많은 데이터를 수집하는 것은 일반적입니다. 예를 들어, Llama 2 보고서 [3]는 모델이 여러 단계로 후처리 훈련되며, 각 단계에서 추가 후처리 훈련을 위해 더 많은 데이터가 수집된다고 언급합니다. 위를 참조하십시오. 데이터를 수집하는 것은 개념적으로 간단해 보일 수 있지만, 데이터 주석(data annotation)은 성공적으로 실행하기 위해 올바른 전략과 (대개는) 사전 경험을 필요로 하는 매우 복잡하고 미묘한 주제입니다. 자세한 내용은 여기와 여기를 참조하십시오.
+
+"인간 데이터를 최대한 활용하는 것은 모델의 반복적인 훈련, 진화하고 매우 상세한 데이터 지침, 데이터 파운드리(data foundry) 비즈니스를 통한 번역, 그리고 쌓이는 다른 도전 과제들을 포함합니다." - RLHF 책
+
+### 데이터 큐레이션(Curating data)
+
+이 보고서에서는 더 많은 데이터를 수집하는 데 초점을 맞추지 않을 것입니다. 대신, 우리는 현재 사용 가능한 데이터를 큐레이션(curating)하거나 (디버깅하는) 데 집중할 것입니다. 이것은 인간 데이터 수집과는 직교적인(orthogonal) 접근 방식입니다. 아래를 참조하십시오. 이를 위해 우리는 다양한 기술을 사용하여 고품질 또는 저품질 데이터를 식별하고, 이를 통해 데이터셋의 문제를 해결하고 훈련 프로세스를 최고 품질의 데이터에 집중할 수 있습니다.
+
+(source) **고품질 데이터에 접근하는 두 가지 방향**
+
+LLM 품질에 대한 대부분의 개입이 데이터와 관련되어 있다는 점을 고려할 때, 데이터 큐레이션(data curation)은 매우 중요한 주제입니다. 예를 들어, 이 주제에 초점을 맞춘 여러 스타트업과 훌륭한 논문들이 많이 있습니다. 그러나 LLM 훈련 프로세스에 그렇게 근본적임에도 불구하고, 데이터 관련 주제는 AI 연구에서 일반적으로 과소 대표됩니다. 데이터를 최적화하는 것은 단순히 화려하거나 인기 있는 주제는 아니지만, LLM을 훈련할 때 성공과 실패를 가르는 핵심적인 차별화 요소인 경우가 많습니다.
+
+#### 데이터를 어떻게 큐레이션할까요?
+
+간단히 말해, 데이터를 큐레이션하는 두 가지 방법이 있습니다:
+*   데이터를 직접 살펴보는 것.
+*   모델 출력을 사용하여 훈련 데이터를 디버깅하는 것.
+
+예를 들어, 수동 검사(manual inspection) 또는 기본적인 검색 및 휴리스틱(heuristics)을 통해 데이터를 큐레이션하고 디버깅할 수 있습니다. 최근에는 데이터 시각화 도구와 인터랙티브 대시보드가 발전하여 대규모 데이터셋의 패턴과 이상 징후를 더 쉽게 식별할 수 있게 되었습니다. 또한, 다른 모델을 사용하여 데이터를 분석할 수 있습니다. 예를 들어, 태깅(tagging), 분류(classification), 품질 점수 할당 등이 있습니다. 이러한 모든 전략은 우리가 생성하는 다운스트림 모델(downstream model)과는 관련이 없습니다. 우리는 훈련 데이터를 직접 보고 있습니다.
+
+그러나 모델을 훈련한 후에는 다음과 같이 LLM의 출력을 디버깅하여 데이터 큐레이션 프로세스를 더욱 촉진할 수 있습니다:
+*   불량 모델 출력 식별.
+*   이러한 출력에 (잠재적으로) 기여한 데이터 문제 찾기.
+*   어떤 개입을 통해 데이터 수정.
+*   모델 재훈련.
+
+#### 디버깅 전략
+
+이 개요에서는 위에 설명된 두 가지 전략을 데이터 중심 큐레이션(data-focused curation)과 모델 중심 큐레이션(model-focused curation)이라고 부를 것입니다. 이러한 아이디어를 지칭하는 데 사용할 수 있는 많은 용어가 있으며, 이 명명법(nomenclature)이 완벽하지는 않습니다. 예를 들어, 데이터 중심 큐레이션도 모델 사용을 포함할 수 있습니다. 우리는 데이터를 모델 훈련에 사용하는 대신 모델을 사용하여 데이터를 분석할 뿐입니다. 그러나 우리는 논의를 명확하고 일관성 있게 유지하기 위해 이 용어를 계속 사용할 것입니다.
+
+이러한 아이디어를 논의할 때, 데이터 중심 디버깅과 모델 중심 디버깅이 상호 배타적이지 않다는 점을 명심해야 합니다. 사실, 우리는 거의 항상 둘 다 활용해야 합니다. 데이터 중심 큐레이션은 어떤 모델도 훈련할 필요가 없으며, 이는 LLM 개발 초기 단계에서 매우 유용합니다. 숙련된 과학자들은 어떤 모델링을 하기 전에 데이터를 분석하고 이해하는 데 많은 시간을 보냅니다. 우리는 시간이 지남에 따라 이러한 데이터 중심 분석을 계속 수행하지만, 모델을 훈련한 후에는 새로운 분석 방법이 가능해집니다. LLM을 디버깅하고 개선하기 위해, 우리는 모델, 데이터 및 그들 간의 연결에 대한 더 깊은 이해를 얻을 수 있는 다각적인 접근 방식을 개발해야 합니다.
+
+## 데이터 중심 큐레이션: 데이터 살펴보기
+
+데이터에 대한 깊은 이해를 얻기 위해, 우리는 데이터를 수동으로 살펴보는 것부터 시작할 것입니다. 데이터를 수동으로 검사하면서, 우리는 데이터의 중요한 문제와 패턴을 발견하고 (어떤 경우에는) 수정하기 시작할 것입니다. 그러나 이 큐레이션 프로세스를 우리의 판단을 넘어 확장하려면, 휴리스틱(heuristics) 또는 다른 머신러닝(machine learning) 모델을 기반으로 하는 자동화된 기술을 사용해야 할 것입니다.
+
+(source) **수동 검사(Manual inspection).** LLM을 디버깅하는 첫 번째 단계는 단순히 모델의 훈련 데이터를 살펴보는 것입니다. 이것은 어떤 모델을 훈련하기 시작하기 전에 발생해야 하며, 모델 개발의 전체 수명 주기 동안 계속되어야 합니다. 수동 데이터 검사는 매우 시간 소모적이며 (항상 가장 재미있는 것은 아니지만!), LLM 개발의 중요한 부분입니다. 데이터를 수동으로 검사하는 데 시간을 투자함으로써, 우리는 이 데이터에 대한 더 나은 이해를 얻고, 결과적으로 우리 모델에 대한 더 나은 이해를 얻게 됩니다. 어떤 LLM 연구자에게 물어보면, 그들은 아마도 시간의 상당 부분을 데이터를 수동으로 검사하는 데 보낸다고 확인할 것입니다. 이 인기 없는 활동은 LLM 훈련 성공의 핵심 기여자입니다. 이것은 피할 수 없으며 (피해서도 안 됩니다)!
+
+이 재미있고 (정확한) 밈에 대한 원본 크레딧은 @code_star에게 있습니다.
+
+수동 데이터 검사의 주요 한계는 확장 가능하지 않다는 단순한 사실입니다. 연구자로서 우리가 수동으로 검사할 수 있는 데이터의 양은 제한적입니다. 데이터를 잘 이해하기 위해 충분한 수동 검사 3을 수행했다면, 데이터 검사 노력을 확장하기 위한 더 나은 전략을 개발해야 합니다.
+
+**휴리스틱 필터링(Heuristic filtering).** 수동 검사는 우리 데이터에서 많은 문제와 흥미로운 패턴을 발견할 것입니다. 예를 들어, 특정 단어가 매우 자주 재사용되는 것을 발견할 수 있습니다. 아래를 참조하십시오. 우리 모델이 데이터의 이러한 최적 이하의 패턴을 반영하지 않도록 하기 위해, 우리는 휴리스틱을 사용하여 이러한 패턴과 일치하는 훈련 예제를 찾아 필터링(또는 수정)할 수 있습니다. 예를 들어, 동일한 단어 세트를 재사용하는 데이터를 찾는 것은 간단한 문자열 일치(string match)를 통해 수행될 수 있습니다. 여기서는 기본적인 휴리스틱을 사용하여 데이터의 눈에 띄는 한계를 해결하고 있습니다. 최근에는 정규 표현식(regular expression)을 넘어, 특정 토큰 시퀀스나 문맥적 패턴을 감지하는 고급 휴리스틱이 개발되어 혐오 발언(hate speech), 편향된 콘텐츠, 또는 사실과 다른 정보(hallucination-prone content)를 식별하고 필터링하는 데 사용됩니다.
+
+(source) 우리가 고려할 수 있는 데이터 검사 및 필터링을 위한 다른 많은 휴리스틱이 있습니다. 예를 들어, 특정 데이터 소스가 다른 데이터 소스에 비해 더 높은 품질이거나 유용한 속성을 가지고 있음을 발견할 수 있습니다. 이에 따라, 우리는 훈련 4 동안 이 데이터를 강조하거나 심지어 이 소스에서 더 많은 데이터를 얻을 수 있습니다. 마찬가지로, 데이터의 하위 집합에서 정규 표현식(regex) 문으로 식별하거나 수정할 수 있는 형식 지정 문제를 발견할 수 있습니다. 수동 검사 단계에서의 관찰에 따라, 훈련 데이터셋에 적용해야 할 휴리스틱 검사 또는 수정의 수는 거의 무한합니다.
+
+**모델 기반 필터링(Model-based filtering).** 관찰된 문제가 휴리스틱하게 해결될 수 없다면, 머신러닝 모델의 도움을 받아 해결할 수 있습니다. fastText 분류기(classifiers)는 효율성 때문에 LLM 데이터 필터링에 많이 사용됩니다. 이들은 사전 훈련(pretraining) 규모에서도 작동할 수 있습니다. LLM 데이터 필터링에 사용되는 fastText 모델의 구체적인 예로는 언어 식별(예: 비영어 데이터 필터링) 또는 유해 콘텐츠 식별이 있습니다. 그러나 맞춤형 fastText 모델은 다양한 맞춤형 필터링 작업을 처리하도록 쉽게 훈련될 수 있습니다. 우리는 단순히 i) 식별하고자 하는 데이터의 예제로 모델을 훈련하고, ii) 모델을 사용하여 해당 데이터를 식별하며, iii) 식별된 데이터를 제거하거나 유지합니다. 아래를 참조하십시오. 최근에는 특정 데이터 품질(예: 일관성, 정확성, 최신성)을 측정하기 위해 소형 언어 모델(SLM)이나 BERT 기반 분류기를 미세 조정하여 사용하는 사례도 늘고 있습니다.
+
+(source) 데이터 필터링 목적으로 다른 종류의 모델도 사용할 수 있습니다. 예를 들어, LLM-as-a-Judge 스타일 모델은 데이터 필터링 및 합성 데이터(synthetic data) 생성 모두에 일반적으로 사용됩니다. Constitutional AI는 LLM 심사위원을 사용하여 합성 선호 쌍(synthetic preference pairs)을 생성하는 인기 있는 예시이며, Llama 4는 LLM 심사위원을 사용하여 지도 미세 조정(supervised finetuning) 데이터셋에서 더 쉬운 예제를 제거합니다. 우리는 필터링 목적으로 데이터 내에서 임의의 속성과 패턴을 (일반적으로 상당히 높은 정확도로) 식별하기 위해 유사한 접근 방식을 적용할 수 있습니다. 예를 들어, 데이터셋의 특정 바이어스(bias)를 자동으로 감지하고 완화하기 위해 특화된 LLM을 사용하는 연구가 활발히 진행 중입니다.
+
+"우리는 Llama 모델을 심사위원으로 사용하여 '쉬움'으로 태그된 데이터의 50% 이상을 제거하고, 남은 더 어려운 세트에 대해 경량 SFT를 수행했습니다." - [13]에서
+
+이러한 대규모 모델은 fastText 모델에 비해 훨씬 덜 효율적이어서, 더 작은 규모의 사용 사례(일반적으로 후처리 훈련)로 제한됩니다. 일부 가장 큰 현대 LLM보다 약 10,000배 작은 BERT-base를 fastText 모델과 비교하면, 효율성과 필요한 하드웨어의 차이는 엄청납니다. 아래를 참조하십시오. 그럼에도 불구하고, 데이터 큐레이션을 위한 더 정교한 접근 방식과 모델을 개발하는 것은 현재 AI 연구에서 가장 영향력 있는 주제 중 하나입니다.
+
+**데이터 필터링을 위한 fastText 대 BERT-base 사용** (source)
+
+## 모델 중심 큐레이션: LLM 출력 디버깅
+
+데이터에 대해 LLM 훈련을 시작하면, 이 LLM을 사용하여 훈련 데이터셋 내의 문제를 디버깅할 수 있습니다. 모델 중심 큐레이션의 아이디어는 간단합니다. 우리는 단순히:
+*   모델이 생성한 문제적이거나 부정확한 출력 식별.
+*   이러한 출력으로 이어질 수 있는 훈련 데이터의 인스턴스 검색.
+
+문제적 출력의 식별은 우리의 평가 시스템을 통해 처리됩니다. 우리는 인간(심지어 우리 자신!)이 수동 검사를 통해 불량 출력을 식별하게 하거나, 자동 평가 설정을 통해 부정확하거나 낮은 점수의 출력을 효율적으로 찾을 수 있습니다. 이러한 문제적 출력이 식별되면, LLM 디버깅은 검색 문제가 됩니다. 우리는 이러한 불량 출력과 관련될 수 있는 훈련 예제를 찾고자 합니다. 이 섹션에서는 이에 대한 몇 가지 일반적인 접근 방식을 살펴볼 것이며, Ai2에서 최근 개발한 OLMoTrace [2]라는 저비용의 효율적인 데이터 추적 방법을 마지막으로 다룰 것입니다.
+
+## 훈련 데이터 검색
+
+관련 훈련 데이터를 검색하는 것은 다른 어떤 검색 문제와도 유사합니다. 위를 참조하십시오. 유일한 차이점은 우리의 쿼리(query)가 검색창에 입력하는 것이 아니라 LLM의 출력이라는 점입니다. 하지만, 검색을 위한 모든 동일한 기술이 이 문제를 해결하는 데 적용될 수 있습니다. 이 주제에 대한 심층 분석을 위해 아래 개요를 확인하십시오. 이 섹션에서는 검색의 주요 개념과 이들이 훈련 데이터 추적에 어떻게 적용될 수 있는지 간략하게 다룰 것입니다.
+
+**AI 기반 (벡터) 검색의 기본**
+Cameron R. Wolfe, Ph.D. · 2024년 1월 8일
+현대 검색 시스템과 LLM이 이러한 시스템을 더 정확하게 만드는 데 어떤 역할을 하는지에 대한 소개. [전체 이야기 읽기]
+
+**어휘 검색(Lexical search).** 딥러닝(deep learning)이 대중화되기 수년 전에는 대부분의 검색 엔진이 순전히 어휘적(lexical)이었습니다. 이는 키워드(또는 n-그램(n-gram)) 일치에 의존하여 쿼리와 관련된 문서를 찾는다는 것을 의미합니다. 이러한 일치를 효율적으로 찾기 위해 우리는 역색인(inverted index)이라는 데이터 구조를 사용합니다. 각 쿼리와 문서 간의 일치 횟수를 세고, 일치하는 각 n-그램의 고유성을 고려함으로써, 각 문서에 대한 관련성 점수(relevance score)를 도출할 수 있습니다. 이를 위한 가장 일반적인 알고리즘은 BM25이며, 아래에 표시된 대로 계산됩니다.
+
+**BM25 점수 계산 공식**
+
+이러한 세부 사항이 복잡해 보일 수 있지만, rank_bm25 또는 bm25s와 같은 Python 패키지를 통해 BM25 기반 검색을 쉽게 구현할 수 있습니다. 이러한 패키지를 사용하면 Python에서 데이터에 대한 검색 색인(search index)을 구축하고 아래 코드 예제에 표시된 대로 검색을 실행할 수 있습니다. 보시다시피, 이 기능은 큰 노력 없이 쉽게 프로토타입을 만들고 사용하기 시작할 수 있습니다!
+
+```python
+from transformers import AutoTokenizer
+from rank_bm25 import BM25Okapi
+
+tok = AutoTokenizer.from_pretrained(<your tokenizer>)
+corpus = [
+    "Here is a training example",
+    "Here is another training example...",
+]
+tokenized_corpus = [doc.split(" ") for doc in corpus]
+bm25 = BM25Okapi(tokenized_corpus)
+```
+
+**의미 검색(Semantic search).** 어휘 검색의 강력함과 효율성에도 불구하고, 이 기술은 여전히 키워드 일치에 의존합니다. 의미 일치(즉, 유사한 의미를 가진 다른 단어)는 이 프레임워크에 의해 포착되지 않습니다. 의미 일치를 처리하려면 어떤 형태의 벡터 검색(vector search)을 사용해야 합니다. 아래를 참조하십시오. 최근에는 OpenAI의 `text-embedding-3-large`나 Google의 `text-embedding-004`와 같은 고성능 임베딩 모델들이 출시되어, 텍스트의 미묘한 의미 차이까지 포착하는 능력이 크게 향상되었습니다. 이러한 모델들은 다국어 지원 및 더 긴 컨텍스트 처리에 강점을 보여, LLM 훈련 데이터 검색의 정확도를 높이는 데 기여합니다.
+
+**간단한 벡터 검색 파이프라인**
+
+벡터 검색에서는 임베딩 모델(embedding model)을 사용하여 검색하려는 각 문서에 대한 임베딩(embedding)을 생성합니다. 그런 다음, 이러한 모든 임베딩을 벡터 데이터베이스(vector database)에 저장하며, 이는 계층적 탐색 가능한 작은 세계(hierarchical navigable small worlds, HNSW)와 같은 알고리즘을 사용하여 유사한 임베딩을 효율적으로 검색할 수 있게 합니다. 여기에서 우리는 단순히 쿼리를 임베딩하고 색인 내에서 유사한 임베딩을 검색하여, 쿼리와 의미적으로 유사한 문서를 찾을 수 있습니다! 이것은 검색 증강 생성(retrieval augmented generation, RAG)이 LLM의 컨텍스트(context)에 추가할 관련 텍스트 청크(text chunks)를 검색하기 위해 수행하는 것과 정확히 같습니다. 자세한 내용은 여기를 참조하십시오.
+
+**바이-인코더(bi-encoders)와 크로스-인코더(cross-encoders)의 차이점**
+
+위에 설명된 의미 검색 시스템은 바이-인코더(bi-encoders)를 사용합니다. 이들은 각 문서와 쿼리에 대해 별도의 임베딩을 생성하며, 이 임베딩들은 코사인 유사도(cosine similarity) 점수를 통해 서로 일치됩니다. 그러나 우리는 문서와 쿼리 모두를 입력으로 받아 단일 유사도 점수를 출력하는 크로스-인코더(cross-encoders)도 사용할 수 있습니다. 이 두 전략의 차이점은 위 그림에 설명되어 있습니다. 다양한 사전 훈련된 바이-인코더와 크로스-인코더가 공개 저장소(public repos)에서 사용 가능하며, 미세 조정(finetuned)되거나 즉시 사용될 수 있습니다. 자세한 내용은 여기를 참조하십시오.
+
+현대 검색 시스템은 이러한 모든 기술을 결합합니다. 바이-인코더와 (BM25) 어휘 검색의 하이브리드(hybrid) 방식이 먼저 사용되어 쿼리에 가장 관련성이 높은 문서를 효율적으로 검색합니다. 그런 다음, 크로스-인코더를 사용하여 검색된 문서의 세밀한 순위 지정(fine-grained ranking)을 수행하여 가장 관련성이 높은 문서를 목록의 맨 위로 가져옵니다. 아래를 참조하십시오. 이러한 모든 구성 요소는 검색 엔진이 사용됨에 따라 수집된 데이터를 통해 미세 조정되어 시간이 지남에 따라 정확도를 향상시킬 수 있습니다.
+
+**현대 AI 기반 검색 프레임워크**
+
+**디버깅에 검색 적용.** 이제 검색 시스템의 기본 사항을 이해했으므로, 이러한 아이디어를 LLM 출력 디버깅에도 적용할 수 있습니다. 그러나 LLM 출력 디버깅에는 이 사용 사례를 표준 검색 애플리케이션과 다르게 만드는 두 가지 고유한 고려 사항이 있습니다.
+*   LLM 훈련 데이터셋은 방대할 수 있으며 (수십 조 개의 토큰), 이는 일부 기술의 사용을 제한할 수 있습니다.
+*   사용 사례에 따라 LLM의 출력과 LLM이 훈련된 문서가 매우 길 수 있습니다.
+
+대규모 데이터셋을 추적하는 경우, 벡터 검색과 같은 기술을 사용하는 것은 (불가능하지는 않지만) 시간 소모적이고 비용이 많이 들 수 있습니다. 우리는 먼저 전체 데이터셋에 대한 임베딩을 생성한 다음, 이 임베딩을 벡터 데이터베이스에 저장하여 검색 가능하게 만들어야 합니다. 이 프로세스는 많은 설정(대규모 데이터 파이프라인 생성 포함!)을 필요로 하며, 이는 진입 장벽을 높입니다. 더 나아가, LLM의 출력과 훈련 문서가 매우 길 수 있다는 사실은 이 검색 문제에 다르게 접근해야 함을 의미합니다. 전체 출력을 검색 쿼리로 사용하는 대신, 이 출력에서 더 짧은 스팬(span)을 고려하고 훈련 데이터에서 유사한 스팬을 검색해야 합니다.
+
+이상적으로, 우리는 훈련 데이터를 추적하기 위한 다음과 같은 기술을 개발하고자 합니다:
+*   설정이 비교적 간단함.
+*   대규모 데이터셋에서 효율적임.
+*   (더 짧은) 스팬 수준에서 작동 가능함.
+
+## 인피니-그램(Infini-gram): 무한 n-그램 언어 모델을 1조 토큰으로 확장 [1]
+
+"n-그램 카운트 테이블을 미리 계산하는 대신(이는 매우 비용이 많이 들 것입니다), 우리는 접미사 배열(suffix arrays)로 구동되는 인피니-그램이라는 엔진을 개발하여 밀리초 수준의 지연 시간으로 ∞-그램(임의의 n을 가진 n-그램 포함) 확률을 계산할 수 있습니다." - [1]에서
+
+방대한 데이터셋을 효율적으로 추적하는 방법을 이해하려면, 먼저 인피니-그램 [1]의 개념을 이해해야 합니다. 간단히 말해, 인피니-그램은 n-그램을 임의로 큰 N 값으로 일반화한 것입니다. 우리가 보게 될 것처럼, 인피니-그램의 확률을 계산하는 데 사용하는 데이터 구조는 방대한 데이터셋 내에서 임의 길이의 텍스트 스팬을 (매우 효율적으로) 찾고 세는 데도 사용될 수 있습니다. 이 속성은 모델 중심 큐레이션 및 디버깅에 매우 유용합니다!
+
+**텍스트 시퀀스에서 n-그램 생성**
+
+**n-그램 LM이란 무엇인가요?** n-그램은 단순히 N개의 토큰(또는 단어)으로 구성된 순서 있는 집합입니다. 텍스트 시퀀스가 주어졌을 때, 위에서 보듯이 N=3을 선택하여 이를 n-그램으로 나눌 수 있습니다. 전체 텍스트 데이터셋을 n-그램으로 나누면, 데이터셋 내에서 특정 n-그램이 나타나는 횟수를 세는 것만으로도 해당 n-그램의 확률을 실제로 계산할 수 있습니다. 아래를 참조하십시오.
+
+**n-그램 확률 계산**
+
+이러한 모든 카운트(counts)는 일반적으로 미리 계산되어 카운트 테이블(count table)에 저장되므로, n-그램 확률을 빠르게 조회하고 위에 표시된 표현식을 평가할 수 있습니다. 우리는 실제로 n-그램 확률을 사용하여 간단한 언어 모델을 만들 수 있습니다! n-그램을 사용하여 시퀀스의 다음 토큰을 예측하려면, 우리는 단순히 다음을 수행합니다:
+*   시퀀스의 마지막 N-1개 토큰을 봅니다.
+*   이전 N-1개 토큰이 주어졌을 때 각 가능한 n-그램의 확률을 얻습니다.
+*   다른 언어 모델과 유사하게 다음 토큰을 샘플링합니다.
+
+**n-그램의 한계.** 실용적으로 말하면, n-그램 LM은 텍스트 생성에 능숙하지 않습니다. n-그램을 세는 것만으로는 강력한 챗봇을 만들 수 없을 것입니다. 이것이 N의 어떤 값에 대해서도 사실이지만, n-그램 LM의 성능을 제한하는 주요 문제 중 하나는 n-그램 카운트 테이블이 N에 대해 (거의) 지수적으로 크기가 증가한다는 사실입니다. 결과적으로, 대부분의 n-그램 LM은 작은 N 값(예: N=5가 일반적인 설정)으로 제한되며, 의미 있는 긴 컨텍스트(context) 언어 분포를 포착하는 능력이 낮습니다. 아래를 참조하십시오.
+
+(출처 [1]) 또한, n-그램 LM은 희소성(sparsity) 문제에 직면합니다. 일부 n-그램은 우리 데이터에 나타나지 않을 수 있으며, 이로 인해 확률을 계산하기 위해 더 작은 n-그램으로 되돌아가야 합니다. 이 개념은 일반적으로 n-그램 "백오프(backoff)"라고 불립니다. 더 작은 n-그램으로 백오프할 때 유효한 확률 추정치를 형성하는 것은 실제로는 상당히 복잡합니다.
+
+**n-그램을 다시 관련성 있게 만들기.** [1]에서 저자들은 현대 LLM과 더 잘 어울리는 n-그램 LM의 변형인 인피니-그램(infini-grams, 또는 ∞-그램)을 제안합니다. 표준 n-그램에 비해 인피니-그램은 두 가지 주요 변경 사항을 가집니다:
+*   다른 현대 LLM과 마찬가지로 방대한 텍스트 데이터셋(수조 개의 토큰)에서 훈련되어 희소성 문제를 완화합니다.
+*   n-그램의 확률을 계산할 때 N의 값을 임의로 크게 만들 수 있어 데이터에서 더 의미 있는 분포를 포착합니다.
+
+**∞-그램이란 무엇인가요?** 이러한 변경을 통해 인피니-그램은 위에서 다룬 n-그램 LM의 가장 큰 두 가지 문제를 해결합니다. 어떻게 작동할까요? 텍스트 시퀀스 w가 있다고 가정해 봅시다. 토큰 i의 인피니-그램을 계산하기 위해, 우리는 시퀀스에서 토큰 i 앞에 오는 모든 토큰을 고려합니다. 아래를 참조하십시오.
+
+**인피니-그램 확률 계산**
+
+이 방정식의 왼쪽에서 인피니-그램 확률은 시퀀스의 전체 이전 컨텍스트(context)에 조건화되며, 이는 이전과는 다릅니다. 그러나 이 방정식의 오른쪽은 n-그램 확률과 정확히 일치합니다! n-그램과 인피니-그램의 주요 차이점은 N 값을 선택하는 방식에 있습니다. n-그램의 경우 N은 (고정된) 하이퍼파라미터(hyperparameter)입니다. 대조적으로, 인피니-그램은 백오프(backoff) 절차를 사용하여 N을 동적으로 선택합니다. 더 구체적으로, 우리는 이 표현식의 분모를 가능한 가장 큰 N(시퀀스의 모든 선행 토큰)으로 테스트하고, 분모가 0이 아닐 때까지 N을 하나씩 계속 감소시킵니다. 아래를 참조하십시오.
+
+"분모가 양수가 되는 즉시 백오프를 중단하며, 이때 분자는 여전히 0일 수 있습니다… 유효 n은 훈련 데이터에 나타나는 프롬프트(prompt)의 가장 긴 접미사 길이에 1을 더한 값과 같습니다." - [1]에서
+
+w'를 토큰 i-1까지 (포함하여) w의 부분 시퀀스(subsequence)로 정의한다면, 이 백오프 절차는 단순히 우리 데이터셋에 존재하는 w'의 가장 긴 접미사(suffix)를 찾는 것입니다. 여기에서 우리는 백오프를 통해 찾은 N 값을 사용하여 이전의 표준 n-그램 확률 표현식을 사용하여 인피니-그램 확률을 계산합니다.
+
+**∞-그램 확률 계산.** 인피니-그램 확률을 계산하기 위해, 우리는 이전처럼 단순히 카운트를 미리 계산하여 테이블에 저장할 수 없습니다. N의 값은 무한하며, 인피니-그램은 [1]에서 LLM 규모의 데이터셋에서 훈련됩니다. 이러한 카운트 테이블의 크기는 방대할 것입니다. 대신, 우리는 접미사 배열(suffix array)이라는 데이터 구조를 사용하여 인피니-그램 확률을 효율적으로 계산하는 엔진을 만듭니다.
+
+**여섯 문자 장난감 시퀀스에 대한 접미사 배열** (출처 [1])
+
+접미사 배열의 개념은 위에 묘사되어 있습니다. 길이 L의 텍스트 시퀀스 w가 주어졌을 때, 접미사 배열은 다음을 통해 구성됩니다:
+*   이 시퀀스의 모든 접미사를 추출합니다(L개).
+*   접미사를 사전순으로 정렬합니다 5.
+*   정렬된 각 접미사의 원본 인덱스(정렬 전)를 목록 내에 저장합니다. 이것이 접미사 배열입니다!
+
+w'를 토큰 i부터 토큰 j까지 실행되는 w의 임의의 부분 배열(subarray)이라고 가정해 봅시다 (여기서 i < j). w'로 시작하는 모든 접미사는 배열이 사전순으로 정렬되어 있기 때문에 접미사 배열에 연속적으로 저장됩니다. 이 속성을 사용하여 w 내에서 w'의 개수를 효율적으로 계산할 수 있습니다. 우리는 배열에서 w'가 접두사(prefix)인 첫 번째 및 마지막 접미사의 인덱스를 찾고, w 내 w'의 개수는 이 두 인덱스 간의 차이입니다. w'의 개수를 계산할 수 있다면, 임의의 인피니-그램 확률을 계산할 수 있습니다. 이 연산은 N을 찾고 인피니-그램 확률 표현식 내의 두 카운트를 계산하는 데 사용될 수 있습니다!
+
+**텍스트 토큰에 대한 접미사 배열** (출처 [1])
+
+**LLM을 위한 ∞-그램.** LLM의 맥락에서, 우리의 시퀀스 w는 LLM의 전체 토큰화된 훈련 데이터셋이며, 문서 경계는 고정된 구분자 토큰(separator token) 6으로 표시됩니다. 위를 참조하십시오. 이 시퀀스는 클 것입니다. 현대 LLM은 수십 조 개의 토큰으로 훈련되지만, 접미사 배열은 이 규모의 데이터를 처리할 수 있습니다 7.
+
+"추론(inference) 중에는 전체 인피니-그램 색인이 디스크에 유지될 수 있어 필요한 컴퓨팅 자원(GPU 없음, 최소한의 CPU/RAM)을 최소화합니다… 가장 최적화된 인피니-그램 엔진은 주어진 n-그램을 평균 20밀리초 미만의 지연 시간으로 셀 수 있습니다. n-그램 LM의 경우 40밀리초, ∞-그램의 경우 200밀리초 내에 확률 및 다음 토큰 분포를 계산할 수 있습니다." - [1]에서
+
+예를 들어, [1]에서 5조 토큰 데이터셋 위에 구축된 접미사 배열은 약 35테라바이트(Tb)의 메모리를 소비합니다. 이 접미사 배열을 구축하는 데 약 48시간이 걸리며, 생성 후에는 인피니-그램 확률을 계산할 때도 전체 접미사 배열을 디스크에 저장할 수 있습니다. 결과적으로 생성된 인피니-그램 엔진은 2경 개 이상의 고유한 n-그램에 대한 확률을 계산하는 데 사용될 수 있습니다. 그러나 이 크기의 데이터셋에서 주어진 n-그램의 개수를 검색하는 데는 여전히 약 20밀리초밖에 걸리지 않습니다!
+
+**실제 ∞-그램 사용.** 인피니-그램 뒤에 있는 아이디어를 완전히 이해하는 데는 시간이 걸릴 것입니다. 다행히도, Ai2의 다른 프로젝트와 마찬가지로 전체 인피니-그램 프로젝트는 완전히 오픈 소스(open-source)입니다! Python에서 인피니-그램을 사용하는 데 사용할 수 있는 많은 오픈 소스 도구들이 있습니다. 자세한 내용은 프로젝트 웹사이트를 참조하십시오.
+
+```bash
+%pip install infini_gram
+python -m infini_gram.indexing --data_dir <path to data> --save_dir <path to save index> --tokenizer llama # also supports gpt2 and olmo --cpus <cpus available> --mem <memory available (in Gb)> --shards 1 # increase if N > 500B --add_metadata --ulimit 1048576
+```
+
+이 개요와 가장 관련 있는 도구는 infini-gram Python 패키지입니다. 여러 오픈 LLM 훈련 데이터셋이 이 패키지 내에 이미 사전 색인화(pre-indexed)되어 있지만, 위 명령어를 사용하여 사용자 정의 데이터셋에 대한 인피니-그램 색인을 구축하는 데도 이 패키지를 사용할 수 있습니다. 색인이 사용 가능해지면, infini-gram Python 패키지를 사용하여 다양한 검색 및 카운팅 작업을 효율적으로 실행할 수 있습니다. 예시는 아래를 참조하고, 자세한 내용은 여기를 참조하십시오.
+
+```python
+from infini_gram.engine import InfiniGramEngine
+from transformers import AutoTokenizer
+
+# instantiate tokenizer (must match tokenizer used for indexing)
+tokenizer = AutoTokenizer.from_pretrained(
+    "meta-llama/Llama-2-7b-hf", add_bos_token=False, add_eos_token=False,
+)
+
+# connect to infini-gram engine
+engine = InfiniGramEngine(
+    index_dir=<path to index>,
+    eos_token_id=tokenizer.eos_token_id,
+)
+
+# sample n-gram / sequence
+inp = "This is my sample n-gram sequence."
+inp_ids = tokenizer.encode(inp)
+
+# find matching n-grams in dataset
+result = engine.find(input_ids=input_ids)
+
+# n-gram count
+result = engine.count(input_ids=inp_ids)
+
+# n-gram probability
+result = engine.prob(
+    prompt_ids=inp_ids[:-1],
+    cont_id=inp_ids[-1],
+)
+
+# next token distribution
+result = engine.ntd(prompt_ids=inp_ids)
+
+# infini-gram probability
+result = engine.infgram_prob(
+    prompt_ids=inp_ids[:-1],
+    cont_id=inp_ids[-1],
+)
+```
+
+## OLMoTrace: 언어 모델 출력을 수조 개의 훈련 토큰으로 추적 [2]
+
+(출처 [2]) OLMoTrace [2]는 LLM의 출력을 훈련 데이터 내의 예제에 효율적으로 귀속시키는 새로운 접근 방식을 개척합니다. 이 접근 방식은 Ai2 플레이그라운드(playground, 위에 표시됨) 내에 배포되어 있으며, LLM 출력과 관련된 훈련 문서를 몇 초 만에 검색하는 추적(trace)을 수행할 수 있습니다. LLM이 방대한 데이터셋에서 훈련된다는 점을 고려할 때, 그러한 실시간 추적이 어떻게 가능할지 궁금할 수 있습니다. 다행히도, 우리는 이미 답을 알고 있습니다: 인피니-그램(infini-grams)!
+
+"OLMOTRACE의 목적은 LM 출력이 특정 단어 시퀀스를 생성하는 방법을 어디에서 배웠는지 탐색할 수 있는 도구를 사용자에게 제공하는 것이며, LM 출력과 훈련 데이터 간의 가장 직접적인 연결로서 문자 그대로의 일치(verbatim matching)에 초점을 맞춥니다." - [2]에서
+
+**추적 전략.** OLMoTrace의 핵심 아이디어는 모델의 출력과 훈련 데이터셋 모두에 존재하는 길고 고유한 토큰 시퀀스의 예제를 찾는 것입니다. 프롬프트(prompt)와 LLM 응답을 입력으로 받으면, OLMoTrace는 다음을 반환합니다:
+*   LLM 응답에서 발견된 주목할 만한 텍스트 스팬(textual spans) 집합.
+*   각 응답 스팬과 관련된 LLM 훈련 데이터에서 가장 관련성 높은 문서 스팬 목록.
+
+벡터 검색과 달리, 모델 출력과 훈련 데이터 간의 이러한 일치는 문자 그대로(verbatim)여야 합니다. 정확한 토큰 일치는 지난 섹션에서 논의했듯이 접미사 배열로 빠르게 식별할 수 있습니다. 그러나 최상의 일치하는 문서가 식별되고 반환되도록 보장하려면 표준 인피니-그램 기능 위에 구축된 4단계 알고리즘이 필요합니다.
+
+**(1단계) 최대 일치 스팬(Maximal Matching Spans).** LLM의 응답을 토큰화한 후, 우리는 이 응답에서 세 가지 속성을 만족하는 모든 텍스트 스팬을 찾습니다:
+*   **존재성(Existence)**: 스팬이 훈련 데이터에 정확히 일치하는 부분이 있습니다.
+*   **최대성(Maximality)**: 스팬이 다른 일치하는 스팬의 하위 스팬(sub-span)이 아닙니다.
+*   **자체 포함성(Self-contained)**: 스팬이 불완전하지 않습니다. 예를 들어, 불완전한 단어로 시작하거나 끝나지 않으며, 스팬 중간에 구두점(punctuation)을 포함하지 않습니다.
+
+이러한 속성은 아래 그림에 설명되어 있습니다. 여기에서 우리는 세 개의 일치하는 스팬이 있음을 봅니다. 그러나 하나(녹색으로 윤곽선이 표시된)를 제외한 모든 스팬은 i) 최대가 아니거나 ii) 자체 포함되지 않았기 때문에 제거됩니다.
+
+**최대 및 자체 포함 스팬의 그림**
+
+최대 스팬을 순진하게(naively) 계산하는 것은 비효율적이지만, [2]의 저자들은 인피니-그램 색인의 find 연산에 의존하는 더 효율적인 알고리즘을 제안합니다. 토큰 시퀀스가 입력으로 주어지면, find 연산은 다음을 반환합니다:
+*   색인에서 일치하는 스팬의 개수.
+*   일치하는 데이터 스팬을 조회하는 데 사용할 수 있는 세그먼트 8 범위.
+
+그러나 반환된 개수가 0인 경우(이 시퀀스에 대한 정확한 일치가 데이터에 없음을 나타냄), find 연산은 여전히 (비어 있는) 세그먼트 범위를 반환할 것입니다. 접미사 배열이 사전순으로 정렬되어 있기 때문에, 이 범위의 인덱스는 우리 데이터셋에서 시퀀스의 가장 긴 일치 접두사에 해당합니다.
+
+```python
+""" ### .find() output example (match):
+{
+    'cnt': 10,
+    'segment_by_shard': [(13693395, 13693405)],
+}
+
+### .find() output example (no match):
+{
+    'cnt': 0,
+    'segment_by_shard': [(85267640, 85267640)],
+}
+"""
+# lookup training documents from .find()
+rank_start, rank_end = result['segment_by_shard'][0]
+ranks = [r for r in range(rank_start, rank_end)]
+for r in ranks:
+    docs = engine.get_doc_by_rank(
+        s=0, # assumes suffix array has a single shard
+        rank=r,
+        max_disp_len=len(inp_ids) * 5, # size of doc chunk
+    )
+    doc_text = [tokenizer.decode(d['token_ids']) for d in docs]
+    print(f'Number of documents: {len(docs)}')
+    print(f'Matching document: {doc_text[0]}')
+```
+
+find 연산의 이 속성은 [2]에서 스팬 일치를 위한 효율적인 알고리즘을 만드는 데 활용됩니다. 아래 그림에 표시된 대로, 이 알고리즘은 입력 시퀀스의 모든 접미사에 대해 단일 find 연산을 실행하여 각 접미사에 대한 가장 긴 일치 접두사를 산출합니다. 이러한 모든 일치하는 스팬이 식별되면, 이 목록을 다시 한 번 통과하여 최대가 아니거나 자체 포함되지 않은 일치하는 스팬을 제거할 수 있습니다.
+
+(출처 [2]) **(2단계) 스팬 필터링(Span Filtering).** 위에서 설명한 대로 계산된 최대 스팬 목록이 길다면, 이 스팬들 중 가장 유용하고 관련성 높은 것을 식별하기 위한 전략이 필요합니다. 이를 위해 [2]의 저자들은 스팬의 유니그램 확률(unigram probability, 낮을수록 좋음) 또는 스팬 내 각 토큰의 유니그램 확률 곱에 따라 스팬에 점수를 매깁니다. 주어진 토큰의 유니그램 확률은 일반적으로 모든 토큰에 대해 미리 계산되어 캐시(cache)에 저장되며, 아래에 표시된 대로 계산될 수 있습니다.
+
+**토큰의 유니그램 확률 계산**
+
+[2]에서 저자들은 스팬을 스팬 유니그램 확률에 따라 정렬하고, 이 목록에서 처음 K개의 스팬만 유지합니다. 여기서 K는 길이 L의 시퀀스에 대해 K = ceil(0.05 x L)입니다.
+
+**(3-4단계) 스팬 병합 및 문서 가져오기.** 혼란을 피하기 위해, OLMoTrace에서는 겹치는 스팬이 병합됩니다. 이러한 각 최종 스팬에 대한 문서가 검색됩니다. 그러나 각 스팬과 관련된 문서의 수는 많을 수 있으므로, 문서를 하위 선택해야 합니다. 예를 들어, [2]의 저자들은 스팬당 10개의 문서를 유지합니다. 가장 관련성 높은 문서를 찾기 위해, 우리는 LLM의 출력과 검색된 문서 간의 BM25 점수에 따라 순위를 매길 수 있습니다. 최근에는 BM25 외에도 벡터 유사도(vector similarity)를 결합한 하이브리드 순위 지정(hybrid ranking)이 더욱 정교한 문서 검색을 위해 사용되고 있습니다.
+
+"가장 관련성 높은 문서를 우선적으로 표시하기 위해, 문서 패널에서는 모든 문서를 BM25 점수 내림차순으로 순위를 매깁니다. 문서별 BM25 점수는 검색된 문서의 컬렉션을 코퍼스(corpus)로, 사용자 프롬프트와 LM 응답의 연결을 쿼리로 처리하여 계산됩니다." - [2]에서
+
+(출처 [2]) **예제 구현.** OLMoTrace의 추론 파이프라인(inference pipeline)은 위 그림에 표시되어 있습니다. 이것이 어떻게 작동하는지 더 잘 이해하기 위해, Python의 infini-gram 패키지를 사용하여 핵심 기능을 (빠르게) 구현해 봅시다.
+
+인피니-그램 색인을 구축하려면, LLM의 모든 훈련 데이터를 단일 디렉토리(directory)에 넣어야 합니다. infini-gram 패키지는 데이터가 하나 이상의 .jsonl 파일로 포맷되기를 기대하며, 각 파일은 텍스트 및 메타데이터(metadata) 필드를 포함합니다. 아래를 참조하십시오. .jsonl 파일의 각 줄은 훈련 데이터셋의 단일 문서에 해당합니다.
+
+```json
+{
+    'text': 'This is a training sequence for our LLM...',
+    'metadata': {
+        'source': <url>,
+        'category': 'general',
+        'year': 2025,
+        ...
+    },
+}
+```
+
+데이터가 이렇게 포맷되면, 이전에 설명한 대로 인피니-그램 색인을 구축할 수 있습니다. 또한, OLMoTrace는 모든 토큰에 대한 유니그램 확률을 미리 계산하도록 요구합니다. 이 두 단계는 아래에 구현되어 있습니다. 이 코드는 Llama 2 토크나이저(tokenizer)를 사용하여 추적을 수행하고, 인피니-그램 색인에 단일 샤드(shard)만 필요하다고 가정합니다. 기본 토크나이저는 수정될 수 있으며, 매우 큰 데이터셋(즉, 5천억 개 이상의 토큰)으로 작업할 때는 색인에 여러 샤드에 대한 지원이 필요할 수 있습니다.
+
+이 파일에는 아래에 표시된 것과 다르게 해석되거나 컴파일될 수 있는 숨겨진 또는 양방향 유니코드 텍스트가 포함되어 있습니다. 검토하려면 숨겨진 유니코드 문자를 표시하는 편집기에서 파일을 여십시오. 양방향 유니코드 문자에 대해 자세히 알아보십시오. 숨겨진 문자 표시
+
+```python
+import os
+import json
+from collections import Counter
+import tempfile
+from transformers import AutoTokenizer
+
+# load tokenizer / data
+enc = AutoTokenizer.from_pretrained(
+    "meta-llama/Llama-2-7b-hf", add_bos_token=False, add_eos_token=False
+)
+data_rows = [{'text': 'here is some training data'}, ...]
+
+# compute / save unigram probabilities
+all_toks = []
+for x in data_rows:
+    all_toks.extend(enc.encode(x['text']))
+total_toks = len(all_toks)
+tok_count = Counter(all_toks)
+unigram_probs = {}
+for tid in tok_count:
+    cnt = tok_count[tid]
+    unigram_probs[tid] = cnt / total_toks
+
+with open(<save path>, 'w') as json_file:
+    json.dump(unigram_probs, json_file, indent=4)
+
+# build infinigram index
+data_dir = <path to data>
+save_dir = <save index here>
+temp_dir = tempfile.TemporaryDirectory()
+command = (
+    f"python -m infini_gram.indexing --data_dir {data_dir} "
+    f"--temp_dir {temp_dir.name} --save_dir {save_dir} "
+    f"--tokenizer llama --cpus 12 --mem 64 --shards 1 "
+    f"--add_metadata --ulimit 100000 "
+)
+print(command)
+os.system(command)
+temp_dir.cleanup()
+```
+
+이제 인피니-그램 색인이 구축되었으므로, 아래 코드에 표시된 대로 [2]의 OLMoTrace가 제안한 알고리즘을 따라 훈련 데이터셋에 걸쳐 텍스트 시퀀스를 추적할 수 있습니다. 이 코드는 스팬 집합과 훈련 코퍼스(corpus)의 메타데이터가 포함된 관련 문서를 모두 반환합니다.
+
+이 파일에는 아래에 표시된 것과 다르게 해석되거나 컴파일될 수 있는 숨겨진 또는 양방향 유니코드 텍스트가 포함되어 있습니다. 검토하려면 숨겨진 유니코드 문자를 표시하는 편집기에서 파일을 여십시오. 양방향 유니코드 문자에 대해 자세히 알아보십시오. 숨겨진 문자 표시
+
+```python
+import ast
+import math
+import random
+from infini_gram.engine import InfiniGramEngine
+from transformers import AutoTokenizer
+from collections import defaultdict # Added for clarity
+
+def compute_longest_prefix(query, doc):
+    """helper function for computing longest prefix of query that exists within a document"""
+    def shared_prefix_length(list1, list2):
+        prefix_length = 0
+        for elem1, elem2 in zip(list1, list2):
+            if elem1 == elem2:
+                prefix_length += 1
+            else:
+                break
+        return prefix_length
+
+    first_id = query[0]
+    start_idx = [index for index, value in enumerate(doc) if value == first_id]
+    longest_prefix = 0
+    for si in start_idx:
+        longest_prefix = max(
+            longest_prefix, shared_prefix_length(query, doc[si:]),
+        )
+    return longest_prefix
+
+# setup
+enc = AutoTokenizer.from_pretrained(
+    "meta-llama/Llama-2-7b-hf", add_bos_token=False, add_eos_token=False
+)
+engine = InfiniGramEngine(
+    index_dir=<path to index>,
+    eos_token_id=enc.eos_token_id
+)
+unigram_probs = {1: 0.5, 2: 0.5} # load pre-computed probabilities (Placeholder)
+# In a real scenario, you would load this from the saved JSON file
+# with open(<path to unigram_probs.json>, 'r') as f:
+#     unigram_probs = json.load(f)
+
+
+# LLM output / query to search
+generation = 'Here is the output of the LLM that we want to search for in our data.'
+gen_ids = enc.encode(generation)
+
+""" Step One: find maximal matching spans """
+L = len(gen_ids)
+max_doc_toks = len(gen_ids) * 2 # size of spans to retrieve in documents
+
+# find longest prefix match for every suffix in the query
+spans = []
+for start in range(len(gen_ids) - 1):
+    _suffix = gen_ids[start:]
+    _suff_res = engine.find(input_ids=_suffix)
+
+    # if no match, get the longest matching prefix using find result
+    if _suff_res['cnt'] == 0:
+        _shards = _suff_res['segment_by_shard']
+        assert len(_shards) == 1 # assume only one shard
+        # Correctly handle case where _doc_ids might be empty or not directly iterable
+        doc_info = engine.get_doc_by_rank(
+            s=0, # assume only one shard
+            rank=_shards[0][0],
+            max_disp_len=max_doc_toks,
+        )
+        _doc_ids = doc_info['token_ids'] if 'token_ids' in doc_info else []
+        matched_toks = compute_longest_prefix(_suffix, _doc_ids) # get longest matching prefix
+    elif _suff_res['cnt'] > 0:
+        matched_toks = len(_suffix)
+    spans.append((start, start + matched_toks))
+
+# remove partial and non-self-contained spans
+full_spans = []
+for start, end, in spans: # Removed ids, text for initial iteration
+    if start >= end: # Skip empty or invalid spans
+        continue
+    span_ids = gen_ids[start: end]
+    span_text = enc.decode(span_ids)
+
+    # check for internal punctuation
+    has_internal_punc = False
+    punc_chars = "!.?\n"
+    for ch in span_text[:-1]:
+        if ch in punc_chars:
+            has_internal_punc = True
+            break
+    if has_internal_punc:
+        continue
+
+    # check if first token is a continuation of a word
+    first_tok_id = span_ids[0]
+    first_tok = enc.convert_ids_to_tokens(first_tok_id)
+    # Llama 2 tokenizer adds ' ' prefix to words, so a token not starting with ' '
+    # means it's part of a previous word, unless it's the very first token in a sentence.
+    # This heuristic can be refined based on specific tokenizer behavior.
+    if first_tok.startswith(' ') is False and start != 0: # Assuming Llama 2 token format, first token might not have space if it's start of generation.
+        continue
+
+    # no sub-token follows the last token (ensure it's a complete word/phrase)
+    # This check is a bit complex and depends heavily on tokenizer.
+    # A simpler approach might be to check if the last token is a full word.
+    # For now, keeping the original logic, assuming it's robust for Llama-2.
+    if end < len(gen_ids) and enc.convert_ids_to_tokens(gen_ids[end])[0].startswith(' ') is False:
+        continue
+
+
+    full_spans.append((start, end, span_ids, span_text))
+
+# remove non-maximal spans
+maximal_spans = []
+max_end_pos = -1
+full_spans = sorted(full_spans, key=lambda x: x[0]) # Sort by start position
+for start, end, ids, text in full_spans:
+    if end > max_end_pos:
+        maximal_spans.append((start, end, ids, text))
+        max_end_pos = end
+
+""" Step Two: filter to keep long / unique spans """
+K = math.ceil(0.05 * L)
+assert K > 0
+
+filt_spans = []
+for start, end, ids, text in maximal_spans:
+    span_uni_prob = 1.0 # Initialize to 1.0 for product
+    for _id in ids:
+        if _id in unigram_probs:
+            span_uni_prob *= unigram_probs[_id]
+        else:
+            span_uni_prob = 0 # If any token not found, probability is 0 (or a very small number)
+            break
+    filt_spans.append((start, end, ids, text, span_uni_prob))
+
+filt_spans = sorted(filt_spans, key=lambda x: x[-1])
+filt_spans = filt_spans[:K]
+filt_spans = sorted(filt_spans) # sort based on start position again
+
+""" Step Three: retrieve Enclosing Docs """
+docs_per_span = 10
+span_to_docs = defaultdict(list)
+for i, (start, end, ids, text, uni_prob) in enumerate(filt_spans):
+    # run retrieval in infinigram index to get documents
+    span_res = engine.find(input_ids=ids)
+    assert span_res['cnt'] > 0
+    assert len(span_res['segment_by_shard']) == 1 # assume only one shard
+    rank_start, rank_end = span_res['segment_by_shard'][0]
+    ranks = [r for r in range(rank_start, rank_end)]
+
+    if len(ranks) > docs_per_span:
+        # retrieve fixed number of documents for each span
+        ranks = sorted(random.sample(ranks, docs_per_span))
+    # NOTE: we can instead rank documents by BM25 score here!
+    for r in ranks:
+        _doc = engine.get_doc_by_rank(
+            s=0,
+            rank=r,
+            max_disp_len=max_doc_toks,
+        )
+        # Handle potential KeyError if 'metadata' is not always present or is a string
+        _doc_meta = ast.literal_eval(_doc.get('metadata', '{}'))
+        if 'metadata' in _doc_meta and isinstance(_doc_meta['metadata'], dict):
+            _doc_meta = _doc_meta['metadata']
+        else:
+            _doc_meta = {} # Default to empty dict if metadata is not as expected
+
+        _doc_text = enc.decode(_doc['token_ids'])
+        _doc_data = {"text": _doc_text, **_doc_meta}
+        span_to_docs[i].append(_doc_data)
+
+""" Step Four: merge overlapping spans """
+# get indices of spans to merge together
+merged_spans = []
+if filt_spans: # Ensure filt_spans is not empty
+    merged_spans.append([0])
+    curr_idx = 0
+    curr_start = filt_spans[0][0]
+    curr_end = filt_spans[0][1]
+    for i, next_span in enumerate(filt_spans[1:]):
+        start = next_span[0]
+        end = next_span[1]
+        if start < curr_end:
+            curr_end = max(curr_end, end)
+            merged_spans[curr_idx].append(i + 1)
+        else:
+            curr_start, curr_end = start, end
+            curr_idx += 1
+            merged_spans.append([i + 1])
+    # assert len(merged_spans) == curr_idx + 1 # This assertion might fail if filt_spans was empty
+
+# merge spans into a final set
+final_spans = []
+for ms in merged_spans:
+    all_docs = []
+    docs_per_merged_span = math.ceil(docs_per_span / float(len(ms))) # subsample docs for spans being merged
+    for i in ms:
+        # take top docs from each span being merged
+        all_docs.extend(span_to_docs[i][:docs_per_merged_span])
+    _spans = [filt_spans[i] for i in ms]
+    start = min([x[0] for x in _spans])
+    end = max([x[1] for x in _spans])
+    text = enc.decode(gen_ids[start: end])
+    final_spans.append({
+        "start": start,
+        "end": end,
+        "text": text,
+        "docs": all_docs,
+    })
+
+""" Step Five: observe tracing results """
+docs_to_print = 5
+print(f'Query Text: {enc.decode(gen_ids)}')
+for i, sp in enumerate(final_spans):
+    print("\n" + "=" * 20 + f" SPAN {i + 1} / {len(final_spans)} " + "=" * 20)
+    print(f"Span Text: {sp['text']}\n")
+    for j, doc in enumerate(sp['docs']):
+        print("-" * 10 + f" Document {j + 1} / {len(sp['docs'])} " + "-" * 10)
+        for k in ['text', 'movie_id', 'src_lang', 'start_frame', 'end_frame']:
+            if k in doc: # Check if key exists in doc
+                if k == 'text':
+                    v = doc[k].replace('\n', ' ')
+                else:
+                    v = doc[k]
+                print(f"- {k} --> {v} ")
+```
+
+보시다시피, OLMoTrace의 핵심 기능은 그렇게 복잡하지 않습니다. 대부분의 복잡한 코드는 이미 infini-gram 패키지에 의해 추상화(abstracted)되어 있습니다! 관심 있는 분들을 위해, 이 코드를 자신의 모델과 데이터에 대해 테스트하여 반환할 수 있는 결과 유형을 느껴보시기를 강력히 추천합니다!
+
+**OLMoTrace 사용 사례** (출처 [2])
+
+**OLMoTrace의 응용.** OLMoTrace는 LLM의 출력과 훈련 데이터 간에 정확히 일치하는 길고 고유한 스팬을 찾는 데 특화되어 있습니다. 정확한 일치는 LLM의 특정 출력에 기여할 수 있는 훈련 데이터를 찾는 데 유용한 대리 지표(proxy)입니다. [2]에서는 다양한 사용 사례가 고려됩니다:
+*   **사실 확인(Fact checking)**: LLM이 만든 사실 진술을 훈련 데이터 내의 유사한 사실 진술과 비교합니다.
+*   **창의적 표현(Creative expressions)**: LLM의 "창의적" 출력이 실제로 창의적인지, 아니면 훈련 데이터에서 직접 복사된 것인지 확인합니다.
+*   **추론 능력(Reasoning capabilities)**: LLM이 검증 가능한 문제(예: 수학)를 해결하는 데 사용된 추론 프로세스를 훈련 데이터에서 복사하는지 확인합니다.
+*   **환각(Hallucination) 원인 식별**: 모델이 생성한 잘못된 정보나 '환각'이 특정 훈련 데이터의 오해석이나 잘못된 패턴 학습에서 비롯되었는지 추적하여 근본적인 데이터 문제를 진단합니다.
+*   **편향(Bias) 및 공정성(Fairness) 분석**: 특정 모델 출력에서 발견되는 편향된 내용이 훈련 데이터의 어떤 부분에서 유래했는지 식별하여 데이터셋의 편향성을 평가하고 완화 전략을 수립합니다.
+
+이러한 각 경우에, 우리는 LLM의 출력을 추적하여 훈련 데이터에서 주목할 만한, 문자 그대로의 일치를 가진 영역을 찾아 LLM에 대한 새로운 것을 배울 수 있습니다.
+
+## 추론 모델 및 미래 연구
+
+**LLM 훈련 단계** (출처 [4, 5, 6])
+
+**추론 모델로의 확장.** 위에 표시된 대로, LLM은 일반적으로 여러 단계로 훈련되며, 각 단계는 고유한 데이터 스타일을 가집니다.
+*   **지도 미세 조정(Supervised Finetuning, SFT)**: LLM이 복제해야 하는 프롬프트-응답 쌍의 구체적인 예제를 사용하여 LLM을 훈련합니다.
+*   **인간 피드백 기반 강화 학습(Reinforcement Learning from Human Feedback, RLHF)**: 선호 쌍(preference pairs, 즉 두 개의 응답을 가진 단일 프롬프트로, 두 응답 중 하나가 다른 하나보다 더 낫다고 식별됨)을 사용하여 모델을 훈련합니다.
+*   **검증 가능한 보상 기반 강화 학습(Reinforcement Learning from Verifiable Rewards, RLVR)**: 규칙 기반(일반적으로 결정론적) 검증 함수에 의해 결정된 검증 가능한 문제를 올바르게 해결한 모델에 보상을 주기 위해 순수 RL을 사용합니다.
+
+이러한 고유한 데이터 형식에도 불구하고, 우리는 최소한의 변경으로 OLMoTrace를 각 훈련 단계에 적용할 수 있습니다! 우리는 지도 예제와 선호 쌍에 대해 쉽게 인피니-그램 색인을 구축할 수 있습니다(비록 선호 쌍의 긍정적 및 부정적 완성을 다르게 처리하고 싶을 수도 있지만). 그러나 RLVR의 경우, 데이터가 어떻게 추적되어야 하는지에 대해 더 깊이 생각해야 할 수도 있습니다.
+
+RLVR로 LLM을 훈련할 때, 우리는 검증 가능한 솔루션을 가진 문제 데이터셋을 가집니다. 예를 들어, 알려진 솔루션을 가진 수학 문제나 테스트 케이스를 가진 코딩 문제입니다. 우리는 LLM이 그러한 문제를 올바르게 해결하는지 쉽게 확인할 수 있습니다(예: 문자열 일치 또는 약간 더 견고한 방법으로). 위를 참조하십시오. 그런 다음, 모델은 DeepSeek-R1 [7]에 의해 시연된 바와 같이, 대규모 RL 훈련으로 구동되는 자기 진화 프로세스를 통해 이러한 문제를 스스로 해결하는 방법을 배웁니다.
+
+"우리는 어떤 지도 데이터 없이도 추론 능력을 개발하는 LLM의 잠재력을 탐구하며, 순수한 강화 학습 프로세스를 통한 자기 진화에 초점을 맞춥니다." - [7]에서
+
+RL 훈련 중에, [7]에서 LLM이 추론 능력을 향상시키기 위해 복잡한 사고의 사슬(chains of thought)—때로는 수천 개의 토큰 길이!—을 출력하는 것을 볼 수 있습니다. 그러나 이러한 추론 추적(reasoning traces)을 색인화하려면 흥미로운 문제에 직면합니다. 즉, 추론 추적은 실제로는 우리 훈련 데이터의 일부가 아니며, RL 훈련 프로세스 동안 LLM에 의해 생성됩니다.
+
+(출처 [7]) 마찬가지로, LLM은 보상 모델(reward model)에 의해 순위가 매겨지고 RLHF 동안 정책 업데이트(policy updates)에 사용되는 완성을 생성합니다. 자세한 설명은 여기를 참조하십시오. RL 훈련(RLHF 및 RLVR 모두 포함) 중에 학습된 패턴을 포착하려면, 훈련 중에 LLM이 생성한 완성을 추적해야 합니다. 이러한 완성에 접근할 수 있다면, 다른 훈련 데이터처럼 색인화하고, 인피니-그램 색인에 추가하고, OLMoTrace를 사용하여 추적할 수 있습니다.
+
+**관련 (및 미래) 연구.** OLMoTrace의 유용성에도 불구하고, 정확한 일치가 인과성(causality)을 보장하지는 않습니다. LLM이 출력을 생성했을 수 있는 많은 이유가 있습니다. 우리 LLM의 출력과 유사한 훈련 데이터를 찾았다고 해서 이 데이터가 이 출력을 유발했다고 보장할 수는 없습니다. LLM 출력에 대한 더 깊은 통찰력을 제공하려는 시도로, 여러 병렬 연구 분야에서 설명 가능성(explainability)을 위한 대안 전략을 조사하고 있습니다. 예를 들어, LLM에게 출력을 생성할 때 출처를 인용하는 방법을 가르치는 주제에 대한 많은 논문이 최근에 발표되었습니다 [8, 9, 10]. 아래를 참조하십시오.
+
+(출처 [8]) 이러한 출처 인용 능력은 LLM의 표준 훈련 프로세스(예: 사전 훈련(pretraining) [8] 또는 RLHF [9])에 통합될 수 있으며, 이를 통해 모델은 답변에 대한 증거를 언제 어떻게 제공해야 하는지 학습합니다. 그러나 이러한 인용이 출력이 어떻게 생성되었는지 진정으로 설명한다는 보장은 여전히 없습니다.
+
+기계적 해석 가능성(mechanistic interpretability) 분야는 신경망(neural networks)의 내부를 연구하여 왜 특정 출력을 생성하는지에 대한 이해를 얻고자 합니다. 딥 신경망은 일반적으로 블랙박스(black boxes)로 묘사되지만, 미시적 수준(즉, 작은 가중치 집합)에서 연구할 때 이러한 네트워크에서 많은 반복되는 회로와 특징을 발견할 수 있습니다. 예를 들어, 비전 네트워크(vision networks)는 곡선, 가장자리 등을 감지하기 위한 전용 단위를 가지는 경향이 있습니다. 기계적 해석 가능성 주제는 Anthropic에 의해 크게 대중화되었습니다. 최근 보고서에서 연구자들은 사전 학습(dictionary learning)을 사용하여 Claude Sonnet의 특징에 대한 대규모 연구를 수행했습니다. 위에 표시된 대로, 이 연구는 사람, 장소, 코드의 버그 등과 같은 고급 개념에 대한 수백만 개의 특징을 발견했습니다.
+
+"우리는 배포된 대규모 언어 모델 중 하나인 Claude Sonnet 내부에 수백만 개의 개념이 어떻게 표현되는지 확인했습니다. 이는 현대적인 프로덕션(production) 등급 대규모 언어 모델 내부를 처음으로 자세히 들여다본 것입니다." - [11]에서
+
+또한, 저자들은 특징들 간의 "거리"를 분석하고 흥미로운 속성을 발견합니다. 예를 들어, 금문교(Golden Gate Bridge) 특징은 알카트라즈(Alcatraz)의 특징과 가깝습니다. 이러한 연구는 비록 초기 단계이지만, LLM이 특정 출력을 생성하는 이유와 방법을 진정으로 이해하는 데 가장 유망한 길이라고 할 수 있습니다. 최근에는 '개념 벡터(concept vectors)'를 추출하고 조작하여 모델의 내부 작동 방식을 탐색하거나 특정 행동을 유도하는 방식의 연구도 활발히 진행되고 있습니다.
+
+## 결론
+
+우리가 배웠듯이, 훈련 데이터셋을 최적화하는 것은 LLM 훈련 프로세스에서 가장 영향력 있고 중요한 측면 중 하나입니다. 데이터를 효과적으로 큐레이션하고 디버깅하려면, 모델을 훈련하는 것이 아니라 데이터 자체를 살펴보는 것부터 시작해야 합니다! 먼저, 데이터를 수동으로 검사하고 그 다양한 속성, 패턴 및 특이점에 대한 이해를 발전시켜야 합니다. 수동 검사 프로세스를 확장하기 위해, 우리는 (가능한 경우) 휴리스틱과 머신러닝 모델(예: fastText 또는 LLM 심사위원) 모두에 의존할 수 있습니다. 이 데이터 중심 큐레이션 프로세스는 어떤 LLM도 훈련하기 전에 문제를 해결하고 데이터 품질을 향상시키는 데 중점을 둡니다!
+
+"제가 발견한 한 가지 패턴은 훌륭한 AI 연구자들이 많은 데이터를 수동으로 검사하는 것을 기꺼이 한다는 것입니다. 그리고 그 이상으로, 그들은 데이터를 빠르게 수동으로 검사할 수 있는 인프라(infrastructure)를 구축합니다. 화려하지는 않지만, 데이터를 수동으로 검사하는 것은 문제에 대한 귀중한 직관을 제공합니다." - Jason Wei
+
+LLM 훈련을 시작하면, LLM의 출력을 사용하여 데이터의 문제를 찾을 수 있습니다. 더 구체적으로, 우리는 다음을 수행할 수 있습니다:
+*   평가 프레임워크(evaluation framework)를 통해 문제적 LLM 출력 식별.
+*   이러한 출력을 훈련 데이터의 해당 영역으로 추적.
+
+데이터 추적을 위해 어휘 검색(lexical search) 또는 벡터 검색(vector search)과 같은 표준 검색 기술을 사용할 수 있지만, OLMoTrace [2]와 같이 LLM을 위해 특별히 개발된 전문 추적 기술도 있습니다. 이러한 기술은 설정이 쉽고(빠르며), 매우 유익하며, 임의로 큰 데이터셋으로 확장될 수 있어 LLM 훈련 데이터셋을 디버깅하는 데 매우 실용적인 선택입니다.
+
+뉴스레터가 처음이신가요? 안녕하세요! 저는 Cameron R. Wolfe이며, 딥러닝(Deep Learning) 박사이자 넷플릭스(Netflix)의 선임 연구 과학자입니다. 이것은 독자들이 AI 연구의 중요한 주제를 더 잘 이해하도록 돕는 Deep (Learning) Focus 뉴스레터입니다. 뉴스레터가 마음에 드시면 구독하거나 공유하거나 X 및 LinkedIn에서 저를 팔로우해주세요!
+
+[구독]
+
+### 참고문헌(Bibliography)
+
+[1] Liu, Jiacheng, et al. "Infini-gram: Scaling unbounded n-gram language models to a trillion tokens." arXiv preprint arXiv:2401.17377 (2024).
+[2] Liu, Jiacheng, et al. "OLMoTrace: Tracing Language Model Outputs Back to Trillions of Training Tokens." arXiv preprint arXiv:2504.07096 (2025).
+[3] Touvron, Hugo, et al. "Llama 2: Open foundation and fine-tuned chat models." arXiv preprint arXiv:2307.09288 (2023).
+[4] Kaplan, Jared, et al. "Scaling laws for neural language models." arXiv preprint arXiv:2001.08361 (2020).
+[5] Ouyang, Long, et al. "Training language models to follow instructions with human feedback." Advances in neural information processing systems 35 (2022): 27730-27744.
+[6] Lambert, Nathan, et al. "T\" ulu 3: Pushing frontiers in open language model post-training." arXiv preprint arXiv:2411.15124 (2024).
+[7] Guo, Daya, et al. "Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning." arXiv preprint arXiv:2501.12948 (2025).
+[8] Khalifa, Muhammad, et al. "Source-aware training enables knowledge attribution in language models." arXiv preprint arXiv:2404.01019 (2024).
+[9] Glaese, Amelia, et al. "Improving alignment of dialogue agents via targeted human judgements, 2022." URL https://storage. googleapis. com/deepmind-media/DeepMind. com/Authors-Notes/sparrow/sparrow-final. pdf (2022).
+[10] Huang, Chengyu, et al. "Training language models to generate text with citations via fine-grained rewards." arXiv preprint arXiv:2402.04315 (2024).
+[11] Anthropic. “Mapping the Mind of a Large Language Model” https://www.anthropic.com/research/mapping-mind-language-model (2025).
+[12] Liu, Yang, et al. "G-eval: NLG evaluation using gpt-4 with better human alignment." arXiv preprint arXiv:2303.16634 (2023).
+[13] Meta. “The Llama 4 herd: The beginning of a new era of natively multimodal AI innovation” https://ai.meta.com/blog/llama-4-multimodal-intelligence/ (2025).
+
+---
+1 가장 큰 관심을 불러일으키는 논문들은 이 범주에 속하는 경향이 있습니다. 예를 들어, 최근 사례로는 GRPO, 확산 LLM(diffusion LLMs), RLVR이 있습니다.
+2 구체적으로, Llama 3는 SFT와 DPO만을 사용하여 후처리 훈련되었지만, Llama 4는 SFT, 온라인 RL, 경량 DPO(lightweight DPO)의 더 정교한 파이프라인을 사용합니다. 여기를 참조하십시오.
+3 "충분한" 수동 데이터 검사가 무엇을 의미하는지에 대한 경험 법칙은 당신이 원하는 것보다 더 많다는 것입니다. 진지하게, 데이터를 수동으로 검사하는 데 더 많은 시간을 할애하십시오. 후회하지 않을 것입니다!
+4 예를 들어, Llama 3는 다단계 사전 훈련 프로세스를 가지고 있으며, 특정 데이터 소스(예: 추론 데이터셋)가 모델의 특정 도메인(domain)에서의 능력을 향상시키기 위해 후기 단계에서 더 강조됩니다. 여기를 참조하십시오.
+5 사전순 정렬(Lexicographical ordering)은 알파벳을 넘어선 문자(예: 숫자 및 기호)를 지원하기 위한 알파벳 순서 정렬의 일반화입니다.
+6 [1]에서 저자들은 문서 간의 구분자로 \xff\xff 토큰을 사용합니다.
+7 우리 데이터셋에 T개의 토큰이 포함되어 있고 토크나이저(tokenizer)의 어휘 크기가 약 64K라고 가정하면, 각 토큰 ID는 2바이트로 표현될 수 있습니다. 이 데이터셋의 토큰 ID 목록은 2T 바이트를 소비합니다. 접미사 배열은 토큰 배열의 위치를 가리키는 T개의 인덱스 목록이며, 각 인덱스는 log(2T)/8 바이트로 표현됩니다. 만약 20억 < T < 5천억이라면, 인덱스는 5바이트를 사용하여 저장될 수 있으며, 이는 토큰 배열과 접미사 배열의 결합된 크기가 단 7T 바이트임을 의미합니다!
+8 이 세그먼트(segments)는 전체 토큰 배열 내에서 일치하는 스팬의 위치에 해당하는 정수일 뿐입니다.

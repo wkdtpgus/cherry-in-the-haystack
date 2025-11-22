@@ -1,0 +1,21 @@
+{
+  "post_id": "044",
+  "title": "**GPT-oss 바닥부터**",
+  "base_word_count": 12163,
+  "exact_30_update_wc": 11966,
+  "exact_30_ground_truth_wc": 11946,
+  "exact_30_overlap_ratio": 1.018,
+  "paraphrase_25_update_wc": 10745,
+  "paraphrase_25_ground_truth_wc": 973,
+  "paraphrase_25_overlap_ratio": 2.041,
+  "fragment_20_update_wc": 3371,
+  "fragment_20_ground_truth_wc": 6854,
+  "fragment_20_overlap_ratio": 2.575,
+  "semantic_25_update_wc": 10551,
+  "semantic_25_ground_truth_wc": 1778,
+  "semantic_25_overlap_ratio": 1.984,
+  "mixed_real_update_wc": 10500,
+  "mixed_real_ground_truth_wc": 10497,
+  "mixed_real_overlap_ratio": 1.159,
+  "status": "generated"
+}

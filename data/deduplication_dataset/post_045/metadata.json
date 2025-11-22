@@ -1,0 +1,21 @@
+{
+  "post_id": "045",
+  "title": "**직접 선호 최적화 (DPO)**",
+  "base_word_count": 7350,
+  "exact_30_update_wc": 5823,
+  "exact_30_ground_truth_wc": 6213,
+  "exact_30_overlap_ratio": 1.195,
+  "paraphrase_25_update_wc": 5700,
+  "paraphrase_25_ground_truth_wc": 5701,
+  "paraphrase_25_overlap_ratio": 1.289,
+  "fragment_20_update_wc": 3030,
+  "fragment_20_ground_truth_wc": 6148,
+  "fragment_20_overlap_ratio": 1.397,
+  "semantic_25_update_wc": 5926,
+  "semantic_25_ground_truth_wc": 5928,
+  "semantic_25_overlap_ratio": 1.24,
+  "mixed_real_update_wc": 5707,
+  "mixed_real_ground_truth_wc": 5707,
+  "mixed_real_overlap_ratio": 1.288,
+  "status": "generated"
+}

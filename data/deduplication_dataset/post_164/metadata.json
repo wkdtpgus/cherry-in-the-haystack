@@ -1,0 +1,21 @@
+{
+  "post_id": "164",
+  "title": "AI 스케일링 신화",
+  "base_word_count": 2392,
+  "exact_30_update_wc": 1941,
+  "exact_30_ground_truth_wc": 2876,
+  "exact_30_overlap_ratio": 0.751,
+  "paraphrase_25_update_wc": 2240,
+  "paraphrase_25_ground_truth_wc": 2610,
+  "paraphrase_25_overlap_ratio": 0.903,
+  "fragment_20_update_wc": 2512,
+  "fragment_20_ground_truth_wc": 2554,
+  "fragment_20_overlap_ratio": 0.936,
+  "semantic_25_update_wc": 2310,
+  "semantic_25_ground_truth_wc": 2310,
+  "semantic_25_overlap_ratio": 1.035,
+  "mixed_real_update_wc": 2018,
+  "mixed_real_ground_truth_wc": 2067,
+  "mixed_real_overlap_ratio": 1.161,
+  "status": "generated"
+}

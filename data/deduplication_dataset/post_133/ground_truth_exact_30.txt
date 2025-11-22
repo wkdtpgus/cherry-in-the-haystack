@@ -1,0 +1,62 @@
+지난주 주요 AI 소식 요약 및 토론을 담은 250번째 에피소드입니다! 2026년 3월 15일 녹화
+
+Andrey의 Astrocade 작업물을 확인해 보세요. 여기에서 앰배서더(ambassador)로 가입하세요. Andrey Kurenkov와 Jeremie Harris가 진행합니다. 질문이나 피드백이 있으시면 contact@lastweekinai.com 및/또는 hello@gladstone.ai로 이메일을 보내주세요.
+
+이번 에피소드에서는: OpenAI가 이전 모든 버전을 통합한 모델인 GPT-5를 공개하며, 눈에 띄는 개선 사항을 선보이고 새로운 인프라(infrastructure) 및 제품 업데이트를 도입했습니다. OpenAI, Anthropic, Google을 포함한 선도적인 AI 연구소들의 여러 주요 발표는 중요한 비즈니스 업데이트와 새로운 모델 기능을 통해 지속적인 경쟁 구도를 반영합니다. AI 개발에 대한 지정학적 영향에 대한 논의는 AI 안전 및 거버넌스(governance)에 대한 중국의 변화하는 입장을 강조하며, 미국의 접근 방식과 대조적이며 수출 금지 및 국제 협력에 대한 우려를 제기합니다. OpenAI 및 Anthropic과 같은 선도적인 AI 기관의 논문은 AI 정렬(alignment) 및 안전의 복잡성을 심층적으로 다루며, 모델 동작의 위험을 감사하고 완화하기 위한 새로운 방법론을 제안합니다.
+
+최근 몇 달간 AI 분야는 기술 발전의 가속화와 함께 전례 없는 변화를 겪고 있습니다. 특히 오픈소스(open-source) 모델의 성능 향상과 다중 모드(multimodal) AI의 실용화는 개발자와 사용자 모두에게 새로운 가능성을 열어주고 있습니다. 또한 AI 윤리 및 규제에 대한 전 세계적인 논의는 기술의 책임감 있는 발전을 위한 중요한 이정표를 제시하고 있습니다.
+
+타임스탬프 + 링크:
+(00:00:10) 소개 / 잡담
+(00:02:14) 홍보: Astrocade, AI 에이전트(agent) 기반 게임 제작 경험 출시로 누구나 게임을 만들 수 있게 합니다.
+(00:04:30) 새로운 홍보: AI 기반 창작 도구 'SynthCanvas', 텍스트-이미지-비디오 전환 기능으로 콘텐츠 제작의 진입 장벽을 낮춥니다.
+**도구 및 앱(Tools & Apps)**
+(00:03:07) OpenAI의 GPT-5 출시
+(00:17:02) Anthropic, 에이전트(Agentic), 코딩 및 추론 기능이 업그레이드된 Claude Opus 4.1 출시
+(00:21:06) Google, 여러 아이디어를 병렬로 테스트하는 추론 모델인 Gemini Deep Think AI 출시 | TechCrunch
+(00:22:00) Google DeepMind, 시각 및 청각 정보를 통합한 새로운 다중 모드 모델 'Gemini Ultra 2.0' 공개: 이전 버전을 뛰어넘는 이해력과 추론 능력을 선보이며, 복잡한 실세계 시나리오에서 더욱 정확한 상호작용을 가능하게 합니다.
+(00:24:04) xAI의 새로운 AI 이미지 및 비디오 생성기인 Grok Imagine, NSFW 콘텐츠 제작 가능 | TechCrunch
+(00:25:15) Meta, 개방형 모델 생태계 확장을 위한 'Llama 3.1' 발표: 효율적인 미세 조정(fine-tuning)과 다양한 언어 지원으로 개발자 커뮤니티의 폭발적인 반응을 얻고 있습니다.
+(00:28:00) xAI의 'Grok 2.0', 대화형 AI 기능 강화 및 실시간 정보 검색 능력 대폭 개선: 사용자 질의에 대한 심층적인 답변과 최신 데이터 반영으로 경쟁력을 높였습니다.
+**응용 프로그램 및 비즈니스(Applications & Business)**
+(00:26:35) Meta, Microsoft 주가, 강력한 실적과 AI 지출 급증에 상승
+(00:29:17) OpenAI, 230MW 데이터 센터(data center)를 갖춘 Stargate Norway 설립 예정 - Bloomberg
+(00:30:05) NVIDIA, 차세대 AI 가속기 'Blackwell B200' 출시 및 대규모 데이터 센터(data center) 구축 가속화 발표: AI 인프라(infrastructure) 시장에서의 리더십을 더욱 공고히 합니다.
+(00:32:12) Anthropic, 메가 라운드(Mega Round)를 앞두고 연간 매출 50억 달러에 육박 — The Information
+(00:33:40) Microsoft, 기업용 AI 솔루션 'Copilot Pro'의 광범위한 통합: Office 365 및 다른 비즈니스 애플리케이션(application)에 AI 기능을 접목하여 생산성 향상을 목표로 합니다.
+(00:36:55) AI 헬스케어(healthcare) 스타트업 'CureAI', 1억 5천만 달러 규모의 시리즈 B 투자 유치: AI 기반의 신약 개발 및 진단 솔루션(solution) 상용화에 박차를 가하고 있습니다.
+(00:37:18) OpenAI, 연간 매출 120억 달러 달성
+(00:40:06) Noma Security, AI 에이전트(agent) 취약점 방어를 위해 1억 달러 모금 | Ctech
+(00:40:10) Amazon, 물류 및 공급망 최적화를 위한 AI 에이전트(agent) 시스템 'SupplyChainGPT' 도입: 예측 분석 및 자동화된 의사 결정으로 효율성을 극대화합니다.
+**프로젝트 및 오픈 소스(Projects & Open Source)**
+(00:42:13) OpenAI, GPT-2 이후 첫 오픈 가중치(open-weight) 모델 출시
+(00:43:20) Hugging Face, 'Transformers Agents' 프레임워크(framework) 공개: 개발자들이 다양한 오픈소스 모델을 활용하여 AI 에이전트(agent)를 쉽게 구축하고 배포할 수 있도록 지원합니다.
+(00:46:00) Stability AI, 'Stable Diffusion 3.0' 출시: 이미지 품질과 텍스트-프롬프트(text-prompt) 일치도를 대폭 개선하여 창작 활동의 범위를 확장합니다.
+(00:49:10) Google, AI 안전 연구를 위한 새로운 오픈 가중치(open-weight) 모델 'SafeLM' 발표: 유해 콘텐츠 생성 방지 및 모델 정렬(alignment) 기술 발전에 기여합니다.
+(00:53:13) Falcon-H1: 효율성과 성능을 재정의하는 하이브리드 헤드(hybrid-head) 언어 모델(language model) 제품군
+(00:57:39) Meta CLIP 2: 전 세계적 확장 레시피(Scaling Recipe)
+(01:01:12) BFL 및 Krea, 사실적인 이미지 모델(image model) FLUX.1 Krea 출시
+**연구 및 발전(Research & Advancements)**
+(00:52:00) MIT, '양자 컴퓨팅(quantum computing) 기반 AI'의 새로운 알고리즘(algorithm) 개발: 복잡한 최적화 문제 해결 및 신소재 발견에 잠재력을 보여줍니다.
+(00:55:30) DeepMind, '강화 학습(reinforcement learning)'을 이용한 로봇 팔 조작 기술 혁신: 미세한 움직임과 복잡한 작업을 학습하여 실제 산업 현장에서의 적용 가능성을 높입니다.
+(00:58:45) OpenAI, '모델 환각(hallucination)' 현상 감소를 위한 새로운 데이터 증강(data augmentation) 기법 연구: AI 모델의 신뢰성과 정확도를 향상시키는 데 중점을 둡니다.
+(01:02:33) Google의 최신 AI 모델, 기후 변화 추적을 위한 위성(satellite)처럼 작동 | WIRED
+(01:04:50) Google의 새로운 AI 모델, 실시간으로 비디오 게임 세계 생성
+(01:10:55) 모델 아키텍처(architecture) 발견을 위한 알파고(AlphaGo) 순간
+(01:17:22) METR, Grok 4 정책 및 안전 평가
+**정책 및 안전(Policy & Safety)**
+(01:20:05) 오픈 가중치(open-weight) LLM의 최악의 프론티어(frontier) 위험 추정
+(01:23:14) Anthropic의 AI '백신(Vaccine)': 악으로 훈련시켜 선하게 만들기 - Business Insider
+(01:27:26) Anthropic, AI 오정렬(misalignment) 테스트를 위한 '감사 에이전트(auditing agents)' 공개 | VentureBeat
+(01:28:00) EU AI Act, 최종 승인 및 발효 임박: 고위험 AI 시스템(system)에 대한 엄격한 규제와 투명성 의무를 부과하여 글로벌 AI 거버넌스(governance)의 선례를 만듭니다.
+(01:28:31) 최종 출력을 최적화하는 것이 CoT를 모호하게 할 수 있음 (연구 노트)
+(01:31:10) 미국, AI 안전 및 혁신을 위한 행정 명령(executive order) 강화: AI 개발자에게 안전 보고 의무를 부과하고 국가 AI 연구 역량을 확대합니다.
+(01:31:23) 중국이 컴퓨팅(compute) 분야에서 서방을 앞서지 못하는 이유
+(01:33:15) 중국이 세계에 AI 의제(agenda)를 제시한 정상회담 내부 | WIRED
+(01:34:25) 유엔(UN), AI의 윤리적 사용에 대한 국제 협약 논의 시작: 인권 보호 및 AI의 오용 방지를 위한 국제적 합의 도출에 초점을 맞춥니다.
+(01:37:30) AI 생성 콘텐츠의 저작권 및 책임 문제에 대한 법적 논쟁 심화: 창작자의 권리 보호와 AI 기술 발전 간의 균형점 찾기가 주요 과제로 부상하고 있습니다.
+(01:38:47) Nvidia H20 GPU, 미국 상무부의 30년 만에 최악의 수출 허가 적체에 묶인 것으로 알려짐 — 인력 감축, 소통 문제로 수십억 달러 상당의 GPU 및 기타 제품이 불확실한 상태 | Tom's Hardware
+(01:42:35) 청취자 의견에 대한 답변
+
+(01:40:00) 마무리 및 향후 전망
+오늘 에피소드에서는 AI의 최신 기술 동향, 비즈니스 영향, 그리고 정책적 논의까지 광범위하게 다루어 보았습니다. AI 분야의 발전 속도는 여전히 놀라울 정도이며, 앞으로도 혁신적인 모델과 응용 프로그램(application)들이 계속해서 등장할 것으로 예상됩니다. AI의 잠재력을 최대한 활용하면서도 발생할 수 있는 위험을 최소화하기 위한 지속적인 연구와 국제적 협력이 그 어느 때보다 중요합니다. 다음 에피소드에서 또 다른 흥미로운 AI 소식으로 찾아뵙겠습니다.

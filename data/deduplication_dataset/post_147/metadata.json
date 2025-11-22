@@ -1,0 +1,21 @@
+{
+  "post_id": "147",
+  "title": "다비다드 달림플: 증명 가능한 안전한 인공지능(AI)을 향하여",
+  "base_word_count": 392,
+  "exact_30_update_wc": 371,
+  "exact_30_ground_truth_wc": 612,
+  "exact_30_overlap_ratio": 0.407,
+  "paraphrase_25_update_wc": 721,
+  "paraphrase_25_ground_truth_wc": 721,
+  "paraphrase_25_overlap_ratio": 0.544,
+  "fragment_20_update_wc": 486,
+  "fragment_20_ground_truth_wc": 573,
+  "fragment_20_overlap_ratio": 0.628,
+  "semantic_25_update_wc": 829,
+  "semantic_25_ground_truth_wc": 829,
+  "semantic_25_overlap_ratio": 0.473,
+  "mixed_real_update_wc": 507,
+  "mixed_real_ground_truth_wc": 507,
+  "mixed_real_overlap_ratio": 0.773,
+  "status": "generated"
+}

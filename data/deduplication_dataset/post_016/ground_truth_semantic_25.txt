@@ -1,0 +1,71 @@
+두 달은 실로 역동적인 기간이었습니다. 인공지능 연구 분야에서는 또다시 눈부신 진보가 거듭되었고, 이 혁신적인 영역에 두 차례의 권위 있는 영예가 주어졌으며, 다수의 매력적인 학술 자료들이 공개되었습니다. 특히 Meta AI는 최신 Llama 3.2 모델 제품군을 공개했는데, 여기에는 10억 및 30억 매개변수 규모의 거대 언어 모델(large language model)을 위한 개방형 가중치(open-weight) 버전과 두 개의 다중 모드 모델(multimodal model)이 포함됩니다. 본문에서는 다중 모드 LLM(multimodal LLM)이 어떻게 작동하는지 상세히 설명하고자 합니다. 나아가, 최근 몇 주간 발표된 약 12개의 다른 최신 다중 모드 연구 논문과 모델(Llama 3.2 포함)들을 심층적으로 분석하고 요약하여, 각 접근 방식의 특징과 차이점을 비교해 볼 것입니다. (목차를 확인하시려면 화면 좌측의 줄 아이콘을 눌러주세요.)
+
+다양한 형태의 입력 양식(input modality)(청각, 문자, 시각, 영상)을 받아들이고 문자열을 출력 양식(output modality)으로 반환하는 다중 모드 LLM의 구조도. 이러한 모델은 인공지능이 세상을 인식하고 상호작용하는 방식을 근본적으로 변화시킬 잠재력을 지니고 있습니다.
+
+이야기를 시작하기 전에, 개인적으로 기쁜 소식이 있습니다! 저의 저서 "Build A Large Language Model (From Scratch)"이 드디어 Amazon에서 만나볼 수 있게 되었습니다!
+
+[Build a Large Language Model (From Scratch) now available on Amazon]
+
+이 책을 집필하는 과정은 엄청난 노력을 요구했으며, 지난 2년, 특히 최근 몇 달 동안 많은 친절한 독자분들께서 보내주신 아낌없는 지지와 격려, 그리고 소중한 피드백에 진심으로 감사드립니다. 여러분 모두에게 감사드리며, 저자로서 이 책이 독자 여러분의 경력에 긍정적인 변화를 가져왔다는 소식만큼 큰 동기 부여는 없을 것입니다! 책을 완독하신 후에도 더 많은 지식을 갈망하시는 분들을 위해, 계속 주목해 주세요! 앞으로 몇 달 내에 GitHub 저장소에 추가 자료들을 업데이트할 예정입니다.
+
+추신. 만약 이 책을 읽으셨다면, 짧은 서평을 남겨주시면 정말 큰 도움이 될 것입니다. 이는 저희 저자들에게 큰 힘이 됩니다!
+
+### 1. 다중 모드 LLM의 활용 영역
+
+다중 모드 대규모 언어 모델(multimodal large language model)은 어떤 존재일까요? 서문에서 언급했듯이, 이러한 모델들은 다양한 형태의 데이터를 수용할 수 있는 거대 언어 처리 시스템입니다. 이때 각각의 '모드(modality)'는 기존 언어 모델이 다루는 문자열 외에 음성, 화상, 동영상 등을 포함하는 특정 데이터 양식을 지칭합니다. 본 글에서는 주로 문자열 입력과 함께 시각적 모드(image modality)에 중점을 두고 논의를 진행할 것입니다.
+
+다중 모드 LLM의 전형적이고 직관적인 활용 사례는 그림 설명 생성(image captioning)입니다. 대상 이미지를 입력으로 주면, 모델은 다음 삽화처럼 해당 그림의 내용을 서술하는 문장을 만들어냅니다. 이는 인공지능이 시각 정보를 해석하고 자연어로 표현하는 능력을 보여주는 핵심적인 예시입니다.
+
+밈(meme)을 해석하여 설명하는 다중 모드 LLM의 사용 예시. 이 외에도 시각적 질의응답(Visual Question Answering, VQA), 이미지 기반 스토리텔링 등 다양한 응용이 가능합니다.
+
+물론, 이 외에도 수많은 활용 분야가 존재합니다. 예를 들어, 제가 특히 좋아하는 기능 중 하나는 PDF 문서 내 표에서 정보를 추출하여 LaTeX 또는 Markdown 형식으로 변환하는 것입니다. 이는 단순한 텍스트 인식을 넘어 문서 구조를 이해하고 특정 형식으로 재구성하는 고도의 능력을 요구합니다. 또한, 로봇 공학 분야에서는 주변 환경을 시각적으로 인식하고 그에 대한 언어적 지시를 이해하여 복잡한 작업을 수행하는 데 다중 모드 LLM이 활용될 수 있습니다.
+
+### 2. 다중 모드 LLM 구축을 위한 핵심 접근법
+
+다중 모드 LLM을 개발하는 데에는 두 가지 주요한 접근 방식이 있습니다. 첫째, 통합 임베딩 디코더 구조(Unified Embedding Decoder Architecture) 방식과 둘째, 교차 모드 어텐션 구조(Cross-modality Attention Architecture) 방식입니다. (참고로, 저는 이 기술들에 대한 공식적인 명칭이 아직 확립되지 않았다고 생각합니다. 혹시 더 적절하고 간결한 설명이 있다면 알려주세요. 예를 들어, '디코더 전용(decoder-only)' 및 '교차 어텐션 기반(cross-attention-based)' 접근 방식이 될 수도 있습니다.) 이 두 가지 방법론은 다중 모드 데이터를 단일 언어 모델 내에서 어떻게 효과적으로 통합할 것인가에 대한 서로 다른 철학을 반영합니다.
+
+다중 모드 LLM 구조 개발을 위한 두 가지 주요 접근 방식. 각 방식은 데이터 통합 및 처리 방식에서 차이를 보이며, 이는 모델의 성능과 효율성에 영향을 미칩니다.
+
+위 그림에서 볼 수 있듯이, 통합 임베딩 디코더 구조(Unified Embedding-Decoder Architecture)는 GPT-2나 Llama 3.2와 같이 수정되지 않은 LLM 구조와 매우 유사하게 단일 디코더 모델(decoder model)을 활용합니다. 이 접근법에서는 시각 정보가 원본 문자열 토큰(text token)과 동일한 임베딩 차원(embedding size)을 가지는 토큰으로 변환되어, LLM이 결합(concatenation) 후 문자열 및 시각 입력 토큰(image input token)을 함께 처리할 수 있도록 설계됩니다. 반면, 교차 모드 어텐션 구조(Cross-Modality Attention Architecture)는 교차 어텐션 메커니즘(cross-attention mechanism)을 사용하여 어텐션 계층(attention layer) 내에서 시각 및 문자열 임베딩(embedding)을 직접적으로 연동합니다. 이 방식은 각 모드의 특성을 보존하면서도 상호작용을 가능하게 합니다.
+
+다음 절에서는 이러한 방법들이 개념적 차원에서 어떻게 기능하는지 심도 있게 탐구할 것입니다. 그 후, 다중 모드 LLM에 대한 최신 연구 논문들을 검토하여 실제 적용 사례와 구현 방식을 분석할 것입니다.
+
+#### 2.1 방법 A: 통합 임베딩 디코더 구조
+
+아래 그림에 다시 설명된 통합 임베딩 디코더 구조(unified embedding decoder architecture)부터 논의를 시작하겠습니다. 이 방식은 언어 모델의 기존 구조를 최대한 활용하면서 시각 정보를 효과적으로 통합하려는 시도입니다.
+
+시각 토큰(image token) 및 문자열 토큰(text token) 임베딩(embedding)으로 구성된 입력을 받는 수정되지 않은 디코더 스타일 LLM(GPT-2, Phi-3, Gemma 또는 Llama 3.2와 같은)인 통합 임베딩 디코더 구조의 그림. 이는 다양한 형태의 정보가 동일한 언어 모델 파이프라인을 통과하게 함으로써 통합된 이해를 가능하게 합니다.
+
+통합 임베딩 디코더 구조(unified embedding-decoder architecture)에서 시각 정보는 표준 문자열 전용 LLM(text-only LLM)에서 입력 문자열이 임베딩으로 변환되는 방식과 유사하게 임베딩 벡터(embedding vector)로 변환됩니다. 문자열을 처리하는 일반적인 문자열 전용 LLM의 경우, 문자열 입력은 일반적으로 토큰화(tokenized)된 다음(예: 바이트 쌍 인코딩(Byte-Pair Encoding) 사용), 아래 그림과 같이 임베딩 계층(embedding layer)을 통과합니다. 이 과정은 추상적인 의미를 지닌 숫자 벡터로 변환하여 모델이 이해하고 처리할 수 있도록 합니다.
+
+문자열을 토큰화(tokenizing)하고 토큰 임베딩 벡터(token embedding vector)로 변환하는 표준 프로세스 그림. 이 벡터는 훈련(training) 및 추론(inference) 중에 LLM으로 전달됩니다. 이러한 임베딩은 단어의 의미론적 및 구문론적 정보를 함축하고 있습니다.
+
+##### 2.1.1 이미지 인코더(Image encoders)의 원리
+
+문자열의 토큰화(tokenization) 및 임베딩(embedding)과 유사하게, 시각 정보의 임베딩(image embedding)은 아래 그림과 같이 이미지 인코더(image encoder) 모듈(토크나이저(tokenizer) 대신)을 사용하여 생성됩니다. 이 인코더는 원본 이미지를 언어 모델이 이해할 수 있는 고차원 벡터 표현으로 변환하는 역할을 합니다.
+
+시각 정보를 이미지 패치 임베딩(image patch embedding)으로 인코딩하는 과정 그림. 이 과정은 이미지를 작은 조각으로 분할하고 각 조각의 특징을 추출하는 방식으로 이루어집니다.
+
+위 그림에 나타난 이미지 인코더(image encoder) 내부에서는 어떤 과정이 일어날까요? 시각 정보를 처리하기 위해 먼저 이미지를 더 작은 조각(patch)으로 분할합니다. 이는 문자열 토큰화(tokenization) 과정에서 단어를 부분 단어(subword)로 나누는 것과 매우 유사한 개념입니다. 이 조각들은 아래 그림과 같이 사전 학습된(pretrained) 비전 트랜스포머(vision transformer, ViT)에 의해 인코딩됩니다. ViT는 대규모 이미지 데이터셋에서 학습되어 일반적인 시각적 특징을 효과적으로 포착할 수 있습니다.
+
+"An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (2020)"에서 제안된 모델과 유사한 고전적인 비전 트랜스포머(ViT) 설정 그림. ViT는 종종 분류 작업(classification task)에 사용되므로 위 그림에 분류 헤드(classification head)를 포함했습니다. 그러나 이 경우에는 시각 인코더(image encoder)의 특징 추출 부분만 활용됩니다.
+
+##### 2.1.2 선형 투영(linear projection) 모듈의 역할
+
+이전 그림에 명시된 "선형 투영(linear projection)"은 단일 선형 계층(linear layer)(즉, 완전 연결 계층(fully connected layer))으로 구성됩니다. 이 계층의 목표는 벡터 형태로 평탄화된 시각 조각(image patch)들을 트랜스포머 인코더(transformer encoder)와 호환되는 임베딩 차원(embedding size)으로 사상하는 것입니다. 이 선형 투영(linear projection)의 기능은 아래 그림에 상세히 설명되어 있습니다. 이는 서로 다른 형태의 데이터가 동일한 표현 공간에서 상호작용할 수 있도록 차원을 조정하는 중요한 단계입니다.
+
+256차원 벡터로 평탄화된 시각 조각(image patch)이 768차원 벡터로 상향 투영됩니다. 이 과정은 저차원 시각 특징을 고차원 의미론적 표현으로 확장하는 역할을 합니다.
+
+256차원에서 768차원 임베딩 공간(embedding space)으로 평탄화된 시각 조각(image patch)을 투영하는 선형 투영(linear projection) 계층 그림. 이 변환은 시각 정보가 언어 모델의 내부 표현과 일관되도록 만듭니다.
+
+코드 예시를 선호하는 분들을 위해, PyTorch 코드에서는 시각 조각(image patch)에 대한 선형 투영(linear projection)을 다음과 같이 구현할 수 있습니다.
+
+```python
+import torch
+
+class PatchProjectionLayer(torch.nn.Module):
+    def __init__(self, patch_size, num_channels, embedding_dim):
+        super().__init__()
+        self.patch_size = patch_size
+        self.num_channels = num_channels
+        self.embedding

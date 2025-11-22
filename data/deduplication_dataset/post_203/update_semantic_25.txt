@@ -1,0 +1,607 @@
+**2만 구독자 특별 할인**
+
+데이터 과학 분야의 전문가로서, 방대한 양의 정보를 효과적으로 다루기 위해서는 적절한 유틸리티와 기법을 숙지하는 것이 필수적입니다. Pandas 모듈은 자료 가공, 분석, 그리고 시각화에 특출난 역량을 지닌 핵심적인 구성 요소이며, 모든 데이터 과학 전문가의 핵심 작업 세트에 반드시 포함되어야 합니다. 그럼에도 불구하고, Pandas를 최적의 방식으로 활용하는 것은 때때로 난관에 부딪힐 수 있으며, 이는 불필요한 자원 소모와 비효율적인 작업으로 이어질 수 있습니다. 다행스럽게도, 데이터 전문가들이 Pandas 활용 경험을 극대화할 수 있도록 돕는 다수의 권장 사항들이 존재합니다. 배열 기반 처리를 활용하는 것부터 라이브러리 제공 기능을 적극적으로 쓰는 것까지, 이들 권장 사항은 데이터 전문가들이 Pandas를 활용하여 데이터를 신속하고 정밀하게 분석하고 시각화하는 데 기여할 것입니다. 이러한 권장 지침을 이해하고 적용함으로써, 데이터 과학자들은 작업 효율성과 결과의 정확성을 향상시켜 더욱 신속하고 탁월한 의사 결정을 내릴 수 있을 것입니다.
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+Sid Balachandran의 Unsplash 사진
+
+**목차:**
+효율적인 코드 작성의 중요성
+자료 값의 효율적인 선택 및 변경
+2.1. `.iloc[]` 및 `.loc[]`를 활용한 행과 열의 효과적인 지정
+2.2. DataFrame 내 값의 효율적인 교체
+2.3. 값 선택 및 교체에 대한 최적화 요약
+Pandas DataFrame의 효과적인 순회 방법
+3.1. `.iterrows()`를 이용한 순회 최적화
+3.2. `.apply()`를 이용한 순회 최적화
+3.3. 벡터화(vectorization) 기법을 이용한 순회 최적화
+3.4. DataFrame 순회에 대한 최적화 요약
+`.groupby()`를 통한 데이터 변환 기법
+4.1. `.groupby()`와 함께 자주 사용되는 함수들
+4.2. `.groupby()` 및 `.transform()`을 활용한 결측치 보간
+4.3. `.groupby()` 및 `.filter()`를 활용한 데이터 필터링
+최적화 권장 사항 종합
+
+이 문서 전체에서 우리는 세 가지 자료 집합(dataset)을 활용할 것입니다:
+포커 카드 게임 자료 집합
+인기 있는 아기 이름 자료 집합
+레스토랑 자료 집합
+
+첫 번째 자료 집합은 아래에 제시된 포커 카드 게임 자료 집합입니다:
+```python
+poker_data = pd.read_csv('poker_hand.csv')
+poker_data.head()
+```
+각 포커 라운드에서 각 플레이어는 다섯 장의 카드를 손에 쥐게 되며, 각 카드는 하트, 다이아몬드, 클럽 또는 스페이드가 될 수 있는 문양(suit)과 1에서 13까지의 순위(rank)로 특징지어집니다. 이 자료 집합은 한 사람이 가질 수 있는 다섯 장의 카드에 대한 모든 가능한 조합으로 구성됩니다.
+
+구독하기
+
+Sn: n번째 카드의 문양(suit) (여기서: 1 (하트), 2 (다이아몬드), 3 (클럽), 4 (스페이드))
+Rn: n번째 카드의 순위(rank) (여기서: 1 (에이스), 2–10, 11 (잭), 12 (퀸), 13 (킹))
+
+우리가 다룰 두 번째 자료 집합은 2011년부터 2016년 사이에 신생아에게 부여된 가장 선호되는 이름들을 포함하는 인기 아기 이름 자료 집합입니다. 이 자료 집합은 아래에 로드되어 표시됩니다:
+```python
+names = pd.read_csv('Popular_Baby_Names.csv')
+names.head()
+```
+이 자료 집합에는 다른 정보들 외에도 연도, 성별, 민족별로 미국 내에서 가장 인기 있었던 이름들이 수록되어 있습니다. 예를 들어, 'Chloe'라는 이름은 2011년에 아시아 및 태평양 섬 주민 여성 신생아들 사이에서 선호도 2위를 기록했습니다.
+
+우리가 활용할 세 번째 자료 집합은 레스토랑 자료 집합입니다. 이 자료 집합은 식당에서 저녁 식사를 하는 고객들의 기록을 모아 놓은 것입니다. 자료 집합은 아래에 로드되어 표시됩니다:
+```python
+restaurant = pd.read_csv('restaurant_data.csv')
+restaurant.head()
+```
+각 고객에 대해 총 지불액, 웨이터에게 남긴 팁, 요일, 시간 등 다양한 특성(attributes)이 기록되어 있습니다.
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+### 1. 효율적인 코드 작성의 중요성
+
+**2만 구독자 특별 할인**
+
+성능 최적화된 코드(optimized code)는 더 빠른 실행 속도를 보이며, 시스템의 계산 자원(computational resources)을 적게 소모하는 프로그램을 의미합니다. 이 문서에서는 `time()` 함수를 활용하여 코드의 실행 시간(execution time)을 측정할 것입니다. 효율성은 단순히 속도만을 의미하지 않습니다. 이는 한정된 CPU 사이클, 메모리(RAM) 및 기타 시스템 자원을 보존하여 더 큰 규모의 데이터를 처리하고, 복잡한 알고리즘을 실행하며, 궁극적으로는 클라우드 컴퓨팅(cloud computing) 비용을 절감하는 데 기여합니다. 비효율적인 코드는 개발 시간을 늘리고, 디버깅(debugging)을 어렵게 만들며, 장기적으로 프로젝트의 확장성(scalability)을 저해할 수 있습니다.
+
+내 모든 책을 40% 할인된 가격으로 한 번에 만나보세요
+
+Youssef Hosni · 6월 17일
+
+저는 제 책과 로드맵(roadmap)을 번들(bundle)로 만들었으니, 단 한 번의 클릭으로 모든 것을 원가보다 40% 저렴하게 구매할 수 있습니다. 이 번들에는 다음을 포함한 8권의 전자책(eBook)이 포함되어 있습니다: 전체 이야기 읽기
+
+이 함수는 현재 시점을 기록하므로, 코드 실행 이전과 이후에 변수에 할당한 다음, 그 차이를 산출하여 코드의 계산 소요 시간을 파악할 수 있습니다. 간단한 예시는 다음 코드에 나타나 있습니다:
+```python
+import time
+
+# record time before execution
+start_time = time.time()
+
+# execute operation
+result = 5 + 2
+
+# record time after execution
+end_time = time.time()
+
+print("Result calculated in {} sec".format(end_time - start_time))
+```
+이제 효율적인 코드 작성 기법(method)을 적용하는 것이 코드의 실행 시간(runtime)을 어떻게 단축시키고, 계산 소요 시간 복잡도(computational time complexity)를 어떻게 경감시키는지 몇 가지 사례를 통해 살펴보겠습니다:
+
+0부터 100만까지 각 숫자의 제곱을 계산하는 작업을 수행할 것입니다. 먼저, 이 연산을 실행하기 위해 리스트 내포(list comprehension) 방식을 사용하고, 그 다음 `for` 반복문(loop)을 활용하여 동일한 절차를 반복할 것입니다.
+
+먼저, 리스트 내포를 사용하여:
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+```python
+#using List comprehension
+list_comp_start_time = time.time()
+result = [i*i for i in range(0,1000000)]
+list_comp_end_time = time.time()
+print("Time using the list_comprehension: {} sec".format(list_comp_end_time - list_comp_start_time))
+```
+이제 동일한 연산을 실행하기 위해 `for` 반복문을 사용할 것입니다:
+```python
+# Using For loop
+for_loop_start_time= time.time()
+result=[]
+for i in range(0,1000000):
+    result.append(i*i)
+for_loop_end_time= time.time()
+print("Time using the for loop: {} sec".format(for_loop_end_time - for_loop_start_time))
+```
+두 방식 사이에 상당한 성능 차이가 있음을 확인할 수 있습니다. 백분율로 그 차이를 산출할 수 있습니다:
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+```python
+list_comp_time = list_comp_end_time - list_comp_start_time
+for_loop_time = for_loop_end_time - for_loop_start_time
+print("Difference in time: {} %".format((for_loop_time - list_comp_time)/ list_comp_time*100))
+```
+여기 성능 최적화된 코드 작성의 효과를 보여주는 또 다른 예시가 있습니다. 우리는 1부터 100만까지의 모든 연속된 숫자의 합을 계산하고자 합니다. 이를 위한 두 가지 접근법이 있습니다: 첫 번째는 무차별 대입(brute-force) 방식으로, 1부터 100만까지 숫자를 하나씩 더해 나가는 것입니다.
+```python
+def sum_brute_force(N):
+    res = 0
+    for i in range(1,N+1):
+        res+=i
+    return res
+
+# Using brute force
+bf_start_time = time.time()
+bf_result = sum_brute_force(1000000)
+bf_end_time = time.time()
+print("Time using brute force: {} sec".format(bf_end_time - bf_start_time))
+```
+또 다른, 훨씬 더 능률적인 방법은 수학적 공식을 활용하여 계산하는 것입니다. 1부터 어떤 수 N까지의 모든 정수의 합을 구하려면, N에 N+1을 곱한 다음 2로 나누면 원하는 해답을 얻을 수 있습니다. 이 문제는 실제로 19세기 독일의 일부 학생들에게 제시되었고, 칼 프리드리히 가우스(Carl-Friedrich Gauss)라는 영리한 학생이 이 문제를 몇 초 만에 해결하기 위한 이 공식을 고안했습니다.
+```python
+def sum_formula(N):
+    return N*(N+1)/2
+
+# Using the formula
+formula_start_time = time.time()
+formula_result = sum_formula(1000000)
+formula_end_time = time.time()
+print("Time using the formula: {} sec".format(formula_end_time - formula_start_time))
+```
+두 가지 방식을 모두 실행한 결과, 우리는 160,000% 이상의 경이로운 개선을 달성했으며, 이는 단순한 작업조차도 능률적이고 최적화된 코드(optimized code)가 왜 필요한지 명확하게 입증합니다. 이러한 성능 향상은 특히 대규모 데이터 처리나 반복적인 계산이 필요한 상황에서 엄청난 차이를 만들어낼 수 있습니다.
+
+### 2. 자료 값의 효율적인 선택 및 변경
+
+**2만 구독자 특별 할인**
+
+먼저, 데이터 과학 프로젝트의 자료 조작(data manipulation) 단계에서 일반적으로 수행되는 가장 보편적인 두 가지 작업부터 시작하겠습니다. 이 두 가지 작업은 특정 및 무작위 행과 열을 능률적으로 선택하는 것과, 목록(list) 및 사전(dictionary)을 사용하여 하나 또는 여러 값을 교체하는 `replace()` 함수의 활용입니다. 이러한 작업들은 데이터의 정확성을 보장하고 분석 준비를 위해 필수적입니다.
+
+#### 2.1. `.iloc[]` 및 `.loc[]`를 활용한 행과 열의 효과적인 지정
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+이 하위 섹션에서는 `.iloc[]` 및 `.loc[]` Pandas 함수를 활용하여 데이터프레임(DataFrame)에서 행을 능률적으로 찾고 선택하는 방법을 소개할 것입니다. 우리는 정수 기반 인덱스(index) 위치 지정자(locator)에는 `iloc[]`를, 레이블 기반 인덱스(index label) 위치 지정자에는 `loc[]`를 사용할 것입니다. 아래 예시에서는 포커 자료 집합의 처음 500개 행을 선택할 것입니다. 먼저 `.loc[]` 함수를 사용하고, 그 다음 `.iloc[]` 함수를 사용할 것입니다. `loc[]`는 행과 열 레이블을 사용하여 데이터를 선택하는 반면, `iloc[]`는 정수 위치를 사용하여 선택합니다. 이는 데이터의 구조와 접근 방식에 따라 선택의 기준이 됩니다.
+
+```python
+# Specify the range of rows to select
+rows = range(0, 500)
+
+# Time selecting rows using .loc[]
+loc_start_time = time.time()
+poker_data.loc[rows]
+loc_end_time = time.time()
+print("Time using .loc[] : {} sec".format(loc_end_time - loc_start_time))
+
+# Specify the range of rows to select
+rows = range(0, 500)
+
+# Time selecting rows using .iloc[]
+iloc_start_time = time.time()
+poker_data.iloc[rows]
+iloc_end_time = time.time()
+print("Time using .iloc[]: {} sec".format(iloc_end_time - iloc_start_time))
+
+loc_comp_time = loc_end_time - loc_start_time
+iloc_comp_time = iloc_end_time - iloc_start_time
+print("Difference in time: {} %".format((loc_comp_time - iloc_comp_time)/ iloc_comp_time*100))
+```
+이 두 함수는 표기법(syntax)이 유사하지만, `iloc[]`는 `loc[]`보다 거의 70% 더 빠르게 작동합니다. `.iloc[]` 함수는 이미 정렬된 인덱스(index)의 순서를 내부적으로 활용하므로 더 신속하게 처리됩니다. 우리는 이들을 행뿐만 아니라 열을 선택하는 데도 활용할 수 있습니다. 다음 예시에서는 두 가지 방식을 사용하여 처음 세 열을 선택할 것입니다. 열 선택 시 `loc[]`는 열 이름을, `iloc[]`는 열의 정수 위치를 사용합니다.
+
+```python
+iloc_start_time = time.time()
+poker_data.iloc[:,:3]
+iloc_end_time = time.time()
+print("Time using .iloc[]: {} sec".format(iloc_end_time - iloc_start_time))
+
+names_start_time = time.time()
+poker_data[['S1', 'R1', 'S2']]
+names_end_time = time.time()
+print("Time using selection by name: {} sec".format(names_end_time - names_start_time))
+
+loc_comp_time = names_end_time - names_start_time
+iloc_comp_time = iloc_end_time - iloc_start_time
+print("Difference in time: {} %".format((loc_comp_time - iloc_comp_time)/ loc_comp_time*100))
+```
+`iloc[]`를 사용한 열 색인(column indexing)이 여전히 80% 더 빠르다는 것을 알 수 있습니다. 따라서 특정 열을 이름으로 선택하는 것이 더 직관적이거나 편리하고 속도가 최우선 과제가 아니라면 괜찮지만, 성능이 중요한 경우에는 더 빠른 `iloc[]`를 활용하는 것이 바람직합니다. 특히 대규모 데이터프레임에서 반복적인 선택 작업이 필요할 때 이러한 차이는 더욱 두드러집니다.
+
+#### 2.2. DataFrame 내 값의 효율적인 교체
+
+**2만 구독자 특별 할인**
+
+DataFrame 내에서 값을 변경하는 것은 특히 자료 정제(data cleaning) 단계에서 매우 중요한 작업입니다. 동일한 개체(object)를 나타내는 모든 값들이 일관성을 유지해야 하기 때문입니다. 이전에 불러왔던 인기 아기 이름 자료 집합을 다시 살펴보겠습니다:
+
+`Gender` 특성(feature)을 면밀히 검토하고 고유한 값(unique values)을 확인해 봅시다:
+```python
+names['Gender'].unique()
+```
+여성 성별이 대문자와 소문자 두 가지 형태로 표현되어 있음을 알 수 있습니다. 이는 실제 자료에서 흔히 발견되는 현상이며, 이를 처리하는 손쉬운 방법은 자료 집합 전체에서 일관성을 확보하기 위해 한 값을 다른 값으로 교체하는 것입니다. 이를 수행하는 두 가지 방식이 있습니다. 첫 번째는 단순히 교체할 값을 명시한 다음, 무엇으로 교체할지를 정의하는 것입니다. 이는 다음 코드에 제시되어 있습니다:
+```python
+start_time = time.time()
+names['Gender'].loc[names.Gender=='female'] = 'FEMALE'
+end_time = time.time()
+pandas_time = end_time - start_time
+print("Replace values using .loc[]: {} sec".format(pandas_time))
+```
+두 번째 방식은 다음 코드에 제시된 Pandas의 내장 함수인 `.replace()`를 활용하는 것입니다:
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+```python
+start_time = time.time()
+names['Gender'].replace('female', 'FEMALE', inplace=True)
+end_time = time.time()
+replace_time = end_time - start_time
+print("Time using replace(): {} sec".format(replace_time))
+```
+내장 함수를 사용하는 것이 시간 복잡도(time complexity)에 차이를 가져오며, 값의 행 및 열 인덱스(index)를 찾아 교체하는 `.loc()` 방식보다 157% 더 신속하게 처리된다는 것을 알 수 있습니다. `inplace=True` 매개변수는 원본 DataFrame을 직접 수정하여 메모리 사용량을 줄이고 새로운 DataFrame을 생성하는 오버헤드(overhead)를 피할 수 있게 합니다.
+
+```python
+print('The differnce: {} %'.format((pandas_time- replace_time )/replace_time*100))
+```
+목록(list)을 사용하여 여러 값을 동시에 교체할 수도 있습니다. 우리의 목표는 'WHITE NON-HISPANIC' 또는 'WHITE NON-HISP'로 분류된 모든 민족을 'WNH'로 변경하는 것입니다. `.loc[]` 함수를 활용하여, 'or' 연산자(Python에서는 파이프 `|`로 표현됨)를 사용하여 우리가 찾고 있는 민족의 아기들을 검색할 것입니다. 그런 다음 새로운 값을 할당할 것입니다. 늘 그렇듯이, 이 작업에 소요되는 CPU 시간도 측정합니다.
+
+```python
+start_time = time.time()
+names['Ethnicity'].loc[(names["Ethnicity"] == 'WHITE NON HISPANIC') | (names["Ethnicity"] == 'WHITE NON HISP')] = 'WNH'
+end_time = time.time()
+pandas_time= end_time - start_time
+print("Results from the above operation calculated in %s seconds" %(pandas_time))
+```
+아래와 같이 `.replace()` Pandas 내장 함수를 활용하여 동일한 작업을 수행할 수도 있습니다:
+```python
+start_time = time.time()
+names['Ethnicity'].replace(['WHITE NON HISPANIC','WHITE NON HISP'], 'WNH', inplace=True)
+end_time = time.time()
+replace_time = end_time - start_time
+print("Time using .replace(): {} sec".format(replace_time))
+```
+다시 `.replace()` 함수가 `.loc[]` 함수를 사용하는 것보다 훨씬 더 빠르게 수행된다는 것을 알 수 있습니다. 얼마나 빠른지 더 명확하게 이해하기 위해 아래 코드를 실행해 봅시다:
+```python
+print('The differnce: {} %'.format((pandas_time- replace_time )/replace_time*100))
+```
+`.replace()` 함수는 `.loc[]` 함수보다 87% 더 빠릅니다. 자료의 양이 방대하고 많은 정제 작업이 필요한 경우, 이 팁은 자료 정제의 계산 소요 시간을 줄이고 Pandas 코드를 훨씬 더 빠르고 효율적으로 만들 것입니다.
+
+마지막으로, 사전(dictionary)을 활용하여 DataFrame 내에서 단일 및 여러 값을 모두 교체할 수도 있습니다. 이는 여러 함수를 단일 명령으로 교체하고자 할 때 매우 유용할 것입니다. 우리는 사전을 활용하여 모든 남성 성별을 'BOY'로, 모든 여성 성별을 'GIRL'로 교체할 것입니다. 사전 기반 교체는 특히 복잡한 매핑(mapping) 규칙이 있을 때 코드의 가독성을 높이고 유지보수를 용이하게 합니다.
+
+```python
+names = pd.read_csv('Popular_Baby_Names.csv')
+start_time = time.time()
+names['Gender'].replace({'MALE':'BOY', 'FEMALE':'GIRL', 'female': 'girl'}, inplace=True)
+end_time = time.time()
+dict_time = end_time - start_time
+print("Time using .replace() with dictionary: {} sec".format(dict_time))
+
+names = pd.read_csv('Popular_Baby_Names.csv')
+start_time = time.time()
+names['Gender'].replace('MALE', 'BOY', inplace=True)
+names['Gender'].replace('FEMALE', 'GIRL', inplace=True)
+names['Gender'].replace('female', 'girl', inplace=True)
+end_time = time.time()
+list_time = end_time - start_time
+print("Time using multiple .replace(): {} sec".format(list_time))
+
+print('The differnce: {} %'.format((list_time- dict_time )/dict_time*100))
+```
+목록으로도 동일한 작업을 수행할 수 있지만, 이는 더 번거롭습니다. 두 방식을 비교하면 사전 방식이 약 22% 더 빠르게 실행된다는 것을 알 수 있습니다. 일반적으로 Python에서 사전을 다루는 것은 목록에 비해 매우 능률적입니다. 목록을 탐색하는 것은 모든 요소를 순회해야 하는 반면, 사전을 탐색하는 것은 항목과 일치하는 키(key)로 즉시 이동합니다. 그러나 두 구조가 서로 다른 목적을 가지고 있기 때문에 이 비교는 다소 불공평합니다. 사전을 활용하면 여러 다른 열에서 동일한 값을 교체할 수 있습니다. 이전의 모든 예시에서 우리는 교체할 값이 있는 열을 명시했습니다. 이제 동일한 열의 여러 값을 하나의 공통 값으로 교체할 것입니다. 모든 민족을 흑인(Black), 아시아인(Asian), 백인(White)의 세 가지 큰 범주로 분류하고자 합니다. 표기법은 다시 매우 간단합니다. 여기서는 중첩된 사전(nested dictionaries)을 사용합니다. 바깥쪽 키는 값을 교체할 열입니다. 이 바깥쪽 키의 값은 또 다른 사전이며, 여기서 키는 교체할 민족이고 값은 새로운 민족(흑인, 아시아인 또는 백인)입니다.
+
+```python
+start_time = time.time()
+names.replace({'Ethnicity': {'ASIAN AND PACI': 'ASIAN', 'ASIAN AND PACIFIC ISLANDER': 'ASIAN','BLACK NON HISPANIC': 'BLACK', 'BLACK NON HISP': 'BLACK','WHITE NON HISPANIC': 'WHITE', 'WHITE NON HISP': 'WHITE'}})
+print("Time using .replace() with dictionary: {} sec".format (time.time() - start_time))
+```
+이처럼 중첩된 사전을 활용하면 복잡한 다중 값 교체 시나리오에서도 코드를 간결하고 효율적으로 유지할 수 있습니다.
+
+#### 2.3. 값 선택 및 교체에 대한 최적화 요약
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+*   `.iloc[]` 함수는 정수 기반 위치를 사용하여 행과 열을 더 신속하게 선택할 수 있게 합니다. 따라서 `loc[]`가 더 직관적이거나 특정 상황에서 편리하고 속도가 최우선 순위가 아니거나 일회성 작업인 경우가 아니라면, 성능 측면에서는 `iloc[]`를 사용하는 것이 권장됩니다.
+*   내장된 `replace()` 함수는 직접적인 할당이나 `loc[]`를 활용하는 기존 방식보다 훨씬 더 빠르게 값을 변경합니다. 특히 여러 값을 동시에 교체할 때 그 효과가 두드러집니다.
+*   Python 사전(dictionary)을 활용하여 여러 값을 매핑 기반으로 교체하는 것이 목록(list)을 사용하는 것보다 효율적입니다. 이는 사전의 빠른 키 조회 특성 덕분입니다.
+*   `inplace=True` 매개변수를 사용하여 새로운 객체를 생성하지 않고 원본 DataFrame을 직접 수정함으로써 메모리 사용량을 최적화할 수 있습니다.
+
+### 3. Pandas DataFrame의 효과적인 순회 방법
+
+**2만 구독자 특별 할인**
+
+데이터 과학자로서 데이터프레임(DataFrame)을 광범위하게 순회(iterate)해야 할 상황에 자주 직면하게 될 것입니다. 특히 자료 준비 및 탐색 단계에서는 더욱 그렇습니다. 따라서 이를 능률적으로 수행할 수 있는 역량은 매우 중요합니다. 이는 상당한 시간을 절약하고 더 중요한 분석 작업에 집중할 수 있는 여유를 제공할 것입니다. 반복문(loop)을 훨씬 더 빠르고 효율적으로 만드는 세 가지 주요 방식을 살펴보겠습니다:
+*   `.iterrows()` 함수를 활용한 반복
+*   `.apply()` 함수를 활용한 반복
+*   벡터화(Vectorization) 기법
+
+#### 3.1. `.iterrows()`를 이용한 순회 최적화
+
+`.iterrows()` 함수를 활용하여 반복 처리 과정(looping process)을 개선하는 방법에 대해 논의하기 전에, 제너레이터 함수(generator function)의 개념을 다시 상기해 봅시다. 제너레이터(generator)는 이터레이터(iterator)를 생성하는 간결한 도구입니다. 제너레이터의 본문 안에는 `return` 문 대신 `yield()` 문만 발견할 수 있습니다. `yield()` 문은 하나만 있을 수도 있고 여러 개 있을 수도 있습니다. 여기서는 네 개의 도시 이름을 생성하는 `city_name_generator()`라는 제너레이터를 볼 수 있습니다. 편의를 위해 제너레이터를 `city_names` 변수에 할당합니다.
+
+```python
+def city_name_generator():
+    yield('New York')
+    yield('London')
+    yield('Tokyo')
+    yield('Sao Paolo')
+
+city_names = city_name_generator()
+```
+제너레이터가 생성하는 요소에 접근하려면 Python의 `next()` 함수를 사용할 수 있습니다. `next()` 명령이 사용될 때마다 제너레이터는 더 이상 생성할 값이 없을 때까지 다음 값을 생성합니다. 우리는 4개의 도시를 가지고 있습니다. `next` 명령을 네 번 실행하고 무엇을 반환하는지 봅시다:
+```python
+next(city_names)
+next(city_names)
+next(city_names)
+# next(city_names) # 이 코드를 실행하면 'Sao Paolo'가 반환됩니다.
+```
+`next()` 함수를 실행할 때마다 새로운 도시 이름이 출력되는 것을 볼 수 있습니다. `.iterrows()` 함수로 돌아가 봅시다. `.iterrows()` 함수는 모든 Pandas DataFrame의 속성(property)입니다. 호출되면 두 개의 요소를 가진 튜플(tuple)을 생성하는 이터레이터를 반환합니다. 우리는 이 제너레이터를 활용하여 포커 DataFrame의 각 줄을 반복할 것입니다. 첫 번째 요소는 행의 인덱스(index)이고, 두 번째 요소는 각 행의 각 특성(feature)에 대한 Pandas Series를 포함합니다. 즉, 다섯 장의 각 카드에 대한 문양(Symbol)과 순위(Rank)입니다. 이는 목록에 적용될 때 각 요소와 해당 인덱스를 반환하는 `enumerate()` 함수의 개념과 매우 유사합니다.
+
+Pandas DataFrame을 순회하는 가장 직관적인 방법은 종종 '조잡한 반복(crude looping)'이라고 불리는 `range()` 함수를 활용하는 것입니다. 이는 다음 코드에 제시되어 있습니다:
+```python
+start_time = time.time()
+for index in range(poker_data.shape[0]):
+    _ = index # 실제로 아무것도 하지 않고 루프가 실행되도록 함
+print("Time using range(): {} sec".format(time.time() - start_time))
+```
+Pandas DataFrame을 순회하는 더 세련된 방법은 이 작업을 위해 최적화된 `.iterrows()` 함수를 사용하는 것입니다. 우리는 단순히 'for' 반복문을 두 개의 이터레이터(iterator)로 정의합니다. 하나는 각 행의 번호이고 다른 하나는 모든 값입니다. 반복문 내부에서 `_ = index` 또는 `_ = values`와 같은 할당은 실제로 아무것도 하지 않고 반복문이 이터레이터의 다음 값으로 이동함을 나타냅니다.
+
+```python
+data_generator = poker_data.iterrows()
+start_time = time.time()
+for index, values in data_generator:
+    _ = index # 실제로 아무것도 하지 않고 루프가 실행되도록 함
+print("Time using .iterrows(): {} sec".format(time.time() - start_time))
+```
+두 계산 시간을 비교해 보면, `.iterrows()`를 사용하는 것이 Pandas DataFrame을 순회하는 속도를 본질적으로 향상시키지는 않는다는 것을 알 수 있습니다. 오히려 내부적으로 Python 객체를 생성하는 오버헤드 때문에 순수 `range()` 기반 반복문보다 느릴 수도 있습니다. 그러나 자료 집합을 순회하면서 각 행의 값을 깔끔하게 접근해야 할 때 매우 유용합니다. 특히 각 행에 대해 복잡한 로직(logic)을 적용해야 할 경우, `iterrows()`는 가독성 측면에서 장점을 가집니다.
+
+#### 3.2. `.apply()`를 이용한 순회 최적화
+
+**2만 구독자 특별 할인**
+
+이제 `.apply()` 함수를 활용하여 Pandas DataFrame을 순회하면서 특정 작업을 수행할 수 있도록 할 것입니다. `.apply()` 함수는 말 그대로 전체 DataFrame 또는 Series에 다른 함수를 적용합니다. `.apply()` 함수의 표기법(syntax)은 간단합니다. 이 경우 람다 함수(lambda function)를 사용하여 매핑(mapping)을 생성한 다음, 모든 셀(cell)에 적용할 함수를 선언합니다. 여기서는 DataFrame의 모든 셀에 제곱근(square root) 함수를 적용하고 있습니다. 속도 면에서는 전체 DataFrame에 NumPy `sqrt()` 함수를 직접 적용하는 것과 유사한 성능을 보입니다.
+
+```python
+import numpy as np
+data_sqrt = poker_data.apply(lambda x: np.sqrt(x))
+data_sqrt.head()
+```
+이것은 이 함수를 데이터프레임에 적용하고 싶기 때문에 간단한 예시입니다. 하지만 관심 있는 함수가 하나 이상의 셀을 입력으로 받을 때는 어떻게 될까요? 예를 들어, 각 핸드(hand)에 있는 모든 카드의 순위(rank) 합계를 계산하고 싶다면 어떻게 해야 할까요? 이 경우, 이전과 동일한 방식으로 `.apply()` 함수를 사용하겠지만, 함수를 각 행에 적용하고 있음을 명시하기 위해 줄 끝에 `axis=1`을 추가해야 합니다. `axis=1`은 행 방향으로 연산을 수행하라는 의미이며, 이는 각 행이 함수의 입력으로 사용됨을 나타냅니다.
+
+```python
+apply_start_time = time.time()
+poker_data[['R1', 'R2', 'R3', 'R4', 'R5']].apply(lambda x: sum(x), axis=1)
+apply_end_time = time.time()
+apply_time = apply_end_time - apply_start_time
+print("Time using .apply(): {} sec".format(time.time() - apply_start_time))
+```
+그런 다음, 이전에 보았던 `.iterrows()` 함수를 활용하여 효율성을 비교할 것입니다.
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+```python
+for_loop_start_time = time.time()
+for ind, value in poker_data.iterrows():
+    sum([value[1], value[3], value[5], value[7], value[9]])
+for_loop_end_time = time.time()
+for_loop_time = for_loop_end_time - for_loop_start_time
+print("Time using .iterrows(): {} sec".format(for_loop_time))
+```
+`.apply()` 함수를 사용하는 것이 `.iterrows()` 함수보다 약 400% 정도 더 빠르며, 이는 엄청난 개선입니다! `apply()`는 내부적으로 C로 구현된 최적화된 반복문을 사용하기 때문에 Python의 일반적인 반복문보다 훨씬 빠릅니다.
+
+```python
+print('The differnce: {} %'.format((for_loop_time - apply_time) / apply_time * 100))
+```
+행에서 했던 것처럼 열에 대해서도 동일한 작업을 수행할 수 있습니다. 각 열에 하나의 함수를 적용하는 것입니다. `axis=1`을 `axis=0`으로 바꾸면 모든 열에 `sum` 함수를 적용할 수 있습니다. `axis=0`은 열 방향으로 연산을 수행하라는 의미입니다.
+
+```python
+apply_start_time = time.time()
+poker_data[['R1', 'R2', 'R3', 'R4', 'R5']].apply(lambda x: sum(x), axis=0)
+apply_end_time = time.time()
+apply_time = apply_end_time - apply_start_time
+print("Time using .apply(): {} sec".format(apply_time))
+```
+`.apply()` 함수를 행에 대한 합계를 계산하는 Pandas의 내장 함수와 비교하면, Pandas의 내장 `.sum()` 함수가 동일한 작업을 더 빠르게 수행한다는 것을 알 수 있습니다. 이는 Pandas의 내장 함수가 특정 목적을 위해 극도로 최적화되어 있기 때문입니다.
+
+```python
+pandas_start_time = time.time()
+poker_data[['R1', 'R1', 'R3', 'R4', 'R5']].sum(axis=0) # 주의: R1이 두 번 들어가 있으나 원본과 동일하게 유지
+pandas_end_time = time.time()
+pandas_time = pandas_end_time - pandas_start_time
+print("Time using pandas: {} sec".format(pandas_time))
+
+print('The differnce: {} %'.format((apply_time - pandas_time) / pandas_time * 100))
+```
+결론적으로, `.apply()` 함수는 Pandas DataFrame의 모든 행을 순회할 때 더 빠르게 수행되지만, 동일한 작업을 열을 통해 수행할 때는 Pandas의 최적화된 내장 함수보다 느리다는 것을 알 수 있습니다. 가능한 경우 항상 Pandas의 내장 함수를 먼저 고려하는 것이 좋습니다.
+
+#### 3.3. 벡터화(vectorization) 기법을 이용한 순회 최적화
+
+**2만 구독자 특별 할인**
+
+함수가 수행하는 반복량(amount of iteration)을 줄이는 방법을 이해하려면, Pandas의 기본 구성 요소인 DataFrame과 Series가 모두 배열(array)을 기반으로 한다는 점을 기억해야 합니다. Pandas는 각 값을 개별적으로 또는 순차적으로 처리하는 것보다 전체 배열에 대해 연산이 수행될 때 훨씬 더 능률적으로 작동합니다. 이는 벡터화(vectorization) 기법을 통해 달성할 수 있습니다. 벡터화는 전체 배열에 대해 연산을 실행하는 과정입니다. 아래 코드에서는 각 핸드(hand)에 있는 모든 카드의 순위(rank) 합계를 계산하려고 합니다. 이를 위해 포커 자료 집합을 분할(slice)하여 각 카드의 순위를 포함하는 열만 유지합니다. 그런 다음, 각 행에 대한 합계를 원한다는 것을 나타내기 위해 `axis = 1` 매개변수를 사용하여 DataFrame의 내장 `.sum()` 속성(attribute)을 호출합니다. 마지막으로, 자료의 처음 다섯 행의 합계를 출력합니다.
+
+```python
+start_time_vectorization = time.time()
+poker_data[['R1', 'R2', 'R3', 'R4', 'R5']].sum(axis=1)
+end_time_vectorization = time.time()
+vectorization_time = end_time_vectorization - start_time_vectorization
+print("Time using pandas vectorization: {} sec".format(vectorization_time))
+```
+이전에 DataFrame의 모든 행을 단순히 순회하는 것보다 DataFrame에 적용된 함수를 더 빠르게 수행하는 다양한 방법을 살펴보았습니다. 우리의 목표는 이 작업을 수행하는 가장 효율적인 방식을 찾는 것입니다.
+
+DataFrame을 순회하기 위해 `.iterrows()` 사용:
+```python
+data_generator = poker_data.iterrows()
+start_time_iterrows = time.time()
+for index, value in data_generator:
+    sum([value[1], value[3], value[5], value[7]]) # R5가 누락되었으나 원본과 동일하게 유지
+end_time_iterrows = time.time()
+iterrows_time = end_time_iterrows - start_time_iterrows
+print("Time using .iterrows() {} seconds " .format(iterrows_time))
+```
+`.apply()` 함수 사용:
+```python
+start_time_apply = time.time()
+poker_data[['R1', 'R2', 'R3', 'R4', 'R5']].apply(lambda x: sum(x),axis=1)
+end_time_apply = time.time()
+apply_time = end_time_apply - start_time_apply
+print("Time using apply() {} seconds" .format(apply_time))
+```
+벡터화, `.iterrows()` 함수, `.apply()` 함수를 활용하여 각 핸드에 있는 모든 카드의 순위 합계를 계산하는 데 소요되는 시간을 비교하면, 벡터화 방식이 훨씬 더 우수한 성능을 보인다는 것을 명확히 알 수 있습니다.
+
+DataFrame을 효과적으로 순회하는 또 다른 벡터화 방식을 활용할 수도 있습니다. 이는 NumPy 배열(NumPy arrays)을 사용하여 DataFrame을 벡터화하는 것입니다. 자신을 "Python 과학 계산을 위한 근본적인 패키지(fundamental package for scientific computing in Python)"라고 정의하는 NumPy 라이브러리(library)는 최적화되고 사전 컴파일된 C 코드(pre-compiled C code)로 내부적으로 연산을 수행합니다. 배열로 작업하는 Pandas와 유사하게, NumPy는 `ndarray`라고 불리는 배열에서 작동합니다. Series와 `ndarray`의 주요 차이점은 `ndarray`가 색인(indexing), 자료 유형 검사(data type checking) 등과 같은 많은 연산의 오버헤드를 생략한다는 것입니다. 결과적으로 NumPy 배열에 대한 연산은 Pandas Series에 대한 연산보다 훨씬 빠를 수 있습니다. Pandas Series가 제공하는 추가 기능이 중요하지 않을 때 NumPy 배열을 Pandas Series 대신 활용할 수 있습니다. 이 문서에서 살펴보는 문제의 경우, Pandas Series 대신 NumPy `ndarray`를 사용할 수 있습니다. 문제는 이것이 더 효율적인지 아닌지입니다.
+
+다시, 각 핸드에 있는 모든 카드의 순위 합계를 계산할 것입니다. Pandas Series의 `.values` 속성(attribute)을 사용하여 순위 배열을 Pandas Series에서 NumPy 배열로 변환합니다. 이 속성은 Pandas Series를 NumPy `ndarray`로 반환합니다. Series에 대한 벡터화와 마찬가지로, NumPy 배열을 함수에 직접 전달하면 Pandas가 전체 벡터에 함수를 적용하게 됩니다.
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+```python
+start_time = time.time()
+poker_data[['R1', 'R2', 'R3', 'R4', 'R5']].values.sum(axis=1)
+print("Time using NumPy vectorization: {} sec" .format(time.time() - start_time))
+
+start_time = time.time()
+poker_data[['R1', 'R2', 'R3', 'R4', 'R5']].sum(axis=1)
+print("Results from the above operation calculated in %s seconds" % (time.time() - start_time))
+```
+이 시점에서, Pandas Series에 대한 벡터화가 일상적인 계산에 필요한 최적화 요구 사항의 압도적인 대부분을 충족시킨다는 것을 알 수 있습니다. 그러나 속도가 최우선이라면 NumPy Python 라이브러리(library) 형태의 지원을 요청할 수 있습니다. 이전의 최첨단(state-of-the-art) 방식인 Pandas의 최적화와 비교해도 여전히 작동 시간(operating time)이 개선됩니다. NumPy는 저수준(low-level) 최적화를 통해 Python의 오버헤드를 줄여주므로, 순수 Python 반복문이나 Pandas의 일부 고수준(high-level) 함수보다 더 빠른 성능을 제공할 수 있습니다.
+
+#### 3.4. DataFrame 순회에 대한 최적화 요약
+
+**2만 구독자 특별 할인**
+
+*   `.iterrows()`를 활용하는 것은 DataFrame을 순회하는 속도를 본질적으로 향상시키지는 않지만, 각 행에 대한 접근을 깔끔하게 만들어 가독성 측면에서 이점을 제공합니다. 그러나 성능이 중요한 대규모 데이터 처리에는 적합하지 않을 수 있습니다.
+*   `.apply()` 함수는 Pandas DataFrame의 모든 행을 순회할 때 일반적인 Python 반복문보다 훨씬 빠르게 수행되지만, 동일한 작업을 열을 통해 수행할 때는 Pandas의 최적화된 내장 함수보다 느릴 수 있습니다. `axis` 매개변수의 올바른 사용이 중요합니다.
+*   Pandas Series에 대한 벡터화는 일상적인 계산에 필요한 최적화 요구 사항의 압도적인 대부분을 달성합니다. 가능한 경우 항상 벡터화된 연산을 우선적으로 고려해야 합니다. 그러나 절대적인 속도가 최우선이라면 NumPy Python 라이브러리(library) 형태의 지원을 요청하여 더 깊은 수준의 성능 최적화를 추구할 수 있습니다.
+*   일반적으로 Python의 반복문(for loops)을 DataFrame에 직접 적용하는 것은 가장 느린 방법이므로, 가능한 한 피하고 Pandas 또는 NumPy의 내장 함수를 활용하는 것이 중요합니다.
+
+### 4. `.groupby()`를 통한 데이터 변환 기법
+
+**2만 구독자 특별 할인**
+
+이 문서의 마지막 섹션에서는 특정 특성(feature)의 값에 따라 DataFrame의 항목을 그룹화하기 위해 `.groupby()` 함수를 효과적으로 활용하는 방법에 대해 논의할 것입니다. `.groupby()` 함수는 DataFrame에 적용되어 특정 특성을 기준으로 그룹을 형성합니다. 그런 다음, 해당 그룹화된 객체에 간단하거나 더 복잡한 함수를 적용할 수 있습니다. 이는 테이블 형식(tabular) 또는 구조화된 자료(structured data)로 작업하는 모든 데이터 과학자에게 매우 중요한 도구이며, 자료를 쉽고 효과적인 방식으로 조작하는 데 기여할 것입니다. 그룹화는 자료의 패턴을 발견하고, 서브그룹(subgroup)별 분석을 수행하며, 복잡한 집계(aggregation)를 효율적으로 처리하는 데 필수적인 기법입니다.
+
+#### 4.1. `.groupby()`와 함께 자주 사용되는 함수들
+
+집계된 그룹(aggregated group)에 적용할 수 있는 가장 간결한 함수 중 하나는 `.count()`입니다. 아래 예시에서는 이를 레스토랑 자료 집합에 적용할 것입니다. 먼저, 고객이 흡연자인지 아닌지에 따라 레스토랑 자료를 그룹화합니다. 그런 다음 `.count()` 함수를 적용합니다. 흡연자와 비흡연자 그룹의 항목 수를 얻습니다.
+
+```python
+restaurant = pd.read_csv('restaurant_data.csv')
+restaurant_grouped = restaurant.groupby('smoker')
+print(restaurant_grouped.count())
+```
+`.count()` 함수가 각 특성에서 각 그룹의 발생 횟수를 세기 때문에 모든 특성에 대해 동일한 결과를 얻는 것은 놀라운 일이 아닙니다. 자료에 결측값(missing values)이 없으므로 모든 열에서 결과는 동일해야 합니다. `count()` 외에도 `sum()`, `mean()`, `median()`, `min()`, `max()`, `std()`, `var()` 등 다양한 집계 함수를 적용할 수 있습니다.
+
+특정 특성의 값에 따라 DataFrame의 항목을 그룹화한 후, 우리는 관심 있는 모든 종류의 변환(transformation)을 적용할 수 있습니다. 여기서는 각 값과 평균 사이의 거리를 표준 편차(standard deviation)로 나눈 정규화 변환(normalization transformation)인 z-점수(z-score)를 적용할 것입니다. 이는 통계학에서 매우 유용한 변환이며, 표준화된 테스트(standardized testing)에서 z-검정(z-test)과 함께 자주 사용됩니다. 이 변환을 그룹화된 객체에 적용하려면, 우리가 정의한 람다 변환을 포함하는 `.transform()` 함수를 호출하기만 하면 됩니다. 이번에는 식사 유형에 따라 그룹화할 것입니다. 저녁 식사였을까요, 아니면 점심 식사였을까요? z-점수 변환은 그룹 관련이므로, 결과 테이블은 원본 테이블과 동일한 형태를 유지합니다. 각 요소에 대해 해당 요소가 속한 그룹의 평균을 빼고 표준 편차로 나눕니다. 또한 숫자 변환은 DataFrame의 숫자 특성에만 적용된다는 것을 알 수 있습니다.
+
+```python
+zscore = lambda x: (x - x.mean() ) / x.std()
+restaurant_grouped = restaurant.groupby('time')
+restaurant_transformed = restaurant_grouped.transform(zscore)
+restaurant_transformed.head()
+```
+`transform()` 함수가 많은 것을 단순화하지만, 실제로는 기본 Python 코드(native Python code)를 사용하는 것보다 더 효율적일까요? 이전과 마찬가지로, 이번에는 성별(sex)에 따라 자료를 먼저 그룹화합니다. 그런 다음 이전에 적용했던 z-점수 변환을 적용하여 효율성을 측정합니다. 각 연산의 시간을 측정하는 코드는 이미 익숙하므로 여기서는 생략합니다. `transform()` 함수를 사용하면 엄청난 속도 향상을 달성할 수 있음을 알 수 있습니다. 게다가, 우리는 관심 있는 작업에 대해 단 한 줄만 사용합니다. 이는 코드의 간결성(conciseness)과 유지보수성(maintainability)에도 큰 이점을 제공합니다.
+
+```python
+restaurant.groupby('sex').transform(zscore)
+
+mean_female = restaurant.groupby('sex').mean()['total_bill']['Female']
+mean_male = restaurant.groupby('sex').mean()['total_bill']['Male']
+
+std_female = restaurant.groupby('sex').std()['total_bill']['Female']
+std_male = restaurant.groupby('sex').std()['total_bill']['Male']
+
+for i in range(len(restaurant)):
+    if restaurant.iloc[i][2] == 'Female':
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_female)/std_female
+    else:
+        restaurant.iloc[i][0] = (restaurant.iloc[i][0] - mean_male)/std_male
+```
+위의 수동 `for` 반복문 구현은 `transform()`을 사용하는 것보다 훨씬 느리고 오류 발생 가능성이 높습니다. `transform()`은 그룹화된 객체에 함수를 적용한 후, 원본 DataFrame의 인덱스를 유지하면서 결과를 브로드캐스트(broadcast)하여 반환합니다.
+
+#### 4.2. `.groupby()` 및 `.transform()`을 활용한 결측치 보간(Missing value imputation)
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+이제 그룹화된 Pandas 객체에 `transform()` 함수를 활용하는 이유와 방법을 살펴보았으므로, 결측치 보간(missing value imputation)이라는 매우 구체적인 작업을 다룰 것입니다. `transform()` 함수를 결측치 보간에 어떻게 활용할 수 있는지 실제로 보기 전에, 각 그룹에서 관심 변수에 얼마나 많은 결측값이 있는지 살펴볼 것입니다. 아래에서 각 "time" 특성의 자료 점(data points) 수를 볼 수 있으며, 이는 176+68 = 244입니다.
+
+```python
+prior_counts = restaurant.groupby('time')
+prior_counts['total_bill'].count()
+```
+다음으로, 아래 코드를 사용하여 10%의 무작위 관측치(random observations)의 총 청구액(total bill)이 `NaN`으로 설정된 `restaurant_nan` 자료 집합을 생성할 것입니다:
+
+```python
+import pandas as pd
+import numpy as np
+
+p = 0.1 #percentage missing data required
+mask = np.random.choice([np.nan,1], size=len(restaurant), p=[p,1-p])
+restaurant_nan = restaurant.copy()
+restaurant_nan['total_bill'] = restaurant_nan['total_bill'] * mask
+```
+이제 각 "time" 특성의 자료 점 수를 출력해 봅시다. 이제 155+62 = 217임을 알 수 있습니다. 우리가 가진 총 자료 점은 244이므로, 결측 자료 점은 27개이며, 이는 약 11%에 해당합니다. (원본 24개에서 27개로 변경, 10%가 24.4이므로 반올림)
+
+```python
+prior_counts = restaurant_nan.groupby('time') # restaurant_nan으로 변경
+prior_counts['total_bill'].count()
+```
+자료에서 결측값의 수를 센 후, 이러한 결측값을 그룹별 함수(group-specific function)로 채우는 방법을 보여줄 것입니다. 가장 일반적인 선택은 평균(mean)과 중앙값(median)이며, 선택은 자료의 왜도(skewness)와 관련이 있습니다. 이전과 마찬가지로, `fillna()` 함수를 활용하여 모든 결측값을 해당 그룹 평균으로 대체하는 람다 변환을 정의합니다. 이전과 마찬가지로, 식사 시간에 따라 자료를 그룹화한 다음, 미리 정의된 변환을 적용하여 결측값을 대체합니다.
+
+```python
+# Missing value imputation
+missing_trans = lambda x: x.fillna(x.mean())
+restaurant_nan_grouped = restaurant_nan.groupby('time')['total_bill']
+restaurant_nan_grouped.transform(missing_trans)
+```
+보시다시피, 인덱스 0과 인덱스 4의 관측치는 동일하며, 이는 해당 결측값이 해당 그룹의 평균으로 대체되었음을 의미합니다. 또한, 이 방식을 사용한 계산 시간은 0.007초입니다. 이를 기존 방식과 비교해 봅시다:
+
+```python
+start_time = time.time()
+mean_din = restaurant_nan.loc[restaurant_nan.time =='Dinner']['total_bill'].mean()
+mean_lun = restaurant_nan.loc[restaurant_nan.time == 'Lunch']['total_bill'].mean()
+
+# 이 부분은 원본과 동일하게 유지하되, `total_time` 컬럼이 없으므로 `total_bill`을 직접 수정하는 것으로 가정
+for row in range(len(restaurant_nan)):
+    if pd.isna(restaurant_nan.loc[row, 'total_bill']): # 결측값인 경우에만 대체
+        if restaurant_nan.iloc[row]['time'] == 'Dinner':
+            restaurant_nan.loc[row, 'total_bill'] = mean_din
+        else:
+            restaurant_nan.loc[row, 'total_bill'] = mean_lun
+print("Results from the above operation calculated in %s seconds" % (time.time() - start_time))
+```
+그룹화된 객체에 적용된 `.transform()` 함수를 활용하는 것이 이 작업에 대한 기본 Python 코드보다 훨씬 빠르게 수행된다는 것을 알 수 있습니다. 이는 `.transform()`이 내부적으로 최적화된 C 연산을 활용하여 그룹별 계산을 효율적으로 처리하기 때문입니다.
+
+#### 4.3. `.groupby()` 및 `.filter()`를 활용한 데이터 필터링(Data filtration)
+
+**2만 구독자 특별 할인**
+
+이제 그룹화된 Pandas 객체에서 `filter()` 함수를 활용하는 방법에 대해 논의할 것입니다. 이를 통해 특정 조건에 따라 해당 그룹의 하위 집합(subset)만 포함할 수 있습니다. 종종 특정 특성에 따라 DataFrame의 항목을 그룹화한 후, 우리는 특정 조건에 따라 해당 그룹의 하위 집합만 포함하는 데 관심이 있습니다. 필터링 조건의 예로는 결측값의 수, 특정 특성의 평균, 또는 자료 집합에서 그룹의 발생 횟수 등이 있습니다. `filter()`는 그룹 전체에 대한 조건을 평가하고, 조건에 부합하는 그룹만 유지합니다.
+
+우리는 웨이터에게 지불된 평균 금액이 20 USD를 초과하는 날에 주어진 팁의 평균 금액을 찾는 데 관심이 있습니다. `.filter()` 함수는 각 그룹의 DataFrame에 대해 작동하는 람다 함수를 허용합니다. 이 예시에서 람다 함수는 "total_bill"을 선택하고 `mean()`이 20보다 큰지 확인합니다. 만약 람다 함수가 `True`를 반환하면, 해당 그룹 전체가 유지됩니다. 그런 다음, 필터링된 자료에서 팁의 `mean()`이 계산됩니다. 팁의 총 평균을 비교하면 두 값 사이에 차이가 있음을 알 수 있으며, 이는 필터링이 올바르게 수행되었음을 의미합니다.
+
+```python
+restaurant_grouped = restaurant.groupby('day')
+filter_trans = lambda x : x['total_bill'].mean() > 20
+restaurant_filtered = restaurant_grouped.filter(filter_trans)
+print(restaurant_filtered['tip'].mean())
+print(restaurant['tip'].mean())
+```
+`groupby()`를 사용하지 않고 이 작업을 수행하려고 하면 비효율적인 코드가 됩니다. 먼저, 리스트 내포(list comprehension)를 활용하여 평균 식사 금액이 20달러보다 큰 날을 나타내는 DataFrame 항목을 추출한 다음, `for` 반복문을 활용하여 이를 목록에 추가하고 평균을 계산합니다. 매우 직관적으로 보일 수 있지만, 보시다시피 매우 비효율적입니다. 이는 Python의 반복문 오버헤드와 Pandas 객체에 대한 반복적인 접근 때문이다.
+
+내 모든 책을 40% 할인된 가격으로 만나보세요
+
+```python
+# 이 코드는 원본과 동일하게 유지되지만, 실제로는 매우 비효율적입니다.
+t=[restaurant.loc[restaurant['day'] == i]['tip'] for i in restaurant['day'].unique() if restaurant.loc[restaurant['day'] == i]['total_bill'].mean()>20]
+restaurant_filtered_manual = t[0] # 변수명 변경
+for j in t[1:]:
+    restaurant_filtered_manual=restaurant_filtered_manual.append(j,ignore_index=True)
+# print(restaurant_filtered_manual.mean()) # 수동 필터링된 결과의 평균을 출력하여 비교할 수 있음
+```
+`filter()` 함수는 이러한 복잡한 수동 작업을 단 몇 줄의 코드로 대체하며, 성능 면에서도 훨씬 우수합니다. 이는 특히 대규모 자료 집합에서 그룹 기반 필터링을 수행할 때 필수적인 기법입니다.
+
+### 5. 최적화 권장 사항 종합
+
+**2만 구독자 특별 할인**
+
+*   `.iloc[]` 함수는 정수 기반 위치를 사용하여 행과 열을 더 신속하게 선택할 수 있게 합니다. 따라서 `loc[]`가 더 직관적이거나 특정 상황에서 편리하고 속도가 최우선 순위가 아니거나 일회성 작업인 경우가 아니라면, 성능 측면에서는 `iloc[]`를 사용하는 것이 권장됩니다.
+*   내장된 `replace()` 함수는 직접적인 할당이나 `loc[]`를 활용하는 기존 방식보다 훨씬 더 빠르게 값을 변경합니다. 특히 여러 값을 동시에 교체할 때 그 효과가 두드러집니다.
+*   Python 사전(dictionary)을 활용하여 여러 값을 매핑 기반으로 교체하는 것이 목록(list)을 사용하는 것보다 효율적입니다. 이는 사전의 빠른 키 조회 특성 덕분입니다.
+*   `.iterrows()`를 활용하는 것은 DataFrame을 순회하는 속도를 본질적으로 향상시키지는 않지만, 각 행에 대한 접근을 깔끔하게 만들어 가독성 측면에서 이점을 제공합니다. 그러나 성능이 중요한 대규모 데이터 처리에는 적합하지 않을 수 있습니다.
+*   `.apply()` 함수는 Pandas DataFrame의 모든 행을 순회할 때 일반적인 Python 반복문보다 훨씬 빠르게 수행되지만, 동일한 작업을 열을 통해 수행할 때는 Pandas의 최적화된 내장 함수보다 느릴 수 있습니다. `axis` 매개변수의 올바른 사용이 중요합니다.
+*   Pandas Series에 대한 벡터화는 일상적인 계산에 필요한 최적화 요구 사항의 압도적인 대부분을 달성합니다. 가능한 경우 항상 벡터화된 연산을 우선적으로 고려해야 합니다. 그러나 절대적인 속도가 최우선이라면 NumPy Python 라이브러리(library) 형태의 지원을 요청하여 더 깊은 수준의 성능 최적화를 추구할 수 있습니다.
+*   특정 특성에 따라 그룹화하기 위해 `.groupby()`를 사용한 다음, `.transform()` 또는 `.filter()`와 같은 다른 함수를 사용하여 데이터에 적용하는 것이 기존의 수동 코딩 방식보다 훨씬 빠르고 효율적입니다. 이는 코드의 간결성, 가독성, 그리고 유지보수성 측면에서도 큰 이점을 제공합니다.
+
+이 뉴스레터는 개인적인 열정 프로젝트이며, 여러분의 지원이 이를 유지하는 데 도움이 됩니다. 기여하고 싶다면 몇 가지 좋은 방법이 있습니다:
+구독하기. 유료 구독은 제 글쓰기를 지속 가능하게 만들고 추가 콘텐츠에 대한 접근 권한을 제공합니다.*
+제 책 번들(Bundle)을 구매하세요. 제 7권의 실용적인 책과 로드맵을 원가의 40% 가격으로만 만나보세요.
+읽어주셔서 감사하며, 독립적인 글쓰기와 연구를 지원해 주셔서 감사합니다!

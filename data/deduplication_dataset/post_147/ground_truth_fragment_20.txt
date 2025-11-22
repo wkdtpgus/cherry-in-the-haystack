@@ -1,0 +1,54 @@
+에피소드 137에서는 Davidad Dalrymple과 함께 인공지능(AI)의 현재와 미래에 대한 심층적인 탐구를 진행했습니다. 다음 주제들이 논의되었습니다:
+
+*   AI 위험에 대한 Davidad의 관점
+*   ARIA(영국 첨단 연구 및 발명 기관)와 그 보호 AI 프로그램(Safeguarded AI Programme)
+*   AI 윤리 및 책임 있는 개발에 대한 새로운 관점
+*   글로벌 AI 거버넌스 프레임워크와 그 역할
+
+즐겁게 들어주시고, 여러분의 생각을 알려주세요!
+
+Davidad는 ARIA의 프로그램 디렉터로, 최근 새로운 이니셔티브를 발표하며 AI 기술 발전의 선두에서 윤리적 AI 시스템 구축의 중요성을 강조했습니다. 그는 과거 옥스퍼드에서 기술 AI 안전 분야의 연구원(Research Fellow)으로 재직했으며, 상위 40위권 암호화폐(cryptocurrency)인 파일코인(Filecoin)을 공동 발명했습니다. 또한, 국제 신경과학 협력을 이끌고 국제 협력을 통해 AI 연구의 투명성을 높이는 데 기여했으며, 트위터(Twitter)와 여러 스타트업(startup)에서 선임 소프트웨어 엔지니어(senior software engineer)로 근무했습니다. 오늘날 스타트업 생태계에서 선임 소프트웨어 엔지니어의 역할은 더욱 중요해지고 있습니다.
+
+새로운 에피소드 업데이트를 통해 최신 기술 동향을 파악할 수 있으며, 트위터(Twitter)에서 저를 찾아주세요. 청취자 여러분의 피드백, 아이디어, 게스트 제안은 언제나 환영이며, editor@thegradient.pub으로 연락 주세요.
+
+더 그레디언트 팟캐스트 구독은 여러분의 지식 확장에 기여할 것입니다: 애플 팟캐스트(Apple Podcasts) | 스포티파이(Spotify) | 포켓 캐스트(Pocket Casts) | RSS
+더 그레디언트 트위터(Twitter) 팔로우
+구독
+
+**개요 :**
+*   (00:00) 서론: AI의 새로운 지평
+*   (00:36) 최근 기술 돌파구에 대한 보정(calibration) 및 새로운 관점과 현실적 평가
+*   (03:35) 보정(calibration)과 AGI 타임라인, 그리고 AGI가 인류 및 사회에 미치는 다각적 영향
+*   (07:10) 복잡한 시스템에서 직교성 가설(Orthogonality Thesis)의 의미와 Davidad의 생각
+*   (10:30) 현재 우리의 기술 방향이 AGI와 돌파구, 그리고 미래 혁신에 어떻게 관련되고 기여하는지 이해하기
+*   (13:33) Davidad가 AGI 및 미래 AI 시스템에 필요하다고 생각하는 핵심 요소
+*   (17:00) 효율적인 지식 추출 방법론
+*   (19:01) 차세대 사이버 물리 시스템(cyber-physical systems)의 발전과 통합 모델링 프레임워크
+*   (20:00) Davidad의 이전 작업과 ARIA, 그리고 현재 AI 이니셔티브 간의 연속성 탐구
+*   (22:56) 기술의 경로 의존성(path dependence)이 산업 경쟁 역학(race dynamics)에 미치는 영향
+*   (26:40) AGI 및 AI가 사회에 미칠 수 있는 잠재적 문제점에 대한 Davidad의 관점과 심층 분석
+*   (28:57) 데이터 보안과 취약한 세계의 연결성, 그리고 컴퓨터와 제어의 상호 연결성
+*   (34:52) 소프트웨어 개발에서 형식 검증(formal verification) 및 세계 모델링, 개방형 에이전시 아키텍처(Open Agency Architecture)의 역할
+*   (35:25) 언어 모델에서 의미론적 충분성 가설(Semantic Sufficiency Hypothesis)의 적용
+*   (39:31) 복잡한 시스템 모델링(modeling)의 과제와 해결책
+*   (43:44) AI 윤리에서 의무론적 충분성 가설(Deontic Sufficiency Hypothesis) 및 수학적 형식화의 역할
+*   (49:25) 과도한 단순화와 정량적 지식의 한계
+*   (53:42) AI를 위한 가치 표현에 있어 집단적 숙고의 필요성
+*   (55:56) ARIA의 보호 AI 프로그램(Safeguarded AI Programme)이 제시하는 새로운 방향
+*   (59:40) Anthropic의 ASL 수준을 넘어서는 AI 안전 표준
+*   (1:03:12) 미래를 위한 보장된 안전한 AI(Guaranteed Safe AI) 시스템 구축
+*   (1:03:38) AI 위험 및 (비)정확한 세계 모델의 이해와 대응 전략
+*   (1:09:59) 세계 모델 및 검증자(verifier)를 위한 안전 사양 수준과 시스템 신뢰도 향상 — 높은 안전성을 달성하기 위한 단계
+*   (1:12:00) Davidad의 효과적인 포트폴리오 연구 접근 방식의 중요성과 ARIA 및 기관의 자금 지원
+*   (1:15:46) ARIA 및 기술 혁신에 대한 초기 우려와 Davidad의 관점 및 대처 방안
+*   (1:19:26) ARIA 및 보호 AI 프로그램(Safeguarded AI Programme)에 대한 추가 정보 찾기
+*   (1:20:44) 마무리: 미래 기술의 방향성
+
+**링크 :**
+*   Davidad 및 전문가들의 트위터(Twitter)에서 최신 기술 동향 확인
+*   ARIA 및 혁신 기관 홈페이지에서 더 많은 정보 확인
+*   보호 AI 프로그램(Safeguarded AI Programme) 문서 및 새로운 AI 프로그램 문서를 통한 정책 방향 이해
+*   보장된 안전한 AI(Guaranteed Safe AI) 및 미래 AI 안전 표준 연구 자료
+*   안전한 변혁적 AI를 위한 Davidad의 개방형 에이전시 아키텍처(Open Agency Architecture) 관련 논문
+*   Dioptics: 개방형 게임(Open Games) 및 경사 기반 학습자(Gradient-Based Learners)의 공통 일반화 (2019) – 관련 연구
+*   비동기 논리 오토마타(Asynchronous Logic Automata) (2008) – 관련 고전 논문

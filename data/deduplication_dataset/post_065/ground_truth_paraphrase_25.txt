@@ -1,0 +1,22 @@
+이번 주 AI 뉴스 브리핑에서는 DeepSeek-OCR의 혁신적인 기능과 활용 방안을 집중 조명합니다. 이와 더불어 OpenAI의 ChatGPT Atlas 공개, Apple이 제시하는 에이전트(agent) 기반 모델(foundation model)의 미래, 그리고 Anthropic의 도구 학습 웹 에이전트(agent) 개발 소식 등 주요 인공지능(AI) 기술 동향을 심층 분석합니다. 스탠포드 CME 295 강좌에서 다루는 LLM(Large Language Model)의 포괄적인 이해와 함께, 최신 AI 연구 성과 및 제품 업데이트 소식을 전해드립니다.
+
+**주요 소식**
+
+**DeepSeek-OCR 소개**
+DeepSeek은 최근 DeepSeek-OCR을 선보였습니다. 이 모델은 대규모 언어 모델(LLM)의 관점에서 시각 인코더(vision encoder)의 역할을 심도 깊게 탐색하며, 문맥을 고려한 광학 압축(contextual optical compression) 기술에 초점을 맞춘 개방형 광학 문자 인식(optical character recognition) 솔루션입니다. MIT 라이선스(license)에 따라 배포되어, 상업적 용도와 연구 목적 모두에서 뛰어난 시각적 이해(visual understanding) 능력을 바탕으로 문서 및 이미지에서 텍스트를 효과적으로 추출할 수 있도록 지원합니다.
+
+**DeepSeek-OCR의 주요 기능 및 개발 활용**
+DeepSeek-OCR의 주요 기능은 다음과 같습니다:
+*   다양한 기본 해상도(resolution) 모드 (Tiny: 512×512, Small: 640×640, Base: 1024×1024, Large: 1280×1280)와 여러 해상도를 결합하는 "건담(Gundam)" 모드를 통한 동적 해상도 지원
+*   문서-마크다운(markdown) 변환, 자유 OCR(optical character recognition) 및 텍스트 추출, 그림 구문 분석(parsing), 이미지 설명, 그리고 그라운딩(grounding) 기능을 통한 요소 위치 파악을 포함하는 포괄적인 작업 지원
+*   vLLM을 통해 PDF를 처리할 때 A100-40G GPU에서 초당 약 2500 토큰(token)의 동시성(concurrency)을 달성하는 고성능 추론(inference)
+*   배치 처리(batch processing)를 위한 네이티브(native) vLLM 지원 (v0.11.1+) 및 유연한 구현을 위한 HuggingFace 트랜스포머(Transformers) 호환성
+*   CUDA 11.8 + PyTorch 2.6.0 기반으로 구축되었으며, 플래시 어텐션 2(Flash Attention 2) 지원 및 bfloat16 정밀도(precision)를 제공합니다.
+
+개발자는 고처리량(high-throughput) 배치 처리(batch processing)를 위해 vLLM을 통해 DeepSeek-OCR을 통합하거나, 사용자 정의 구현을 위해 트랜스포머(Transformers)를 통해 통합할 수 있습니다. 이 모델은 작업별 지침으로 사용자 정의할 수 있는 간단한 <image> 토큰(token) 프롬프트(prompt)를 사용하며, 다양한 문서 이해 및 시각적 텍스트 추출 워크플로우(workflow)에 접근 가능하게 합니다. GitHub
+
+**Apple의 에이전트 기반 모델: 개인화된 AI의 도래**
+Apple은 컴퓨터 사용 에이전트(agent)를 위한 파운데이션 모델(foundation model)을 공개하며, 온디바이스(on-device) AI의 새로운 장을 열었습니다. 이 모델은 사용자 의도를 깊이 이해하고 여러 애플리케이션(application)에 걸쳐 복합적인 작업을 자율적으로 처리할 수 있는 에이전트(agent)의 핵심 기반이 됩니다. 개인 정보 보호와 기기 내 처리를 강조하는 Apple의 전략은, 클라우드(cloud) 의존도를 줄여 더욱 빠르고 안전한 AI 경험을 가능하게 합니다. 이는 단순한 명령 수행을 넘어, 사용자의 일상에 깊이 통합되어 지능적으로 지원하는 개인화된 AI 비서의 시대를 가속화할 것으로 기대됩니다.
+
+**LLM 기술의 확장과 AI의 미래**
+DeepSeek-OCR과 같은 시각적 이해 모델의 발전은 LLM(Large Language Model)이 텍스트를 넘어 멀티모달(multimodal) 능력으로 진화하고 있음을 보여줍니다. 이제 AI는 이미지와 같은 비정형 데이터를 분석하고, 복합적인 맥락을 이해하며, 인간의 인지 능력을 보완하는 방향으로 나아가고 있습니다. 또한, 스탠포드 CME 295 강좌에서 다루듯이, LLM은 단순한 지식 습득을 넘어 외부 도구 활용, 계획 수립, 피드백 학습을 통한 목표 지향적 행동이 가능한 에이전트(agent) 프레임워크로 발전하며, 다양한 산업 분야에서 혁신적인 변화를 이끌고 있습니다.

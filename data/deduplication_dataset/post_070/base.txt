@@ -1,0 +1,36 @@
+# **🤖 AI 에이전트 주간 소식: 에이전트킷(AgentKit), 제미니 2.5 컴퓨터 사용(Gemini 2.5 Computer Use), AI 보고서 2025 현황(State of AI Report 2025), 에이전트 컨텍스트 엔지니어링(Agentic Context Engineering), 코드멘더(CodeMender)**
+
+Author: Elvis Saravia
+URL: https://nlp.elvissaravia.com/p/ai-agents-weekly-agentkit-gemini
+
+============================================================
+
+오늘 호에서는: OpenAI, 에이전트 키트(AgentKit) 출시, Google, Gemini 2.5 컴퓨터 사용 모델 발표, 2025 AI 현황 보고서, Claude Code, 이제 플러그인(plugin) 지원, 에이전트 컨텍스트 엔지니어링(Agentic Context Engineering), ElevenLabs, 에이전트 워크플로우(Agent Workflows) 발표, RL을 사용하여 LLM 에이전트(LLM agent)에 메모리(memory) 부여, Google DeepMind, 코드 보안을 위한 CodeMender 발표, 주요 AI 뉴스, 논문, 도구 등.
+
+**주요 소식**
+
+**OpenAI, 에이전트 키트(AgentKit) 출시**
+
+OpenAI는 에이전트 개발을 간소화하기 위해 에이전트 키트(AgentKit)를 발표했습니다. 이는 시각적 워크플로우 빌더(visual workflow builder), 거버넌스(governance)를 위한 커넥터 레지스트리(connector registry), 드롭인(drop-in) 채팅 UI 키트(chat UI kit), 강화된 평가(evals), 그리고 강화 미세 조정(reinforcement fine-tuning) 옵션을 포함합니다. 파편화된 오케스트레이션(orchestration), 수동 평가, 임시 프런트엔드(frontend)를 버전 관리되는 프로덕션(production) 준비 구성 요소로 대체하도록 구축되었습니다.
+
+**에이전트 빌더(Agent Builder)**: 드래그 앤 드롭(drag-and-drop) 노드(node), 도구 연결, 사용자 지정 가드레일(guardrail)을 사용하여 다중 에이전트 워크플로우(multi-agent workflow)를 구성하는 시각적 캔버스(visual canvas). 빠른 반복을 위한 미리 보기 실행, 인라인(inline) 평가 구성, 전체 버전 관리(versioning)를 지원합니다. 제품, 법률, 엔지니어링(engineering) 팀이 동일한 인터페이스(interface)에서 협업하여 첫 에이전트를 개발하는 데 몇 달이 아닌 몇 시간이 걸린다고 보고합니다.
+
+**커넥터 레지스트리(Connector Registry)**: ChatGPT 및 API 전반의 데이터(data) 및 도구 접근에 대한 중앙 집중식 거버넌스(governance). 관리자는 Google Drive, SharePoint, Teams, Dropbox와 같은 사전 구축된 커넥터(connector) 및 타사 MCP(Multi-Cloud Platform)를 하나의 패널(panel)에서 관리합니다. 글로벌 관리 콘솔(Global Admin Console)이 필요합니다. 일부 엔터프라이즈(Enterprise) 및 교육(Edu) 테넌트(tenant)에 베타(beta)로 출시됩니다.
+
+**가드레일(Guardrails)**: 탈옥(jailbreak)을 표시하고, PII(개인 식별 정보)를 마스킹(masking)하거나 표시하며, 정책 검사를 추가하는 오픈 소스(open-source) 모듈형 안전 계층(modular safety layer). 독립적으로 또는 파이썬(Python) 및 자바스크립트(JavaScript) 라이브러리(library)를 통해 배포할 수 있습니다. 에이전트 빌더(Agent Builder) 노드(node)에 직접 통합되도록 설계되었습니다.
+
+**챗킷(ChatKit)**: 스트리밍(streaming), 스레드(thread), "사고 과정 표시(show thinking)", 채팅 내 액션(in-chat actions)을 지원하는 채팅 기반 에이전트 UI(User Interface)를 위한 임베더블(embeddable) 툴킷(toolkit). 몇 주간의 프런트엔드(frontend) 작업을 건너뛰고 브랜드에 맞게 테마(theme)를 지정할 수 있습니다. Canva 및 HubSpot과 같은 회사에서 지원, 온보딩(onboarding), 문서 도우미, 연구 에이전트(research agent)에 사용됩니다.
+
+**평가 업그레이드(Evals upgrades)**: 대규모로 에이전트를 측정하고 개선하기 위한 새로운 기능:
+*   자동 채점기(auto-grader) 및 사람 주석(human annotation)을 사용하여 평가 스위트(eval suite)를 시드(seed)하고 확장하는 데이터셋(dataset)
+*   종단 간(end-to-end) 워크플로우(workflow)를 평가하고 실패 지점을 정확히 찾아내는 추적 채점(trace grading)
+*   채점기 출력 및 사람 피드백(human feedback)에 의해 구동되는 자동화된 프롬프트 최적화(prompt optimization)
+*   동일한 평가에서 모델을 비교하기 위한 타사 모델(third-party model) 지원
+
+**강화 미세 조정(Reinforcement fine-tuning, RFT)**: o4-mini에서 일반 가용성(GA)으로 제공되며 GPT-5에서 비공개 베타(private beta)로 제공됩니다. 모델이 도구를 언제 어떻게 호출해야 하는지 학습하도록 사용자 지정 도구 호출 훈련(custom tool-call training)을 추가하고, KPI(핵심 성과 지표)에 보상을 맞추기 위한 사용자 지정 채점기(custom grader)를 추가합니다.
+
+**가용성 및 가격**: 챗킷(ChatKit)과 새로운 평가 기능은 일반적으로 사용할 수 있습니다. 에이전트 빌더(Agent Builder)는 베타(beta) 상태입니다. 커넥터 레지스트리(Connector Registry)는 글로벌 관리 콘솔(Global Admin Console)을 사용하는 조직에 대해 베타(beta)를 시작합니다. 표준 API 모델(API model) 가격에 포함됩니다. 독립형 워크플로우 API(Workflows API) 및 ChatGPT로의 에이전트 배포(agent deployment)가 계획되어 있습니다.
+
+**적용 분야**: 심층 연구, 고객 지원, 영업, 내부 비서와 같은 종단 간(end-to-end) 에이전트 워크플로우(agentic workflow)를 위해 Responses API 및 Agents SDK를 기반으로 구축되었으며, 높은 티켓 처리율(ticket coverage)과 성장 이점을 예시로 들고 있습니다.
+
+블로그

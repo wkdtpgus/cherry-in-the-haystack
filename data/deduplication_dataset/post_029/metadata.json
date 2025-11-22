@@ -1,0 +1,21 @@
+{
+  "post_id": "029",
+  "title": "**32마리 수달로 본 AI의 최근 역사**",
+  "base_word_count": 1825,
+  "exact_30_update_wc": 1761,
+  "exact_30_ground_truth_wc": 2531,
+  "exact_30_overlap_ratio": 0.599,
+  "paraphrase_25_update_wc": 2100,
+  "paraphrase_25_ground_truth_wc": 2100,
+  "paraphrase_25_overlap_ratio": 0.869,
+  "fragment_20_update_wc": 1476,
+  "fragment_20_ground_truth_wc": 2499,
+  "fragment_20_overlap_ratio": 0.543,
+  "semantic_25_update_wc": 2658,
+  "semantic_25_ground_truth_wc": 2639,
+  "semantic_25_overlap_ratio": 0.694,
+  "mixed_real_update_wc": 1594,
+  "mixed_real_ground_truth_wc": 1594,
+  "mixed_real_overlap_ratio": 1.145,
+  "status": "generated"
+}

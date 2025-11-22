@@ -1,0 +1,371 @@
+대규모 언어 모델(LLM) 연구는 예상치 못한 방향으로 진화하고 있습니다. 과거에는 모델의 크기를 키우는 것이 성능 향상의 주된 방법론이었지만, 이제는 효율성과 특정 작업에 대한 전문성을 강조하는 새로운 접근 방식이 주목받고 있습니다. 이러한 변화의 중심에는 조건부 계산(conditional computation) 패러다임이 있으며, 특히 희소 활성화(sparse activation)를 활용하는 아키텍처들이 중요한 역할을 하고 있습니다. 최근에는 최고 연구실에서 새로운 아키텍처인 MoE(Mixture-of-Experts)가 대규모 모델의 핵심 동력으로 부상하고 있습니다. 이는 GPT-4와 같은 선도적인 모델들이 채택하며, DeepSeek-v3 및 Mistral 8x7B 같은 모델들도 MoE의 잠재력을 입증하고 있습니다.
+
+“오픈 소스 모델 역량의 한계를 더욱 확장하기 위해, 커뮤니티는 혁신적인 접근법을 모색하고 있습니다. 이러한 노력은 단순히 모델 크기를 늘리는 것을 넘어, 실제 사용 환경에서의 효율성과 접근성을 개선하는 데 초점을 맞추고 있습니다.” - 최근의 연구 보고서에서 발췌
+
+MoE 기반 LLM은 대규모 모델의 훈련 및 사용을 더욱 효율적으로 만들 수 있는 능력 덕분에 자연어 처리(NLP) 분야의 판도를 바꾸고 있습니다. 기존의 밀집(dense) 모델이 모든 매개변수를 모든 입력에 대해 활성화하는 것과 달리, MoE는 특정 입력에 대해 모델의 일부 매개변수만 활성화하는 조건부 계산을 수행합니다. 이러한 접근 방식은 모델의 총 매개변수 수를 기하급수적으로 늘리면서도 실제 계산 비용은 일정하게 유지할 수 있게 합니다. MoE의 희소성(sparsity)은 컴퓨팅 자원 활용의 새로운 지평을 열어줍니다. 이는 대규모 모델의 학습 및 추론 비용을 획기적으로 절감하며, 지속 가능한 AI 개발에 기여합니다. 많은 최첨단 LLM이 MoE 기반 아키텍처를 사용하기 시작하고 있다는 점을 고려할 때, 우리는 이 기술의 실제 적용 가능성을 탐구해야 합니다. 본 게시물에서는 MoE 아키텍처의 핵심 원리를 파악하고, PyTorch를 활용하여 이러한 개념을 실제로 구현하는 방법을 심도 있게 다룰 것입니다. 우리는 MoE의 작동 방식을 단계별로 이해하고, 이를 통해 실제 LLM 개발에 필요한 통찰력을 얻을 것입니다.
+
+MoE 구현 리소스
+
+**트랜스포머 아키텍처의 진화와 핵심 원리**
+
+**트랜스포머 기반 LLM: 생성형 AI의 근간**
+AI 연구팀 · 2024년 7월 25일
+더 자세히 알아보기
+
+MoE 기반 LLM을 이해하려면 먼저 현대 AI 시스템의 근간이 되는 **디코더 전용 트랜스포머(decoder-only transformer) 아키텍처**를 살펴봐야 합니다. 이 아키텍처는 GPT 모델에 의해 대중화되었으며, 기존 인코더-디코더 트랜스포머(encoder-decoder transformer) [1]의 강력한 변형으로 자리 잡았습니다. 디코더 전용 모델은 주로 텍스트 생성과 같은 단방향 작업을 위해 최적화되어 있으며, 그 유연성과 확장성 덕분에 LLM 분야의 표준으로 자리매김했습니다. 우리는 이 핵심 아키텍처의 구성 요소를 면밀히 검토하고, 각 부분이 어떻게 작동하여 복잡한 언어 이해 및 생성 능력을 가능하게 하는지 탐구할 것입니다.
+
+원본 아키텍처는 [1]에서 기계 번역(machine translation) 작업을 위해 제안되었으며, 인코더(encoder)와 디코더(decoder) 모듈을 모두 가지고 있습니다. 인코더는 입력 시퀀스를 이해하고 표현을 생성하는 데 사용되며, 디코더는 이 표현을 바탕으로 출력 시퀀스를 생성합니다. 그러나 생성형 LLM의 맥락에서는 입력과 출력의 구분이 모호해지며, 단방향(unidirectional) 텍스트 생성이 핵심이 됩니다. 현대 LLM에 더 일반적으로 사용되는 디코더 전용 트랜스포머는 이름에서 알 수 있듯이 인코더를 제외하고 디코더 2만을 활용합니다. 이는 모델이 현재까지 생성된 토큰만을 기반으로 다음 토큰을 예측하도록 강제함으로써, 문맥에 맞는 자연스러운 텍스트 생성을 가능하게 합니다. 이러한 디코더 전용 아키텍처의 모든 레이어는 다음의 핵심 구성 요소를 포함합니다.
+
+*   인과적 마스킹을 적용한 셀프 어텐션(causal masked self-attention) 레이어.
+*   MLP(Multi-Layer Perceptron) 기반의 피드포워드(feed-forward) 네트워크.
+
+완전한 디코더 전용 트랜스포머 아키텍처를 형성하기 위해, 우리는 동일한 구조를 가진 여러 레이어 L개를 효과적으로 쌓습니다. 각 레이어는 입력 시퀀스에 대한 추상적인 표현을 점진적으로 구축하며, 이는 모델이 더욱 복잡한 패턴과 의존성을 학습할 수 있도록 합니다. 이 계층적 구조는 모델의 깊이를 증가시켜, 방대한 양의 데이터를 처리하고 정교한 언어 능력을 발휘하는 데 필수적입니다.
+
+**트랜스포머 블록의 기본 구조**
+
+이제 더 나은 이해를 위해, 우리는 아키텍처의 핵심 구성 요소를 심층적으로 분석할 것입니다. 모델이 텍스트 입력을 어떻게 처리하고, 이를 내부적으로 어떻게 표현하는지부터 시작하여, 각 구성 요소가 정보 흐름과 변환에 어떻게 기여하는지 상세히 살펴보겠습니다. 이 과정을 통해, 트랜스포머가 언어를 이해하고 생성하는 복잡한 메커니즘을 명확하게 파악할 수 있습니다.
+
+**원시 텍스트의 디지털화: 토큰화와 임베딩**
+
+LLM의 입력은 텍스트 시퀀스(즉, 프롬프트(prompt))이지만, 모델 내부에서는 이를 직접 처리하지 않습니다. 신경망은 숫자로만 작동하기 때문에, 원시 텍스트는 먼저 모델이 이해할 수 있는 수치적 형태로 변환되어야 합니다. 이러한 변환 과정은 여러 단계로 이루어지며, 각 단계는 텍스트의 의미를 보존하면서 모델이 학습할 수 있는 형태로 데이터를 구조화하는 데 필수적입니다. 텍스트 입력에서 이러한 벡터를 어떻게 효과적으로 생성할까요?
+
+**텍스트 분해 및 수치화 과정**
+
+**토큰화(Tokenization).** LLM의 입력을 구성하는 첫 번째 단계는 원시 텍스트 입력(문자 시퀀스)을 의미 단위인 개별 토큰(token)으로 분해하는 것입니다. 토큰화라고 불리는 이 과정은 모델의 **토크나이저(tokenizer)**에 의해 처리됩니다. BPE(Byte-Pair Encoding) 외에도 WordPiece나 SentencePiece와 같은 다양한 토크나이저가 존재하며, 각각 언어적 특성과 모델의 요구사항에 따라 최적화된 방식을 제공합니다. 토큰화의 품질은 모델이 언어를 얼마나 정확하게 이해하고 생성하는지에 직접적인 영향을 미치므로, 적절한 토크나이저 선택이 중요합니다. 이 토크나이저들은 원시 텍스트 시퀀스를 입력으로 받아 복잡한 텍스트를 개별 토큰 시퀀스로 효율적으로 분해합니다.
+
+```python
+import torch
+from transformers import AutoTokenizer
+
+# load the llama-3.2 tokenizer
+tokenizer = AutoTokenizer.from_pretrained('meta-llama/Llama-3.1-8B')
+
+# raw text
+text = "This raw text will be tokenized"
+
+# create tokens using tokenizer
+tokens = tokenizer.tokenize(text)
+token_ids = tokenizer.convert_tokens_to_ids(tokens)
+# token_ids = tokenizer.encode(text) # directly create token ids
+
+# view the results
+print("Original Text:", text)
+print("Tokens:", tokens)
+print("Token IDs:", token_ids)
+
+# create token embedding layer
+VOCABULARY_SIZE: int = 128000
+EMBEDDING_DIM: int = 768
+token_embedding_layer = torch.nn.Embedding(
+    num_embeddings=VOCABULARY_SIZE,
+    embedding_dim=EMBEDDING_DIM,
+)
+
+# get token embeddings (IDs must be passed as a tensor, not a list)
+token_emb = token_embedding_layer(torch.tensor(token_ids))
+print(f'Token Embeddings Shape: {token_emb.shape}')
+```
+view raw tokenizer_example.py hosted with ❤ by GitHub
+
+LLM 훈련 및 상호 작용을 위한 다양한 프레임워크(예: HuggingFace 또는 torchtune)는 강력한 토크나이저 인터페이스를 제공합니다. 이러한 도구들은 개발자들이 텍스트 데이터를 손쉽게 전처리하고, 다양한 모델에 맞는 토큰 시퀀스를 생성할 수 있도록 지원합니다. 예를 들어, OpenAI의 tiktoken 패키지는 GPT 계열 모델의 토크나이저와 효율적으로 상호 작용할 수 있는 기능을 제공합니다. 위에 제시된 코드 스니펫은 일반적인 텍스트 시퀀스를 다음과 같이 토큰화하는 과정을 보여줍니다.
+
+**입력 텍스트**: This raw text will be tokenized
+**토큰 시퀀스**: ['This', 'Ġraw', 'Ġtext', 'Ġwill', 'Ġbe', 'Ġtoken', 'ized']
+
+여기서 Ġ 문자는 토큰이 선행하는 공백을 포함함을 나타냅니다. 이러한 특수 문자는 원본 텍스트의 구조를 보존하고 토큰 시퀀스로부터 원본 텍스트를 정확하게 재구성하는 데 중요한 역할을 합니다. 토크나이저에 따라 다양한 규칙과 특수 문자가 사용될 수 있으며, 이는 단어의 경계를 명확히 하거나 구두점과 같은 비알파벳 문자를 처리하는 방식에 영향을 미칩니다.
+
+**어휘(Vocabulary).** 각 LLM은 특정 토크나이저로 훈련되지만, 범용 토크나이저가 다양한 모델에 적용될 수도 있습니다. 주어진 토크나이저가 생성할 수 있는 토큰 집합은 고정되어 있으며, 이는 모델이 언어를 인코딩하고 디코딩하는 데 사용하는 기본적인 단위가 됩니다. 이 고정된 토큰 집합은 통상적으로 모델의 "어휘(vocabulary)"라고 불리며, 언어 이해의 기반을 형성합니다. 어휘 크기는 모델의 언어 범위와 효율성에 큰 영향을 미칩니다. 예를 들어, 다국어 모델은 여러 언어를 포괄하기 위해 훨씬 더 큰 어휘를 가지는 경향이 있으며, 이는 모델의 복잡성을 증가시키지만 언어 간 전이 학습(cross-lingual transfer learning)에 유리합니다. 최근 LLM의 경우, 64K에서 256K 토큰 사이의 어휘 크기가 일반적입니다.
+
+**모델의 토큰 어휘 구조**
+
+**토큰 ID 및 임베딩(Embeddings).** LLM 어휘의 각 토큰은 고유한 정수 ID와 밀접하게 연결됩니다. 예를 들어, 이전 코드는 텍스트를 토큰화할 때 다음과 같은 ID 시퀀스를 생성합니다: `[2028, 7257, 1495, 690, 387, 4037, 1534]`. 이 각 ID는 **임베딩 레이어(embedding layer)**에서 **토큰 임베딩(token embedding)**이라는 고차원 벡터로 변환됩니다. 토큰 임베딩은 각 토큰의 의미론적 정보를 밀집된 벡터 공간에 압축하여 표현하며, 유사한 의미를 가진 토큰들이 벡터 공간에서 가깝게 위치하도록 학습됩니다. 임베딩 레이어는 이러한 벡터들을 저장하는 거대한 조회 테이블(lookup table) 역할을 하며, 토큰 ID를 통해 해당 임베딩 벡터를 효율적으로 가져올 수 있습니다.
+
+**입력 임베딩의 행렬 표현**
+
+이제 토큰 임베딩 목록을 가지고 있습니다. 이 임베딩들을 행렬로 쌓아 트랜스포머 아키텍처의 초기 입력을 형성할 수 있습니다. PyTorch와 같은 딥러닝 프레임워크에서는 이러한 행렬 생성이 토크나이저와 임베딩 레이어에 의해 자동으로 처리됩니다. 토큰 임베딩 행렬의 크기는 일반적으로 `[B, C, d]`로 표현됩니다. 여기서 `B`는 배치 크기, `C`는 시퀀스 길이(토큰 수), `d`는 각 토큰 임베딩의 차원입니다. 차원 `d`는 트랜스포머 내의 모든 연산의 복잡도에 영향을 미치므로, `d`는 중요한 하이퍼파라미터(hyperparameter) 선택이 됩니다. 트랜스포머는 순서에 무관한(permutation-invariant) 구조를 가지기 때문에, 토큰의 시퀀스 내 위치 정보를 명시적으로 제공해야 합니다. 이 행렬을 트랜스포머에 입력으로 전달하기 전에, 우리는 각 토큰에 위치 임베딩(positional embedding) 3을 추가하여 시퀀스 내 위치 정보를 제공합니다. 이는 모델이 텍스트의 순서와 문맥을 이해하는 데 필수적입니다.
+
+**어텐션 메커니즘: 문맥 이해의 핵심**
+
+이제 토큰 임베딩 행렬인 입력을 트랜스포머 모델에 전달하여 처리를 시작할 준비가 되었습니다. 트랜스포머의 핵심은 입력 시퀀스 내의 각 토큰이 다른 모든 토큰과의 관계를 동적으로 파악하여 자신의 표현을 업데이트하는 능력에 있습니다. 트랜스포머는 셀프 어텐션(self-attention)과 피드포워드 변환(feed-forward transformation)을 포함하는 반복되는 블록으로 구성됩니다. 이 두 가지 메커니즘은 상호 보완적으로 작동하며, 모델이 복잡한 문맥적 의존성을 효과적으로 학습할 수 있도록 합니다. 먼저 셀프 어텐션 메커니즘을 상세히 살펴보겠습니다.
+
+셀프 어텐션이란 무엇인가? 간단히 말해, 셀프 어텐션은 시퀀스 내 각 토큰의 표현을 문맥적 관련성에 기반하여 변환합니다. 이는 마치 사람이 문장을 읽을 때 각 단어의 의미를 파악하기 위해 다른 단어들과의 관계를 생각하는 것과 유사합니다. 셀프 어텐션은 각 토큰이 시퀀스 내의 다른 어떤 토큰(자기 자신 포함)에 가장 큰 영향을 받아야 하는지를 학습합니다. 예를 들어, "강아지가 의자 위에서 잠을 자고 있다"라는 문장에서 '잠을 자고 있다'는 '강아지'와 '의자'라는 단어와 깊은 관련이 있습니다. 이 단어들은 문장의 전체적인 의미를 형성하는 데 결정적인 역할을 합니다.
+
+“어텐션 함수(attention function)는 쿼리(query)와 키-값(key-value) 쌍 집합을 사용하여 문맥적 출력을 생성합니다. 여기서 쿼리, 키, 값, 출력은 모두 벡터 형태를 가집니다. 최종 출력은 값 벡터들의 가중 합으로 계산되며, 각 값에 대한 가중치는 쿼리와 해당 키 사이의 유사성 또는 관련성을 나타내는 호환성 함수(compatibility function)에 의해 결정됩니다.” - [1]에서 발췌
+
+**스케일드 닷 프로덕트 어텐션(Scaled Dot Product Attention).** 입력 토큰 행렬이 주어졌을 때(즉, 단순화를 위해 배치 대신 단일 입력 시퀀스를 처리한다고 가정), 우리는 세 개의 별도 선형 투영(linear projection)을 사용하여 쿼리(query), 키(key), 값(value) 벡터를 생성합니다. 이러한 선형 변환은 각 토큰으로부터 서로 다른 관점의 정보를 추출하는 역할을 합니다. 쿼리 벡터는 '무엇을 찾고 있는가'를 나타내고, 키 벡터는 '무엇을 가지고 있는가'를, 값 벡터는 '제공할 수 있는 정보'를 나타내는 것으로 비유될 수 있습니다.
+
+**쿼리, 키, 값 벡터의 역할**
+
+이 명명 규칙은 정보 검색(information retrieval) 분야에서 영감을 받았습니다. 각 투영 이름에 대한 직관적인 추론은 다음과 같습니다.
+
+*   **쿼리(query)**는 정보를 검색하는 데 사용됩니다. 이는 현재 토큰이 다른 토큰들과의 관계를 탐색하는 질문 역할을 합니다.
+*   **키(key)**는 시퀀스 내의 각 토큰을 식별하며, 쿼리와의 유사성 비교에 사용됩니다. 쿼리와 키가 얼마나 잘 일치하는지에 따라 어텐션 가중치가 결정됩니다.
+*   **값(value)**은 쿼리가 키와 일치할 때 검색되는 실제 정보를 담고 있습니다. 최종 출력은 이러한 값들의 가중 합으로 구성됩니다.
+
+**어텐션 점수(attention score) 계산.** 입력을 투영한 후, 우리는 입력 시퀀스 내 각 토큰 쌍 `[i, j]`에 대한 어텐션 점수 `a[i, j]`를 계산합니다. 이 점수는 특정 토큰이 시퀀스 내의 다른 토큰에 얼마나 "집중해야" 하는지를 정량화합니다. 어텐션 점수가 높을수록 토큰 쌍이 서로 강하게 연결되어 있음을 나타냅니다. 이는 토큰 `i`의 쿼리 벡터와 토큰 `j`의 키 벡터 간의 내적(dot product)을 통해 계산됩니다. 내적은 두 벡터의 유사도를 측정하는 효과적인 방법이며, 이 유사도 값이 어텐션 가중치를 결정하는 기초가 됩니다.
+
+**쿼리-키 유사도 기반 어텐션 점수**
+
+시퀀스 내 모든 쌍별 어텐션 점수를 효율적으로 계산하는 과정은 다음과 같습니다.
+
+*   쿼리 및 키 벡터를 각각 행렬 `Q`와 `K`로 구성합니다.
+*   쿼리 행렬에 전치된 키 행렬을 곱하여 유사도를 측정합니다.
+이 연산은 `[C, C]` 크기의 어텐션 행렬(attention matrix)을 형성하며, 각 요소는 특정 토큰 쌍의 유사도를 나타냅니다. 다음으로, 이 어텐션 행렬의 각 값을 `d`의 제곱근으로 나눕니다(이는 훈련 안정성을 향상시키는 것으로 밝혀진 접근 방식 [1]입니다). 마지막으로, 어텐션 행렬의 각 행에 소프트맥스(softmax) 연산을 적용하여 가중치를 정규화합니다. 소프트맥스 적용 후, 어텐션 행렬의 각 행은 유효한 확률 분포를 형성합니다. 각 행은 합이 1인 양수 값을 포함합니다. 어텐션 행렬의 `i`번째 행은 `i`번째 토큰과 시퀀스 내 다른 각 토큰 사이의 확률을 저장합니다.
+
+**어텐션 가중치 및 최종 출력 산출**
+
+**출력 계산.** 어텐션 점수를 얻으면 셀프 어텐션의 최종 출력을 도출하는 과정은 간단합니다. 각 토큰의 출력은 값 벡터의 가중 조합으로, 가중치는 계산된 어텐션 점수를 통해 결정됩니다. 이 출력을 계산하기 위해, 어텐션 행렬에 값 행렬을 곱하기만 하면 됩니다. 특히, 셀프 어텐션은 입력의 크기를 보존합니다. 입력 내 각 토큰 벡터에 대해 변환된 `d`차원 출력 벡터가 생성됩니다. 일반적으로 단일 입력 시퀀스 대신 `B`개의 입력 시퀀스 배치를 가지며, `[B, C, d]` 크기의 입력 행렬을 형성합니다.
+
+**마스크드 셀프 어텐션(Masked self-attention).** 지금까지 우리가 배운 공식은 일반적인 셀프 어텐션에 대한 것입니다. 그러나 디코더 전용 트랜스포머는 특히 마스크드 셀프 어텐션(masked self-attention)을 사용하며, 이는 시퀀스 내 각 토큰 뒤에 오는 토큰을 "마스킹(masking)"하여 인과적(causal) 관계를 강제합니다. 즉, 각 토큰은 자신보다 앞에 오는 토큰만 고려할 수 있도록 제한됩니다. 이 메커니즘은 모델이 미래의 정보를 "엿보지" 않고 현재까지의 문맥만을 기반으로 다음 토큰을 예측하도록 보장하며, 이는 텍스트 생성과 같은 순차적인 작업에 필수적입니다.
+
+**인과적 마스킹의 적용**
+
+토큰 시퀀스 `[“오늘”, “날씨”, “는”, “맑음”, “입니다”]`를 고려하고 토큰 `“는”`에 대한 마스크드 어텐션 점수를 계산해 봅시다. 일반적인 셀프 어텐션이라면 '는'이 시퀀스 내 모든 다른 토큰들과의 관계를 고려하겠지만, 마스크드 셀프 어텐션의 경우 '는'은 오직 '오늘', '날씨', '는' 자신에게만 주의를 기울일 수 있습니다. 즉, '맑음'이나 '입니다'와 같은 뒤따르는 토큰들은 고려 대상에서 제외됩니다. 마스크드 셀프 어텐션은 모델이 미래 정보를 활용하는 것을 엄격히 금지합니다! 실제적으로, 이는 이러한 토큰에 대한 모든 어텐션 점수를 단순히 음의 무한대(negative infinity)로 설정함으로써 달성되며, 소프트맥스 적용 후 마스크된 토큰에 대해 쌍별 확률이 0이 됩니다.
+
+**어텐션 헤드(Attention heads).** 지금까지 설명한 어텐션 연산은 소프트맥스를 사용하여 시퀀스 전체에 걸쳐 어텐션 점수를 정규화합니다. 이 접근 방식은 유효한 확률 분포를 형성하지만, 시퀀스 내 여러 위치에 초점을 맞추는 셀프 어텐션의 능력을 제한하기도 합니다. 확률 분포는 하나(또는 소수의) 단어에 의해 쉽게 지배될 수 있습니다. 이 문제를 해결하기 위해, 우리는 일반적으로 여러 "헤드(head)"에 걸쳐 어텐션을 병렬로 수행합니다. 각 헤드 내에서 마스크드 어텐션 연산은 동일합니다. 그러나 우리는 다음을 수행합니다.
+
+*   각 어텐션 헤드에 대해 별도의 키, 쿼리 및 값 투영을 사용합니다.
+*   계산 비용을 줄이기 위해 키, 쿼리 및 값 벡터의 차원을 줄입니다(즉, 선형 투영을 수정하여 수행할 수 있습니다). 더 구체적으로, 우리는 각 어텐션 헤드의 벡터 차원을 `d`에서 `d // H`로 변경할 것입니다. 여기서 `H`는 어텐션 헤드의 수이며, 이는 멀티 헤드 셀프 어텐션(multi-headed self-attention)의 계산 비용을 (상대적으로) 고정된 상태로 유지하기 위함입니다.
+
+**멀티 헤드 어텐션 출력 통합**
+
+이제 우리는 셀프 어텐션을 병렬로 계산하는 여러 어텐션 헤드를 활용합니다. 그러나 우리는 여전히 셀프 어텐션 모듈의 여러 헤드로부터 단일 출력 표현을 생성해야 합니다. 각 어텐션 헤드의 출력을 결합하는 데는 여러 옵션이 있습니다. 예를 들어, 연결(concatenation), 평균화(averaging), 투영(projecting) 등이 있습니다. 그러나 멀티 헤드 셀프 어텐션의 바닐라 구현은 다음을 수행합니다(위에 묘사됨).
+
+*   각 헤드의 출력을 연결합니다.
+*   연결된 출력을 선형적으로 투영하여 최종 표현을 만듭니다.
+
+각 어텐션 헤드가 `d // H` 차원의 토큰 벡터를 출력하므로, 모든 어텐션 헤드의 연결된 출력은 `d` 차원을 가집니다. 따라서 멀티 헤드 셀프 어텐션 연산은 여전히 입력의 원래 크기를 보존합니다.
+
+```python
+"""
+Source: https://github.com/karpathy/nanoGPT/blob/master/model.py
+"""
+import math
+import torch
+from torch import nn
+import torch.nn.functional as F
+
+class CausalSelfAttention(nn.Module):
+
+    def __init__(self, d, H, T, bias=False, dropout=0.2,):
+        """
+        Arguments:
+            d: size of embedding dimension
+            H: number of attention heads
+            T: maximum length of input sequences (in tokens)
+            bias: whether or not to use bias in linear layers
+            dropout: probability of dropout
+        """
+        super().__init__()
+        assert d % H == 0
+        # key, query, value projections for all heads, but in a batch
+        # output is 3X the dimension because it includes key, query and value
+        self.c_attn = nn.Linear(d, 3 * d, bias=bias)
+        # projection of concatenated attention head outputs
+        self.c_proj = nn.Linear(d, d, bias=bias)
+        # dropout modules
+        self.attn_dropout = nn.Dropout(dropout)
+        self.resid_dropout = nn.Dropout(dropout)
+        self.H = H
+        self.d = d
+        # causal mask to ensure that attention is only applied to
+        # the left in the input sequence
+        self.register_buffer("mask", torch.tril(torch.ones(T, T)).view(1, 1, T, T))
+
+    def forward(self, x):
+        B, T, _ = x.size() # batch size, sequence length, embedding dimensionality
+
+        # compute query, key, and value vectors for all heads in batch
+        # split the output into separate query, key, and value tensors
+        q, k, v = self.c_attn(x).split(self.d, dim=2) # [B, T, d]
+
+        # reshape tensor into sequences of smaller token vectors for each head
+        k = k.view(B, T, self.H, self.d // self.H).transpose(1, 2) # [B, H, T, d // H]
+        q = q.view(B, T, self.H, self.d // self.H).transpose(1, 2)
+        v = v.view(B, T, self.H, self.d // self.H).transpose(1, 2)
+
+        # compute the attention matrix, perform masking, and apply dropout
+        att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1))) # [B, H, T, T]
+        att = att.masked_fill(self.mask[:,:,:T,:T] == 0, float('-inf'))
+        att = F.softmax(att, dim=-1)
+        att = self.attn_dropout(att)
+
+        # compute output vectors for each token
+        y = att @ v # [B, H, T, d // H]
+
+        # concatenate outputs from each attention head and linearly project
+        y = y.transpose(1, 2).contiguous().view(B, T, self.d)
+        y = self.resid_dropout(self.c_proj(y))
+        return y
+```
+view raw causal_self_attention.py hosted with ❤ by GitHub
+
+**전체 구현.** 마스크드 멀티 헤드 셀프 어텐션의 완전한 구현은 위에 제시되어 있습니다. 여기서는 `[C, d]` 크기의 단일 입력 시퀀스를 넘어 `[B, C, d]` 크기의 입력 배치를 처리합니다. 위 코드는 지금까지 설명한 각 구성 요소를 구현합니다.
+
+*   **52-59행**: 각 어텐션 헤드에 대한 키, 쿼리 및 값 투영을 계산하고(단일 선형 투영 사용) 필요에 따라 분할/재구성합니다.
+*   **62-65행**: 어텐션 점수를 계산하고, 어텐션 점수를 마스킹한 다음, 결과 4에 소프트맥스 변환을 적용합니다.
+*   **68행**: 어텐션 행렬과 값 행렬의 곱을 취하여 출력 벡터를 계산합니다.
+*   **71-72행**: 각 어텐션 헤드의 출력을 연결하고 선형 투영하여 최종 출력을 형성합니다.
+
+PyTorch에서 일부 정교한 행렬 조작 및 연산을 활용하지만, 이 구현은 우리의 개념적 설명과 일관됩니다!
+
+**피드포워드 네트워크: 비선형 변환의 역할**
+
+**MLP 기반의 포인트와이즈 변환**
+
+마스크드 셀프 어텐션 외에도, 트랜스포머의 각 블록은 포인트와이즈 5 피드포워드 변환을 포함합니다. 이 변환은 시퀀스 내 각 토큰 벡터를 동일한 피드포워드 신경망(feed-forward neural network)을 통해 통과시킵니다. 일반적으로 이는 은닉층(hidden layer)에 비선형 활성화 함수(non-linear activation function)(예: ReLU, GeLU 또는 SwiGLU [3])를 가진 2계층 네트워크입니다. 대부분의 경우, 은닉층의 차원은 우리 토큰 임베딩의 원래 차원보다 큽니다(예: 4배). PyTorch에서 피드포워드 신경망을 구현하는 것은 `Linear` 모듈을 사용하면 쉽게 달성할 수 있습니다. 예시는 아래를 참조하십시오.
+
+```python
+"""
+Source: https://github.com/karpathy/nanoGPT/blob/master/model.py
+"""
+from torch import nn
+
+class MLP(nn.Module):
+    def __init__(self, d, bias=False, dropout=0.2):
+        """
+        Arguments:
+            d: size of embedding dimension
+            bias: whether or not to use bias in linear layers
+            dropout: probability of dropout
+        """
+        super().__init__()
+        self.c_fc    = nn.Linear(d, 4 * d, bias=bias)
+        self.gelu    = nn.GELU()
+        self.c_proj  = nn.Linear(4 * d, d, bias=bias)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        x = self.c_fc(x)
+        x = self.gelu(x)
+        x = self.c_proj(x)
+        x = self.dropout(x)
+        return x
+```
+view raw transformer_ffnn.py hosted with ❤ by GitHub
+
+**트랜스포머 블록의 통합 구조**
+
+**트랜스포머 블록의 핵심 요소**
+
+디코더 전용 트랜스포머 블록을 구성하기 위해, 우리는 핵심 구성 요소인 마스크드 셀프 어텐션과 피드포워드 변환을 결합합니다. 구성 요소 사이에 정규화 연산과 잔차 연결(residual connection)을 배치합니다. 완전한 디코더 전용 트랜스포머 블록 6의 묘사는 위에 표시되어 있습니다. 잔차 연결 [4]은 신경망 레이어의 입력을 해당 레이어의 출력에 단순히 추가한 다음 이 표현을 다음 레이어로 전달합니다. 이는 입력 추가 없이 레이어의 출력만을 다음 레이어로 전달하는 것과는 대조적입니다.
+
+**잔차 연결의 작동 원리**
+
+잔차 연결은 딥러닝(deep learning) 내에서 널리 사용되며 모든 종류의 신경망 레이어 7에 적용될 수 있습니다. 잔차 연결을 추가하는 것은 기울기 소실/폭발(vanishing / exploding gradients) 문제를 피하고, 역전파(backpropagation) 동안 기울기가 네트워크를 통해 자유롭게 흐르도록 하는 "지름길"을 제공하여 훈련의 안정성을 일반적으로 향상시킵니다. 자세한 내용은 여기를 참조하십시오.
+
+**레이어 정규화: 안정적인 훈련을 위한 필수 요소**
+
+신경망 레이어의 입력(또는 출력)을 정규화하는 것도 훈련 안정성에 도움이 될 수 있습니다. 많은 종류의 정규화가 존재하지만, 트랜스포머/LLM에 가장 일반적으로 사용되는 정규화 변형은 레이어 정규화(layer normalization)입니다. 위를 참조하십시오. 여기에서 정규화 연산은 두 가지 구성 요소를 가집니다.
+
+*   정규화 수행.
+*   (학습 가능한) 어파인 변환(affine transformation) 적용.
+
+다시 말해, 우리는 정규화된 출력을 직접 사용하는 대신 정규화된 값에 가중치를 곱하고 편향(bias)을 추가합니다. 가중치와 편향은 모두 다른 네트워크 매개변수와 함께 훈련될 수 있는 학습 가능한 매개변수입니다. 레이어 정규화는 PyTorch에 구현되어 있으며 사용하기 쉽습니다. 여기를 참조하십시오.
+
+```python
+"""
+Source: https://github.com/karpathy/nanoGPT/blob/master/model.py
+"""
+import torch
+from torch import nn
+
+class Block(nn.Module):
+    def __init__(self, d, H, T, bias=False, dropout=0.2,):
+        """
+        Arguments:
+            d: size of embedding dimension
+            H: number of attention heads
+            T: maximum length of input sequences (in tokens)
+            bias: whether or not to use bias in linear layers
+            dropout: probability of dropout
+        """
+        super().__init__()
+        self.ln_1 = nn.LayerNorm(d)
+        self.attn = CausalSelfAttention(d, H, T, bias, dropout)
+        self.ln_2 = nn.LayerNorm(d)
+        self.ffnn = MLP(d, bias, dropout)
+
+    def forward(self, x):
+        x = x + self.attn(self.ln_1(x))
+        x = x + self.ffnn(self.ln_2(x))
+        return x
+```
+view raw decoder_only_block.py hosted with ❤ by GitHub
+
+**블록 구현.** 디코더 전용 트랜스포머 블록의 구현은 위에 제시되어 있습니다. 여기서는 이전의 어텐션 및 피드포워드 변환 구현을 사용합니다. 이미 정의한 모듈을 사용함으로써, 디코더 전용 트랜스포머 블록 구현은 실제로 매우 간단해집니다!
+
+**완전한 디코더 전용 트랜스포머 모델**
+
+**전체 트랜스포머 아키텍처 개요**
+
+디코더 전용 트랜스포머의 입력 및 블록 구조를 파악하면, 전체 아키텍처의 구성은 명확해집니다. 동일한 블록을 `L`번 반복하기만 하면 됩니다! 각 블록에 대해 모델 입력의 크기 `[B, C, d]`가 유지되므로, `L`번째 디코더 전용 트랜스포머 블록의 출력도 이 크기의 텐서(tensor)입니다. 아래를 참조하십시오.
+
+**LLM의 텍스트 생성 메커니즘**
+
+(GPT 스타일의) 디코더 전용 트랜스포머 아키텍처의 완전한 구현은 아래에 제공됩니다. 여기에서 아키텍처는 두 개의 임베딩 레이어(즉, 토큰 및 위치용), 모든 `L`개의 트랜스포머 블록, 그리고 출력 토큰 임베딩을 입력으로 받아 다음 토큰 예측을 수행하기 위한 최종 분류 모듈(레이어 정규화 및 선형 레이어 포함)을 포함합니다. 모델은 크기 `[B, C]`의 입력 토큰 ID 집합인 입력을 이러한 각 구성 요소를 통해 전달하여 출력 토큰 ID 집합을 생성함으로써 작동합니다.
+
+```python
+"""
+Source: https://github.com/karpathy/nanoGPT/blob/master/model.py
+"""
+import torch
+from torch import nn
+import torch.nn.functional as F
+
+class GPT(nn.Module):
+
+    def __init__(self, d, H, C, V, layers, bias=False, dropout=0.2,):
+        """
+        Arguments:
+            d: size of embedding dimension
+            H: number of attention heads
+            C: maximum length of input sequences (in tokens)
+            V: size of the token vocabulary
+            layers: number of decoder-only blocks
+            bias: whether or not to use bias in linear layers
+            dropout: probability of dropout
+        """
+        super().__init__()
+        self.transformer = nn.ModuleDict(dict(
+            wte = nn.Embedding(V, d), # token embeddings
+            wpe = nn.Embedding(C, d), # position embeddings
+            drop = nn.Dropout(dropout),
+            blocks = nn.ModuleList([Block(d, H, C, bias, dropout) for _ in range(layers)]),
+            ln_f = nn.LayerNorm(d),
+            head = nn.Linear(d, V, bias=bias),
+        ))
+
+    def forward(self, idx, targets=None):
+        # idx is a [B, C] matrix of token indices
+        # targets is a [B, C] matrix of target (next) token indices
+        device = idx.device
+        _, C = idx.size() # [B, C]
+        pos = torch.arange(0, C, dtype=torch.long, device=device) # generate token and position embeddings
+
+        tok_emb = self.transformer.wte(idx) # [B, C, d]
+        pos_emb = self.transformer.wpe(pos) # [C, d]
+        x = self.transformer.drop(tok_emb + pos_emb)
+
+        # pass through all decoder-only blocks
+        for block in self.transformer.blocks:
+            x = block(x)
+        x = self.transformer.ln_f(x) # final layer norm
+
+        if targets is not None:
+            # compute the loss if we are given targets
+            logits = self.transformer.head(x)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1,)
+        else:
+            # only look at last token if performing inference
+            logits = self.transformer.head(x[:, [-1], :])
+            loss = None
+        return logits, loss
+```
+view raw gpt.py hosted with ❤ by GitHub
+
+**출력 생성(디코딩).** LLM은 **다음 토큰 예측**을 수행하도록 특별히 훈련됩니다. 다시 말해, 이 모델들은 토큰 목록이 입력으로 주어졌을 때 다음 토큰을 예측하는 전문가입니다. 우리가 배웠듯이, 모델의 출력은 각 입력 토큰에 해당하는 출력 토큰 벡터의 목록입니다. 따라서 우리는 다음을 통해 이러한 입력 토큰 중 어느 것에 대해서든 다음 토큰을 예측할 수 있습니다.
+
+*   특정 토큰에 대한 출력 임베딩을 가져옵니다.
+*   이 임베딩을 선형 레이어를 통해 전달합니다. 여기서 출력 크기는 모델 어휘의 차원입니다.
+*   모델 출력의 argmax를 취하여 최대 토큰 ID를 얻습니다.

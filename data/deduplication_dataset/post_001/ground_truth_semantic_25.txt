@@ -1,0 +1,45 @@
+**DeepSeek R1부터 MiniMax-M2에 이르기까지, 최신 대규모 언어 모델(LLM, Large Language Model)의 지형과 새로운 대안들**
+
+현재 시장에 출시된 대형 언어 모델(LLM) 중 공개 가중치를 제공하는 최상위권 모델들은 본래의 다중 헤드 어텐션(multi-head attention) 구조를 변형한 자동 회귀 디코더(autoregressive decoder) 형태의 트랜스포머(Transformer) 모델을 주축으로 하고 있습니다. 하지만 최근 몇 년간, 기존 LLM의 한계를 극복하고 다양한 목표를 추구하는 대안적 모델들이 활발히 등장하고 있습니다. 텍스트 확산 모델(text diffusion models)부터 최첨단 선형 어텐션 하이브리드 아키텍처(linear attention hybrid architectures)에 이르기까지, 이러한 새로운 시도들은 인공지능 분야의 역동성을 잘 보여줍니다. 일부는 연산 효율성 증대를 목표로 하는 반면, 코드 월드 모델(code world models)과 같은 다른 모델들은 모델링 능력 자체의 향상에 집중합니다.
+
+몇 달 전, 주요 트랜스포머 기반 LLM들을 비교 분석한 저의 글 "The Big LLM Architecture Comparison"을 공유한 이후, 독자 여러분으로부터 이러한 대안적 접근 방식들에 대한 질문을 많이 받았습니다. 특히 최근 PyTorch Conference 2025에서 이 주제로 짧은 강연을 진행하면서, 참석자들에게 관련 내용을 글로 정리하여 제공하겠다고 약속했습니다. 그리하여 이 글이 탄생했습니다!
+
+그림 1: LLM 생태계의 주요 아키텍처 개요. 본문에서는 도표상에서 검은색 테두리로 표시된 구조들을 깊이 있게 탐구합니다. 디코더 스타일 트랜스포머는 이미 저의 이전 글 "The Big Architecture Comparison"에서 다루었으므로, 여기서는 새롭게 부상하는 대안들에 초점을 맞춥니다. 프레임이 없는 다른 아키텍처들은 향후 별도의 글에서 상세히 다룰 예정입니다. 각 주제가 개별적인 심층 분석을 받을 가치가 있다는 점을 인지하고 있으며, 본 글의 분량을 적절히 조절하기 위해 많은 섹션이 간략하게 다루어졌습니다. 그럼에도 불구하고, 이 글이 최근 몇 년간 나타난 흥미로운 LLM 대안들에 대한 유용한 입문서가 되기를 바랍니다.
+
+추신: 앞서 언급된 PyTorch 컨퍼런스 강연 영상은 조만간 공식 PyTorch 유튜브 채널에 게시될 예정입니다. 그전에 미리 내용을 확인하고 싶으신 분들을 위해, 아래에서 연습 녹화 버전을 찾아보실 수 있습니다. (유튜브 링크가 여기에 제공됩니다.)
+
+---
+
+**1. 트랜스포머 기반 LLM(Transformer-Based LLMs)**
+
+고전적인 "Attention Is All You Need" 논문에서 제시된 구조를 기반으로 하는 대규모 언어 모델들은 여전히 문자열 데이터와 프로그래밍 코드 처리 분야에서 최고 수준의 성능을 자랑합니다. 2024년 말부터 현재까지 공개된 주요 모델들을 살펴보면 DeepSeek V3/R1, OLMo 2, Gemma 3, Mistral Small 3.1, Llama 4, Qwen3, SmolLM3, Kimi K2, gpt-oss, GLM-4.5, GLM-4.6, MiniMax-M2 등이 있습니다. (이 목록은 공개 가중치 모델에 중점을 둡니다. GPT-5, Grok 4, Gemini 2.5와 같은 독점 모델 또한 이 범주에 속합니다.) 그림 2: 지난 한 해 동안 출시된 가장 주목할 만한 디코더 스타일 트랜스포머의 개요.
+
+트랜스포머 기반 LLM에 대해서는 이미 여러 차례 강연하고 글을 썼기 때문에, 독자 여러분은 그 기본적인 개념과 구조에 익숙할 것이라고 생각합니다. 더 깊이 있는 정보가 필요하시다면, 저의 "The Big LLM Architecture Comparison" 글에서 위에 언급된 아키텍처들(및 아래 그림에 표시된 아키텍처들)을 상세히 비교했습니다. (참고: Qwen3-Next와 Kimi Linear는 개요도 상의 다른 트랜스포머-상태 공간 모델(SSM) 하이브리드와 함께 분류될 수도 있었습니다. 개인적으로 저는 다른 트랜스포머-SSM 하이브리드를 트랜스포머 구성 요소를 가진 SSM으로 보는 반면, 여기서 논의된 모델들(Qwen3-Next 및 Kimi Linear)은 SSM 구성 요소를 가진 트랜스포머로 간주합니다. 그러나 IBM Granite 4.0과 NVIDIA Nemotron Nano 2를 트랜스포머-SSM 범주에 포함했으므로, 이들을 단일 범주로 묶어야 한다는 주장도 일리가 있습니다.) 그림 3: 저의 "The Big Architecture Comparison" (https://magazine.sebastianraschka.com/p/the-big-llm-architecture-comparison) 글에서 논의된 아키텍처의 하위 집합.
+
+만약 LLM을 사용하거나 개발하는 입장이라면, 예를 들어 새로운 애플리케이션을 구축하거나, 특정 작업에 모델을 미세 조정하거나, 혁신적인 알고리즘을 실험하는 경우, 이러한 트랜스포머 모델들이 가장 신뢰할 수 있는 선택지가 될 것입니다. 이러한 모델들은 광범위한 검증 과정을 거쳐 신뢰성이 입증되었으며, 뛰어난 처리 능력을 보여줍니다. 또한, "The Big Architecture Comparison" 글에서 논의했듯이 그룹화된 쿼리 어텐션(grouped-query attention), 슬라이딩 윈도우 어텐션(sliding-window attention), 멀티 헤드 잠재 어텐션(multi-head latent attention) 등 다양한 효율성 개선 기법이 적용되어 있습니다. 그러나 연구자와 엔지니어가 기존 방식에 안주하고 대안을 모색하지 않는다면, 이는 혁신의 정체로 이어질 것입니다. 따라서 다음 섹션들에서는 최근 몇 년간 등장한 주목할 만한 LLM 대안들을 심층적으로 다룰 것입니다. 이들은 단순히 효율성을 넘어선 새로운 패러다임을 제시하며, AI의 미래를 형성하는 데 중요한 역할을 할 것으로 기대됩니다.
+
+---
+
+**2. (선형) 어텐션 하이브리드((Linear) Attention Hybrids)**
+
+더욱 이질적인 접근 방식들을 논하기에 앞서, 먼저 효율적인 어텐션 메커니즘(attention mechanisms)을 도입한 트랜스포머 기반 LLM들을 살펴보겠습니다. 특히, 처리해야 할 입력 단위의 개수(토큰 수)에 비례하여 계산 복잡도가 제곱으로 증가하는 대신, 단일 비례 관계를 보이는 모델들에 주목하고자 합니다. 최근 LLM의 연산 효율성을 높이기 위한 목적으로 선형 어텐션 메커니즘(linear attention mechanisms)이 다시금 연구자들의 관심을 받고 있습니다. 특히, 대규모 모델의 컨텍스트 창이 길어지면서 기존 어텐션의 이차적 복잡성 문제가 더욱 부각되었기 때문입니다.
+
+"Attention Is All You Need" 논문(2017)에서 처음 소개된 스케일드 닷 프로덕트 어텐션(scaled-dot-product attention)은 오늘날 LLM에서 가장 널리 사용되는 어텐션 변형으로 자리 잡고 있습니다. 전통적인 멀티 헤드 어텐션(multi-head attention) 외에도, 제 강연에서 다루었듯이 그룹화된 쿼리 어텐션(grouped-query attention), 슬라이딩 윈도우 어텐션(sliding window attention), 멀티 헤드 잠재 어텐션(multi-head latent attention)과 같은 더욱 효율적인 변형에도 이 기본 개념이 활용됩니다. 이러한 효율성 개선 노력은 대규모 모델의 학습 및 추론 비용을 절감하고, 더 긴 시퀀스를 처리할 수 있도록 하는 데 필수적입니다.
+
+---
+
+**2.1 전통적인 어텐션과 이차적 비용(Traditional Attention and Quadratic Costs)**
+
+기존 어텐션 기법은 입력 시퀀스의 길이에 비례하여 연산량이 제곱으로 증가하는 특성을 가집니다:
+\(\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d}}\right)V\)
+이는 쿼리(Q), 키(K), 값(V)이 각각 n x d 행렬이기 때문입니다. 여기서 d는 임베딩 차원(embedding dimension, 모델의 하이퍼파라미터)을 나타내며, n은 시퀀스 길이, 즉 처리되는 토큰(tokens)의 개수를 의미합니다. (더 자세한 설명은 저의 "Understanding and Coding Self-Attention, Multi-Head Attention, Causal-Attention, and Cross-Attention in LLMs" 글에서 찾아볼 수 있습니다.) 그림 4: 멀티 헤드 어텐션(multi-head attention)에서 전통적인 스케일드 닷 프로덕트 어텐션 메커니즘(scaled-dot-product attention mechanism)의 설명; 시퀀스 길이 n으로 인한 어텐션의 이차적 비용.
+
+이러한 이차적 확장성은 특히 긴 컨텍스트(context)를 처리해야 하는 현대 LLM에 심각한 문제를 야기합니다. 시퀀스 길이가 두 배가 되면, 어텐션 계산에 필요한 시간과 메모리는 네 배로 증가합니다. 이는 모델이 수십만 또는 수백만 개의 토큰을 처리해야 할 때, 기하급수적인 연산 비용과 메모리 요구량을 발생시켜 학습 및 추론을 비현실적으로 만듭니다. 이러한 근본적인 한계가 선형 어텐션과 같은 대안적 접근 방식의 필요성을 더욱 부각시키는 주된 이유입니다.
+
+---
+
+**2.2 선형 어텐션(Linear attention)**
+
+선형 어텐션(linear attention) 변형은 비교적 오래전부터 연구되어 왔으며, 2020년대 초반에 이미 수많은 관련 논문들이 발표되었습니다. 예를 들어, 제가 기억하는 가장 초기 시도 중 하나는 2020년 논문 "Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention"으로, 연구자들은 어텐션 메커니즘을 다음과 같이 효율적으로 근사했습니다:
+\(\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d}}\right)V \approx \phi(Q)\big(\phi(K)^\top V\big)\)
+여기서 ϕ(⋅)는 커널 특징 함수(kernel feature function)를 나타내며, ϕ(x) = elu(x)+1로 설정됩니다. 이 근사는 N x N 크기의 어텐션 행렬(attention matrix) QK T를 명시적으로 계산하는 과정을 생략함으로써 효율성을 달성합니다. 과거의 이러한 시

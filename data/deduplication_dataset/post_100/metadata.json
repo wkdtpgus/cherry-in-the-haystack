@@ -1,0 +1,21 @@
+{
+  "post_id": "100",
+  "title": "AIEWF 2025 온라인! (및 참가자 가이드)",
+  "base_word_count": 771,
+  "exact_30_update_wc": 672,
+  "exact_30_ground_truth_wc": 952,
+  "exact_30_overlap_ratio": 0.731,
+  "paraphrase_25_update_wc": 934,
+  "paraphrase_25_ground_truth_wc": 934,
+  "paraphrase_25_overlap_ratio": 0.825,
+  "fragment_20_update_wc": 656,
+  "fragment_20_ground_truth_wc": 1063,
+  "fragment_20_overlap_ratio": 0.555,
+  "semantic_25_update_wc": 1027,
+  "semantic_25_ground_truth_wc": 1027,
+  "semantic_25_overlap_ratio": 0.751,
+  "mixed_real_update_wc": 680,
+  "mixed_real_ground_truth_wc": 681,
+  "mixed_real_overlap_ratio": 1.132,
+  "status": "generated"
+}

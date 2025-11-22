@@ -1,0 +1,21 @@
+{
+  "post_id": "017",
+  "title": "**처음부터 GPT 스타일(GPT-Style) LLM 분류기(LLM classifier) 구축하기**",
+  "base_word_count": 736,
+  "exact_30_update_wc": 991,
+  "exact_30_ground_truth_wc": 1000,
+  "exact_30_overlap_ratio": 0.734,
+  "paraphrase_25_update_wc": 938,
+  "paraphrase_25_ground_truth_wc": 938,
+  "paraphrase_25_overlap_ratio": 0.785,
+  "fragment_20_update_wc": 670,
+  "fragment_20_ground_truth_wc": 679,
+  "fragment_20_overlap_ratio": 1.085,
+  "semantic_25_update_wc": 994,
+  "semantic_25_ground_truth_wc": 994,
+  "semantic_25_overlap_ratio": 0.74,
+  "mixed_real_update_wc": 604,
+  "mixed_real_ground_truth_wc": 604,
+  "mixed_real_overlap_ratio": 1.219,
+  "status": "generated"
+}
