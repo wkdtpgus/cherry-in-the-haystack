@@ -295,35 +295,81 @@ So that **new contributors can start quickly and code quality is maintained**.
 ### Story 2.1: Multi-Source Content Aggregation
 
 As a **content curator**,
-I want **Auto-News to pull from 10+ LLM-focused sources automatically**,
+I want **Auto-News to pull from diverse LLM-focused sources across 15 content types**,
 So that **we capture comprehensive coverage of the LLM ecosystem without manual monitoring**.
 
 **Acceptance Criteria:**
 
 **Given** the Auto-News engine is adapted for handbook use
-**When** I configure content sources
-**Then** the system successfully pulls from:
-- At least 5 Twitter accounts (e.g., @AnthropicAI, @OpenAI, key researchers)
-- At least 2 Discord servers (with proper bot permissions)
-- At least 3 GitHub organizations/repositories (releases, discussions)
-- At least 3 RSS feeds (blogs, newsletters)
-- Papers from arXiv (LLM-related categories)
+**When** I configure content sources based on ContentList taxonomy
+**Then** the system successfully pulls from at least **3 content types** in each major category:
 
-**And** each source includes metadata: source_type, source_name, URL, poll_frequency
+**Academic & Research Sources:**
+- Academic Papers: ArXiv (LLM/AI categories), ACL Anthology, Semantic Scholar
+- Research Paper Reviews: Aggregated paper summary sources
 
-**And** source health monitoring tracks last successful pull and error rate
+**Technical Content Sources:**
+- Technical Blog Posts: OpenAI Blog, Anthropic Blog, Hugging Face Blog, Google AI Blog
+- Database/Leaderboards: Papers with Code, Hugging Face Open LLM Leaderboard
+- API Documentation: OpenAI API docs, Anthropic API docs, Cohere, Mistral
 
-**And** content is stored in raw_content table with source attribution
+**News & Media Sources:**
+- News Articles: VentureBeat AI, Wired AI, MIT Technology Review
+- Aggregated Feeds: SyncedReview, The Decoder, AI News on Substack
+- Newsletters: The Batch (deeplearning.ai), Import AI, TLDR AI
+
+**Social & Community Sources:**
+- Social Media Posts: Twitter/X (key AI researchers, company accounts), LinkedIn AI influencers
+- Forum Discussions: Reddit (r/MachineLearning, r/LocalLLaMA), Hacker News
+- Chatroom Discussions: Discord AI servers, Kakao Open Chat (AI channels)
+
+**Multimedia Sources:**
+- YouTube Videos: Yannic Kilcher, Lex Fridman Podcast, Two Minute Papers
+- Podcasts: AI-focused audio content (RSS feeds)
+
+**Development & Tools Sources:**
+- Open-Source Repositories: GitHub (AI repos, trending), Hugging Face models
+- Package Releases: PyPI (AI/ML packages), npm (AI tools)
+- Regulatory Reports: OECD AI, EU AI Act updates, DAIR Institute
+
+**And** each source includes comprehensive metadata:
+- content_type (from ContentList: Academic Paper, Technical Blog Post, Social Media Post, etc.)
+- topic_category (from SourceList: Technical Deep Dive, New AI Model Release, etc.)
+- source_name, source_url, poll_frequency
+- priority_level (high/medium/low)
+
+**And** source health monitoring tracks:
+- Last successful pull timestamp
+- Success/failure rate (last 7 days)
+- Content quality metrics (approval rate)
+
+**And** content is stored in raw_content table with:
+- Full source attribution and categorization
+- Content type and topic tags for downstream processing
+- Original publication date and capture timestamp
+
+**And** minimum coverage targets:
+- At least 25 active sources across all content types
+- At least 3 sources per major content type category
+- Coverage of all 11 topic categories from SourceList
 
 **Prerequisites:** Story 1.4 (Auto-News engine adaptation)
 
 **Technical Notes:**
-- Use existing Auto-News operators where possible
-- Twitter: May need official API or scraping (consider rate limits)
-- Discord: Requires bot with MESSAGE_READ permissions
-- GitHub: Use GitHub API for releases, discussions, issues
-- Implement exponential backoff for failed pulls
-- Consider source priority levels (high/medium/low)
+- Reference taxonomy: `Additional/ContentList.md` for content types
+- Reference taxonomy: `Additional/ContentSource/SourceList.csv` for topic categories
+- Use existing Auto-News operators where possible, extend for new source types
+- **Social Media:** Twitter API v2 (rate limits: 1500/month free tier) or alternative scraping
+- **Discord:** Bot with MESSAGE_READ permissions, respect server rules
+- **GitHub:** GitHub API v3/v4 for releases, discussions, trending repos
+- **RSS Feeds:** Standard RSS/Atom parser for blogs, newsletters, podcasts
+- **YouTube:** YouTube Data API v3 or RSS feeds for channels
+- **ArXiv:** ArXiv API for academic papers (categories: cs.AI, cs.CL, cs.LG)
+- **Reddit:** Reddit API (PRAW) or RSS feeds for subreddits
+- **Package Registries:** PyPI RSS/API, npm registry API
+- Implement exponential backoff for failed pulls (1m, 5m, 30m, 2h intervals)
+- Source priority determines poll frequency: high (hourly), medium (daily), low (weekly)
+- Store content_type and topic_category in database for filtering and categorization
 
 ---
 
