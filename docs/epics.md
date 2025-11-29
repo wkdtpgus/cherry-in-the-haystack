@@ -868,6 +868,8 @@ So that **weekly batch publications happen without manual intervention**.
 
 ### Story 4.2: Jupyter Book Theme Customization
 
+> 해당 Story가 필수불가결인지 잘 모르겠습니다.
+
 As a **UI/UX designer**,
 I want **Jupyter Book styled with custom branding and visual design**,
 So that **handbook has professional, distinct visual identity**.
@@ -902,6 +904,8 @@ So that **handbook has professional, distinct visual identity**.
 ---
 
 ### Story 4.3: Card Layouts for "Newly Discovered" Section
+
+> Web UI 디자인 안이 나오고 다시 확인해야 할 거 같습니다.
 
 As a **handbook user**,
 I want **visually distinct card-based presentation for recent updates**,
