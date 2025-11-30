@@ -346,33 +346,85 @@ For MVP, the handbook uses **Jupyter Book** for static site generation rather th
 - Focus on content pipeline automation rather than web development
 
 ### System Architecture
+> `15. 핸드북 Product Overview (250813) ` mermaid 그래프를 주고 수정하게 만들었습니다.
 
 **Newly Discovered Content Pipeline:**
 ```
-Auto-News Ingestion
+M0. Source Exploration
+  → Data Sources Catalog (Notion)
   ↓
-Notion Review (1-5 scoring + weekly approval)
+M1. Data Collection
+  → Web Sources (blogs, conferences, SNS, reports, YouTube)
+  → RSS Collection (TTRSS) + Crawlers (Firecrawl / AI Browser)
+  → TTRSS DB + Crawling DB
   ↓
-Postgres Database (approved score-5 items)
+M2. Sync
+  → Sync DB (unified storage)
   ↓
-Automated GitHub Commit (markdown files)
+M3. Refinement (configurable policy)
+  → Deduplication (required)
+  → Noise Filtering
+  → Classification, Clustering, Tagging
+  → Analysis Metrics (variable)
   ↓
-Jupyter Book Rebuild (GitHub Actions)
+M4. AI Draft Generation
+  → AI Summary
+  → "Why it matters" draft
   ↓
-GitHub Pages Deployment
+M5. Assignment & Notion Upload
+  → Participant table (role, interests, preferred sources)
+  → Tag + preference-based assignment
+  → Notion "Found Content" database
+  ↓
+M6. Community Review
+  → Individual Review (waiting status)
+  → Weekly Review (review done status)
+  → Monthly Review (promotion/demotion between sections)
+  ↓
+M7. Publishing Preparation
+  → Notion "Weekly Updated" view
+  → Score 5 items filter
+  ↓
+M8. Handbook Reflection
+  → NEWLY DISCOVERED (score 5 items via automated flow)
+  ↓
+M9. Digest Generation
+  → Weekly digest (Wednesday scheduler)
+  ↓
+M10. Patchnote & Deployment
+  → Jupyter Book Build
+  → GitHub Actions diff
+  → Patchnote update
+  → GitHub Pages Deployment
 ```
 
 **Basics/Advanced Content Pipeline:**
 ```
-Curated Text Sources (PDFs, books, websites)
+M0. Source Exploration
+  → Curated Text Sources (PDFs, books, canonical websites)
+  → Data Sources Catalog (Notion)
   ↓
-AI Synthesis & Deduplication
+M1-M5. Same as Newly Discovered
+  → Collection, Sync, Refinement, AI Draft, Assignment
   ↓
-Manual GitHub PR (markdown files)
+M6. Community Review
+  → Individual Review
+  → Weekly Review
+  → Monthly Review (promotion from Newly Discovered or between Basics/Advanced)
   ↓
-Jupyter Book Rebuild (GitHub Actions)
+M8. Handbook Reflection
+  → LLM Engineering BASICS (foundational concepts)
+  → ADVANCED (deep technical content)
   ↓
-GitHub Pages Deployment
+M10. Patchnote & Deployment
+  → Manual GitHub PR (markdown files)
+  → Jupyter Book Rebuild (GitHub Actions)
+  → GitHub Pages Deployment
+```
+
+**Observability Layer (M11):**
+```
+All pipeline stages → Metrics, Logs, Alerts → Dashboards
 ```
 
 ### Content Repository Structure
@@ -650,10 +702,12 @@ Organized by user-facing capabilities, each requirement connects to the core pro
 ### 4. Content Publishing & Distribution
 
 **FR-4.1: Automated Publication Pipeline**
-- **Description:** Approved content automatically flows from Postgres → GitHub → Jupyter Book → Public site
+> Notion에서 GitHub인지 DB에서 GitHub인지 기억이 애매합니다...
+
+- **Description:** Approved content automatically flows from Postgres/Notion → GitHub → Jupyter Book → Public site
 - **User Value:** Fresh content reaches users within hours, not days - delivers the "speed" promise
 - **Acceptance Criteria:**
-  - Weekly batch: Postgres → GitHub commit (markdown files)
+  - Weekly batch: Postgres/Notion → GitHub commit (markdown files)
   - GitHub push triggers Jupyter Book rebuild (under 5 minutes)
   - GitHub Pages deployment automatic
   - Zero-downtime deployments
@@ -716,6 +770,9 @@ Organized by user-facing capabilities, each requirement connects to the core pro
   - Feedback to submitter (approved/rejected/reason)
 
 **FR-5.3: Contributor Recognition**
+
+> 이 부분은 Future?
+
 - **Description:** Track and display contributor names/avatars
 - **User Value:** Recognition motivates ongoing participation
 - **Acceptance Criteria:**
