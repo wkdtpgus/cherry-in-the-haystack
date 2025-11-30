@@ -419,6 +419,12 @@ Raw Content → Deduplication → AI Scoring (1-5) → [Filter: score==5] →
 Notion Queue → Human Review → [Approved] → Postgres → Publication
 ```
 
+> 순서에 대해 확인이 필요합니다.
+> ```
+> Raw Content → Deduplication → AI Scoring (1-5) → Sync DB → 
+> Notion → [Filter: score==5] → Human Review → [Approved] → Postgres → Publication
+> ```
+
 **Implementation Guide for AI Agents:**
 - AI Scoring: Use GPT-4o-mini with temperature=0.3 for consistency
 - Store scoring reasoning for pattern learning (future enhancement)
