@@ -160,9 +160,10 @@ def process_rss(args):
     # Only pick top 1 to reduce the overflow
     data_filtered = op.filter(data_scored, k=1, min_score=4)
     data_summarized = op.summarize(data_filtered)
+    data_ranked = op.rank(data_summarized)
 
     targets = args.targets.split(",")
-    pushed_stats = op.push(data_summarized, targets)
+    pushed_stats = op.push(data_ranked, targets)
 
     return op.createStats(
         "RSS",
@@ -172,6 +173,7 @@ def process_rss(args):
         data_scored=data_scored,
         data_filtered=data_filtered,
         data_summarized=data_summarized,
+        data_ranked=data_ranked,
         pushed_stats=pushed_stats)
 
 
