@@ -1,5 +1,7 @@
 # All LLM prompts put here
 
+from config.rss_feeds import FeedNames
+
 LLM_PROMPT_CATEGORY_AND_RANKING_TPL = """
 You are a content review expert, you can analyze how many topics in a content, and be able to calculate a quality score of them (range 0 to 1).
 
@@ -80,6 +82,48 @@ LLM_PROMPT_SUMMARY_COMBINE_PROMPT3 = """
 Write a concise and precise numbered list summary of the following text without losing any numbers and key points (English numbers need to be converted to digital numbers, write in KOREAN):
 ```{text}```
 """
+
+# RSS Feed-specific prompts
+# Map RSS feed name to custom prompt template
+LLM_PROMPT_RSS_REDDIT_ML = """
+Write a technical summary of this Reddit ML discussion, focusing on:
+- Key technical insights and implementation details
+- Community opinions and trending viewpoints
+- Practical applications and code examples mentioned
+Write in numbered list format, in KOREAN:
+```{text}```
+"""
+
+LLM_PROMPT_RSS_NEWSLETTER = """
+Write a newsletter-style summary highlighting:
+- Main insights and key takeaways
+- Actionable recommendations
+- Important facts and figures
+Write in numbered list format, in KOREAN:
+```{text}```
+"""
+
+# RSS Feed Name → Prompt Template Mapping
+# IMPORTANT: Use FeedNames constants (imported from config.rss_feeds)
+# to prevent typos and maintain consistency with RSS_FEEDS
+RSS_FEED_PROMPTS = {
+    FeedNames.REDDIT_ML: LLM_PROMPT_RSS_REDDIT_ML,
+    FeedNames.NEWSLETTER_ELVIS: LLM_PROMPT_RSS_NEWSLETTER,
+    # Default fallback for unmapped feeds
+    "default": LLM_PROMPT_SUMMARY_COMBINE_PROMPT3,
+}
+
+def get_rss_prompt(feed_name: str) -> str:
+    """
+    Get prompt template for specific RSS feed
+
+    Args:
+        feed_name: RSS feed name from config
+
+    Returns:
+        Prompt template string
+    """
+    return RSS_FEED_PROMPTS.get(feed_name, RSS_FEED_PROMPTS["default"])
 
 LLM_PROMPT_SUMMARY_COMBINE_PROMPT4 = """
 As a professional summarizer, create a concise and comprehensive summary of the provided text, be it an article, post, conversation, or passage, while adhering to these guidelines:
