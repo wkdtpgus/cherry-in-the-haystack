@@ -1482,9 +1482,9 @@ class NotionAgent:
         categories: list
     ):
         """
-        Create RSS item in ToRead database with custom format:
-        - Properties: AI summary, URL
-        - Blocks: ## {title}\n{summary}\n{link}
+        Create RSS item in ToRead database with enhanced analysis fields:
+        - Properties: AI summary, URL, Why it matters, Insights, Examples
+        - Blocks: ## {title}\n{content}\n{link}
         """
         content = page.get("content") or ""
         summary = page.get("__summary") or ""
@@ -1492,7 +1492,16 @@ class NotionAgent:
         url = page["url"]
         created_time_pdt = utils.convertUTC2PDT_str(page["created_time"])
 
-        # Properties: Name, Published at, AI summary, URL
+        # Extract enhanced analysis fields
+        why_it_matters = page.get("__why_it_matters", "")
+        insights = page.get("__insights", [])
+        examples = page.get("__examples", [])
+
+        # Convert lists to formatted strings
+        insights_text = "\n".join(f"• {item}" for item in insights) if insights else ""
+        examples_text = "\n".join(f"• {item}" for item in examples) if examples else ""
+
+        # Properties: Name, Published at, AI summary, URL, enhanced analysis fields
         properties = {
             "Name": {
                 "title": [
@@ -1519,6 +1528,33 @@ class NotionAgent:
             },
             "URL": {
                 "url": url
+            },
+            "Why it matters": {
+                "rich_text": [
+                    {
+                        "text": {
+                            "content": why_it_matters[:2000]  # Notion limit: 2000 chars
+                        }
+                    }
+                ]
+            },
+            "Insights": {
+                "rich_text": [
+                    {
+                        "text": {
+                            "content": insights_text[:2000]  # Notion limit: 2000 chars
+                        }
+                    }
+                ]
+            },
+            "Examples": {
+                "rich_text": [
+                    {
+                        "text": {
+                            "content": examples_text[:2000]  # Notion limit: 2000 chars
+                        }
+                    }
+                ]
             }
         }
 
