@@ -7,17 +7,16 @@ from datetime import date, datetime
 from time import mktime
 
 from notion import NotionAgent
-from llm_agent import (
-    LLMAgentCategoryAndRanking,
-    LLMAgentSummary,
-)
+from llm_agent import LLMAgentSummary
 import utils
 from ops_base import OperatorBase
 from db_cli import DBClient
 from ops_milvus import OperatorMilvus
 from ops_notion import OperatorNotion
+from config.rss_feeds import get_enabled_feeds
 
 import feedparser
+import requests
 
 
 class OperatorRSS(OperatorBase):
@@ -38,8 +37,28 @@ class OperatorRSS(OperatorBase):
         """
         print(f"[fetch_articles] list_name: {list_name}, feed_url: {feed_url}, count: {count}")
 
-        # Parse the RSS feed
-        feed = feedparser.parse(feed_url)
+        # Fetch RSS feed with proper headers to avoid being blocked by Reddit
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+            'Accept-Language': 'en-US,en;q=0.9',
+        }
+
+        try:
+            response = requests.get(feed_url, headers=headers, timeout=10)
+            response.raise_for_status()
+            feed = feedparser.parse(response.content)
+        except Exception as e:
+            print(f"[ERROR] Failed to fetch RSS feed: {e}")
+            feed = feedparser.parse('')  # Empty feed to avoid errors
+
+        # Debug information
+        print(f"[DEBUG] feed.bozo: {feed.bozo}, entries count: {len(feed.entries)}")
+        if feed.bozo:
+            print(f"[DEBUG] feed.bozo_exception: {feed.bozo_exception}")
+        if hasattr(feed, 'status'):
+            print(f"[DEBUG] HTTP status: {feed.status}")
+
         pulled_cnt = 0
 
         articles = []
@@ -106,17 +125,10 @@ class OperatorRSS(OperatorBase):
         print("#####################################################")
         print("# Pulling RSS")
         print("#####################################################")
-        
-        rss_list = [
-            {
-                "name": "Reddit MachineLearning Feed",  # 원하는 이름
-                "url": "https://www.reddit.com/r/machinelearningnews/.rss"  # 실제 RSS URL
-            },
-            {
-                "name": "AI Newsletter - elvis saravia",
-                "url": "https://nlp.elvissaravia.com/feed"
-            }
-        ]
+
+        # Load RSS feeds from centralized configuration
+        rss_list = get_enabled_feeds()
+        print(f"Loaded {len(rss_list)} enabled RSS feeds from config")
 
         # Fetch articles from rss list
         pages = {}
@@ -124,9 +136,10 @@ class OperatorRSS(OperatorBase):
         for rss in rss_list:
             name = rss["name"]
             url = rss["url"]
-            print(f"Fetching RSS: {name}, url: {url}")
+            count = rss.get("count", 3)  # Use configured count or default to 3
+            print(f"Fetching RSS: {name}, url: {url}, count: {count}")
 
-            articles = self._fetch_articles(name, url, count=3)
+            articles = self._fetch_articles(name, url, count=count)
             print(f"articles: {articles}")
 
             for article in articles:
@@ -234,15 +247,15 @@ class OperatorRSS(OperatorBase):
         print(f"Number of pages: {len(pages)}")
         print(f"Summary max length: {SUMMARY_MAX_LENGTH}")
 
-        llm_agent = LLMAgentSummary()
-        llm_agent.init_prompt()
-        llm_agent.init_llm()
-
         client = DBClient()
         redis_key_expire_time = os.getenv(
             "BOT_REDIS_KEY_EXPIRE_TIME", 604800)
 
         summarized_pages = []
+
+        # Track current feed to reuse LLM agent for same feed
+        current_feed_name = None
+        llm_agent = None
 
         for page in pages:
             page_id = page["id"]
@@ -251,6 +264,18 @@ class OperatorRSS(OperatorBase):
             list_name = page["list_name"]
             source_url = page["url"]
             print(f"Summarying page, title: {title}, list_name: {list_name}")
+
+            # Initialize or reinitialize LLM agent when feed changes
+            if current_feed_name != list_name or llm_agent is None:
+                import llm_prompts
+                feed_prompt = llm_prompts.get_rss_prompt(list_name)
+                print(f"[INFO] Initializing LLM agent for feed: {list_name}")
+                print(f"[INFO] Using prompt: {feed_prompt[:100]}...")
+
+                llm_agent = LLMAgentSummary()
+                llm_agent.init_prompt(combine_prompt=feed_prompt)
+                llm_agent.init_llm()
+                current_feed_name = list_name
             # print(f"Page content ({len(content)} chars): {content}")
 
             st = time.time()
@@ -263,26 +288,27 @@ class OperatorRSS(OperatorBase):
                 # the source url. For RSS, we will load content
                 # from this entrypoint
                 if not content:
-                    # First, try to use RSS summary field if available
-                    rss_summary = page.get("summary", "")
-                    if rss_summary:
-                        print("page content is empty, using RSS summary field")
-                        content = rss_summary
-                    else:
-                        print("page content is empty, fallback to load web page via WebBaseLoader")
+                    # Try to load web content first, fallback to RSS summary if failed
+                    try:
+                        # load_web() returns None if validation fails
+                        content = utils.load_web(source_url, validate=True, min_length=200)
+                        if content:
+                            print(f"Successfully loaded web content: {len(content)} chars")
+                    except Exception as e:
+                        print(f"[ERROR] Exception occurred during utils.load_web(), source_url: {source_url}, {e}")
+                        content = None
 
-                        try:
-                            content = utils.load_web(source_url)
-                            print(f"Page content ({len(content)} chars)")
-
-                        except Exception as e:
-                            print(f"[ERROR] Exception occurred during utils.load_web(), source_url: {source_url}, {e}")
-
-                        if not content:
-                            print("[ERROR] Empty Web page loaded via WebBaseLoader, skip it")
+                    # Fallback to RSS summary if web load failed or invalid
+                    if not content:
+                        print("Web load failed or invalid, using RSS summary field as fallback")
+                        rss_summary = page.get("summary", "")
+                        if rss_summary:
+                            content = rss_summary
+                            print(f"Using RSS summary as fallback: {len(content)} chars")
+                        else:
+                            print("[ERROR] Both web load and RSS summary failed, skip it")
                             continue
 
-                content = content[:SUMMARY_MAX_LENGTH]
                 summary = llm_agent.run(content)
 
                 print(f"Cache llm response for {redis_key_expire_time}s, page_id: {page_id}, summary: {summary}")
@@ -294,96 +320,137 @@ class OperatorRSS(OperatorBase):
                 print("Found llm summary from cache, decoding (utf-8) ...")
                 summary = utils.bytes2str(llm_summary_resp)
 
-            # assemble summary into page
-            summarized_page = copy.deepcopy(page)
-            summarized_page["__summary"] = summary
+            # categorizing page
+            print(f"Categorizing page, title: {title}, list_name: {list_name}")
 
-            print(f"Used {time.time() - st:.3f}s, Summarized page_id: {page_id}, summary: {summary}")
+            llm_category_resp = client.get_notion_category_item_id(
+                "rss", list_name, page_id)
+
+            if not llm_category_resp:
+                # Initialize categorization LLM agent
+                from llm_agent import LLMAgentGeneric
+                import llm_prompts
+
+                category_agent = LLMAgentGeneric()
+                category_agent.init_prompt(llm_prompts.LLM_PROMPT_CATEGORIZATION)
+                category_agent.init_llm()
+
+                # Run categorization on summary
+                category_response = category_agent.run(summary)
+
+                print(f"Cache llm category response for {redis_key_expire_time}s, page_id: {page_id}, category: {category_response}")
+                client.set_notion_category_item_id(
+                    "rss", list_name, page_id, category_response,
+                    expired_time=int(redis_key_expire_time))
+            else:
+                print("Found llm category from cache, decoding (utf-8) ...")
+                category_response = utils.bytes2str(llm_category_resp)
+
+            # Parse category JSON (multi-select)
+            import json
+            try:
+                category_data = json.loads(category_response)
+                categories = category_data.get("categories", [])
+            except json.JSONDecodeError as e:
+                print(f"[ERROR] Failed to parse category JSON: {e}, response: {category_response}")
+                categories = []
+
+            # assemble summary and categories into page
+            summarized_page = copy.deepcopy(page)
+            summarized_page["content"] = content
+            summarized_page["__summary"] = summary
+            summarized_page["__categories"] = categories
+
+            print(f"Used {time.time() - st:.3f}s, Summarized page_id: {page_id}, categories: {categories}, summary: {summary}")
             summarized_pages.append(summarized_page)
+
+
+        print("[INFO] Enhanced analysis enabled for RSS, running analysis...")
+        summarized_pages = self.analyze_enhanced(summarized_pages)
 
         return summarized_pages
 
-    def rank(self, pages):
+    def analyze_enhanced(self, pages):
         """
-        Rank page summary (not the entire content)
+        Generate enhanced analysis (why_it_matters, insights, examples)
+        for RSS articles
         """
         print("#####################################################")
-        print("# Rank RSS Articles")
+        print("# Enhanced Analysis for RSS Articles")
         print("#####################################################")
-        ENABLED = utils.str2bool(os.getenv("RSS_ENABLE_CLASSIFICATION", "False"))
-        print(f"Number of pages: {len(pages)}, enabled: {ENABLED}")
+        ANALYSIS_MAX_LENGTH = int(os.getenv("ANALYSIS_MAX_LENGTH", 15000))
+        print(f"Number of pages: {len(pages)}")
+        print(f"Analysis max length: {ANALYSIS_MAX_LENGTH}")
 
-        llm_agent = LLMAgentCategoryAndRanking()
-        llm_agent.init_prompt()
+        # Initialize LLM agent
+        llm_agent = LLMAgentSummary()
+        llm_agent.init_prompt()  # for potential summary fallback
         llm_agent.init_llm()
+        llm_agent.init_enhanced_analysis_prompt()
 
         client = DBClient()
-        redis_key_expire_time = os.getenv(
-            "BOT_REDIS_KEY_EXPIRE_TIME", 604800)
+        redis_key_expire_time = os.getenv("BOT_REDIS_KEY_EXPIRE_TIME", 604800)
 
-        # array of ranged pages
-        ranked = []
+        analyzed_pages = []
 
         for page in pages:
-            title = page["title"]
             page_id = page["id"]
+            title = page["title"]
+            content = page.get("content", "")
+            summary = page.get("__summary", "")
             list_name = page["list_name"]
-            text = page["__summary"]
-            print(f"Ranking page, title: {title}")
 
-            # Let LLM to category and rank
+            print(f"Analyzing page, title: {title}, list_name: {list_name}")
+
             st = time.time()
 
-            # Parse LLM response and assemble category and rank
-            ranked_page = copy.deepcopy(page)
+            # Check cache
+            cached_analysis = client.get_notion_enhanced_analysis_item_id(
+                "rss", list_name, page_id
+            )
 
-            if not ENABLED:
-                ranked_page["__topics"] = []
-                ranked_page["__categories"] = []
-                ranked_page["__rate"] = -0.02
-
-                ranked.append(ranked_page)
-                continue
-
-            llm_ranking_resp = client.get_notion_ranking_item_id(
-                "rss", list_name, page_id)
-
-            category_and_rank_str = None
-
-            if not llm_ranking_resp:
-                print("Not found category_and_rank_str in cache, fallback to llm_agent to rank")
-                category_and_rank_str = llm_agent.run(text)
-
-                print(f"Cache llm response for {redis_key_expire_time}s, page_id: {page_id}")
-                client.set_notion_ranking_item_id(
-                    "rss", list_name, page_id,
-                    category_and_rank_str,
-                    expired_time=int(redis_key_expire_time))
-
+            if cached_analysis:
+                print("Found cached enhanced analysis")
+                import json
+                analysis = json.loads(utils.bytes2str(cached_analysis))
             else:
-                print("Found category_and_rank_str from cache")
-                category_and_rank_str = utils.bytes2str(llm_ranking_resp)
+                # Determine input: content first, then summary fallback
+                analysis_input = content if content else summary
 
-            print(f"Used {time.time() - st:.3f}s, Category and Rank: text: {text}, rank_resp: {category_and_rank_str}")
+                if not analysis_input:
+                    print("[WARN] No content or summary available, skipping analysis")
+                    continue
 
-            category_and_rank = utils.fix_and_parse_json(category_and_rank_str)
-            print(f"LLM ranked result (json parsed): {category_and_rank}")
+                # Truncate to max length
+                analysis_input = analysis_input[:ANALYSIS_MAX_LENGTH]
+                print(f"Analysis input length: {len(analysis_input)} chars")
 
-            if not category_and_rank:
-                print("[ERROR] Cannot parse json string, assign default rating -0.01")
-                ranked_page["__topics"] = []
-                ranked_page["__categories"] = []
-                ranked_page["__rate"] = -0.01
-            else:
-                ranked_page["__topics"] = [(x["topic"], x.get("score") or 1) for x in category_and_rank["topics"]]
-                ranked_page["__categories"] = [(x["category"], x.get("score") or 1) for x in category_and_rank["topics"]]
-                ranked_page["__rate"] = category_and_rank["overall_score"]
-                ranked_page["__feedback"] = category_and_rank.get("feedback") or ""
+                # Run LLM
+                analysis = llm_agent.run_enhanced_analysis(analysis_input)
 
-            ranked.append(ranked_page)
+                # Cache result
+                import json
+                analysis_json = json.dumps(analysis, ensure_ascii=False)
+                client.set_notion_enhanced_analysis_item_id(
+                    "rss", list_name, page_id, analysis_json,
+                    expired_time=int(redis_key_expire_time)
+                )
+                print(f"Cached enhanced analysis for {redis_key_expire_time}s")
 
-        print(f"Ranked pages: {ranked}")
-        return ranked
+            # Add to page
+            analyzed_page = copy.deepcopy(page)
+            analyzed_page["__why_it_matters"] = analysis.get("why_it_matters", "")
+            analyzed_page["__insights"] = analysis.get("insights", [])
+            analyzed_page["__examples"] = analysis.get("examples", [])
+
+            print(f"Used {time.time() - st:.3f}s, Enhanced analysis complete")
+            print(f"  - Why it matters: {analyzed_page['__why_it_matters'][:100]}...")
+            print(f"  - Insights: {len(analyzed_page['__insights'])} items")
+            print(f"  - Examples: {len(analyzed_page['__examples'])} items")
+
+            analyzed_pages.append(analyzed_page)
+
+        return analyzed_pages
 
     def _get_top_items(self, items: list, k):
         """
@@ -441,14 +508,12 @@ class OperatorRSS(OperatorBase):
                         topics_topk = topics_topk[:topk]
 
                         categories_topk = []
-                        rating = page.get("__rate") or -1
 
                         notion_agent.createDatabaseItem_ToRead_RSS(
                             database_id,
                             page,
                             topics_topk,
-                            categories_topk,
-                            rating)
+                            categories_topk)
 
                         self.markVisited(page_id, source="rss", list_name=list_name)
 
