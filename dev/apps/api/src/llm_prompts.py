@@ -112,6 +112,30 @@ Ethan Mollick의 글을 다음 중점에 맞춰 요약해 주세요:
 ```{text}```
 """
 
+LLM_PROMPT_API_SUMMARY = """
+Analyze the provided technical article/discussion and generate a structured summary in KOREAN.
+Please organize the output into the following four sections using the exact headers below:
+
+## 💡 AI 요약 (AI Summary)
+- Clearly summarize the main content, key technical concepts, and innovations.
+- Use bullet points.
+
+## ❓ 왜 중요한가 (Why it matters)
+- Explain the significance of this topic in the context of AI and technology trends.
+- Why should the reader care?
+
+## 🔍 예시 (Example)
+- Provide concrete examples, code snippets, or use cases mentioned in the text.
+- If no specific example is provided, describe a potential application.
+
+## ⚡ 인사이트 (Insight)
+- Provide deep insights, implications, or future outlook derived from the content.
+- Include community reactions or counter-arguments if available.
+
+Content:
+```{text}```
+"""
+
 # RSS Feed Name → Prompt Template Mapping
 # IMPORTANT: Use FeedNames constants (imported from config.rss_feeds)
 # to prevent typos and maintain consistency with RSS_FEEDS

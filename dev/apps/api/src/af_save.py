@@ -263,6 +263,12 @@ def run(args):
             op = OperatorCrawlBlogSuperhuman()
             stat = process_crawl(args, op, source=source)
 
+        elif source == "APICrawler":
+            from ops_api_crawler import OperatorAPICrawler
+            op = OperatorAPICrawler()
+            # Reuse process_crawl logic (dedup -> summarize -> push)
+            stat = process_crawl(args, op, source="api_crawl")
+
         stats.extend(stat)
 
     # Print stats

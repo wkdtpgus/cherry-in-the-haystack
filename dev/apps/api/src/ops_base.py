@@ -164,16 +164,19 @@ class OperatorBase:
         filename,
         data
     ):
-        workdir = os.getenv("WORKDIR")
+        workdir = os.getenv("WORKDIR", ".")
 
         data_path = f"{workdir}/{data_folder}/{run_id}"
         full_path = utils.gen_filename(data_path, filename)
+        
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
         print(f"Save data to {full_path}, data: {data}")
         utils.save_data_json(full_path, data)
 
     def readFromJson(self, data_folder, run_id, filename):
-        workdir = os.getenv("WORKDIR")
+        workdir = os.getenv("WORKDIR", ".")
 
         data_path = f"{workdir}/{data_folder}/{run_id}"
         full_path = utils.gen_filename(data_path, filename)

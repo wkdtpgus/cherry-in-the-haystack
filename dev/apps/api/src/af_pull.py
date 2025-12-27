@@ -200,6 +200,42 @@ def run(args):
             data = pull_crawl(args, op)
             save_crawl(args, op, data, source=source)
 
+        elif source == "APICrawler":
+            from ops_api_crawler import OperatorAPICrawler
+            op = OperatorAPICrawler()
+            # Reuse pull_crawl structure or create new
+            print("######################################################")
+            print("# Pull from APICrawler")
+            print("######################################################")
+            
+            def pull_job():
+                return op.pull()
+
+            data = utils.prun(pull_job) or {}
+            
+            print("######################################################")
+            print("# Save APICrawler data to json file")
+            print("######################################################")
+            op.save2json(args.data_folder, args.run_id, "api_crawl.json", data)
+
+        elif source == "APICrawler":
+            from ops_api_crawler import OperatorAPICrawler
+            op = OperatorAPICrawler()
+            # Reuse pull_crawl structure or create new
+            print("######################################################")
+            print("# Pull from APICrawler")
+            print("######################################################")
+            
+            def pull_job():
+                return op.pull()
+
+            data = utils.prun(pull_job) or {}
+            
+            print("######################################################")
+            print("# Save APICrawler data to json file")
+            print("######################################################")
+            op.save2json(args.data_folder, args.run_id, "api_crawl.json", data)
+
 
 if __name__ == "__main__":
     args = parser.parse_args()
