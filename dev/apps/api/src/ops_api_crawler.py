@@ -180,8 +180,6 @@ class OperatorAPICrawler(OperatorBase):
             summary = self.client.get_notion_summary_item_id(
                 "api_crawl", source, page_id) # Use "api_crawl" as source key for cache logic consistency? Or just source.
 
-            # Force update for prompt change
-            summary = None 
             if summary:
                 print(f"Cache hit for summary: {title}")
                 page["summary"] = utils.bytes2str(summary)
@@ -236,16 +234,10 @@ class OperatorAPICrawler(OperatorBase):
             list_name = page.get("list_name", "API")
             
             # Use 'api_crawl' as source key for dedup check to match summary cache
-            is_dup = client.get_notion_toread_item_id("api_crawl", list_name, page_id)
-            
-            # FORCE INCLUDE DUP for testing new summary
-            print(f" - Duplicate check: {is_dup} (Forcing inclusion)")
-            deduped_pages.append(page)
-            
-            # if not client.get_notion_toread_item_id("api_crawl", list_name, page_id):
-            #     deduped_pages.append(page)
-            # else:
-            #      print(f" - Duplicate found, skipping: {title}")
+            if not client.get_notion_toread_item_id("api_crawl", list_name, page_id):
+                deduped_pages.append(page)
+            else:
+                 print(f" - Duplicate found, skipping: {title}")
                  
         print(f"Deduped pages count: {len(deduped_pages)}")
         return deduped_pages
