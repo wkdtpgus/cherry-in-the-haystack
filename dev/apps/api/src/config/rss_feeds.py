@@ -30,6 +30,7 @@ class FeedNames:
     """
     REDDIT_ML = "Reddit MachineLearning Feed"
     NEWSLETTER_ELVIS = "AI Newsletter - elvis saravia"
+    ETHAN_MOLLICK = "Ethan Mollick (AI & Education)"
 
 
 class RSSFeed(TypedDict):
@@ -61,6 +62,12 @@ RSS_FEEDS: List[RSSFeed] = [
     {
         "name": FeedNames.NEWSLETTER_ELVIS,
         "url": "https://nlp.elvissaravia.com/feed",
+        "enabled": True,
+        "count": 3,
+    },
+    {
+        "name": FeedNames.ETHAN_MOLLICK,
+        "url": "https://www.oneusefulthing.org/feed",
         "enabled": True,
         "count": 3,
     },

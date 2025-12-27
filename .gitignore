@@ -38,3 +38,4 @@ logs/
 
 # claude txt files
 .claude/*.txt
+dev/apps/api/venv/

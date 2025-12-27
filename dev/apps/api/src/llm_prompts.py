@@ -103,12 +103,22 @@ Write in numbered list format, in KOREAN:
 ```{text}```
 """
 
+LLM_PROMPT_RSS_ETHAN_MOLLICK = """
+Ethan Mollick의 글을 다음 중점에 맞춰 요약해 주세요:
+- AI가 교육과 업무에 미치는 영향에 대한 핵심 통찰
+- 언급된 실용적 조언과 실험 내용
+- 미래에 대한 시사점
+번호가 매겨진 리스트 형식으로, 반드시 한국어로 작성해 주세요:
+```{text}```
+"""
+
 # RSS Feed Name → Prompt Template Mapping
 # IMPORTANT: Use FeedNames constants (imported from config.rss_feeds)
 # to prevent typos and maintain consistency with RSS_FEEDS
 RSS_FEED_PROMPTS = {
     FeedNames.REDDIT_ML: LLM_PROMPT_RSS_REDDIT_ML,
     FeedNames.NEWSLETTER_ELVIS: LLM_PROMPT_RSS_NEWSLETTER,
+    FeedNames.ETHAN_MOLLICK: LLM_PROMPT_RSS_ETHAN_MOLLICK,
     # Default fallback for unmapped feeds
     "default": LLM_PROMPT_SUMMARY_COMBINE_PROMPT3,
 }
