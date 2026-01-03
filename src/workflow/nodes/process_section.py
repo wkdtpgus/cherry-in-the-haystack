@@ -1,9 +1,3 @@
-"""
-섹션 처리 노드.
-
-현재 섹션을 처리: 청킹 → 아이디어 추출 → 저장.
-그래프 루프에서 반복 호출됨.
-"""
 from langchain_core.prompts import ChatPromptTemplate
 from tqdm import tqdm
 
@@ -20,17 +14,8 @@ from src.workflow.utils import get_concept_from_idea
 def process_section(state: PipelineState) -> PipelineState:
     """
     현재 섹션 처리: 청킹 → 아이디어 추출 → 저장.
-
     all_sections[current_section_index]의 섹션을 처리하고
     인덱스를 증가시킴.
-
-    Args:
-        state: PipelineState
-
-    Returns:
-        업데이트된 PipelineState:
-        - current_section_index: +1 증가
-        - stats: 처리 통계 업데이트
     """
     all_sections = state.get("all_sections", [])
     current_idx = state.get("current_section_index", 0)

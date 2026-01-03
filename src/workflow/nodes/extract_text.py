@@ -1,10 +1,3 @@
-"""
-PDF 텍스트 및 TOC 추출 노드.
-
-PDF 파일에서 Plain Text와 TOC를 추출하여 계층 구조 감지 준비.
-pymupdf(fitz)를 사용.
-"""
-
 from src.workflow.state import PipelineState
 from src.utils.pdf.parser import (
     extract_full_text,
@@ -17,23 +10,11 @@ from src.utils.pdf.parser import (
 def extract_text(state: PipelineState) -> PipelineState:
     """
     PDF에서 Plain Text, TOC, 페이지 위치 정보 추출.
-
     pymupdf(fitz)를 사용하여:
     - 전체 페이지 텍스트 추출
     - 페이지별 문자 위치 매핑
     - TOC(목차) 추출
     - 메타데이터 추출
-
-    Args:
-        state: PipelineState (pdf_path 필수)
-
-    Returns:
-        업데이트된 PipelineState:
-        - plain_text: 전체 텍스트
-        - page_positions: 페이지별 문자 위치 정보
-        - toc: TOC 항목 리스트
-        - has_toc: TOC 존재 여부
-        - metadata: PDF 메타데이터
     """
     pdf_path = state.get("pdf_path")
 

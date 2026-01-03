@@ -1,8 +1,3 @@
-"""Database connection management.
-
-Supports both SQLite (local dev/testing) and PostgreSQL (production).
-"""
-
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
@@ -15,7 +10,6 @@ load_dotenv()
 
 
 def get_database_url() -> str:
-    """Get database URL from environment or use SQLite default."""
     db_url = os.getenv("DATABASE_URL")
 
     if db_url:
@@ -27,14 +21,6 @@ def get_database_url() -> str:
 
 
 def create_db_engine(echo: bool = False):
-    """Create SQLAlchemy engine.
-
-    Args:
-        echo: If True, log all SQL statements
-
-    Returns:
-        SQLAlchemy Engine
-    """
     url = get_database_url()
 
     # PostgreSQL-specific settings
@@ -56,14 +42,6 @@ def create_db_engine(echo: bool = False):
 
 
 def get_session_maker(engine=None) -> sessionmaker:
-    """Get sessionmaker for creating database sessions.
-
-    Args:
-        engine: SQLAlchemy engine (creates new one if None)
-
-    Returns:
-        Configured sessionmaker
-    """
     if engine is None:
         engine = create_db_engine()
 
@@ -71,11 +49,6 @@ def get_session_maker(engine=None) -> sessionmaker:
 
 
 def init_db(engine=None) -> None:
-    """Initialize database (create all tables).
-
-    Args:
-        engine: SQLAlchemy engine (creates new one if None)
-    """
     if engine is None:
         engine = create_db_engine()
 
@@ -83,12 +56,5 @@ def init_db(engine=None) -> None:
 
 
 def get_session() -> Session:
-    """Get a new database session.
-
-    Usage:
-        with get_session() as session:
-            # do database operations
-            session.commit()
-    """
     SessionLocal = get_session_maker()
     return SessionLocal()

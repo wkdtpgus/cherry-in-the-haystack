@@ -1,9 +1,3 @@
-"""
-LangGraph 워크플로우 상태 정의.
-
-PipelineState: 전체 PDF 처리 파이프라인용 (TypedDict)
-State: 개별 아이디어 추출용 (Pydantic)
-"""
 from typing import TypedDict, List, Optional
 from pydantic import BaseModel, Field
 
@@ -16,10 +10,7 @@ from src.model.schemas import (
 )
 
 
-# ============================================================
 # PipelineState: 전체 PDF 처리 파이프라인용 (TypedDict)
-# ============================================================
-
 class SectionInfo(TypedDict):
     """섹션 처리를 위한 정보 구조."""
     chapter: DetectedChapter
@@ -115,10 +106,8 @@ def create_initial_state(
     )
 
 
-# ============================================================
-# State: 개별 아이디어 추출용 (Pydantic)
-# ============================================================
 
+# State: 개별 아이디어 추출용 (Pydantic)
 class State(BaseModel):
     """개별 청크의 아이디어 추출 상태."""
     chunk: ParagraphChunk = Field(description="입력 문단 청크")

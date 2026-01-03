@@ -1,10 +1,3 @@
-"""
-TOC 기반 계층 구조 감지 모듈.
-
-PDF TOC(목차)에서 챕터/섹션 구조를 추출하고,
-LLM은 문단 분할에만 사용.
-"""
-
 import re
 from typing import List, Tuple, Optional, Dict, Any
 
@@ -33,17 +26,7 @@ def detect_chapters_from_toc(
     plain_text: Optional[str] = None,
     page_positions: Optional[List[Tuple[int, int, int, str]]] = None,
 ) -> List[DetectedChapter]:
-    """
-    PDF TOC에서 챕터/섹션 구조 추출.
-
-    Args:
-        pdf_path: PDF 파일 경로
-        plain_text: 미리 추출된 전체 텍스트 (없으면 추출)
-        page_positions: 미리 추출된 페이지 위치 정보 (없으면 추출)
-
-    Returns:
-        DetectedChapter 리스트 (sections 포함)
-    """
+    """PDF TOC에서 챕터/섹션 구조 추출"""
     # 필요시 텍스트/위치 정보 추출
     if plain_text is None:
         plain_text = extract_full_text(pdf_path)
@@ -67,20 +50,7 @@ def _build_hierarchy_from_toc(
     page_positions: List[Tuple[int, int, int, str]],
     plain_text: str,
 ) -> List[DetectedChapter]:
-    """
-    TOC 항목을 계층 구조로 변환.
-
-    - level 1 → DetectedChapter
-    - level 2+ → DetectedSection (재귀적으로 children 구성)
-
-    Args:
-        toc_entries: [{level, title, page}, ...]
-        page_positions: [(page_num, start_char, end_char, text), ...]
-        plain_text: 전체 텍스트
-
-    Returns:
-        DetectedChapter 리스트
-    """
+    """TOC 항목을 계층 구조로 변환"""
     if not toc_entries:
         return []
 
@@ -163,20 +133,7 @@ def _build_sections_from_toc(
     parent_end: int,
     parent_title: str,
 ) -> List[DetectedSection]:
-    """
-    TOC 섹션 항목들을 계층적 섹션 구조로 변환.
-
-    Args:
-        section_entries: 섹션 TOC 항목들
-        page_positions: 페이지 위치 정보
-        plain_text: 전체 텍스트
-        parent_start: 부모 항목의 시작 위치
-        parent_end: 부모 항목의 끝 위치
-        parent_title: 부모 항목 제목
-
-    Returns:
-        DetectedSection 리스트
-    """
+    """TOC 섹션 항목들을 계층적 섹션 구조로 변환"""
     if not section_entries:
         return []
 
@@ -256,16 +213,7 @@ def _page_to_char_position(
     page_num: int,
     page_positions: List[Tuple[int, int, int, str]],
 ) -> int:
-    """
-    페이지 번호를 문자 위치로 변환.
-
-    Args:
-        page_num: 페이지 번호 (0-indexed)
-        page_positions: [(page_num, start_char, end_char, text), ...]
-
-    Returns:
-        해당 페이지의 시작 문자 위치
-    """
+    """페이지 번호를 문자 위치로 변환"""
     for p_num, start, end, text in page_positions:
         if p_num == page_num:
             return start
@@ -281,16 +229,7 @@ def split_into_paragraphs(
     text: str,
     section_title: Optional[str] = None,
 ) -> List[dict]:
-    """
-    섹션 텍스트를 의미 단위 문단으로 분할.
-
-    Args:
-        text: 분할할 섹션 텍스트
-        section_title: 섹션 제목 (컨텍스트용)
-
-    Returns:
-        문단 정보 리스트 [{text, start_char, end_char}, ...]
-    """
+    """섹션 텍스트를 의미 단위 문단으로 분할"""
     if not text or len(text.strip()) < MIN_SECTION_LENGTH:
         return [{"text": text, "start_char": 0, "end_char": len(text)}] if text else []
 
@@ -340,9 +279,7 @@ def split_into_paragraphs(
 
 
 def _simple_paragraph_split(text: str) -> List[dict]:
-    """
-    폴백용 단순 문단 분할 (더블 뉴라인 기준).
-    """
+    """폴백용 단순 문단 분할 (더블 뉴라인 기준)"""
     paragraphs = []
     current_pos = 0
 
@@ -366,17 +303,7 @@ def build_hierarchy_path(
     section: Optional[DetectedSection] = None,
     include_parents: bool = True,
 ) -> str:
-    """
-    계층 경로 문자열 생성.
-
-    Args:
-        chapter: 챕터 정보
-        section: 섹션 정보 (children 포함)
-        include_parents: 상위 경로 포함 여부
-
-    Returns:
-        계층 경로 문자열 (예: "Chapter 1 > Section 1.1 > Subsection 1.1.1")
-    """
+    """계층 경로 문자열 생성"""
     parts = []
 
     if chapter:
@@ -390,15 +317,7 @@ def build_hierarchy_path(
 
 
 def get_leaf_sections(chapter: DetectedChapter) -> List[Tuple[DetectedSection, str]]:
-    """
-    챕터에서 모든 말단 섹션(leaf) 추출.
-
-    Args:
-        chapter: 챕터 정보
-
-    Returns:
-        (섹션, 계층경로) 튜플 리스트
-    """
+    """챕터에서 모든 말단 섹션(leaf) 추출"""
     results = []
 
     def _traverse(section: DetectedSection, path: str):
@@ -434,16 +353,7 @@ def get_leaf_sections(chapter: DetectedChapter) -> List[Tuple[DetectedSection, s
 # ============================================================
 
 def _truncate_text(text: str, max_length: int) -> str:
-    """
-    텍스트를 최대 길이로 truncate.
-
-    Args:
-        text: 원본 텍스트
-        max_length: 최대 길이
-
-    Returns:
-        truncate된 텍스트
-    """
+    """텍스트를 최대 길이로 truncate"""
     if len(text) <= max_length:
         return text
 
@@ -463,18 +373,7 @@ def _find_text_position(
     full_text: str = "",
     search_from: int = 0,
 ) -> int:
-    """
-    텍스트에서 마커 위치 찾기.
-
-    Args:
-        text: 검색 대상 텍스트
-        marker: 찾을 마커
-        full_text: 전체 텍스트 (마커가 없을 때 폴백용)
-        search_from: 검색 시작 위치
-
-    Returns:
-        위치 인덱스 (-1 if not found)
-    """
+    """텍스트에서 마커 위치 찾기"""
     if not marker:
         return search_from
 
@@ -502,9 +401,7 @@ def _find_text_position(
 
 
 def _estimate_original_position(original: str, normalized_pos: int) -> int:
-    """
-    정규화된 텍스트의 위치를 원본 텍스트의 대략적 위치로 변환.
-    """
+    """정규화된 텍스트의 위치를 원본 텍스트의 대략적 위치로 변환"""
     # 간단한 추정: 정규화된 위치 비율로 원본 위치 계산
     normalized = re.sub(r'\s+', ' ', original)
     if len(normalized) == 0:

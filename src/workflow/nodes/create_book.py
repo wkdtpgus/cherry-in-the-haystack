@@ -1,8 +1,3 @@
-"""
-책 생성 노드.
-
-책과 전체 챕터/섹션 구조를 DB에 저장.
-"""
 from src.workflow.state import PipelineState
 from src.db.connection import get_session
 from src.db.operations import (
@@ -16,22 +11,7 @@ from src.utils.pdf.hierarchy_detector import get_leaf_sections
 
 
 def create_book_node(state: PipelineState) -> PipelineState:
-    """
-    책과 전체 구조를 DB에 저장.
-
-    1. Book 레코드 생성
-    2. 모든 Chapter 저장
-    3. 모든 Section 재귀 저장
-    4. all_sections에 chapter_id, section_id 매핑
-
-    Args:
-        state: PipelineState (chapters, metadata 필수)
-
-    Returns:
-        업데이트된 PipelineState:
-        - book_id: 생성된 책 ID
-        - all_sections: chapter_id, section_id가 설정된 섹션 리스트
-    """
+    """책과 전체 구조를 DB에 저장."""
     chapters = state.get("chapters", [])
     metadata = state.get("metadata", {})
     pdf_path = state.get("pdf_path", "")

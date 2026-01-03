@@ -1,9 +1,3 @@
-"""SQLAlchemy models for the database schema.
-
-Maps to the existing PostgreSQL schema with additional fields for
-progress tracking and metadata.
-"""
-
 from sqlalchemy import Column, Integer, Text, ForeignKey, String, Sequence
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
@@ -67,7 +61,6 @@ class Section(Base):
 
 class ParagraphChunk(Base):
     """문단(청크) 테이블
-
     기존 컬럼 유지 + 챕터 메타데이터 확장.
     """
 
@@ -99,7 +92,6 @@ class IdeaGroup(Base):
 
 class KeyIdea(Base):
     """핵심 아이디어 테이블
-
     core_idea_text에 concept(영어 기술 용어)를 저장
     예: "Transformer", "LoRA", "RAG"
     """
@@ -116,7 +108,6 @@ class KeyIdea(Base):
 
 class ProcessingProgress(Base):
     """처리 진행상황 테이블
-
     기존 페이지 기반 + 챕터 기반 진행 추적 지원.
     """
 

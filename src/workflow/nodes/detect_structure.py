@@ -1,8 +1,3 @@
-"""
-구조 감지 노드.
-
-TOC 기반으로 챕터/섹션 구조를 감지하고 처리할 섹션 목록을 생성.
-"""
 from src.workflow.state import PipelineState
 from src.utils.pdf.hierarchy_detector import (
     detect_chapters_from_toc,
@@ -13,19 +8,7 @@ from src.utils.pdf.hierarchy_detector import (
 def detect_structure(state: PipelineState) -> PipelineState:
     """
     TOC 기반 챕터/섹션 구조 감지.
-
     PDF에서 추출한 TOC를 분석하여 챕터/섹션 계층 구조를 생성하고,
-    처리할 모든 leaf 섹션을 flat list로 준비.
-
-    Args:
-        state: PipelineState (plain_text, page_positions, has_toc 필수)
-
-    Returns:
-        업데이트된 PipelineState:
-        - chapters: 감지된 챕터 리스트
-        - all_sections: 처리할 leaf 섹션 리스트 (flattened)
-        - current_section_index: 0 (초기화)
-        - stats 업데이트
     """
     if not state.get("has_toc"):
         return {

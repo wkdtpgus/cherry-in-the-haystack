@@ -1,23 +1,7 @@
-"""
-파이프라인 종료 노드.
-
-처리 결과 요약 및 정리.
-"""
 from src.workflow.state import PipelineState
 
 
 def finalize(state: PipelineState) -> PipelineState:
-    """
-    파이프라인 종료 처리.
-
-    처리 통계를 출력하고 최종 상태를 반환.
-
-    Args:
-        state: PipelineState
-
-    Returns:
-        최종 PipelineState
-    """
     stats = state.get("stats", {})
     error = state.get("error")
 

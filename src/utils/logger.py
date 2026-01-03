@@ -1,9 +1,3 @@
-"""Structured JSON logging configuration for the application.
-
-Provides consistent logging setup with JSON formatting for production
-and human-readable formatting for development.
-"""
-
 import logging
 import sys
 import json
@@ -12,17 +6,8 @@ from typing import Any, Dict
 
 
 class JSONFormatter(logging.Formatter):
-    """Custom JSON formatter for structured logging."""
 
     def format(self, record: logging.LogRecord) -> str:
-        """Format log record as JSON string.
-
-        Args:
-            record: LogRecord instance to format
-
-        Returns:
-            JSON-formatted log string
-        """
         log_data: Dict[str, Any] = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "level": record.levelname,
@@ -45,7 +30,6 @@ class JSONFormatter(logging.Formatter):
 
 
 class HumanReadableFormatter(logging.Formatter):
-    """Human-readable formatter for development."""
 
     def __init__(self):
         super().__init__(
@@ -59,23 +43,7 @@ def setup_logger(
     level: str = "INFO",
     json_format: bool = False
 ) -> logging.Logger:
-    """Setup and configure logger with specified format.
-
-    Args:
-        name: Logger name (default: root logger)
-        level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-        json_format: Use JSON formatting (True) or human-readable (False)
-
-    Returns:
-        Configured logger instance
-
-    Example:
-        # Development (human-readable)
-        logger = setup_logger("myapp", level="DEBUG", json_format=False)
-
-        # Production (JSON)
-        logger = setup_logger("myapp", level="INFO", json_format=True)
-    """
+    
     logger = logging.getLogger(name)
     logger.setLevel(getattr(logging, level.upper()))
 
@@ -102,16 +70,5 @@ def setup_logger(
 
 
 def get_logger(name: str = None) -> logging.Logger:
-    """Get logger instance with name.
-
-    Args:
-        name: Logger name (typically __name__)
-
-    Returns:
-        Logger instance
-
-    Example:
-        logger = get_logger(__name__)
-        logger.info("Processing started")
-    """
+   
     return logging.getLogger(name)

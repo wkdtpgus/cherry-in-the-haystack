@@ -1,16 +1,9 @@
-"""Configuration settings for batch PDF processing.
-
-Centralized configuration for paragraph chunking, retry logic,
-and processing parameters.
-"""
-
 from dataclasses import dataclass
 from typing import List
 
 
 @dataclass
 class ParagraphChunkingConfig:
-    """Configuration for paragraph splitting algorithm."""
 
     # Paragraph length constraints
     MIN_PARAGRAPH_LENGTH: int = 50  # Minimum characters for a paragraph
@@ -26,14 +19,12 @@ class ParagraphChunkingConfig:
     SENTENCE_ENDINGS: List[str] = None
 
     def __post_init__(self):
-        """Initialize default values for mutable fields."""
         if self.SENTENCE_ENDINGS is None:
             self.SENTENCE_ENDINGS = [". ", "! ", "? ", ".\n", "!\n", "?\n"]
 
 
 @dataclass
 class RetryConfig:
-    """Configuration for exponential backoff retry logic."""
 
     # Retry attempts
     MAX_RETRY_ATTEMPTS: int = 3  # Maximum number of retry attempts
@@ -52,7 +43,6 @@ class RetryConfig:
 
 @dataclass
 class ProcessingConfig:
-    """Configuration for batch processing orchestration."""
 
     # Batch processing
     DEFAULT_BATCH_SIZE: int = 10  # Number of pages per batch checkpoint
@@ -73,7 +63,6 @@ class ProcessingConfig:
 
 @dataclass
 class ApplicationConfig:
-    """Master application configuration."""
 
     chunking: ParagraphChunkingConfig = None
     retry: RetryConfig = None
@@ -94,33 +83,11 @@ config = ApplicationConfig()
 
 
 def get_config() -> ApplicationConfig:
-    """Get global application configuration.
-
-    Returns:
-        Application configuration instance
-
-    Example:
-        from src.utils.config import get_config
-
-        cfg = get_config()
-        min_length = cfg.chunking.MIN_PARAGRAPH_LENGTH
-        max_retries = cfg.retry.MAX_RETRY_ATTEMPTS
-    """
+    
     return config
 
 
 def update_config(**kwargs) -> None:
-    """Update configuration values dynamically.
-
-    Args:
-        **kwargs: Configuration values to update
-
-    Example:
-        update_config(
-            MAX_RETRY_ATTEMPTS=5,
-            DEFAULT_MODEL_VERSION="gemini-2.0-pro"
-        )
-    """
     global config
 
     for key, value in kwargs.items():

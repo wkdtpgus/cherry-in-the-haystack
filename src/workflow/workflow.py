@@ -1,11 +1,3 @@
-"""
-LangGraph 워크플로우 정의.
-
-PDF → TOC 기반 챕터/섹션 감지 → 문단 분할 → 아이디어 추출
-
-단일 LangGraph로 전체 파이프라인 구성:
-[extract_text] → [detect_structure] → [create_book] → [process_section] ⟲ → [finalize]
-"""
 from typing import Optional
 from langgraph.graph import StateGraph, END
 
@@ -21,23 +13,6 @@ from src.workflow.nodes import (
 
 
 def create_pdf_pipeline() -> StateGraph:
-    """
-    전체 PDF 처리 파이프라인 그래프 생성.
-
-    워크플로우:
-    ```
-    [extract_text] → [detect_structure] → [create_book]
-                                               │
-                                               ▼
-                                      [process_section] ⟲
-                                               │
-                                               ▼
-                                         [finalize] → END
-    ```
-
-    Returns:
-        컴파일된 LangGraph
-    """
     workflow = StateGraph(PipelineState)
 
     # 노드 추가
@@ -79,23 +54,12 @@ def run_pdf_pipeline(
     model_version: str = "gemini-2.5-flash",
 ) -> dict:
     """
-    PDF 파이프라인 실행.
-
     단일 LangGraph를 통해 전체 PDF 처리 수행:
     1. PDF → Plain Text + TOC 추출
     2. TOC 기반 챕터/섹션 구조 감지
     3. DB에 책/챕터/섹션 저장
     4. 각 섹션별 문단 분할 및 아이디어 추출
     5. 처리 결과 요약
-
-    Args:
-        pdf_path: PDF 파일 경로
-        resume: 이어서 처리 여부 (미구현)
-        book_id: 기존 책 ID (미구현)
-        model_version: LLM 모델 버전
-
-    Returns:
-        처리 통계 dict
     """
     # 초기 상태 생성
     initial_state = create_initial_state(
