@@ -7,15 +7,16 @@ PDF 문서에서 지식을 자동으로 추출하는 LLM 기반 파이프라인�
 - **TOC 기반 챕터 감지**: PDF 내장 목차를 활용한 정확한 챕터 분할
 - **하이브리드 청킹**: 규칙 기반 + LLM 기반 결합으로 의미적 문단 분할
 - **핵심 개념 추출**: 각 문단에서 주요 개념을 자동 추출
+- **다단계 중복제거**: SHA256 → SimHash → 임베딩 → concept 매칭
 - **섹션 메타데이터**: 계층적 섹션 경로 추적 (챕터 > 섹션)
 - **PostgreSQL 저장**: 구조화된 데이터베이스 저장
 
 ## 아키텍처
 
 ```
-PDF → 전체 텍스트 추출 → 챕터 감지 → 텍스트 정규화 → 하이브리드 청킹 → DB 저장
-      (PyMuPDF)     (TOC 기반)  (하이픈 연결,  (규칙+LLM 분할,
-                               테이블 제거)   개념 추출 통합)
+PDF → 전체 텍스트 추출 → 챕터 감지 → 텍스트 정규화 → 하이브리드 청킹 → 중복제거 → DB 저장
+      (PyMuPDF)       (TOC 기반)  (하이픈 연결,  (규칙+LLM 분할,  (해시/임베딩)
+                                  테이블 제거)   개념 추출 통합)
 ```
 
 ### 데이터 구조
@@ -161,6 +162,10 @@ pdf_knowledge_extractor/
 │   ├── db/              # 데이터베이스 모델 및 작업
 │   │   ├── models.py    # SQLAlchemy 모델
 │   │   └── operations.py
+│   ├── dedup/           # 중복제거 모듈
+│   │   ├── hash_utils.py       # SHA256, SimHash
+│   │   ├── embedding_utils.py  # OpenAI 임베딩
+│   │   └── dedup_service.py    # 중복제거 서비스
 │   ├── model/           # LLM 통합
 │   │   └── llm.py       # Vertex AI 클라이언트
 │   ├── prompts/         # LLM 프롬프트
@@ -176,9 +181,12 @@ pdf_knowledge_extractor/
 │       ├── workflow.py  # 메인 워크플로우
 │       ├── state.py     # 상태 정의
 │       └── nodes/       # 워크플로우 노드
+├── scripts/             # 유틸리티 스크립트
+│   └── generate_embeddings.py  # 배치 임베딩 생성
 ├── tests/               # 테스트
 ├── docs/                # 문서
-│   └── ARCHITECTURE_DECISIONS.md
+│   ├── ARCHITECTURE_DECISIONS.md
+│   └── deduplication_pipeline.md
 ├── run_pipeline.py      # 실행 스크립트
 ├── requirements.txt     # 의존성
 └── alembic/             # DB 마이그레이션
@@ -192,6 +200,55 @@ pdf_knowledge_extractor/
 - **데이터베이스**: PostgreSQL, SQLAlchemy
 - **마이그레이션**: Alembic
 
+## 중복제거 (Deduplication)
+
+불필요한 LLM 호출과 DB 저장을 방지하는 다단계 중복제거 시스템입니다.
+
+### 중복제거 흐름
+
+```
+청크 텍스트
+    │
+    ▼
+1단계: SHA256 해시 (무료, 즉시) ─── 완전 동일 텍스트 탐지
+    │
+    ▼
+2단계: SimHash 퍼지 매칭 (무료, 즉시) ─── 글자 변형 탐지
+    │
+    ▼
+3단계: 임베딩 의미적 매칭 (API 비용) ─── 의미적 유사 탐지
+    │
+    ▼
+4단계: LLM 아이디어 추출
+    │
+    ▼
+5단계: concept 문자열 매칭 (무료) ─── 동일 개념 탐지
+    │
+    ▼
+DB 저장
+```
+
+### 사용법
+
+```bash
+# 기본 실행 (SHA256 해시만)
+python run_pipeline.py "book.pdf"
+
+# 시맨틱 중복제거 활성화 (SimHash + 임베딩)
+# run_pipeline.py에서 enable_semantic_dedup=True 설정
+```
+
+### 중복제거 방식 비교
+
+| 방식 | 속도 | 비용 | 탐지 범위 |
+|-----|------|------|----------|
+| SHA256 | 즉시 | 무료 | 완전 동일 |
+| SimHash | 즉시 | 무료 | 글자 변형 |
+| 임베딩 | ~200ms | API 비용 | 의미적 유사 |
+| concept | 즉시 | 무료 | 정확히 동일 |
+
+자세한 내용은 [docs/deduplication_pipeline.md](docs/deduplication_pipeline.md) 참조.
+
 ### 핵심 결정 요약
 
 | 결정 | 이유 |
@@ -200,4 +257,5 @@ pdf_knowledge_extractor/
 | TOC 우선 감지 | PDF 내장 메타데이터가 가장 신뢰성 높음 |
 | 하이브리드 청킹 | 규칙(효율) + LLM(정확도) 장점 결합 |
 | 청킹+추출 통합 | API 호출 78% 감소, 의미 일관성 |
+| 다단계 중복제거 | 해시(무료 필터) + 임베딩(정밀 필터) |
 

@@ -30,12 +30,18 @@ def create_book_node(state: PipelineState) -> PipelineState:
         session = get_session()
 
         try:
-            # 중복 체크
+            # 중복 체크 - 기존 책이 있으면 중복 체크 모드로 진행
             existing = get_book_by_title(session, title)
             if existing:
+                print(f"📚 '{title}' 이미 존재 (ID: {existing.id}) - 중복 체크 모드로 진행")
+
+                # 기존 책의 챕터/섹션 ID 매핑 수집 (DB에서 조회)
+                all_sections = state.get("all_sections", [])
+                # 기존 책 사용 시에는 section_id 없이 진행 (청크 저장 시 book_id로만 중복 체크)
                 return {
                     **state,
-                    "error": f"'{title}' 책이 이미 존재합니다 (ID: {existing.id})",
+                    "book_id": existing.id,
+                    "all_sections": all_sections,
                 }
 
             # 챕터 카운터 초기화

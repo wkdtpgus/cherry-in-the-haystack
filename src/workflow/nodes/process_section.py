@@ -9,6 +9,8 @@ from src.utils.pdf.hierarchy_detector import split_into_paragraphs
 from src.db.connection import get_session
 from src.db.models import ParagraphChunk as DBParagraphChunk, KeyIdea
 from src.workflow.utils import get_concept_from_idea
+from src.dedup.hash_utils import compute_paragraph_hash, compute_simhash64
+from src.dedup.dedup_service import DeduplicationService
 
 
 def process_section(state: PipelineState) -> PipelineState:
@@ -62,7 +64,11 @@ def process_section(state: PipelineState) -> PipelineState:
 
         stats["total_paragraphs"] = stats.get("total_paragraphs", 0) + len(chunks)
 
-        # 2. 각 청크 처리: 아이디어 추출 → 중복 체크 → 저장
+        # dedup 옵션 가져오기
+        enable_semantic_dedup = state.get("enable_semantic_dedup", False)
+        semantic_threshold = state.get("semantic_threshold", 0.95)
+
+        # 2. 각 청크 처리: 청크 중복 체크 → 아이디어 추출 → 아이디어 중복 체크 → 저장
         for i, chunk in enumerate(chunks):
             chunk.section_id = section_id
 
@@ -77,11 +83,17 @@ def process_section(state: PipelineState) -> PipelineState:
                 section_id=section_id,
                 prev_text=prev_text,
                 next_text=next_text,
+                enable_semantic_dedup=enable_semantic_dedup,
+                semantic_threshold=semantic_threshold,
             )
 
             if result.get("saved"):
                 stats["total_ideas"] = stats.get("total_ideas", 0) + 1
-            if result.get("is_duplicate"):
+            if result.get("is_chunk_duplicate"):
+                stats["chunk_duplicates_skipped"] = stats.get("chunk_duplicates_skipped", 0) + 1
+                stats["duplicates_skipped"] = stats.get("duplicates_skipped", 0) + 1
+            if result.get("is_idea_duplicate"):
+                stats["idea_duplicates_skipped"] = stats.get("idea_duplicates_skipped", 0) + 1
                 stats["duplicates_skipped"] = stats.get("duplicates_skipped", 0) + 1
 
         stats["completed_sections"] = stats.get("completed_sections", 0) + 1
@@ -128,6 +140,9 @@ def _chunk_section(
                 detection_method="llm",
                 hierarchy_path=hierarchy_path,
             )
+            # 해시 기반 dedup을 위한 해시 계산
+            chunk.paragraph_hash = compute_paragraph_hash(chunk.text)
+            chunk.simhash64 = compute_simhash64(chunk.text)
             chunks.append(chunk)
 
         return chunks
@@ -211,20 +226,26 @@ def _process_chunk(
     section_id: int,
     prev_text: str = "",
     next_text: str = "",
+    enable_semantic_dedup: bool = False,
+    semantic_threshold: float = 0.95,
 ) -> dict:
     """
-    단일 청크 처리: 아이디어 추출 → 중복 체크 → 저장.
+    단일 청크 처리: 청크 중복 체크 → 아이디어 추출 → 아이디어 중복 체크 → 저장.
 
     Returns:
-        {"saved": bool, "is_duplicate": bool, "error": str | None}
+        {"saved": bool, "is_chunk_duplicate": bool, "is_idea_duplicate": bool, "error": str | None}
     """
     chunk_text = chunk.text
 
     if not chunk_text or len(chunk_text.strip()) < 50:
-        return {"saved": False, "is_duplicate": False}
+        return {"saved": False, "is_chunk_duplicate": False, "is_idea_duplicate": False}
 
     try:
-        # 1. 아이디어 추출 (컨텍스트 포함)
+        # 1. 청크 해시 기반 중복 체크 (먼저!)
+        if _check_chunk_duplicate(chunk, book_id, enable_semantic_dedup, semantic_threshold):
+            return {"saved": False, "is_chunk_duplicate": True, "is_idea_duplicate": False}
+
+        # 2. 아이디어 추출 (컨텍스트 포함)
         extracted_idea = _extract_idea(
             chunk_text,
             hierarchy_path=chunk.hierarchy_path,
@@ -233,16 +254,14 @@ def _process_chunk(
         )
 
         if not extracted_idea:
-            return {"saved": False, "is_duplicate": False}
+            return {"saved": False, "is_chunk_duplicate": False, "is_idea_duplicate": False}
 
-        # 2. 중복 체크
+        # 3. 아이디어 중복 체크
         concept = get_concept_from_idea(extracted_idea)
-        is_duplicate = _check_duplicate(concept, book_id)
+        if _check_idea_duplicate(concept, book_id):
+            return {"saved": False, "is_chunk_duplicate": False, "is_idea_duplicate": True}
 
-        if is_duplicate:
-            return {"saved": False, "is_duplicate": True}
-
-        # 3. DB 저장
+        # 4. DB 저장
         _save_to_db(
             chunk=chunk,
             extracted_idea=extracted_idea,
@@ -251,10 +270,10 @@ def _process_chunk(
             section_id=section_id,
         )
 
-        return {"saved": True, "is_duplicate": False}
+        return {"saved": True, "is_chunk_duplicate": False, "is_idea_duplicate": False}
 
     except Exception as e:
-        return {"saved": False, "is_duplicate": False, "error": str(e)}
+        return {"saved": False, "is_chunk_duplicate": False, "is_idea_duplicate": False, "error": str(e)}
 
 
 def _get_first_sentence(text: str) -> str:
@@ -297,8 +316,53 @@ def _extract_idea(
         return None
 
 
-def _check_duplicate(concept: str, book_id: int) -> bool:
-    """중복 아이디어 체크."""
+def _check_chunk_duplicate(
+    chunk: HierarchicalChunk,
+    book_id: int,
+    enable_semantic_dedup: bool = False,
+    semantic_threshold: float = 0.95,
+) -> bool:
+    """청크 해시 기반 중복 체크."""
+    if not chunk.paragraph_hash:
+        return False
+
+    try:
+        session = get_session()
+        try:
+            # 1. 정확한 해시 매칭
+            existing = session.query(DBParagraphChunk).filter(
+                DBParagraphChunk.paragraph_hash == chunk.paragraph_hash,
+                DBParagraphChunk.book_id == book_id,
+            ).first()
+
+            if existing:
+                return True
+
+            # 2. SimHash 퍼지 매칭 (선택적)
+            if enable_semantic_dedup and chunk.simhash64:
+                dedup_service = DeduplicationService(
+                    session,
+                    enable_semantic=True,
+                    semantic_threshold=semantic_threshold
+                )
+                fuzzy_matches = dedup_service.find_fuzzy_duplicates(chunk.simhash64, book_id, cross_book=False)
+                if fuzzy_matches:
+                    return True
+
+                # 3. 임베딩 기반 의미적 중복 체크
+                semantic_match = dedup_service.find_semantic_duplicate(chunk.text, book_id, cross_book=False)
+                if semantic_match:
+                    return True
+
+            return False
+        finally:
+            session.close()
+    except Exception:
+        return False
+
+
+def _check_idea_duplicate(concept: str, book_id: int) -> bool:
+    """아이디어 텍스트 기반 중복 체크."""
     if not concept:
         return False
 

@@ -28,7 +28,8 @@ def main():
 
     result = run_pdf_pipeline(
         pdf_path=pdf_path,
-        model_version=model_version
+        model_version=model_version,
+        enable_semantic_dedup=True,
     )
 
     if isinstance(result, dict) and result.get('error'):
