@@ -12,5 +12,18 @@ venv/
 .vscode/
 .idea/
 
-# api
-thetimecollabo-38646deba34a.json
+# OS
+.DS_Store
+
+# Output & Logs
+output/
+*.log
+
+# Database
+*.db
+
+# PDF files
+*.pdf
+
+# Claude
+.claude/

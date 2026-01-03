@@ -12,6 +12,7 @@
 5. [전체 아키텍처 변화](#5-전체-아키텍처-변화)
 6. [파일 변경 요약](#6-파일-변경-요약)
 7. [핵심 의사결정 요약](#7-핵심-의사결정-요약)
+8. [현재 아키텍처 (LangGraph 기반)](#8-현재-아키텍처-langgraph-기반)
 
 ---
 
@@ -262,6 +263,8 @@ Book: "AI Engineering"
 
 ## 6. 파일 변경 요약
 
+> **참고**: 아래는 초기 설계 단계의 파일 목록입니다. 현재 실제 파일 구조는 [섹션 8](#8-현재-아키텍처-langgraph-기반)을 참조하세요.
+
 | 파일 | 상태 | 주요 변경 |
 |------|------|----------|
 | `parser.py` | 수정 | `extract_all_pages()`, `extract_full_text()` 추가 |
@@ -305,3 +308,94 @@ Book: "AI Engineering"
 ### P3: "null" 문자열 처리
 - **문제**: LLM이 JSON null 대신 `"null"` 문자열 반환
 - **수정**: `para.section_title.lower() != "null"` 조건 추가
+
+---
+
+## 8. 현재 아키텍처 (LangGraph 기반)
+
+### 워크플로우 구조
+
+현재 파이프라인은 LangGraph 기반의 상태 머신으로 구현되어 있습니다.
+
+```
+[extract_text] → [detect_structure] → [create_book]
+                                           │
+                                           ▼
+                                     [process_section] ⟲ (섹션 루프)
+                                           │
+                                           ▼
+                                      [finalize] → END
+```
+
+### 노드별 역할
+
+| 노드 | 파일 | 역할 |
+|------|------|------|
+| `extract_text` | `nodes/extract_text.py` | PDF에서 텍스트와 TOC 추출 |
+| `detect_structure` | `nodes/detect_structure.py` | TOC 기반 챕터/섹션 계층 감지 |
+| `create_book` | `nodes/create_book.py` | DB에 책/챕터/섹션 저장 |
+| `process_section` | `nodes/process_section.py` | 섹션별 문단 분할 및 아이디어 추출 |
+| `finalize` | `nodes/finalize.py` | 처리 통계 출력 및 종료 |
+
+### 현재 파일 구조
+
+```
+src/
+├── workflow/                    # LangGraph 파이프라인
+│   ├── workflow.py             # 그래프 정의, run_pdf_pipeline()
+│   ├── state.py                # PipelineState 정의
+│   ├── utils.py                # 유틸리티 함수
+│   └── nodes/
+│       ├── extract_text.py     # PDF 텍스트 추출
+│       ├── detect_structure.py # TOC 기반 구조 감지
+│       ├── create_book.py      # DB 저장
+│       ├── process_section.py  # 섹션 처리 (청킹+추출 통합)
+│       └── finalize.py         # 결과 요약
+│
+├── model/                       # 데이터 모델 & LLM
+│   ├── schemas.py              # Pydantic + Dataclass 스키마
+│   └── model.py                # LLM 초기화 (Vertex AI)
+│
+├── db/                         # 데이터베이스
+│   ├── models.py               # SQLAlchemy ORM 모델
+│   ├── connection.py           # DB 연결 관리
+│   ├── operations.py           # CRUD 작업
+│   └── progress.py             # 진행도 추적
+│
+├── prompts/                    # LLM 프롬프트
+│   ├── extraction.py           # 아이디어 추출 프롬프트
+│   └── hierarchy_detection.py  # 구조 감지 프롬프트
+│
+└── utils/                      # 공용 유틸리티
+    ├── config.py               # 설정
+    ├── logger.py               # 로깅
+    ├── retry.py                # 재시도 로직
+    └── pdf/
+        ├── parser.py           # PDF 파싱 (extract_full_text, extract_toc)
+        └── hierarchy_detector.py # 챕터/섹션 감지 (detect_chapters_from_toc)
+```
+
+### Phase 3 구현 상태
+
+| 항목 | 상태 | 설명 |
+|------|------|------|
+| `SemanticParagraph.section_title` 스키마 | ✅ 정의됨 | `schemas.py`에 필드 존재 |
+| LLM 섹션 감지 | ⚠️ TOC 기반으로 대체 | `detect_structure` 노드에서 TOC 기반 섹션 감지 |
+| 섹션 상태 추적 | ⚠️ 섹션별 독립 처리 | 각 섹션이 독립적으로 처리됨 |
+
+### 데이터 모델 (현재)
+
+**DB 테이블 구조**:
+```
+books
+├── chapters (book_id FK)
+│   └── sections (chapter_id FK)
+│       └── paragraph_chunks (section_id FK)
+│           └── key_ideas (chunk_id FK)
+└── idea_groups (중복 제거용)
+```
+
+**주요 스키마**:
+- `DetectedChapter`: 파이프라인용 챕터 (title, sections, start_char, end_char)
+- `DetectedSection`: 파이프라인용 섹션 (title, content, children, level)
+- `HierarchicalChunk`: 청커 출력 (text, section_id, hierarchy_path)

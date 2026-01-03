@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """PDF 파이프라인 실행 스크립트."""
-import os
 import sys
 import warnings
 
 warnings.filterwarnings('ignore')
 
-# DATABASE_URL 설정
-os.environ['DATABASE_URL'] = 'postgresql://postgres:cherry251110!@localhost:5433/cherry_db'
+# 환경변수 로드
+from dotenv import load_dotenv
+load_dotenv()
 
 from src.workflow.workflow import run_pdf_pipeline
 
@@ -20,7 +20,6 @@ def main():
         pdf_path = 'AI Engineering.pdf'
         #AI Engineering.pdf
         #LLM Engineers Handbook.pdf
-    # 모델 버전 (기본: gemini-2.0-flash)
     model_version = sys.argv[2] if len(sys.argv) > 2 else 'gemini-2.5-flash'
 
     print(f"📄 PDF: {pdf_path}")
